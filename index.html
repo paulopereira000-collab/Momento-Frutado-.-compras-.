@@ -52,9 +52,7 @@
     #progress-pill { background:rgba(124,163,124,0.2); color:var(--green); border-radius:20px; padding:3px 10px; font-size:12px; font-weight:700; border:1px solid rgba(124,163,124,0.3); }
     #progress-bar { height:2px; background:#3a3a3a; margin:0 -18px; }
     #progress-fill { height:100%; background:var(--green); width:0%; transition:width 0.4s; }
-    #tabs { display:flex; margin:0 -18px; }
-    .tab-btn { flex:1; padding:9px 4px; border:none; background:transparent; font-size:13px; font-weight:600; color:#888; border-bottom:2px solid transparent; transition:all 0.15s; }
-    .tab-btn.active { color:var(--green); border-bottom-color:var(--green); }
+
 
     /* SCROLL */
     #scroll-area { flex:1; overflow-y:auto; padding-bottom:24px; }
@@ -175,11 +173,7 @@
       </div>
     </div>
     <div id="progress-bar"><div id="progress-fill"></div></div>
-    <div id="tabs">
-      <button class="tab-btn active" data-view="list">Lista</button>
-      <button class="tab-btn" data-view="whatsapp">WhatsApp</button>
-      <button class="tab-btn" data-view="add">Gerir</button>
-    </div>
+
   </div>
 
   <div id="scroll-area">
@@ -343,7 +337,8 @@ function payload() { return { products, subcats, list }; }
 
 function applyRemote(r) {
   if (r.products) products = r.products;
-  if (r.subcats)  subcats  = r.subcats;
+  if (r.subcats && Object.keys(r.subcats).length > 0) subcats = r.subcats;
+  else subcats = JSON.parse(JSON.stringify(DEFAULT_SUBCATS));
   if (r.list)     list     = { ...buildEmpty(products), ...r.list };
   else            list     = buildEmpty(products);
   initOpen(products);
