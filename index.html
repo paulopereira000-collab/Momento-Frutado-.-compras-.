@@ -297,7 +297,7 @@ async function push(){
   const n=new Date();document.getElementById("sync-label").textContent=`Guardado ${n.getHours().toString().padStart(2,"0")}:${n.getMinutes().toString().padStart(2,"0")}`;
   snack("Guardado ✓","saved");setTimeout(hideSnack,1500);}catch{snack("Erro ⚠️","error");setTimeout(hideSnack,3000);}dirty=false;}
 function sched(){dirty=true;localStorage.setItem(LS_CACHE,JSON.stringify(payload()));clearTimeout(saveTimer);saveTimer=setTimeout(push,1500);}
-async function poll(){if(!binId||dirty)return;try{const r=await binRead(binId);if(!r)return;const h=JSON.stringify(r);if(h!==lastHash){lastHash=h;localStorage.setItem(LS_CACHE,h);products=r.products||products;initOpen(products);list={...buildEmpty(products),...(r.list||{})};renderCats(document.getElementById("search-input").value);renderWA();const n=new Date();document.getElementById("sync-label").textContent=`Atualizado ${n.getHours().toString().padStart(2,"0")}:${n.getMinutes().toString().padStart(2,"0")}`;}}catch{}}
+async function poll(){if(!binId||dirty)return;try{const r=await binRead(binId);if(!r)return;const h=JSON.stringify(r);if(h!==lastHash){lastHash=h;localStorage.setItem(LS_CACHE,h);products=r.products||products;if(r.subcats)Object.assign(SUBCATS,r.subcats);initOpen(products);list={...buildEmpty(products),...(r.list||{})};renderCats(document.getElementById("search-input").value);renderWA();const n=new Date();document.getElementById("sync-label").textContent=`Atualizado ${n.getHours().toString().padStart(2,"0")}:${n.getMinutes().toString().padStart(2,"0")}`;}}catch{}}
 async function boot(){
   loadSubcats();
   const c=localStorage.getItem(LS_CACHE);
@@ -307,7 +307,7 @@ async function boot(){
   document.getElementById("loading").style.display="none";
   document.getElementById("app").style.cssText="display:flex;flex-direction:column;";
   renderCats("");
-  if(binId){try{const r=await binRead(binId);if(r){lastHash=JSON.stringify(r);localStorage.setItem(LS_CACHE,lastHash);products=r.products||products;initOpen(products);list={...buildEmpty(products),...(r.list||{})};renderCats("");renderWA();document.getElementById("sync-label").textContent="Em linha ✓";}}catch{document.getElementById("sync-label").textContent="Modo offline";}}
+  if(binId){try{const r=await binRead(binId);if(r){lastHash=JSON.stringify(r);localStorage.setItem(LS_CACHE,lastHash);products=r.products||products;if(r.subcats)Object.assign(SUBCATS,r.subcats);initOpen(products);list={...buildEmpty(products),...(r.list||{})};renderCats("");renderWA();document.getElementById("sync-label").textContent="Em linha ✓";}}catch{document.getElementById("sync-label").textContent="Modo offline";}}
   else await push();
   setInterval(poll,POLL_MS);}
 
@@ -411,7 +411,7 @@ function renderManage(){
     if (SUBCATS[cat]) {
       // Subcat management for Fruta
       const addSubBtn = document.createElement("button");
-      addSubBtn.style.cssText="width:100%;padding:10px;background:var(--green-light,#e8f5e9);border:none;border-radius:8px;font-size:14px;font-weight:700;color:#2e7d32;cursor:pointer;margin:8px 0;font-family:inherit;";
+      addSubBtn.style.cssText="width:100%;padding:10px;background:#e8f5e9;border:none;border-radius:8px;font-size:14px;font-weight:700;color:#2e7d32;cursor:pointer;margin:8px 0;font-family:inherit;";
       addSubBtn.textContent="+ Nova subcategoria";
       addSubBtn.addEventListener("click",()=>{
         const name=prompt("Nome da nova subcategoria:");
