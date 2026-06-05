@@ -22,7 +22,6 @@
       --text-dim: #9e9e9e;
       --border: #e0e0e0;
       --error: #c62828;
-      --nav-h: 54px;
     }
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     html, body { height: 100%; background: var(--bg); font-family: 'Inter', sans-serif; color: var(--text); }
@@ -50,12 +49,19 @@
     #header-right { display:flex; flex-direction:column; align-items:flex-end; gap:3px; }
     #sync-label { font-size:11px; color:#888; }
     #progress-pill { background:rgba(124,163,124,0.2); color:var(--green); border-radius:20px; padding:3px 10px; font-size:12px; font-weight:700; border:1px solid rgba(124,163,124,0.3); }
+    #header-nav { display:flex; gap:20px; padding:8px 0 10px; }
+    .hnav-btn { border:none; background:transparent; font-size:14px; font-weight:600; color:#888; padding:0; cursor:pointer; font-family:inherit; letter-spacing:0.3px; }
+    .hnav-btn.active { color:var(--green); }
     #progress-bar { height:2px; background:#3a3a3a; margin:0 -18px; }
     #progress-fill { height:100%; background:var(--green); width:0%; transition:width 0.4s; }
 
 
+    #tabs { display:flex; margin:0 -18px; }
+    .tab-btn { flex:1; padding:9px 4px; border:none; background:transparent; font-size:13px; font-weight:600; color:#888; border-bottom:2px solid transparent; transition:all 0.15s; }
+    .tab-btn.active { color:var(--green); border-bottom-color:var(--green); }
+
     /* SCROLL */
-    #scroll-area { flex:1; overflow-y:auto; padding-bottom:24px; }
+    #scroll-area { flex:1; overflow-y:auto; padding-bottom:16px; }
     .view { display:none; }
     .view.active { display:block; }
 
@@ -139,14 +145,10 @@
     .btn-save { color:var(--green); }
     .btn-cancel-edit { color:var(--text-dim); }
 
-    /* BOTTOM NAV */
-    #bottom-nav { position:fixed; bottom:0; left:50%; transform:translateX(-50%); width:100%; max-width:600px; height:var(--nav-h); background:#ffffff; border-top:1px solid var(--border); display:flex; z-index:100; box-shadow:0 -2px 8px rgba(0,0,0,0.08); }
-    .nav-item { flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:2px; border:none; background:transparent; color:var(--text-dim); font-size:10px; font-weight:600; padding:6px 0; }
-    .nav-item .nav-icon { font-size:19px; line-height:1; }
-    .nav-item.active { color:var(--green); }
+
 
     /* SNACK */
-    #snackbar { position:fixed; bottom:calc(var(--nav-h) + 12px); left:50%; transform:translateX(-50%); border-radius:8px; padding:9px 18px; font-size:13px; font-weight:600; box-shadow:0 3px 12px rgba(0,0,0,0.18); z-index:300; display:none; color:#fff; white-space:nowrap; }
+    #snackbar { position:fixed; bottom:24px; left:50%; transform:translateX(-50%); border-radius:8px; padding:9px 18px; font-size:13px; font-weight:600; box-shadow:0 3px 12px rgba(0,0,0,0.18); z-index:300; display:none; color:#fff; white-space:nowrap; }
     #snackbar.saving { background:#f57f17; }
     #snackbar.saved  { background:var(--green); }
     #snackbar.error  { background:var(--error); }
@@ -171,6 +173,16 @@
         <div id="sync-label"></div>
         <div id="progress-pill">0/0</div>
       </div>
+    </div>
+    <div id="header-nav">
+      <button class="hnav-btn active" data-view="list">Lista</button>
+      <button class="hnav-btn" data-view="whatsapp">WhatsApp</button>
+      <button class="hnav-btn" data-view="add">Gerir</button>
+    </div>
+    <div id="tabs">
+      <button class="tab-btn active" data-view="list">Lista</button>
+      <button class="tab-btn" data-view="whatsapp">WhatsApp</button>
+      <button class="tab-btn" data-view="add">Gerir</button>
     </div>
     <div id="progress-bar"><div id="progress-fill"></div></div>
 
@@ -229,11 +241,7 @@
     </div>
   </div>
 
-  <nav id="bottom-nav">
-    <button class="nav-item active" data-view="list"><span class="nav-icon material-icons-round">format_list_bulleted</span><span>Lista</span></button>
-    <button class="nav-item" data-view="whatsapp"><span class="nav-icon material-icons-round">chat_bubble_outline</span><span>WhatsApp</span></button>
-    <button class="nav-item" data-view="add"><span class="nav-icon material-icons-round">tune</span><span>Gerir</span></button>
-  </nav>
+
 </div>
 
 <div id="snackbar"></div>
@@ -679,14 +687,14 @@ function hideSnack() { document.getElementById("snackbar").style.display="none";
 
 // ── NAV ───────────────────────────────────────────────────────────────────────
 function switchTo(v) {
-  document.querySelectorAll(".tab-btn,.nav-item").forEach(x => x.classList.toggle("active", x.dataset.view===v));
+  document.querySelectorAll(".tab-btn").forEach(x => x.classList.toggle("active", x.dataset.view===v));
   document.querySelectorAll(".view").forEach(el => el.classList.toggle("active", el.id===`view-${v}`));
   if (v==="whatsapp") renderWA();
   if (v==="add") renderAdd();
 }
 
 // ── EVENTS ────────────────────────────────────────────────────────────────────
-document.querySelectorAll(".tab-btn,.nav-item").forEach(b => b.addEventListener("click", () => switchTo(b.dataset.view)));
+document.querySelectorAll(".tab-btn").forEach(b => b.addEventListener("click", () => switchTo(b.dataset.view)));
 document.getElementById("search-input").addEventListener("input", e => renderCats(e.target.value));
 document.getElementById("clear-btn").addEventListener("click", () => {
   if (!confirm("Limpar todas as quantidades?")) return;
