@@ -41,24 +41,14 @@
 
     /* HEADER */
     #header { background:#2a2a2a; padding:10px 18px 0; position:sticky; top:0; z-index:100; box-shadow:0 2px 8px rgba(0,0,0,0.2); }
-    #header-top { display:flex; align-items:center; justify-content:space-between; margin-bottom:8px; }
-    #header-left { display:flex; align-items:center; gap:6px; }
-    #header-title { font-size:16px; font-weight:400; color:#ffffff; }
-    #header-sep { font-size:16px; color:#555; font-weight:400; }
-    #header-sub { font-size:16px; font-weight:400; color:var(--green); }
-    #header-right { display:flex; flex-direction:column; align-items:flex-end; gap:3px; }
-    #sync-label { font-size:11px; color:#888; }
-    #progress-pill { background:rgba(124,163,124,0.2); color:var(--green); border-radius:20px; padding:3px 10px; font-size:12px; font-weight:700; border:1px solid rgba(124,163,124,0.3); }
-    #header-nav { display:flex; gap:20px; padding:8px 0 10px; }
-    .hnav-btn { border:none; background:transparent; font-size:14px; font-weight:600; color:#888; padding:0; cursor:pointer; font-family:inherit; letter-spacing:0.3px; }
+    #header-nav { display:flex; align-items:center; justify-content:space-between; padding:10px 0 12px; }
+    #header-brand { font-size:16px; font-weight:600; color:#888; letter-spacing:0.3px; text-transform:uppercase; }
+    #header-icons { display:flex; gap:8px; }
+    .hnav-btn { border:none; background:transparent; color:#888; padding:6px; cursor:pointer; display:flex; align-items:center; justify-content:center; border-radius:8px; }
+    .hnav-btn .material-icons-round { font-size:22px; }
     .hnav-btn.active { color:var(--green); }
-    #progress-bar { height:2px; background:#3a3a3a; margin:0 -18px; }
-    #progress-fill { height:100%; background:var(--green); width:0%; transition:width 0.4s; }
 
 
-    #tabs { display:flex; margin:0 -18px; }
-    .tab-btn { flex:1; padding:9px 4px; border:none; background:transparent; font-size:13px; font-weight:600; color:#888; border-bottom:2px solid transparent; transition:all 0.15s; }
-    .tab-btn.active { color:var(--green); border-bottom-color:var(--green); }
 
     /* SCROLL */
     #scroll-area { flex:1; overflow-y:auto; padding-bottom:16px; }
@@ -66,11 +56,6 @@
     .view.active { display:block; }
 
     /* SEARCH */
-    #search-wrap { padding:14px 14px 6px; }
-    #search-box { display:flex; align-items:center; gap:10px; background:var(--surface); border:1px solid var(--border); border-radius:12px; padding:10px 14px; }
-    #search-box .s-icon { font-size:20px; color:var(--text-dim); }
-    #search-input { border:none; outline:none; background:transparent; font-size:16px; font-family:inherit; flex:1; color:var(--text); }
-    #search-input::placeholder { color:var(--text-dim); }
 
     /* CATEGORY */
     .cat-wrap { padding:10px 14px 0; }
@@ -81,10 +66,10 @@
     .cat-body.collapsed { display:none; }
 
     /* SUBCAT SPACER */
-    .subcat-spacer { height:18px; display:block; }
+    .subcat-spacer { height:70px; display:block; background:#f5f5f5; margin:0; border-radius:0; }
 
     /* ITEM ROWS */
-    .item-row { display:flex; align-items:center; gap:16px; padding:14px 4px; border-bottom:none; border-radius:8px; }
+    .item-row { display:flex; align-items:center; gap:16px; padding:10px 4px; border-bottom:none; border-radius:8px; }
     .item-row.zebra-even { background:#eeeeee; }
     .item-row.zebra-odd  { background:#f5f5f5; }
     .item-row.active { background:var(--green-light) !important; }
@@ -163,39 +148,23 @@
 
 <div id="app" style="display:none">
   <div id="header">
-    <div id="header-top">
-      <div id="header-left">
-        <span id="header-title">Momento Frutado</span>
-        <span id="header-sep"> · </span>
-        <span id="header-sub">Compras</span>
-      </div>
-      <div id="header-right">
-        <div id="sync-label"></div>
-        <div id="progress-pill">0/0</div>
-      </div>
-    </div>
+
     <div id="header-nav">
-      <button class="hnav-btn active" data-view="list">Lista</button>
-      <button class="hnav-btn" data-view="whatsapp">WhatsApp</button>
-      <button class="hnav-btn" data-view="add">Gerir</button>
+      <div id="header-brand">Momento Frutado</div>
+      <div id="header-icons">
+        <button class="hnav-btn active" data-view="list"><span class="material-icons-round">format_list_bulleted</span></button>
+        <button class="hnav-btn" data-view="whatsapp"><span class="material-icons-round">chat_bubble_outline</span></button>
+        <button class="hnav-btn" data-view="add"><span class="material-icons-round">tune</span></button>
+      </div>
     </div>
-    <div id="tabs">
-      <button class="tab-btn active" data-view="list">Lista</button>
-      <button class="tab-btn" data-view="whatsapp">WhatsApp</button>
-      <button class="tab-btn" data-view="add">Gerir</button>
-    </div>
-    <div id="progress-bar"><div id="progress-fill"></div></div>
+
+
 
   </div>
 
   <div id="scroll-area">
     <div id="view-list" class="view active">
-      <div id="search-wrap">
-        <div id="search-box">
-          <span class="s-icon material-icons-round" style="font-size:20px">search</span>
-          <input id="search-input" placeholder="Pesquisar" autocomplete="off"/>
-        </div>
-      </div>
+
       <div id="cat-list"></div>
       <div id="clear-wrap"><button id="clear-btn">Limpar lista</button></div>
     </div>
@@ -250,8 +219,8 @@
 // ── CONFIG ────────────────────────────────────────────────────────────────────
 const JSONBIN_KEY  = "$2a$10$RHikBkHG7JTwO.xj7fNeZOFlFuiCgQLufothh9VvlczMX94LY8d";
 const JSONBIN_BASE = "https://api.jsonbin.io/v3/b";
-const LS_BIN_ID   = "mf_bin_id_v9";
-const LS_CACHE    = "mf_cache_v9";
+const LS_BIN_ID   = "mf_bin_id_v11";
+const LS_CACHE    = "mf_cache_v11";
 const POLL_MS     = 6000;
 const CLOSED_BY_DEFAULT = ["Azeitonas","Frutos secos","Consumíveis"];
 
@@ -345,10 +314,10 @@ function payload() { return { products, subcats, list }; }
 
 function applyRemote(r) {
   if (r.products) products = r.products;
-  if (r.subcats && Object.keys(r.subcats).length > 0) subcats = r.subcats;
-  else subcats = JSON.parse(JSON.stringify(DEFAULT_SUBCATS));
-  if (r.list)     list     = { ...buildEmpty(products), ...r.list };
-  else            list     = buildEmpty(products);
+  // Always keep DEFAULT_SUBCATS structure — never overwrite from cloud
+  subcats = JSON.parse(JSON.stringify(DEFAULT_SUBCATS));
+  if (r.list) list = { ...buildEmpty(products), ...r.list };
+  else        list = buildEmpty(products);
   initOpen(products);
 }
 
@@ -382,7 +351,7 @@ async function poll() {
     if (h !== lastHash) {
       lastHash = h; localStorage.setItem(LS_CACHE, h);
       applyRemote(r);
-      renderCats(document.getElementById("search-input").value);
+      renderCats("");
       renderWA();
       const n = new Date();
       document.getElementById("sync-label").textContent = `Atualizado ${pad(n.getHours())}:${pad(n.getMinutes())}`;
@@ -455,7 +424,7 @@ function renderCats(search) {
 
     const hdr = document.createElement("div"); hdr.className = "cat-header";
     hdr.innerHTML = `<span class="cat-name">${cat}</span><span class="cat-chevron ${open?"":"closed"}">▾</span>`;
-    hdr.addEventListener("click", () => { openCats[cat] = !open; renderCats(document.getElementById("search-input").value); });
+    hdr.addEventListener("click", () => { openCats[cat] = !open; renderCats(""); });
     wrap.appendChild(hdr);
 
     const body = document.createElement("div"); body.className = "cat-body" + (open ? "" : " collapsed");
@@ -493,7 +462,7 @@ function renderCats(search) {
 // ── QTY CONTROL ───────────────────────────────────────────────────────────────
 function makeQty(key, qty) {
   const wrap = document.createElement("div"); wrap.className = "qty-wrap";
-  const rr = () => { renderCats(document.getElementById("search-input").value); renderWA(); };
+  const rr = () => { renderCats(""); renderWA(); };
 
   const bMinus = document.createElement("button"); bMinus.className = "qty-btn"; bMinus.textContent = "−";
   bMinus.addEventListener("click", () => { list[key] = { qty: Math.max(0, Number(list[key]?.qty||0)-1) }; sched(); rr(); });
@@ -574,7 +543,7 @@ function renderManage() {
         const btnDel = document.createElement("button"); btnDel.className = "btn-icon btn-delete"; btnDel.textContent = "🗑️";
         btnDel.addEventListener("click", () => {
           if (!confirm(`Apagar subcategoria "${group.name}"?`)) return;
-          subcats[cat].splice(gi, 1); sched(); renderManage(); renderCats(document.getElementById("search-input").value);
+          subcats[cat].splice(gi, 1); sched(); renderManage(); renderCats("");
         });
 
         gHdr.appendChild(gTitle); gHdr.appendChild(btnRen); gHdr.appendChild(btnDel);
@@ -596,7 +565,7 @@ function renderManage() {
               const ix = products[cat].indexOf(item); if (ix !== -1) products[cat][ix] = n;
               const gix = subcats[cat][gi].items.indexOf(item); if (gix !== -1) subcats[cat][gi].items[gix] = n;
               const ok = gk(cat,item), nk = gk(cat,n); if (list[ok]) { list[nk]=list[ok]; delete list[ok]; }
-              sched(); renderManage(); renderCats(document.getElementById("search-input").value);
+              sched(); renderManage(); renderCats("");
             };
             bS.addEventListener("click", doSave); bC.addEventListener("click", () => renderManage());
             inp.addEventListener("keydown", e => { if(e.key==="Enter") doSave(); if(e.key==="Escape") renderManage(); });
@@ -615,7 +584,7 @@ function renderManage() {
             const targetGi = subcats[cat].indexOf(targetGroup);
             subcats[cat][gi].items = subcats[cat][gi].items.filter(i => i !== item);
             subcats[cat][targetGi].items.push(item);
-            sched(); renderManage(); renderCats(document.getElementById("search-input").value);
+            sched(); renderManage(); renderCats("");
           });
 
           const bD = document.createElement("button"); bD.className = "btn-icon btn-delete"; bD.textContent = "🗑️";
@@ -624,7 +593,7 @@ function renderManage() {
             products[cat] = products[cat].filter(i => i !== item);
             subcats[cat][gi].items = subcats[cat][gi].items.filter(i => i !== item);
             delete list[gk(cat, item)];
-            sched(); renderManage(); renderCats(document.getElementById("search-input").value);
+            sched(); renderManage(); renderCats("");
           });
 
           row.appendChild(nm); row.appendChild(bE); row.appendChild(bM); row.appendChild(bD);
@@ -640,7 +609,7 @@ function renderManage() {
           if (!products[cat].includes(n)) products[cat].push(n);
           subcats[cat][gi].items.push(n);
           list[gk(cat, n)] = { qty: 0 };
-          sched(); addInp.value = ""; renderManage(); renderCats(document.getElementById("search-input").value);
+          sched(); addInp.value = ""; renderManage(); renderCats("");
         });
         addRow.appendChild(addInp); gBlock.appendChild(addRow);
         bd.appendChild(gBlock);
@@ -662,7 +631,7 @@ function renderManage() {
             const n = inp.value.trim(); if (!n||n===item) { renderManage(); return; }
             const ix = products[cat].indexOf(item); if (ix !== -1) products[cat][ix] = n;
             const ok = gk(cat,item), nk = gk(cat,n); if (list[ok]) { list[nk]=list[ok]; delete list[ok]; }
-            sched(); renderManage(); renderCats(document.getElementById("search-input").value);
+            sched(); renderManage(); renderCats("");
           };
           bS.addEventListener("click", ds); bC.addEventListener("click", () => renderManage());
           inp.addEventListener("keydown", e => { if(e.key==="Enter") ds(); if(e.key==="Escape") renderManage(); });
@@ -671,7 +640,7 @@ function renderManage() {
           if (!confirm(`Apagar "${item}"?`)) return;
           products[cat] = products[cat].filter(i => i !== item);
           delete list[gk(cat, item)];
-          sched(); renderManage(); renderCats(document.getElementById("search-input").value);
+          sched(); renderManage(); renderCats("");
         });
         row.appendChild(nm); row.appendChild(bE); row.appendChild(bD); bd.appendChild(row);
       });
@@ -687,19 +656,18 @@ function hideSnack() { document.getElementById("snackbar").style.display="none";
 
 // ── NAV ───────────────────────────────────────────────────────────────────────
 function switchTo(v) {
-  document.querySelectorAll(".tab-btn").forEach(x => x.classList.toggle("active", x.dataset.view===v));
+  document.querySelectorAll(".hnav-btn").forEach(x => x.classList.toggle("active", x.dataset.view===v));
   document.querySelectorAll(".view").forEach(el => el.classList.toggle("active", el.id===`view-${v}`));
   if (v==="whatsapp") renderWA();
   if (v==="add") renderAdd();
 }
 
 // ── EVENTS ────────────────────────────────────────────────────────────────────
-document.querySelectorAll(".tab-btn").forEach(b => b.addEventListener("click", () => switchTo(b.dataset.view)));
-document.getElementById("search-input").addEventListener("input", e => renderCats(e.target.value));
+document.querySelectorAll(".hnav-btn").forEach(b => b.addEventListener("click", () => switchTo(b.dataset.view)));
 document.getElementById("clear-btn").addEventListener("click", () => {
   if (!confirm("Limpar todas as quantidades?")) return;
   Object.keys(list).forEach(k => { list[k] = { qty: 0 }; });
-  sched(); renderCats(document.getElementById("search-input").value); renderWA();
+  sched(); renderCats(""); renderWA();
 });
 document.getElementById("cat-select").addEventListener("change", e => {
   const cat = e.target.value;
@@ -733,6 +701,8 @@ document.getElementById("cancel-btn").addEventListener("click", () => switchTo("
 document.getElementById("wa-text").addEventListener("focus", e => e.target.select());
 
 // ── START ─────────────────────────────────────────────────────────────────────
+// Clear old cache keys
+['mf_bin_id_v9','mf_cache_v9','mf_bin_id_v10','mf_cache_v10'].forEach(k => localStorage.removeItem(k));
 boot();
 </script>
 </body>
