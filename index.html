@@ -217,10 +217,10 @@
 
 <script>
 // ── CONFIG ────────────────────────────────────────────────────────────────────
-const JSONBIN_KEY  = "$2a$10$RHikBkHG7JTwO.xj7fNeZOFlFuiCgQLufothh9VvlczMX94LY8dMO";
-const JSONBIN_BASE = "https://api.jsonbin.io/v3/b";
-const LS_BIN_ID   = "mf_bin_id_v12";
-const LS_CACHE    = "mf_cache_v12";
+const SB_URL      = "https://phgovdhhivuimdbtglsl.supabase.co";
+const SB_KEY      = "sb_publishable_MBrFlrMuoCTcyMkFbfTWRg_zUBNb_E0";
+const SB_HEADERS  = { "Content-Type": "application/json", "apikey": SB_KEY, "Authorization": "Bearer " + SB_KEY };
+const LS_CACHE    = "mf_cache_v13";
 const POLL_MS     = 6000;
 const CLOSED_BY_DEFAULT = ["Azeitonas","Frutos secos","Consumíveis"];
 
@@ -277,7 +277,6 @@ let products = JSON.parse(JSON.stringify(DEFAULT_PRODUCTS));
 let subcats  = JSON.parse(JSON.stringify(DEFAULT_SUBCATS));
 let list     = {};
 let openCats = {};
-let binId    = localStorage.getItem(LS_BIN_ID) || null;
 let lastHash = "", saveTimer = null, dirty = false;
 
 // ── HELPERS ───────────────────────────────────────────────────────────────────
@@ -297,42 +296,44 @@ function initOpen(prods) {
   });
 }
 
-// ── JSONBIN ───────────────────────────────────────────────────────────────────
-async function binCreate(d) {
-  const r = await fetch(JSONBIN_BASE, { method:"POST", headers:{"Content-Type":"application/json","X-Master-Key":JSONBIN_KEY,"X-Bin-Private":"false"}, body:JSON.stringify(d) });
-  return (await r.json()).metadata?.id || null;
-}
-async function binRead(id) {
-  const r = await fetch(`${JSONBIN_BASE}/${id}/latest`, { headers:{"X-Master-Key":JSONBIN_KEY} });
-  return (await r.json()).record || null;
-}
-async function binUpdate(id, d) {
-  await fetch(`${JSONBIN_BASE}/${id}`, { method:"PUT", headers:{"Content-Type":"application/json","X-Master-Key":JSONBIN_KEY}, body:JSON.stringify(d) });
-}
-
+// ── SUPABASE ──────────────────────────────────────────────────────────────────
 function payload() { return { products, subcats, list }; }
 
 function applyRemote(r) {
   if (r.products) products = r.products;
-  // Always keep DEFAULT_SUBCATS structure — never overwrite from cloud
   subcats = JSON.parse(JSON.stringify(DEFAULT_SUBCATS));
   if (r.list) list = { ...buildEmpty(products), ...r.list };
   else        list = buildEmpty(products);
   initOpen(products);
 }
 
+async function sbRead() {
+  const r = await fetch(`${SB_URL}/rest/v1/lista?id=eq.1&select=data`, { headers: SB_HEADERS });
+  const rows = await r.json();
+  if (rows && rows.length > 0) return JSON.parse(rows[0].data);
+  return null;
+}
+
+async function sbWrite(data) {
+  // Upsert row with id=1
+  await fetch(`${SB_URL}/rest/v1/lista`, {
+    method: "POST",
+    headers: { ...SB_HEADERS, "Prefer": "resolution=merge-duplicates" },
+    body: JSON.stringify({ id: 1, data: JSON.stringify(data) })
+  });
+}
+
 // ── SAVE/SYNC ─────────────────────────────────────────────────────────────────
 async function push() {
   snack("A guardar...", "saving");
   try {
-    if (!binId) { binId = await binCreate(payload()); localStorage.setItem(LS_BIN_ID, binId); }
-    else await binUpdate(binId, payload());
+    await sbWrite(payload());
     lastHash = JSON.stringify(payload());
     localStorage.setItem(LS_CACHE, lastHash);
     const n = new Date();
     document.getElementById("sync-label").textContent = `Guardado ${pad(n.getHours())}:${pad(n.getMinutes())}`;
     snack("Guardado ✓", "saved"); setTimeout(hideSnack, 1500);
-  } catch { snack("Erro ⚠️", "error"); setTimeout(hideSnack, 3000); }
+  } catch(e) { snack("Erro ⚠️", "error"); setTimeout(hideSnack, 3000); }
   dirty = false;
 }
 
@@ -344,15 +345,13 @@ function sched() {
 }
 
 async function poll() {
-  if (!binId || dirty) return;
+  if (dirty) return;
   try {
-    const r = await binRead(binId); if (!r) return;
+    const r = await sbRead(); if (!r) return;
     const h = JSON.stringify(r);
     if (h !== lastHash) {
       lastHash = h; localStorage.setItem(LS_CACHE, h);
-      applyRemote(r);
-      renderCats("");
-      renderWA();
+      applyRemote(r); renderCats(""); renderWA();
       const n = new Date();
       document.getElementById("sync-label").textContent = `Atualizado ${pad(n.getHours())}:${pad(n.getMinutes())}`;
     }
@@ -372,16 +371,16 @@ async function boot() {
   document.getElementById("app").style.cssText = "display:flex;flex-direction:column;";
   renderCats("");
 
-  if (binId) {
-    try {
-      const r = await binRead(binId);
-      if (r) {
-        lastHash = JSON.stringify(r); localStorage.setItem(LS_CACHE, lastHash);
-        applyRemote(r); renderCats(""); renderWA();
-        document.getElementById("sync-label").textContent = "Em linha ✓";
-      }
-    } catch { document.getElementById("sync-label").textContent = "Modo offline"; }
-  } else { await push(); }
+  try {
+    const r = await sbRead();
+    if (r) {
+      lastHash = JSON.stringify(r); localStorage.setItem(LS_CACHE, lastHash);
+      applyRemote(r); renderCats(""); renderWA();
+      document.getElementById("sync-label").textContent = "Em linha ✓";
+    } else {
+      await push();
+    }
+  } catch { document.getElementById("sync-label").textContent = "Modo offline"; }
 
   setInterval(poll, POLL_MS);
 }
@@ -701,8 +700,6 @@ document.getElementById("cancel-btn").addEventListener("click", () => switchTo("
 document.getElementById("wa-text").addEventListener("focus", e => e.target.select());
 
 // ── START ─────────────────────────────────────────────────────────────────────
-// Clear old cache keys
-['mf_bin_id_v9','mf_cache_v9','mf_bin_id_v10','mf_cache_v10'].forEach(k => localStorage.removeItem(k));
 boot();
 </script>
 </body>
