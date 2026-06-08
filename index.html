@@ -217,9 +217,7 @@
 
 <script>
 // ── CONFIG ────────────────────────────────────────────────────────────────────
-const GAS_URL  = "https://script.google.com/macros/s/AKfycbzZSZrQYtxa-V_ja629ci7_XRdsOjWzw0lh3RuneqJWy3pQA_7vvMjSiKuw-W4BvBCE/exec";
-const LS_CACHE = "mf_cache_v15";
-const POLL_MS  = 8000;
+const LS_CACHE = "mf_cache_v16";
 const CLOSED_BY_DEFAULT = ["Azeitonas","Frutos secos","Consumíveis"];
 
 // ── DATA ──────────────────────────────────────────────────────────────────────
@@ -275,7 +273,7 @@ let products = JSON.parse(JSON.stringify(DEFAULT_PRODUCTS));
 let subcats  = JSON.parse(JSON.stringify(DEFAULT_SUBCATS));
 let list     = {};
 let openCats = {};
-let lastHash = "", saveTimer = null, dirty = false;
+let saveTimer = null;
 
 // ── HELPERS ───────────────────────────────────────────────────────────────────
 function gk(cat, item) { return `${cat}|||${item}`; }
@@ -294,10 +292,10 @@ function initOpen(prods) {
   });
 }
 
-// ── GOOGLE APPS SCRIPT STORAGE ───────────────────────────────────────────────
+// ── LOCAL STORAGE ─────────────────────────────────────────────────────────────
 function payload() { return { products, subcats, list }; }
 
-function applyRemote(r) {
+function applyLocal(r) {
   if (r.products) products = r.products;
   subcats = JSON.parse(JSON.stringify(DEFAULT_SUBCATS));
   if (r.list) list = { ...buildEmpty(products), ...r.list };
@@ -305,62 +303,19 @@ function applyRemote(r) {
   initOpen(products);
 }
 
-async function gasRead() {
-  const r = await fetch(GAS_URL + "?t=" + Date.now());
-  if (!r.ok) return null;
-  const text = await r.text();
-  if (!text || text === "{}") return null;
-  return JSON.parse(text);
-}
-
-async function gasWrite(data) {
-  await fetch(GAS_URL, {
-    method: "POST",
-    mode: "no-cors",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(data)
-  });
-}
-
-// ── SAVE/SYNC ─────────────────────────────────────────────────────────────────
-async function push() {
-  snack("A guardar...", "saving");
-  try {
-    await gasWrite(payload());
-    lastHash = JSON.stringify(payload());
-    localStorage.setItem(LS_CACHE, lastHash);
-    const n = new Date();
-    document.getElementById("sync-label").textContent = `Guardado ${pad(n.getHours())}:${pad(n.getMinutes())}`;
-    snack("Guardado ✓", "saved"); setTimeout(hideSnack, 1500);
-  } catch(e) { snack("Erro ⚠️", "error"); setTimeout(hideSnack, 3000); }
-  dirty = false;
-}
-
 function sched() {
-  dirty = true;
   localStorage.setItem(LS_CACHE, JSON.stringify(payload()));
   clearTimeout(saveTimer);
-  saveTimer = setTimeout(push, 1500);
+  saveTimer = setTimeout(() => {
+    const n = new Date();
+    document.getElementById("sync-label").textContent = `Guardado ${pad(n.getHours())}:${pad(n.getMinutes())}`;
+  }, 300);
 }
 
-async function poll() {
-  if (dirty) return;
-  try {
-    const r = await gasRead(); if (!r) return;
-    const h = JSON.stringify(r);
-    if (h !== lastHash) {
-      lastHash = h; localStorage.setItem(LS_CACHE, h);
-      applyRemote(r); renderCats(""); renderWA();
-      const n = new Date();
-      document.getElementById("sync-label").textContent = `Atualizado ${pad(n.getHours())}:${pad(n.getMinutes())}`;
-    }
-  } catch {}
-}
-
-async function boot() {
+function boot() {
   const cached = localStorage.getItem(LS_CACHE);
   if (cached) {
-    try { applyRemote(JSON.parse(cached)); }
+    try { applyLocal(JSON.parse(cached)); }
     catch { list = buildEmpty(products); initOpen(products); }
   } else {
     list = buildEmpty(products); initOpen(products);
@@ -369,19 +324,6 @@ async function boot() {
   document.getElementById("loading").style.display = "none";
   document.getElementById("app").style.cssText = "display:flex;flex-direction:column;";
   renderCats("");
-
-  try {
-    const r = await gasRead();
-    if (r) {
-      lastHash = JSON.stringify(r); localStorage.setItem(LS_CACHE, lastHash);
-      applyRemote(r); renderCats(""); renderWA();
-      document.getElementById("sync-label").textContent = "Em linha ✓";
-    } else {
-      await push();
-    }
-  } catch { document.getElementById("sync-label").textContent = "Modo offline"; }
-
-  setInterval(poll, POLL_MS);
 }
 
 // ── WHATSAPP ──────────────────────────────────────────────────────────────────
