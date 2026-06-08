@@ -217,11 +217,9 @@
 
 <script>
 // ── CONFIG ────────────────────────────────────────────────────────────────────
-const SB_URL      = "https://phgovdhhivuimdbtglsl.supabase.co";
-const SB_KEY      = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBoZ292ZGhoaXZ1aW1kYnRnbHNsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA3ODg2MzMsImV4cCI6MjA5NjM2NDYzM30.O7gpxD2OEmCPw-Poxx8I9FacpmmXXTk09OvD6hj8Ad8";
-const SB_HEADERS  = { "Content-Type": "application/json", "apikey": SB_KEY, "Authorization": "Bearer " + SB_KEY };
-const LS_CACHE    = "mf_cache_v13";
-const POLL_MS     = 6000;
+const GAS_URL  = "https://script.google.com/macros/s/AKfycbzId2RnSfUmeQon8Yn0ei22n1BfSg4LkLVIk4lQ87XdowQ4LEqEg036nsAwCVhe4N2V/exec";
+const LS_CACHE = "mf_cache_v15";
+const POLL_MS  = 8000;
 const CLOSED_BY_DEFAULT = ["Azeitonas","Frutos secos","Consumíveis"];
 
 // ── DATA ──────────────────────────────────────────────────────────────────────
@@ -296,7 +294,7 @@ function initOpen(prods) {
   });
 }
 
-// ── SUPABASE ──────────────────────────────────────────────────────────────────
+// ── GOOGLE APPS SCRIPT STORAGE ───────────────────────────────────────────────
 function payload() { return { products, subcats, list }; }
 
 function applyRemote(r) {
@@ -307,19 +305,23 @@ function applyRemote(r) {
   initOpen(products);
 }
 
-async function sbRead() {
-  const r = await fetch(`${SB_URL}/rest/v1/lista?id=eq.1&select=data`, { headers: SB_HEADERS });
+async function gasRead() {
+  const r = await fetch(GAS_URL);
+  if (!r.ok) return null;
   const rows = await r.json();
-  if (rows && rows.length > 0) return JSON.parse(rows[0].data);
-  return null;
+  if (!rows || rows.length === 0) return null;
+  // Data stored in cell A1 as JSON string
+  const cell = rows[0][0];
+  if (!cell) return null;
+  return JSON.parse(cell);
 }
 
-async function sbWrite(data) {
-  // Upsert row with id=1
-  await fetch(`${SB_URL}/rest/v1/lista`, {
+async function gasWrite(data) {
+  await fetch(GAS_URL, {
     method: "POST",
-    headers: { ...SB_HEADERS, "Prefer": "resolution=merge-duplicates" },
-    body: JSON.stringify({ id: 1, data: JSON.stringify(data) })
+    mode: "no-cors",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify([[JSON.stringify(data)]])
   });
 }
 
@@ -327,7 +329,7 @@ async function sbWrite(data) {
 async function push() {
   snack("A guardar...", "saving");
   try {
-    await sbWrite(payload());
+    await gasWrite(payload());
     lastHash = JSON.stringify(payload());
     localStorage.setItem(LS_CACHE, lastHash);
     const n = new Date();
@@ -347,7 +349,7 @@ function sched() {
 async function poll() {
   if (dirty) return;
   try {
-    const r = await sbRead(); if (!r) return;
+    const r = await gasRead(); if (!r) return;
     const h = JSON.stringify(r);
     if (h !== lastHash) {
       lastHash = h; localStorage.setItem(LS_CACHE, h);
@@ -372,7 +374,7 @@ async function boot() {
   renderCats("");
 
   try {
-    const r = await sbRead();
+    const r = await gasRead();
     if (r) {
       lastHash = JSON.stringify(r); localStorage.setItem(LS_CACHE, lastHash);
       applyRemote(r); renderCats(""); renderWA();
