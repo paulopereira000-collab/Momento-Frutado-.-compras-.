@@ -7,7 +7,7 @@
   <meta name="apple-mobile-web-app-capable" content="yes"/>
   <meta name="apple-mobile-web-app-title" content="Momento Frutado"/>
   <title>Momento Frutado – Compras</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800;900&display=swap" rel="stylesheet"/>
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet"/>
   <style>
     :root {
@@ -24,7 +24,7 @@
       --error: #c62828;
     }
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    html, body { height: 100%; background: var(--bg); font-family: 'Inter', sans-serif; color: var(--text); }
+    html, body { height: 100%; background: var(--bg); font-family: 'Nunito', sans-serif; color: var(--text); }
     input[type=number]::-webkit-inner-spin-button,
     input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; }
     input[type=number] { -moz-appearance: textfield; }
@@ -64,25 +64,24 @@
     .cat-chevron { font-size:14px; color:#ffffff; transition:transform 0.2s; }
     .cat-chevron.closed { transform:rotate(-90deg); }
     .cat-body.collapsed { display:none; }
+    .cat-body { background:#ffffff; }
 
     /* SUBCAT SPACER */
     .subcat-spacer { height:70px; display:block; background:#f5f5f5; margin:0; border-radius:0; }
 
     /* ITEM ROWS */
     .item-row { display:flex; align-items:center; gap:16px; padding:10px 4px; border-bottom:none; border-radius:8px; }
-    .item-row.zebra-even { background:#eeeeee; }
-    .item-row.zebra-odd  { background:#f5f5f5; }
-    .item-row.active { background:var(--green-light) !important; }
-    .item-name { flex:1; font-size:20px; font-weight:400; color:var(--text-mid); line-height:1.2; }
-    .item-name.active { font-weight:600; color:var(--text); }
+    .item-row.zebra-even { background:#e8f5e9; }
+    .item-row.zebra-odd  { background:#ffffff; }
+    .item-row.active { }
+    .item-name { flex:1; font-size:25px; font-weight:400; color:var(--text-mid); line-height:1.2; }
+    .item-name.active { font-weight:800; color:var(--text); font-size:27px; }
 
     /* QTY */
-    .qty-wrap { display:flex; align-items:center; gap:10px; }
-    .qty-btn { width:22px; height:22px; border:none; border-radius:50%; background:#d0d0d0; color:#424242; font-size:14px; font-weight:700; display:flex; align-items:center; justify-content:center; flex-shrink:0; padding:0; }
-    .qty-btn:active { background:#bdbdbd; }
-    .qty-display { width:44px; height:44px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:16px; font-weight:600; color:var(--text-dim); background:#e0e0e0; border:none; cursor:pointer; transition:all 0.2s; }
-    .qty-display.active { background:var(--green); color:#fff; }
-    .qty-input-inline { width:44px; height:44px; text-align:center; font-size:16px; font-weight:600; border:2px solid var(--green); border-radius:50%; color:#fff; background:var(--green); font-family:inherit; outline:none; }
+    .qty-wrap { display:flex; align-items:center; }
+    .qty-display { width:48px; height:48px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:22px; font-weight:400; color:#1a1a1a; background:#e8f5e9; border:none; cursor:pointer; transition:all 0.2s; }
+    .qty-display.active { background:#c8e6c9; color:#1a1a1a; box-shadow: 0 2px 8px rgba(124,163,124,0.3); }
+    .qty-input-inline { width:48px; height:48px; text-align:center; font-size:22px; font-weight:400; border:2px solid var(--green); border-radius:50%; color:#1a1a1a; background:#c8e6c9; font-family:inherit; outline:none; }
 
     /* CLEAR */
     #clear-wrap { padding:16px 18px 0; }
@@ -343,17 +342,18 @@ function toWA() {
         const groupRows = group.items
           .map(item => ({ item, qty: Number(list[gk(cat, item)]?.qty || 0) }))
           .filter(e => e.qty > 0)
-          .map(e => `- ${e.qty} ${e.item.toLowerCase()}`);
+          .map(e => `${e.qty} ${e.item.toLowerCase()}`);
         if (groupRows.length) {
           if (catRows.length) catRows.push("", ""); // 2 blank lines between subcats
           catRows.push(...groupRows);
         }
       });
     } else {
-      items.forEach(item => {
+      items.forEach((item, idx) => {
         const qty = Number(list[gk(cat, item)]?.qty || 0);
-        if (qty) catRows.push(`- ${qty} ${item.toLowerCase()}`);
+        if (qty) { catRows.push(`${qty} ${item.toLowerCase()}`); catRows.push(""); }
       });
+      if (catRows.length && catRows[catRows.length-1]==="") catRows.pop();
     }
     if (catRows.length) {
       if (lines.length) lines.push("", "", ""); // 3 blank lines between categories
@@ -424,21 +424,15 @@ function makeQty(key, qty) {
   const wrap = document.createElement("div"); wrap.className = "qty-wrap";
   const rr = () => { renderCats(""); renderWA(); };
 
-  const bMinus = document.createElement("button"); bMinus.className = "qty-btn"; bMinus.textContent = "−";
-  bMinus.addEventListener("click", () => { list[key] = { qty: Math.max(0, Number(list[key]?.qty||0)-1) }; sched(); rr(); });
-
-  const bPlus = document.createElement("button"); bPlus.className = "qty-btn"; bPlus.textContent = "+";
-  bPlus.addEventListener("click", () => { list[key] = { qty: Math.min(99, Number(list[key]?.qty||0)+1) }; sched(); rr(); });
-
   const display = document.createElement("div"); display.className = "qty-display" + (qty > 0 ? " active" : ""); display.textContent = qty > 0 ? qty : "—";
   display.addEventListener("click", () => {
     const inp = document.createElement("input"); inp.type = "number"; inp.inputMode = "numeric"; inp.pattern = "[0-9]*"; inp.className = "qty-input-inline"; inp.value = qty > 0 ? qty : "";
     wrap.replaceChild(inp, display); inp.focus(); inp.select();
-    const commit = () => { const n = parseInt(inp.value, 10); list[key] = { qty: isNaN(n)||n<0?0:Math.min(99,n) }; sched(); rr(); };
+    const commit = () => { const n = parseInt(inp.value, 10); list[key] = { qty: isNaN(n)||n<0?0:Math.min(999,n) }; sched(); rr(); };
     inp.addEventListener("blur", commit); inp.addEventListener("keydown", e => { if (e.key==="Enter") inp.blur(); });
   });
 
-  wrap.appendChild(bMinus); wrap.appendChild(bPlus); wrap.appendChild(display);
+  wrap.appendChild(display);
   return wrap;
 }
 
