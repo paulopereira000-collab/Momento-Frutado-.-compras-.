@@ -217,7 +217,7 @@
 
 <script>
 // ── CONFIG ────────────────────────────────────────────────────────────────────
-const GAS_URL  = "https://script.google.com/macros/s/AKfycbzId2RnSfUmeQon8Yn0ei22n1BfSg4LkLVIk4lQ87XdowQ4LEqEg036nsAwCVhe4N2V/exec";
+const GAS_URL  = "https://script.google.com/macros/s/AKfycbzZSZrQYtxa-V_ja629ci7_XRdsOjWzw0lh3RuneqJWy3pQA_7vvMjSiKuw-W4BvBCE/exec";
 const LS_CACHE = "mf_cache_v15";
 const POLL_MS  = 8000;
 const CLOSED_BY_DEFAULT = ["Azeitonas","Frutos secos","Consumíveis"];
@@ -306,14 +306,11 @@ function applyRemote(r) {
 }
 
 async function gasRead() {
-  const r = await fetch(GAS_URL);
+  const r = await fetch(GAS_URL + "?t=" + Date.now());
   if (!r.ok) return null;
-  const rows = await r.json();
-  if (!rows || rows.length === 0) return null;
-  // Data stored in cell A1 as JSON string
-  const cell = rows[0][0];
-  if (!cell) return null;
-  return JSON.parse(cell);
+  const text = await r.text();
+  if (!text || text === "{}") return null;
+  return JSON.parse(text);
 }
 
 async function gasWrite(data) {
@@ -321,7 +318,7 @@ async function gasWrite(data) {
     method: "POST",
     mode: "no-cors",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify([[JSON.stringify(data)]])
+    body: JSON.stringify(data)
   });
 }
 
