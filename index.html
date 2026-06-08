@@ -336,16 +336,30 @@ function boot() {
 function toWA() {
   const lines = [];
   Object.entries(products).forEach(([cat, items]) => {
-    const rows = [];
-    items.forEach(item => {
-      const qty = Number(list[gk(cat, item)]?.qty || 0);
-      if (!qty) return;
-      rows.push(`- ${qty} ${item.toLowerCase()}`);
-    });
-    if (rows.length) {
+    // Collect rows grouped by subcat if applicable
+    let catRows = [];
+    if (subcats[cat]) {
+      subcats[cat].forEach((group, gi) => {
+        const groupRows = group.items
+          .map(item => ({ item, qty: Number(list[gk(cat, item)]?.qty || 0) }))
+          .filter(e => e.qty > 0)
+          .map(e => `- ${e.qty} ${e.item.toLowerCase()}`);
+        if (groupRows.length) {
+          if (catRows.length) catRows.push("", ""); // 2 blank lines between subcats
+          catRows.push(...groupRows);
+        }
+      });
+    } else {
+      items.forEach(item => {
+        const qty = Number(list[gk(cat, item)]?.qty || 0);
+        if (qty) catRows.push(`- ${qty} ${item.toLowerCase()}`);
+      });
+    }
+    if (catRows.length) {
+      if (lines.length) lines.push("", "", ""); // 3 blank lines between categories
       const label = cat.replace(/^[\p{Emoji}\s]+/u, "").trim();
-      lines.push(`\n*${label}*\n`);
-      rows.forEach(r => lines.push(r, ""));
+      lines.push(`*${label}*`, "");
+      lines.push(...catRows);
     }
   });
   return lines.join("\n").trim();
