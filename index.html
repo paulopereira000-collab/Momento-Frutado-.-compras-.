@@ -42,9 +42,9 @@
     /* HEADER */
     #header { background:#000000; padding:9px 16px 0; position:sticky; top:0; z-index:100; box-shadow:0 2px 8px rgba(0,0,0,0.2); }
     #header-nav { display:flex; align-items:center; justify-content:space-between; padding:9px 0 10px; }
-    #header-brand { font-size:14px; font-weight:600; color:#888; letter-spacing:0.3px; text-transform:uppercase; }
     #header-icons { display:flex; gap:8px; }
     .hnav-btn { border:none; background:transparent; color:#888; padding:6px; cursor:pointer; display:flex; align-items:center; justify-content:center; border-radius:8px; }
+    #brand-nav-btn { font-size:14px; font-weight:600; letter-spacing:0.3px; text-transform:uppercase; padding:6px 8px; }
     .hnav-btn .material-icons-round { font-size:20px; }
     .hnav-btn.active { color:var(--green); }
 
@@ -59,8 +59,8 @@
 
     /* CATEGORY */
     .cat-wrap { padding:10px 14px 0; }
-    .cat-header { display:flex; align-items:center; justify-content:space-between; padding:7px 10px; cursor:pointer; user-select:none; background:var(--green); border-radius:8px; margin-bottom:4px; }
-    .cat-name { font-size:11px; font-weight:700; color:#ffffff; text-transform:uppercase; letter-spacing:1.5px; }
+    .cat-header { display:flex; align-items:center; justify-content:space-between; padding:6px 4px; cursor:pointer; user-select:none; background:var(--green); border-radius:8px; margin-bottom:4px; }
+    .cat-name { font-size:12px; font-weight:700; color:#ffffff; text-transform:uppercase; letter-spacing:normal; padding-left:4px; }
     .cat-chevron { font-size:14px; color:#ffffff; transition:transform 0.2s; }
     .cat-chevron.closed { transform:rotate(-90deg); }
     .cat-body.collapsed { display:none; }
@@ -70,22 +70,22 @@
     .subcat-spacer { height:70px; display:block; background:#f5f5f5; margin:0; border-radius:0; }
 
     /* ITEM ROWS */
-    .item-row { display:flex; align-items:center; gap:16px; padding:10px 4px; border-bottom:none; border-radius:8px; }
+    .item-row { display:flex; align-items:center; gap:16px; padding:9px 4px; border-bottom:1px solid rgba(0,0,0,0.04); border-radius:0; user-select:none; -webkit-user-select:none; }
     .item-row.zebra-even { background:#e8f5e9; }
     .item-row.zebra-odd  { background:#ffffff; }
     .item-row.active { }
     .item-name { flex:1; font-size:25px; font-weight:400; color:var(--text-mid); line-height:1.2; }
-    .item-name.active { font-weight:800; color:var(--text); font-size:27px; }
+    .item-name.active { font-weight:800; color:var(--text); font-size:25px; }
 
     /* QTY */
-    .qty-wrap { display:flex; align-items:center; }
+    .qty-wrap { display:flex; align-items:center; gap:6px; }
     .qty-display { width:48px; height:48px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:22px; font-weight:400; color:#1a1a1a; background:#e8f5e9; border:none; cursor:pointer; transition:all 0.2s; }
     .qty-display.active { background:#c8e6c9; color:#1a1a1a; box-shadow: 0 2px 8px rgba(124,163,124,0.3); font-weight:800; }
     .qty-input-inline { width:48px; height:48px; text-align:center; font-size:22px; font-weight:400; border:2px solid var(--green); border-radius:50%; color:#1a1a1a; background:#c8e6c9; font-family:inherit; outline:none; }
 
     /* CLEAR */
     #clear-wrap { padding:16px 18px 0; }
-    #clear-btn { width:100%; padding:12px; background:transparent; border:1px solid #ffcdd2; border-radius:10px; color:var(--error); font-size:14px; font-weight:600; display:flex; align-items:center; justify-content:center; gap:7px; }
+    #clear-btn { width:100%; padding:13px; background:#fff5f5; border:1.5px solid #ffcdd2; border-radius:10px; color:var(--error); font-size:15px; font-weight:700; display:flex; align-items:center; justify-content:center; gap:7px; }
 
     /* WHATSAPP */
     #wa-content { padding:16px 14px; }
@@ -132,6 +132,54 @@
 
 
     /* SNACK */
+    /* HISTORY */
+    .hist-toggle { display:flex; background:#f0f0f0; border-radius:10px; padding:3px; margin-bottom:14px; }
+    .hist-toggle-btn { flex:1; padding:8px; border:none; background:transparent; border-radius:8px; font-size:13px; font-weight:700; color:#9e9e9e; cursor:pointer; font-family:'Nunito',sans-serif; }
+    .hist-toggle-btn.active { background:#fff; color:#1a1a1a; box-shadow:0 1px 4px rgba(0,0,0,0.1); }
+    .hist-week { background:#fff; border-radius:12px; border:1px solid #e0e0e0; margin-bottom:10px; overflow:hidden; }
+    .hist-week-hdr { padding:12px 14px; background:#f5f5f5; display:flex; justify-content:space-between; align-items:center; cursor:pointer; }
+    .hist-week-label { font-size:14px; font-weight:800; color:#1a1a1a; }
+    .hist-week-count { font-size:12px; color:#9e9e9e; }
+    .hist-week-body.collapsed { display:none; }
+    .hist-item { display:flex; align-items:center; padding:9px 14px; border-top:1px solid #f0f0f0; gap:10px; }
+    .hist-item-name { flex:1; font-size:16px; color:#424242; font-weight:500; }
+    .hist-item-detail { font-size:13px; color:#9e9e9e; text-align:right; line-height:1.5; }
+    .hist-product { background:#fff; border-radius:12px; border:1px solid #e0e0e0; margin-bottom:10px; overflow:hidden; }
+    .hist-product-hdr { padding:12px 14px; background:#f5f5f5; display:flex; justify-content:space-between; align-items:center; cursor:pointer; }
+    .hist-product-name { font-size:14px; font-weight:800; color:#1a1a1a; }
+    .hist-product-body.collapsed { display:none; }
+    .hist-price-row { display:flex; align-items:center; padding:9px 14px; border-top:1px solid #f0f0f0; gap:10px; }
+    .hist-price-date { font-size:13px; color:#9e9e9e; flex:1; }
+    .hist-price-val { font-size:15px; font-weight:700; color:#2e7d32; }
+    .hist-price-sup { font-size:13px; color:#9e9e9e; }
+    .hist-empty { text-align:center; padding:60px 20px; color:#9e9e9e; font-size:15px; }
+
+    /* PICKED */
+    .item-name.picked { color:#b0b0b0 !important; font-weight:400 !important; font-size:25px !important; }
+    .qty-display.picked { opacity:0.3; }
+    .pick-btn { border:none; background:transparent; font-size:18px; color:#d0d0d0; cursor:pointer; padding:2px; flex-shrink:0; line-height:1; }
+    .pick-btn.pick-hidden { visibility:hidden; pointer-events:none; }
+    .pick-btn.picked { color:#7CA37C; }
+
+    /* LONG PRESS PANEL */
+    #pick-panel {
+      position:fixed; bottom:0; left:50%; transform:translateX(-50%);
+      width:100%; max-width:600px; background:#1e1e1e;
+      border-radius:20px 20px 0 0; padding:20px 18px 32px;
+      box-shadow:0 -4px 24px rgba(0,0,0,0.4); z-index:200;
+      display:none;
+    }
+    #pick-panel.open { display:block; }
+    #pick-overlay { position:fixed; inset:0; background:rgba(0,0,0,0.3); z-index:199; display:none; }
+    #pick-overlay.open { display:block; }
+    #pick-title { font-size:18px; font-weight:800; color:#ffffff; margin-bottom:16px; font-family:'Nunito',sans-serif; }
+    .pick-field-label { font-size:11px; font-weight:700; color:#888; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:5px; display:block; }
+    #pick-price { width:100%; padding:12px 14px; border:1.5px solid #444; border-radius:10px; font-size:18px; font-family:'Nunito',sans-serif; outline:none; margin-bottom:12px; background:#2a2a2a; color:#fff; }
+    #pick-price:focus { border-color:#7CA37C; }
+    #pick-supplier { width:100%; padding:12px 14px; border:1.5px solid #444; border-radius:10px; font-size:16px; font-family:'Nunito',sans-serif; outline:none; margin-bottom:12px; background:#2a2a2a; color:#fff; }
+    #pick-supplier:focus { border-color:#7CA37C; }
+    #pick-close { width:100%; padding:12px; border:1.5px solid #444; border-radius:10px; font-size:15px; font-weight:600; background:transparent; color:#888; cursor:pointer; font-family:'Nunito',sans-serif; }
+
     #snackbar { position:fixed; bottom:24px; left:50%; transform:translateX(-50%); border-radius:8px; padding:9px 18px; font-size:13px; font-weight:600; box-shadow:0 3px 12px rgba(0,0,0,0.18); z-index:300; display:none; color:#fff; white-space:nowrap; }
     #snackbar.saving { background:#f57f17; }
     #snackbar.saved  { background:var(--green); }
@@ -149,10 +197,10 @@
   <div id="header">
 
     <div id="header-nav">
-      <div id="header-brand">Momento Frutado</div>
+      <button class="hnav-btn active" data-view="list" id="brand-nav-btn">Momento Frutado</button>
       <div id="header-icons">
-        <button class="hnav-btn active" data-view="list"><span class="material-icons-round">format_list_bulleted</span></button>
         <button class="hnav-btn" data-view="whatsapp"><span class="material-icons-round">chat_bubble_outline</span></button>
+        <button class="hnav-btn" data-view="history"><span class="material-icons-round">history</span></button>
         <button class="hnav-btn" data-view="add"><span class="material-icons-round">tune</span></button>
       </div>
     </div>
@@ -164,7 +212,7 @@
   <div id="scroll-area">
     <div id="view-list" class="view active">
 
-      <div id="cat-list"></div>
+      <div id="cat-list" style="padding-top:6px"></div>
       <div id="clear-wrap"><button id="clear-btn">Limpar lista</button></div>
     </div>
 
@@ -180,6 +228,10 @@
           <textarea id="wa-text" readonly></textarea>
         </div>
       </div>
+    </div>
+
+    <div id="view-history" class="view">
+      <div id="history-content" style="padding:14px"></div>
     </div>
 
     <div id="view-add" class="view">
@@ -210,6 +262,20 @@
   </div>
 
 
+  <!-- LONG PRESS PANEL -->
+  <div id="pick-overlay"></div>
+  <div id="pick-panel" style="background:#1a1a1a;">
+    <div id="pick-title">Produto</div>
+    <label class="pick-field-label">💶 Preço por kg</label>
+    <input id="pick-price" type="number" inputmode="decimal" placeholder="Ex: 1.20" step="0.01" min="0"/>
+    <label class="pick-field-label">📅 Data</label>
+    <input id="pick-date" type="date" style="width:100%;padding:12px 14px;border:1.5px solid #444;border-radius:10px;font-size:16px;font-family:'Nunito',sans-serif;outline:none;margin-bottom:12px;background:#2a2a2a;color:#fff;"/>
+    <label class="pick-field-label">🏪 Fornecedor</label>
+    <select id="pick-supplier">
+      <option value="">— escolher fornecedor —</option>
+    </select>
+    <button id="pick-close">Fechar</button>
+  </div>
 </div>
 
 <div id="snackbar"></div>
@@ -218,6 +284,13 @@
 // ── CONFIG ────────────────────────────────────────────────────────────────────
 const LS_CACHE = "mf_cache_v16";
 const CLOSED_BY_DEFAULT = ["Azeitonas","Frutos secos","Consumíveis"];
+
+const FORNECEDORES = {
+  "A5":  ["Vintage","Eurofrutas","Eurobanan","Masterfruits","Eporifrutas","Luís Vicente","Figueira bananas"],
+  "A6":  ["Manuel Batista","Frutaliana","Essência da fruta","Frutorbel","Leitão frutas","Cermouros","Frutas do norte","Ferreira da Silva","Manu frutas","Antonio Aurélio","Eusébio legumes","Rui ramos","Fruta real"],
+  "A8":  ["Ashtari","Xico das cebolas","Eusébio Benavente","Hortovi","Frutipt","Belinha"],
+  "A10": ["Miranda batata","Edgar","Batata olho perdiz","Algarvios"]
+};
 
 // ── DATA ──────────────────────────────────────────────────────────────────────
 const DEFAULT_PRODUCTS = {
@@ -234,7 +307,7 @@ const DEFAULT_PRODUCTS = {
   "Legumes": [
     "Tomate","Tomate cacho","Tomate Xuxa","Tomate rosa","Tomate cherry",
     "Pepino","Pimento verde","Pimento vermelho","Courgette","Beringela","Feijão verde","Feijão douradinho",
-    "Batata roxa","Batata agria","Batata assar","Batata olho perdiz",
+    "Batata roxa","Batata agria","Batata assar","Batata olho perdiz","Batata doce laranja",
     "Cebola","Cebola nova","Cebola doce","Cebola roxa","Cebola mini","Chalota",
     "Cogumelo branco","Cogumelo marrom","Cogumelo Shitake","Cogumelo Eringi",
     "Espargos","Quiabos","Malagueta"
@@ -257,7 +330,7 @@ const DEFAULT_PRODUCTS = {
 const DEFAULT_SUBCATS = {
   "Legumes": [
     { name: "Tomate", items: ["Tomate","Tomate cacho","Tomate Xuxa","Tomate rosa","Tomate cherry","Pepino","Pimento verde","Pimento vermelho","Courgette","Beringela","Feijão verde","Feijão douradinho"] },
-    { name: "Batata", items: ["Batata roxa","Batata agria","Batata assar","Batata olho perdiz"] },
+    { name: "Batata", items: ["Batata roxa","Batata agria","Batata assar","Batata olho perdiz","Batata doce laranja"] },
     { name: "Cebola", items: ["Cebola","Cebola nova","Cebola doce","Cebola roxa","Cebola mini","Chalota"] },
     { name: "Cogumelo", items: ["Cogumelo branco","Cogumelo marrom","Cogumelo Shitake","Cogumelo Eringi","Espargos","Quiabos","Malagueta"] }
   ],
@@ -269,7 +342,7 @@ const DEFAULT_SUBCATS = {
     { name: "Citrinos",        items: ["Laranja","Clementina"] },
     { name: "Prunóideas",      items: ["Pêssego amarelo","Pêssego rosa","Pêssego vermelho","Paraguaio","Nectarina","Alperce","Ameixa vermelha","Ameixa amarela"] },
     { name: "Frutos vermelhos",items: ["Cereja (cx 2kg)","Morangos","Pitaia","Mirtilos","Framboesa"] },
-    { name: "Mini",            items: ["Mini Gold","Mini Gala","Mini Reineta","Mini Reineta"] }
+    { name: "Mini",            items: ["Mini Gold","Mini Gala","Mini Reineta"] }
   ]
 };
 
@@ -279,6 +352,8 @@ let subcats  = JSON.parse(JSON.stringify(DEFAULT_SUBCATS));
 let list     = {};
 let openCats = {};
 let saveTimer = null;
+let picked = {}; // key -> { done, price, supplier, date }
+let history = []; // array of weekly snapshots
 
 // ── HELPERS ───────────────────────────────────────────────────────────────────
 function gk(cat, item) { return `${cat}|||${item}`; }
@@ -298,10 +373,12 @@ function initOpen(prods) {
 }
 
 // ── LOCAL STORAGE ─────────────────────────────────────────────────────────────
-function payload() { return { products, subcats, list }; }
+function payload() { return { products, subcats, list, picked, history }; }
 
 function applyLocal(r) {
   if (r.products) products = r.products;
+  if (r.picked) picked = r.picked;
+  if (r.history) history = r.history;
   if (r.subcats && Object.keys(r.subcats).length > 0) subcats = r.subcats;
   else subcats = JSON.parse(JSON.stringify(DEFAULT_SUBCATS));
   if (r.list) list = { ...buildEmpty(products), ...r.list };
@@ -398,20 +475,44 @@ function renderCats(search) {
         if (gi > 0) { const sp = document.createElement("div"); sp.className = "subcat-spacer"; body.appendChild(sp); }
         gItems.forEach((item, idx) => {
           const key = gk(cat, item), e = list[key] || { qty: 0 }, active = Number(e.qty) > 0;
+          const isPicked = picked[key]?.done;
           const row = document.createElement("div");
           row.className = "item-row " + (idx % 2 === 0 ? "zebra-even" : "zebra-odd") + (active ? " active" : "");
-          const nm = document.createElement("span"); nm.className = "item-name" + (active ? " active" : ""); nm.textContent = item;
-          row.appendChild(nm); row.appendChild(makeQty(key, Number(e.qty))); body.appendChild(row);
+          const nm = document.createElement("span"); nm.className = "item-name" + (active ? " active" : "") + (isPicked ? " picked" : "");
+          nm.innerHTML = item;
+          const qtyEl = makeQty(key, Number(e.qty));
+          if (isPicked) { const qd = qtyEl.querySelector(".qty-display"); if(qd) qd.classList.add("picked"); }
+          row.dataset.key = key;
+          addLongPress(row, () => openPickPanel(cat, item));
+          row.appendChild(nm);
+          const pb = document.createElement("button");
+          pb.className = "pick-btn material-icons-round" + (isPicked ? " picked" : "") + (active ? "" : " pick-hidden");
+          pb.textContent = isPicked ? "task_alt" : "radio_button_unchecked";
+          if (active) pb.addEventListener("click", ev => { ev.stopPropagation(); picked[key] = { ...picked[key], done: !picked[key]?.done }; sched(); renderCats(""); });
+          row.appendChild(pb);
+          row.appendChild(qtyEl); body.appendChild(row);
         });
       });
     } else {
       const filtered = search ? items.filter(i => i.toLowerCase().includes(search.toLowerCase())) : items;
       filtered.forEach((item, idx) => {
         const key = gk(cat, item), e = list[key] || { qty: 0 }, active = Number(e.qty) > 0;
+        const isPicked2 = picked[key]?.done;
         const row = document.createElement("div");
         row.className = "item-row " + (idx % 2 === 0 ? "zebra-even" : "zebra-odd") + (active ? " active" : "");
-        const nm = document.createElement("span"); nm.className = "item-name" + (active ? " active" : ""); nm.textContent = item;
-        row.appendChild(nm); row.appendChild(makeQty(key, Number(e.qty))); body.appendChild(row);
+        const nm = document.createElement("span"); nm.className = "item-name" + (active ? " active" : "") + (isPicked2 ? " picked" : "");
+        nm.innerHTML = item;
+        const qtyEl2 = makeQty(key, Number(e.qty));
+        if (isPicked2) { const qd = qtyEl2.querySelector(".qty-display"); if(qd) qd.classList.add("picked"); }
+        row.dataset.key = key;
+        addLongPress(row, () => openPickPanel(cat, item));
+        row.appendChild(nm);
+        const pb2 = document.createElement("button");
+        pb2.className = "pick-btn material-icons-round" + (isPicked2 ? " picked" : "") + (active ? "" : " pick-hidden");
+        pb2.textContent = isPicked2 ? "task_alt" : "radio_button_unchecked";
+        if (active) pb2.addEventListener("click", ev => { ev.stopPropagation(); picked[key] = { ...picked[key], done: !picked[key]?.done }; sched(); renderCats(""); });
+        row.appendChild(pb2);
+        row.appendChild(qtyEl2); body.appendChild(row);
       });
     }
 
@@ -610,18 +711,95 @@ function snack(msg, type) { const s=document.getElementById("snackbar"); s.textC
 function hideSnack() { document.getElementById("snackbar").style.display="none"; }
 
 // ── NAV ───────────────────────────────────────────────────────────────────────
+function renderHistory() {
+  const c = document.getElementById("history-content"); if (!c) return;
+  c.innerHTML = "";
+
+  if (!history.length) {
+    c.innerHTML = '<div class="hist-empty">Ainda não há histórico.<br>Quando limpares a lista, fica aqui guardado.</div>';
+    return;
+  }
+
+  // Toggle
+  const toggle = document.createElement("div"); toggle.className = "hist-toggle";
+  const btnWeek = document.createElement("button"); btnWeek.className = "hist-toggle-btn active"; btnWeek.textContent = "Por semana";
+  const btnProd = document.createElement("button"); btnProd.className = "hist-toggle-btn"; btnProd.textContent = "Por produto";
+  toggle.appendChild(btnWeek); toggle.appendChild(btnProd); c.appendChild(toggle);
+
+  const weekView = document.createElement("div"); weekView.id = "hist-week-view";
+  const prodView = document.createElement("div"); prodView.id = "hist-prod-view"; prodView.style.display = "none";
+  c.appendChild(weekView); c.appendChild(prodView);
+
+  btnWeek.addEventListener("click", () => { btnWeek.classList.add("active"); btnProd.classList.remove("active"); weekView.style.display="block"; prodView.style.display="none"; });
+  btnProd.addEventListener("click", () => { btnProd.classList.add("active"); btnWeek.classList.remove("active"); prodView.style.display="block"; weekView.style.display="none"; });
+
+  // BY WEEK
+  history.forEach((snap, si) => {
+    const block = document.createElement("div"); block.className = "hist-week";
+    const hdr = document.createElement("div"); hdr.className = "hist-week-hdr";
+    hdr.innerHTML = `<span class="hist-week-label">${snap.label}</span><span class="hist-week-count">${snap.items.length} artigos</span>`;
+    const body = document.createElement("div"); body.className = "hist-week-body" + (si > 0 ? " collapsed" : "");
+    hdr.addEventListener("click", () => body.classList.toggle("collapsed"));
+    snap.items.forEach(it => {
+      const row = document.createElement("div"); row.className = "hist-item";
+      row.innerHTML = `<span class="hist-item-name">${it.item}</span><div class="hist-item-detail">${it.price ? it.price+"€/kg" : ""}${it.price && it.supplier ? "<br>" : ""}${it.supplier || ""}</div>`;
+      body.appendChild(row);
+    });
+    block.appendChild(hdr); block.appendChild(body); weekView.appendChild(block);
+  });
+
+  // BY PRODUCT
+  const byProduct = {};
+  history.forEach(snap => {
+    snap.items.forEach(it => {
+      if (!byProduct[it.item]) byProduct[it.item] = [];
+      byProduct[it.item].push({ date: snap.label, price: it.price, supplier: it.supplier });
+    });
+  });
+  Object.entries(byProduct).sort((a,b) => a[0].localeCompare(b[0])).forEach(([name, entries], pi) => {
+    const block = document.createElement("div"); block.className = "hist-product";
+    const hdr = document.createElement("div"); hdr.className = "hist-product-hdr";
+    hdr.innerHTML = `<span class="hist-product-name">${name}</span><span class="hist-week-count">${entries.length}x</span>`;
+    const body = document.createElement("div"); body.className = "hist-product-body" + (pi > 0 ? " collapsed" : "");
+    hdr.addEventListener("click", () => body.classList.toggle("collapsed"));
+    entries.forEach(e => {
+      const row = document.createElement("div"); row.className = "hist-price-row";
+      row.innerHTML = `<span class="hist-price-date">${e.date}</span><span class="hist-price-val">${e.price ? e.price+"€/kg" : "—"}</span><span class="hist-price-sup">${e.supplier||""}</span>`;
+      body.appendChild(row);
+    });
+    block.appendChild(hdr); block.appendChild(body); prodView.appendChild(block);
+  });
+}
+
 function switchTo(v) {
   document.querySelectorAll(".hnav-btn").forEach(x => x.classList.toggle("active", x.dataset.view===v));
   document.querySelectorAll(".view").forEach(el => el.classList.toggle("active", el.id===`view-${v}`));
   if (v==="whatsapp") renderWA();
   if (v==="add") renderAdd();
+  if (v==="history") renderHistory();
 }
 
 // ── EVENTS ────────────────────────────────────────────────────────────────────
 document.querySelectorAll(".hnav-btn").forEach(b => b.addEventListener("click", () => switchTo(b.dataset.view)));
 document.getElementById("clear-btn").addEventListener("click", () => {
-  if (!confirm("Limpar todas as quantidades?")) return;
+  if (!confirm("Limpar lista e guardar histórico?")) return;
+  // Save snapshot
+  const snapshot = {
+    date: new Date().toISOString().split('T')[0],
+    label: new Date().toLocaleDateString('pt-PT', { day:'2-digit', month:'short', year:'numeric' }),
+    items: []
+  };
+  Object.entries(list).forEach(([key, e]) => {
+    if (Number(e.qty) > 0) {
+      const p = picked[key] || {};
+      const [cat, item] = key.split('|||');
+      snapshot.items.push({ cat, item, qty: e.qty, price: p.price||'', supplier: p.supplier||'', date: p.date||'' });
+    }
+  });
+  if (snapshot.items.length > 0) history.unshift(snapshot);
+  if (history.length > 52) history = history.slice(0, 52); // keep 1 year
   Object.keys(list).forEach(k => { list[k] = { qty: 0 }; });
+  picked = {};
   sched(); renderCats(""); renderWA();
 });
 document.getElementById("cat-select").addEventListener("change", e => {
@@ -654,6 +832,94 @@ document.getElementById("add-btn").addEventListener("click", () => {
 });
 document.getElementById("cancel-btn").addEventListener("click", () => switchTo("list"));
 document.getElementById("wa-text").addEventListener("focus", e => e.target.select());
+
+// ── LONG PRESS ───────────────────────────────────────────────────────────────
+function addLongPress(el, cb) {
+  let timer = null;
+  el.addEventListener("touchstart", e => {
+    timer = setTimeout(() => { cb(); timer = null; }, 600);
+  }, { passive: true });
+  el.addEventListener("touchend", () => { if (timer) clearTimeout(timer); });
+  el.addEventListener("touchmove", () => { if (timer) clearTimeout(timer); });
+}
+
+// ── PICK PANEL ────────────────────────────────────────────────────────────────
+let currentPickKey = null;
+
+function buildSupplierOptions() {
+  const sel = document.getElementById("pick-supplier");
+  sel.innerHTML = '<option value="">— escolher fornecedor —</option>';
+  Object.entries(FORNECEDORES).forEach(([corridor, suppliers]) => {
+    const grp = document.createElement("optgroup");
+    grp.label = corridor;
+    suppliers.forEach(s => {
+      const opt = document.createElement("option");
+      opt.value = s; opt.textContent = s;
+      grp.appendChild(opt);
+    });
+    sel.appendChild(grp);
+  });
+  // Custom option
+  const grp2 = document.createElement("optgroup");
+  grp2.label = "Outro";
+  const opt2 = document.createElement("option");
+  opt2.value = "__novo__"; opt2.textContent = "+ Novo fornecedor...";
+  grp2.appendChild(opt2);
+  sel.appendChild(grp2);
+}
+
+function openPickPanel(cat, item) {
+  const key = gk(cat, item);
+  currentPickKey = key;
+  const p = picked[key] || {};
+  document.getElementById("pick-title").textContent = item;
+  document.getElementById("pick-price").value = p.price || "";
+  buildSupplierOptions();
+  document.getElementById("pick-supplier").value = p.supplier || "";
+  const today = new Date().toISOString().split('T')[0];
+  const dateEl = document.getElementById("pick-date"); if(dateEl) dateEl.value = p.date || today;
+  document.getElementById("pick-panel").classList.add("open");
+  document.getElementById("pick-overlay").classList.add("open");
+}
+
+function closePickPanel() {
+  document.getElementById("pick-panel").classList.remove("open");
+  document.getElementById("pick-overlay").classList.remove("open");
+  currentPickKey = null;
+}
+
+document.getElementById("pick-price").addEventListener("change", e => {
+  if (!currentPickKey) return;
+  const price = e.target.value;
+  const supplier = picked[currentPickKey]?.supplier || "";
+  picked[currentPickKey] = { ...picked[currentPickKey], price };
+  sched();
+});
+
+document.getElementById("pick-supplier").addEventListener("change", e => {
+  if (!currentPickKey) return;
+  if (e.target.value === "__novo__") {
+    const name = prompt("Nome do novo fornecedor:");
+    if (!name || !name.trim()) { e.target.value = picked[currentPickKey]?.supplier || ""; return; }
+    // Add to A5 by default
+    FORNECEDORES["A5"].push(name.trim());
+    picked[currentPickKey] = { ...picked[currentPickKey], supplier: name.trim() };
+    buildSupplierOptions();
+    document.getElementById("pick-supplier").value = name.trim();
+  } else {
+    picked[currentPickKey] = { ...picked[currentPickKey], supplier: e.target.value };
+  }
+  sched();
+});
+
+document.getElementById("pick-date").addEventListener("change", e => {
+  if (!currentPickKey) return;
+  picked[currentPickKey] = { ...picked[currentPickKey], date: e.target.value };
+  sched();
+});
+
+document.getElementById("pick-close").addEventListener("click", closePickPanel);
+document.getElementById("pick-overlay").addEventListener("click", closePickPanel);
 
 // ── START ─────────────────────────────────────────────────────────────────────
 boot();
