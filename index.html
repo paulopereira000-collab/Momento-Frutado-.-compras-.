@@ -113,13 +113,13 @@
     .manage-cat-hdr span { font-size:11px; font-weight:700; color:var(--text-dim); text-transform:uppercase; letter-spacing:0.5px; }
     .manage-cat-body.collapsed { display:none; }
     .manage-subcat-block { background:#fafafa; border-radius:10px; margin:8px; border:1px solid var(--border); overflow:hidden; }
-    .manage-subcat-hdr { display:flex; align-items:center; gap:8px; padding:9px 12px; background:var(--surface2); border-bottom:1px solid var(--border); }
-    .manage-subcat-title { flex:1; font-size:12px; font-weight:700; color:#424242; text-transform:uppercase; letter-spacing:0.5px; }
-    .manage-row { display:flex; align-items:center; gap:8px; padding:11px 14px; border-top:1px solid #f0f0f0; }
-    .manage-name { flex:1; font-size:17px; font-weight:500; color:var(--text); }
+    .manage-subcat-hdr { display:flex; align-items:center; gap:8px; padding:11px 14px; background:#d4e8d4; border-bottom:1px solid #b8d4b8; }
+    .manage-subcat-title { flex:1; font-size:13px; font-weight:800; color:#2e5e2e; text-transform:uppercase; letter-spacing:0.5px; }
+    .manage-row { display:flex; align-items:center; gap:8px; padding:14px 14px; border-top:1px solid #e8e8e8; }
+    .manage-name { flex:1; font-size:20px; font-weight:500; color:var(--text); }
     .manage-edit-input { flex:1; font-size:17px; border:1.5px solid var(--green); border-radius:8px; padding:6px 10px; font-family:inherit; outline:none; background:#fff; }
-    .manage-add-row { padding:8px 12px; }
-    .manage-add-input { width:100%; padding:8px 10px; border:1px solid var(--border); border-radius:8px; font-size:15px; font-family:inherit; outline:none; background:#fff; }
+    .manage-add-row { padding:10px 12px 14px; }
+    .manage-add-input { width:100%; padding:12px 14px; border:1.5px solid var(--border); border-radius:10px; font-size:18px; font-family:inherit; outline:none; background:#fff; }
     .manage-add-input:focus { border-color:var(--green); }
     .btn-add-subcat { width:calc(100% - 16px); margin:8px; padding:10px; background:var(--green-light); border:none; border-radius:8px; font-size:14px; font-weight:700; color:var(--green-dark); }
     .btn-icon { width:36px; height:36px; border:none; border-radius:8px; display:flex; align-items:center; justify-content:center; flex-shrink:0; font-size:15px; background:transparent; }
@@ -176,6 +176,8 @@
     .pick-field-label { font-size:11px; font-weight:700; color:#888; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:5px; display:block; }
     #pick-price { width:100%; padding:12px 14px; border:1.5px solid #444; border-radius:10px; font-size:18px; font-family:'Nunito',sans-serif; outline:none; margin-bottom:12px; background:#2a2a2a; color:#fff; }
     #pick-price:focus { border-color:#7CA37C; }
+    #pick-sell-price { width:100%; padding:12px 14px; border:1.5px solid #444; border-radius:10px; font-size:18px; font-family:'Nunito',sans-serif; outline:none; margin-bottom:12px; background:#2a2a2a; color:#fff; }
+    #pick-sell-price:focus { border-color:#7CA37C; }
     #pick-supplier { width:100%; padding:12px 14px; border:1.5px solid #444; border-radius:10px; font-size:16px; font-family:'Nunito',sans-serif; outline:none; margin-bottom:12px; background:#2a2a2a; color:#fff; }
     #pick-supplier:focus { border-color:#7CA37C; }
     #pick-close { width:100%; padding:12px; border:1.5px solid #444; border-radius:10px; font-size:15px; font-weight:600; background:transparent; color:#888; cursor:pointer; font-family:'Nunito',sans-serif; }
@@ -223,6 +225,11 @@
           <div class="wa-title">Lista ainda vazia</div>
           <div class="wa-sub">Vai à lista e insere as quantidades</div>
         </div>
+        <div id="wa-prices" style="display:none; margin-bottom:16px;">
+          <div id="wa-prices-hint" style="background:#e8f5e9; border-radius:12px; padding:13px 15px; margin-bottom:12px; font-size:14px; color:#2e7d32; font-weight:600; line-height:1.5; border-left:4px solid #7CA37C;">👆 Mantém o dedo no texto → <strong>Seleccionar tudo</strong> → <strong>Copiar</strong></div>
+          <div style="font-size:12px; font-weight:700; color:#9e9e9e; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:8px;">Alterações de preço</div>
+          <textarea id="wa-prices-text" readonly style="width:100%; padding:14px; border-radius:12px; border:1px solid #e0e0e0; font-size:15px; line-height:2; font-family:monospace; color:#1a1a1a; background:#fff; resize:none; outline:none;"></textarea>
+        </div>
         <div id="wa-filled" style="display:none">
           <div id="wa-hint">Mantém o dedo no texto → <strong>Seleccionar tudo</strong> → <strong>Copiar</strong></div>
           <textarea id="wa-text" readonly></textarea>
@@ -266,8 +273,10 @@
   <div id="pick-overlay"></div>
   <div id="pick-panel" style="background:#1a1a1a;">
     <div id="pick-title">Produto</div>
-    <label class="pick-field-label">💶 Preço por kg</label>
+    <label class="pick-field-label">💶 Preço de compra/kg</label>
     <input id="pick-price" type="number" inputmode="decimal" placeholder="Ex: 1.20" step="0.01" min="0"/>
+    <label class="pick-field-label">🏷️ Preço de venda</label>
+    <input id="pick-sell-price" type="number" inputmode="decimal" placeholder="Ex: 2.50" step="0.01" min="0"/>
     <label class="pick-field-label">📅 Data</label>
     <input id="pick-date" type="date" style="width:100%;padding:12px 14px;border:1.5px solid #444;border-radius:10px;font-size:16px;font-family:'Nunito',sans-serif;outline:none;margin-bottom:12px;background:#2a2a2a;color:#fff;"/>
     <label class="pick-field-label">🏪 Fornecedor</label>
@@ -544,6 +553,24 @@ function renderWA() {
   document.getElementById("wa-empty").style.display  = has ? "none"  : "block";
   document.getElementById("wa-filled").style.display = has ? "block" : "none";
   if (has) { const ta = document.getElementById("wa-text"); ta.value = text; ta.style.height = Math.min(600, 40 + text.split("\n").length * 28) + "px"; }
+
+  // Price changes section
+  const priceLines = [];
+  Object.entries(picked).forEach(([key, p]) => {
+    if (p.sellPrice && p.sellPriceChanged) {
+      const parts = key.split("|||");
+      const item = parts[1] || key;
+      const price = parseFloat(p.sellPrice).toFixed(2).replace(".", ",");
+      priceLines.push(`${item}  ${price}€`);
+    }
+  });
+  const hasPrices = priceLines.length > 0;
+  document.getElementById("wa-prices").style.display = hasPrices ? "block" : "none";
+  if (hasPrices) {
+    const ta = document.getElementById("wa-prices-text");
+    ta.value = "*Actualizações de preço*\n\n" + priceLines.join("\n");
+    ta.style.height = Math.min(400, 40 + priceLines.length * 30 + 60) + "px";
+  }
 }
 
 // ── RENDER ADD ────────────────────────────────────────────────────────────────
@@ -561,6 +588,21 @@ function renderAdd() {
 function renderManage() {
   const c = document.getElementById("manage-list"); if (!c) return; c.innerHTML = "";
   window._mO = window._mO || {};
+
+  // Collapse/Expand all button
+  const allOpen = Object.values(window._mO).every(v => v !== false);
+  const toggleAll = document.createElement("div");
+  toggleAll.style.cssText = "display:flex; gap:8px; margin-bottom:12px;";
+  const btnExp = document.createElement("button");
+  btnExp.textContent = "Expandir tudo";
+  btnExp.style.cssText = "flex:1; padding:10px; background:var(--green-light); border:none; border-radius:8px; font-size:13px; font-weight:700; color:var(--green-dark); cursor:pointer; font-family:inherit;";
+  btnExp.addEventListener("click", () => { Object.keys(products).forEach(k => { window._mO[k] = true; }); renderManage(); });
+  const btnCol = document.createElement("button");
+  btnCol.textContent = "Colapsar tudo";
+  btnCol.style.cssText = "flex:1; padding:10px; background:#f5f5f5; border:none; border-radius:8px; font-size:13px; font-weight:700; color:#666; cursor:pointer; font-family:inherit;";
+  btnCol.addEventListener("click", () => { Object.keys(products).forEach(k => { window._mO[k] = false; }); renderManage(); });
+  toggleAll.appendChild(btnExp); toggleAll.appendChild(btnCol);
+  c.appendChild(toggleAll);
 
   Object.entries(products).forEach(([cat, items]) => {
     const io = window._mO[cat] !== false;
@@ -622,6 +664,7 @@ function renderManage() {
               const gix = subcats[cat][gi].items.indexOf(item); if (gix !== -1) subcats[cat][gi].items[gix] = n;
               const ok = gk(cat,item), nk = gk(cat,n); if (list[ok]) { list[nk]=list[ok]; delete list[ok]; }
               sched(); renderManage(); renderCats("");
+              snack("✓ Guardado", "saved"); setTimeout(hideSnack, 1200);
             };
             bS.addEventListener("click", doSave); bC.addEventListener("click", () => renderManage());
             inp.addEventListener("keydown", e => { if(e.key==="Enter") doSave(); if(e.key==="Escape") renderManage(); });
@@ -832,6 +875,7 @@ document.getElementById("add-btn").addEventListener("click", () => {
 });
 document.getElementById("cancel-btn").addEventListener("click", () => switchTo("list"));
 document.getElementById("wa-text").addEventListener("focus", e => e.target.select());
+document.getElementById("wa-prices-text").addEventListener("focus", e => e.target.select());
 
 // ── LONG PRESS ───────────────────────────────────────────────────────────────
 function addLongPress(el, cb) {
@@ -874,6 +918,7 @@ function openPickPanel(cat, item) {
   const p = picked[key] || {};
   document.getElementById("pick-title").textContent = item;
   document.getElementById("pick-price").value = p.price || "";
+  const sellEl = document.getElementById("pick-sell-price"); if(sellEl) sellEl.value = p.sellPrice || "";
   buildSupplierOptions();
   document.getElementById("pick-supplier").value = p.supplier || "";
   const today = new Date().toISOString().split('T')[0];
@@ -890,10 +935,18 @@ function closePickPanel() {
 
 document.getElementById("pick-price").addEventListener("change", e => {
   if (!currentPickKey) return;
-  const price = e.target.value;
-  const supplier = picked[currentPickKey]?.supplier || "";
-  picked[currentPickKey] = { ...picked[currentPickKey], price };
+  picked[currentPickKey] = { ...picked[currentPickKey], price: e.target.value };
   sched();
+});
+
+document.getElementById("pick-sell-price").addEventListener("change", e => {
+  if (!currentPickKey) return;
+  const newSellPrice = e.target.value;
+  const oldSellPrice = picked[currentPickKey]?.sellPrice || "";
+  const changed = newSellPrice !== oldSellPrice && newSellPrice !== "";
+  picked[currentPickKey] = { ...picked[currentPickKey], sellPrice: newSellPrice, sellPriceChanged: changed };
+  sched();
+  renderWA();
 });
 
 document.getElementById("pick-supplier").addEventListener("change", e => {
