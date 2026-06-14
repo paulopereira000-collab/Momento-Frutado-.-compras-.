@@ -9,7 +9,7 @@
   <title>Momento Frutado – Compras</title>
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
-  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600&display=swap" rel="stylesheet"/>
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet"/>
   <style>
     :root {
@@ -35,7 +35,7 @@
 
     /* LOADING */
     #loading { display:flex; flex-direction:column; align-items:center; justify-content:center; height:100vh; gap:14px; background:#f5f5f5; }
-    .ld-title { font-size:22px; font-weight:800; color:var(--green); }
+    .ld-title { font-size:22px; font-weight:600; color:var(--green); }
     .ld-sub { font-size:12px; color:var(--text-dim); }
 
     /* SHELL */
@@ -62,7 +62,7 @@
     /* CATEGORY */
     .cat-wrap { padding:10px 14px 0; }
     .cat-header { display:flex; align-items:center; justify-content:space-between; padding:6px 4px; cursor:pointer; user-select:none; background:var(--green); border-radius:8px; margin-bottom:4px; }
-    .cat-name { font-size:12px; font-weight:700; color:#ffffff; text-transform:uppercase; letter-spacing:normal; padding-left:4px; }
+    .cat-name { font-size:12px; font-weight:600; color:#ffffff; text-transform:uppercase; letter-spacing:normal; padding-left:4px; }
     .cat-chevron { font-size:14px; color:#ffffff; transition:transform 0.2s; }
     .cat-chevron.closed { transform:rotate(-90deg); }
     .cat-body.collapsed { display:none; }
@@ -72,28 +72,28 @@
     .subcat-spacer { height:70px; display:block; background:#f5f5f5; margin:0; border-radius:0; }
 
     /* ITEM ROWS */
-    .item-row { display:flex; align-items:center; gap:16px; padding:9px 4px; border-bottom:1px solid rgba(0,0,0,0.04); border-radius:0; user-select:none; -webkit-user-select:none; }
-    .item-row.zebra-even { background:#e8f5e9; }
+    .item-row { display:flex; align-items:center; gap:16px; padding:14px 8px; border-bottom:1px solid rgba(0,0,0,0.10); border-radius:0; user-select:none; -webkit-user-select:none; }
+    .item-row.zebra-even { background:#f5f5f5; }
     .item-row.zebra-odd  { background:#ffffff; }
     .item-row.active { }
-    .item-name { flex:1; font-size:25px; font-weight:400; color:var(--text-mid); line-height:1.2; }
-    .item-name.active { font-weight:800; color:var(--text); font-size:25px; }
+    .item-name { flex:1; font-size:29px; font-weight:400; color:#2e5e2e; line-height:1.2; }
+    .item-name.active { font-weight:600; color:#1a3d1a; font-size:29px; }
 
     /* QTY */
     .qty-wrap { display:flex; align-items:center; gap:6px; }
-    .qty-display { width:48px; height:48px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:22px; font-weight:400; color:#1a1a1a; background:#e8f5e9; border:none; cursor:pointer; transition:all 0.2s; }
-    .qty-display.active { background:#c8e6c9; color:#1a1a1a; box-shadow: 0 2px 8px rgba(124,163,124,0.3); font-weight:800; }
-    .qty-input-inline { width:48px; height:48px; text-align:center; font-size:22px; font-weight:400; border:2px solid var(--green); border-radius:50%; color:#1a1a1a; background:#c8e6c9; font-family:inherit; outline:none; }
+    .qty-display { width:56px; height:56px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:26px; font-weight:400; color:#1a1a1a; background:#e8f5e9; border:none; cursor:pointer; transition:all 0.2s; }
+    .qty-display.active { background:#c8e6c9; color:#1a1a1a; box-shadow: 0 2px 8px rgba(124,163,124,0.3); font-weight:600; }
+    .qty-input-inline { width:56px; height:56px; text-align:center; font-size:26px; font-weight:400; border:2px solid var(--green); border-radius:50%; color:#1a1a1a; background:#c8e6c9; font-family:inherit; outline:none; }
 
     /* CLEAR */
     #clear-wrap { padding:16px 18px 0; }
-    #clear-btn { width:100%; padding:13px; background:#fff5f5; border:1.5px solid #ffcdd2; border-radius:10px; color:var(--error); font-size:15px; font-weight:700; display:flex; align-items:center; justify-content:center; gap:7px; }
+    #clear-btn { width:100%; padding:13px; background:#fff5f5; border:1.5px solid #ffcdd2; border-radius:10px; color:var(--error); font-size:15px; font-weight:600; display:flex; align-items:center; justify-content:center; gap:7px; }
 
     /* WHATSAPP */
     #wa-content { padding:16px 14px; }
     #wa-empty { text-align:center; padding:60px 20px; color:var(--text-dim); }
     #wa-empty .wa-icon { font-size:52px; margin-bottom:12px; }
-    #wa-empty .wa-title { font-size:17px; font-weight:700; color:var(--text-mid); }
+    #wa-empty .wa-title { font-size:17px; font-weight:600; color:var(--text-mid); }
     #wa-empty .wa-sub { font-size:14px; margin-top:6px; }
     #wa-hint { background:var(--green-light); border-radius:12px; padding:13px 15px; margin-bottom:12px; font-size:14px; color:var(--green-dark); font-weight:600; line-height:1.5; border-left:4px solid var(--green); }
     #wa-text { width:100%; padding:14px; border-radius:12px; border:1px solid var(--border); font-size:15px; line-height:2; font-family:monospace; color:var(--text); background:var(--surface); resize:none; outline:none; }
@@ -102,28 +102,28 @@
     /* ADD/MANAGE */
     #add-content { padding:14px; }
     .form-card { background:var(--surface); border-radius:14px; padding:18px; border:1px solid var(--border); margin-bottom:14px; }
-    .form-card-title { font-size:15px; font-weight:800; color:var(--text); margin-bottom:16px; }
-    .form-label { font-size:11px; font-weight:700; color:var(--text-dim); margin-bottom:5px; display:block; text-transform:uppercase; letter-spacing:0.5px; }
+    .form-card-title { font-size:15px; font-weight:600; color:var(--text); margin-bottom:16px; }
+    .form-label { font-size:11px; font-weight:600; color:var(--text-dim); margin-bottom:5px; display:block; text-transform:uppercase; letter-spacing:0.5px; }
     .md-input, .md-select { width:100%; padding:12px 13px; border-radius:10px; border:1px solid var(--border); font-size:16px; margin-bottom:12px; font-family:inherit; outline:none; background:#fff; color:var(--text); transition:border-color 0.15s; }
     .md-input:focus, .md-select:focus { border-color:var(--green); }
-    .btn-primary { width:100%; padding:14px; background:var(--green); color:#fff; border:none; border-radius:10px; font-size:16px; font-weight:700; margin-bottom:8px; }
+    .btn-primary { width:100%; padding:14px; background:var(--green); color:#fff; border:none; border-radius:10px; font-size:16px; font-weight:600; margin-bottom:8px; }
     .btn-secondary { width:100%; padding:12px; background:var(--green-light); color:var(--green-dark); border:none; border-radius:10px; font-size:15px; font-weight:600; }
 
     /* MANAGE */
     .manage-cat-block { background:var(--surface); border-radius:12px; border:1px solid var(--border); overflow:hidden; margin-bottom:10px; }
     .manage-cat-hdr { padding:11px 14px; background:var(--surface2); display:flex; justify-content:space-between; align-items:center; cursor:pointer; border-bottom:1px solid var(--border); }
-    .manage-cat-hdr span { font-size:11px; font-weight:700; color:var(--text-dim); text-transform:uppercase; letter-spacing:0.5px; }
+    .manage-cat-hdr span { font-size:11px; font-weight:600; color:var(--text-dim); text-transform:uppercase; letter-spacing:0.5px; }
     .manage-cat-body.collapsed { display:none; }
     .manage-subcat-block { background:#fafafa; border-radius:10px; margin:8px; border:1px solid var(--border); overflow:hidden; }
     .manage-subcat-hdr { display:flex; align-items:center; gap:8px; padding:11px 14px; background:#d4e8d4; border-bottom:1px solid #b8d4b8; }
-    .manage-subcat-title { flex:1; font-size:13px; font-weight:800; color:#2e5e2e; text-transform:uppercase; letter-spacing:0.5px; }
+    .manage-subcat-title { flex:1; font-size:13px; font-weight:600; color:#2e5e2e; text-transform:uppercase; letter-spacing:0.5px; }
     .manage-row { display:flex; align-items:center; gap:8px; padding:14px 14px; border-top:1px solid #e8e8e8; }
     .manage-name { flex:1; font-size:20px; font-weight:500; color:var(--text); }
     .manage-edit-input { flex:1; font-size:17px; border:1.5px solid var(--green); border-radius:8px; padding:6px 10px; font-family:inherit; outline:none; background:#fff; }
     .manage-add-row { padding:10px 12px 14px; }
     .manage-add-input { width:100%; padding:12px 14px; border:1.5px solid var(--border); border-radius:10px; font-size:18px; font-family:inherit; outline:none; background:#fff; }
     .manage-add-input:focus { border-color:var(--green); }
-    .btn-add-subcat { width:calc(100% - 16px); margin:8px; padding:10px; background:var(--green-light); border:none; border-radius:8px; font-size:14px; font-weight:700; color:var(--green-dark); }
+    .btn-add-subcat { width:calc(100% - 16px); margin:8px; padding:10px; background:var(--green-light); border:none; border-radius:8px; font-size:14px; font-weight:600; color:var(--green-dark); }
     .btn-icon { width:36px; height:36px; border:none; border-radius:8px; display:flex; align-items:center; justify-content:center; flex-shrink:0; font-size:15px; background:transparent; }
     .btn-edit { color:#1565c0; }
     .btn-move { color:var(--green); }
@@ -136,11 +136,11 @@
     /* SNACK */
     /* HISTORY */
     .hist-toggle { display:flex; background:#f0f0f0; border-radius:10px; padding:3px; margin-bottom:14px; }
-    .hist-toggle-btn { flex:1; padding:8px; border:none; background:transparent; border-radius:8px; font-size:13px; font-weight:700; color:#9e9e9e; cursor:pointer; font-family:'Outfit',sans-serif; }
+    .hist-toggle-btn { flex:1; padding:8px; border:none; background:transparent; border-radius:8px; font-size:13px; font-weight:600; color:#9e9e9e; cursor:pointer; font-family:'Outfit',sans-serif; }
     .hist-toggle-btn.active { background:#fff; color:#1a1a1a; box-shadow:0 1px 4px rgba(0,0,0,0.1); }
     .hist-week { background:#fff; border-radius:12px; border:1px solid #e0e0e0; margin-bottom:10px; overflow:hidden; }
     .hist-week-hdr { padding:12px 14px; background:#f5f5f5; display:flex; justify-content:space-between; align-items:center; cursor:pointer; }
-    .hist-week-label { font-size:14px; font-weight:800; color:#1a1a1a; }
+    .hist-week-label { font-size:14px; font-weight:600; color:#1a1a1a; }
     .hist-week-count { font-size:12px; color:#9e9e9e; }
     .hist-week-body.collapsed { display:none; }
     .hist-item { display:flex; align-items:center; padding:9px 14px; border-top:1px solid #f0f0f0; gap:10px; }
@@ -148,16 +148,16 @@
     .hist-item-detail { font-size:13px; color:#9e9e9e; text-align:right; line-height:1.5; }
     .hist-product { background:#fff; border-radius:12px; border:1px solid #e0e0e0; margin-bottom:10px; overflow:hidden; }
     .hist-product-hdr { padding:12px 14px; background:#f5f5f5; display:flex; justify-content:space-between; align-items:center; cursor:pointer; }
-    .hist-product-name { font-size:14px; font-weight:800; color:#1a1a1a; }
+    .hist-product-name { font-size:14px; font-weight:600; color:#1a1a1a; }
     .hist-product-body.collapsed { display:none; }
     .hist-price-row { display:flex; align-items:center; padding:9px 14px; border-top:1px solid #f0f0f0; gap:10px; }
     .hist-price-date { font-size:13px; color:#9e9e9e; flex:1; }
-    .hist-price-val { font-size:15px; font-weight:700; color:#2e7d32; }
+    .hist-price-val { font-size:15px; font-weight:600; color:#2e7d32; }
     .hist-price-sup { font-size:13px; color:#9e9e9e; }
     .hist-empty { text-align:center; padding:60px 20px; color:#9e9e9e; font-size:15px; }
 
     /* PICKED */
-    .item-name.picked { color:#b0b0b0 !important; font-weight:400 !important; font-size:25px !important; }
+    .item-name.picked { color:#b0b0b0 !important; font-weight:400 !important; font-size:29px !important; }
     .qty-display.picked { opacity:0.3; }
     .pick-btn { border:none; background:transparent; font-size:18px; color:#d0d0d0; cursor:pointer; padding:2px; flex-shrink:0; line-height:1; }
     .pick-btn.pick-hidden { visibility:hidden; pointer-events:none; }
@@ -174,13 +174,13 @@
     #pick-panel.open { display:block; }
     #pick-overlay { position:fixed; inset:0; background:rgba(0,0,0,0.3); z-index:199; display:none; }
     #pick-overlay.open { display:block; }
-    #pick-title { font-size:29px; font-weight:800; color:#ffffff; font-family:'Outfit',sans-serif; padding:18px 16px 14px; }
+    #pick-title { font-size:29px; font-weight:600; color:#ffffff; font-family:'Outfit',sans-serif; padding:18px 16px 14px; }
     .pick-row { display:flex; align-items:center; gap:12px; padding:10px 16px 10px 16px; overflow:hidden; }
     .pick-row:nth-child(even) { background:rgba(0,0,0,0.08); }
     .pick-row:nth-child(odd)  { background:rgba(0,0,0,0.04); }
     .pick-row-label { font-size:18px; font-weight:500; color:#fff; flex:1; white-space:nowrap; }
-    .pick-row-input { width:120px; max-width:120px; min-width:120px; height:44px; padding:0 14px; border:none !important; border-radius:22px !important; font-size:26px; font-weight:700; font-family:'Outfit',sans-serif; outline:none; background:#ffffff !important; color:#1a1a1a !important; text-align:center; -webkit-appearance:none; appearance:none; flex-shrink:0; box-sizing:border-box; }
-    .pick-field-label { font-size:11px; font-weight:700; color:rgba(255,255,255,0.7); text-transform:uppercase; letter-spacing:0.5px; margin-bottom:5px; display:block; }
+    .pick-row-input { width:120px; max-width:120px; min-width:120px; height:44px; padding:0 14px; border:none !important; border-radius:22px !important; font-size:26px; font-weight:600; font-family:'Outfit',sans-serif; outline:none; background:#ffffff !important; color:#1a1a1a !important; text-align:center; -webkit-appearance:none; appearance:none; flex-shrink:0; box-sizing:border-box; }
+    .pick-field-label { font-size:11px; font-weight:600; color:rgba(255,255,255,0.7); text-transform:uppercase; letter-spacing:0.5px; margin-bottom:5px; display:block; }
     #pick-sell-price { width:100%; padding:12px 14px; border:1.5px solid #444; border-radius:10px; font-size:18px; font-family:'Outfit',sans-serif; outline:none; margin-bottom:12px; background:#2a2a2a; color:#fff; }
     #pick-sell-price:focus { border-color:#7CA37C; }
     #pick-supplier { width:100%; padding:12px 14px; border:1.5px solid #444; border-radius:10px; font-size:16px; font-family:'Outfit',sans-serif; outline:none; margin-bottom:12px; background:#2a2a2a; color:#fff; }
@@ -206,7 +206,7 @@
     <div id="header-nav">
       <button class="hnav-btn active" data-view="list" id="brand-nav-btn">Momento Frutado</button>
       <div id="header-icons">
-        <span id="progress-pill" style="font-size:11px;font-weight:700;color:#666;padding:4px 8px;background:#222;border-radius:12px;align-self:center;"></span>
+        <span id="progress-pill" style="font-size:11px;font-weight:600;color:#666;padding:4px 8px;background:#222;border-radius:12px;align-self:center;"></span>
         <button class="hnav-btn" data-view="whatsapp"><span class="material-icons-round">chat_bubble_outline</span></button>
         <button class="hnav-btn" data-view="history"><span class="material-icons-round">history</span></button>
         <button class="hnav-btn" data-view="add"><span class="material-icons-round">tune</span></button>
@@ -234,7 +234,7 @@
         </div>
         <div id="wa-prices" style="display:none; margin-bottom:16px;">
           <div id="wa-prices-hint" style="background:#e8f5e9; border-radius:12px; padding:13px 15px; margin-bottom:12px; font-size:14px; color:#2e7d32; font-weight:600; line-height:1.5; border-left:4px solid #7CA37C;">👆 Mantém o dedo no texto → <strong>Seleccionar tudo</strong> → <strong>Copiar</strong></div>
-          <div style="font-size:12px; font-weight:700; color:#9e9e9e; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:8px;">Alterações de preço</div>
+          <div style="font-size:12px; font-weight:600; color:#9e9e9e; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:8px;">Alterações de preço</div>
           <textarea id="wa-prices-text" readonly style="width:100%; padding:14px; border-radius:12px; border:1px solid #e0e0e0; font-size:15px; line-height:2; font-family:monospace; color:#1a1a1a; background:#fff; resize:none; outline:none;"></textarea>
         </div>
         <div id="wa-filled" style="display:none">
@@ -279,8 +279,11 @@
   <!-- LONG PRESS PANEL -->
   <div id="pick-overlay"></div>
   <div id="pick-panel">
-    <div id="pick-title-row" style="display:flex; align-items:center; justify-content:space-between; padding:18px 16px 14px;">
-      <div id="pick-title" style="font-size:33px; font-weight:800; color:#ffffff; font-family:'Outfit',sans-serif;">Produto</div>
+    <div id="pick-title-row" style="display:flex; align-items:center; justify-content:space-between; padding:18px 16px 6px;">
+      <div>
+        <div id="pick-title" style="font-size:33px; font-weight:600; color:#ffffff; font-family:'Outfit',sans-serif;">Produto</div>
+        <div id="pick-date-display" style="font-size:13px; color:rgba(255,255,255,0.45); margin-top:3px;">—</div>
+      </div>
       <button id="pick-close" style="border:none; background:rgba(255,255,255,0.2); color:#fff; border-radius:50%; width:36px; height:36px; display:flex; align-items:center; justify-content:center; cursor:pointer; flex-shrink:0;">
         <span class="material-icons-round" style="font-size:20px;">close</span>
       </button>
@@ -295,25 +298,21 @@
     </div>
     <div class="pick-row">
       <span class="pick-row-label">Fornecedor</span>
-      <button id="pick-supplier-btn" onclick="openSupplierPicker()" style="background:transparent;border:none;color:#f5c842;font-size:21px;font-weight:800;font-family:'Outfit',sans-serif;text-align:right;flex:1;cursor:pointer;padding:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">—</button>
+      <button id="pick-supplier-btn" onclick="openSupplierPicker()" style="background:transparent;border:none;color:#f5c842;font-size:21px;font-weight:600;font-family:'Outfit',sans-serif;text-align:right;flex:1;cursor:pointer;padding:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">—</button>
       <select id="pick-supplier" style="display:none"></select>
     </div>
     <div id="supplier-picker" style="display:none;position:fixed;bottom:0;left:0;right:0;background:#1e1e1e;border-radius:20px 20px 0 0;padding:16px;z-index:300;max-height:60vh;overflow-y:auto;"></div>
     <div id="supplier-overlay" onclick="closeSupplierPicker()" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:299;"></div>
-    <div class="pick-row">
-      <span class="pick-row-label">Data</span>
-      <span id="pick-date-display" style="color:#a8d4aa;font-size:16px;font-weight:700;text-align:right;flex:1;cursor:pointer;" onclick="pickDateNative()">—</span>
-      <input id="pick-date" type="date" style="position:absolute;opacity:0;width:0;height:0;pointer-events:none;"/>
-    </div>
+    <input id="pick-date" type="date" style="position:absolute;opacity:0;width:0;height:0;pointer-events:none;"/>
     <div id="pick-margin" style="display:none; margin:10px 16px; background:rgba(255,255,255,0.15); border-radius:14px; padding:14px 16px;">
-      <div style="font-size:13px; font-weight:700; color:rgba(255,255,255,0.7); text-transform:uppercase; letter-spacing:0.5px; margin-bottom:10px;">Análise</div>
+      <div style="font-size:13px; font-weight:600; color:rgba(255,255,255,0.7); text-transform:uppercase; letter-spacing:0.5px; margin-bottom:10px;">Análise</div>
       <div style="display:flex; justify-content:space-between; margin-bottom:6px;">
         <span style="font-size:16px; color:rgba(255,255,255,0.8);">Custo c/ IVA 6%</span>
-        <span id="pick-cost-iva" style="font-size:16px; font-weight:700; color:#fff;">—</span>
+        <span id="pick-cost-iva" style="font-size:16px; font-weight:600; color:#fff;">—</span>
       </div>
       <div style="display:flex; justify-content:space-between; margin-bottom:6px;">
         <span style="font-size:16px; color:rgba(255,255,255,0.8);">Lucro/kg</span>
-        <span id="pick-profit" style="font-size:16px; font-weight:700; color:#fff;">—</span>
+        <span id="pick-profit" style="font-size:16px; font-weight:600; color:#fff;">—</span>
       </div>
       <div style="display:flex; justify-content:space-between; margin-bottom:10px;">
         <span style="font-size:16px; color:rgba(255,255,255,0.8);">Margem</span>
@@ -344,9 +343,9 @@ const FORNECEDORES = {
 // ── DATA ──────────────────────────────────────────────────────────────────────
 const DEFAULT_PRODUCTS = {
   "Fruta": [
-    "Abacaxi","Uva Red Globe","Uva sem grainha","Mamão","Manga","Papaia","Abacate","Kiwi Gold",
+    "Abacaxi","Uva Red Globe","Uva sem grainha","Mamão","Manga","Papaia","Abacate","Kiwi Gold","Kiwi",
     "Meloa","Melão branco","Melão verde","Melancia",
-    "Pera Rocha","Maçã Gala","Maçã Gold","Maçã Reineta","Pêra Conferência","Pera William","Pera Red","Maçã Granny","Maçã Fuji","Maçã Pink Lady","Kiwi",
+    "Maçã Gala","Maçã Gold","Maçã Reineta","Maçã Granny","Maçã Fuji","Maçã Pink Lady","Pera Rocha","Pêra Conferência","Pera William","Pera Red",
     "Banana","Banana Madeira",
     "Laranja","Clementina",
     "Pêssego amarelo","Pêssego rosa","Pêssego vermelho","Paraguaio","Nectarina","Alperce","Ameixa vermelha","Ameixa amarela",
@@ -384,9 +383,9 @@ const DEFAULT_SUBCATS = {
     { name: "Cogumelo", items: ["Cogumelo branco","Cogumelo marrom","Cogumelo Shitake","Cogumelo Eringi","Espargos","Quiabos","Malagueta"] }
   ],
   "Fruta": [
-    { name: "Tropical",        items: ["Abacaxi","Uva Red Globe","Uva sem grainha","Mamão","Manga","Papaia","Abacate","Kiwi Gold"] },
+    { name: "Tropical",        items: ["Abacaxi","Uva Red Globe","Uva sem grainha","Mamão","Manga","Papaia","Abacate","Kiwi Gold","Kiwi"] },
     { name: "Melões",          items: ["Meloa","Melão branco","Melão verde","Melancia"] },
-    { name: "Maçãs e Peras",   items: ["Pera Rocha","Maçã Gala","Maçã Gold","Maçã Reineta","Pêra Conferência","Pera William","Pera Red","Maçã Granny","Maçã Fuji","Maçã Pink Lady","Kiwi"] },
+    { name: "Maçãs e Peras",   items: ["Maçã Gala","Maçã Gold","Maçã Reineta","Maçã Granny","Maçã Fuji","Maçã Pink Lady","Pera Rocha","Pêra Conferência","Pera William","Pera Red"] },
     { name: "Banana",          items: ["Banana","Banana Madeira"] },
     { name: "Citrinos",        items: ["Laranja","Clementina"] },
     { name: "Prunóideas",      items: ["Pêssego amarelo","Pêssego rosa","Pêssego vermelho","Paraguaio","Nectarina","Alperce","Ameixa vermelha","Ameixa amarela"] },
@@ -636,11 +635,11 @@ function renderManage() {
   toggleAll.style.cssText = "display:flex; gap:8px; margin-bottom:12px;";
   const btnExp = document.createElement("button");
   btnExp.textContent = "Expandir tudo";
-  btnExp.style.cssText = "flex:1; padding:10px; background:var(--green-light); border:none; border-radius:8px; font-size:13px; font-weight:700; color:var(--green-dark); cursor:pointer; font-family:inherit;";
+  btnExp.style.cssText = "flex:1; padding:10px; background:var(--green-light); border:none; border-radius:8px; font-size:13px; font-weight:600; color:var(--green-dark); cursor:pointer; font-family:inherit;";
   btnExp.addEventListener("click", () => { Object.keys(products).forEach(k => { window._mO[k] = true; }); renderManage(); });
   const btnCol = document.createElement("button");
   btnCol.textContent = "Colapsar tudo";
-  btnCol.style.cssText = "flex:1; padding:10px; background:#f5f5f5; border:none; border-radius:8px; font-size:13px; font-weight:700; color:#666; cursor:pointer; font-family:inherit;";
+  btnCol.style.cssText = "flex:1; padding:10px; background:#f5f5f5; border:none; border-radius:8px; font-size:13px; font-weight:600; color:#666; cursor:pointer; font-family:inherit;";
   btnCol.addEventListener("click", () => { Object.keys(products).forEach(k => { window._mO[k] = false; }); renderManage(); });
   toggleAll.appendChild(btnExp); toggleAll.appendChild(btnCol);
   c.appendChild(toggleAll);
@@ -926,13 +925,13 @@ function openSupplierPicker() {
   picker.innerHTML = "";
 
   const title = document.createElement("div");
-  title.style.cssText = "font-size:16px;font-weight:800;color:#fff;margin-bottom:14px;";
+  title.style.cssText = "font-size:16px;font-weight:600;color:#fff;margin-bottom:14px;";
   title.textContent = "Escolher fornecedor";
   picker.appendChild(title);
 
   Object.entries(FORNECEDORES).forEach(([corridor, suppliers]) => {
     const grpLabel = document.createElement("div");
-    grpLabel.style.cssText = "font-size:11px;font-weight:700;color:#888;text-transform:uppercase;letter-spacing:0.5px;margin:10px 0 6px;";
+    grpLabel.style.cssText = "font-size:11px;font-weight:600;color:#888;text-transform:uppercase;letter-spacing:0.5px;margin:10px 0 6px;";
     grpLabel.textContent = corridor;
     picker.appendChild(grpLabel);
     suppliers.forEach(s => {
@@ -955,7 +954,7 @@ function openSupplierPicker() {
 
   // New supplier option
   const newBtn = document.createElement("button");
-  newBtn.style.cssText = "display:block;width:100%;text-align:left;padding:11px 14px;border:1.5px dashed #555;border-radius:8px;font-size:15px;font-family:'Outfit',sans-serif;cursor:pointer;margin-top:10px;font-weight:700;background:transparent;color:#aaa;";
+  newBtn.style.cssText = "display:block;width:100%;text-align:left;padding:11px 14px;border:1.5px dashed #555;border-radius:8px;font-size:15px;font-family:'Outfit',sans-serif;cursor:pointer;margin-top:10px;font-weight:600;background:transparent;color:#aaa;";
   newBtn.textContent = "+ Novo fornecedor...";
   newBtn.addEventListener("click", () => {
     closeSupplierPicker();
@@ -1016,15 +1015,16 @@ function openPickPanel(cat, item) {
   const key = gk(cat, item);
   currentPickKey = key;
   const p = picked[key] || {};
+  const today = new Date().toISOString().split('T')[0];
+  // Always stamp today's date
+  picked[key] = { ...p, date: today };
   document.getElementById("pick-title").textContent = item;
   document.getElementById("pick-price").value = p.price || "";
   const sellEl = document.getElementById("pick-sell-price"); if(sellEl) sellEl.value = p.sellPrice || "";
   buildSupplierOptions();
   document.getElementById("pick-supplier").value = p.supplier || "";
   document.getElementById("pick-supplier-btn").textContent = p.supplier || "—";
-  const today = new Date().toISOString().split('T')[0];
-  const dateEl = document.getElementById("pick-date"); if(dateEl) dateEl.value = p.date || today;
-  const dateDisp = document.getElementById("pick-date-display"); if(dateDisp) dateDisp.textContent = formatDate(p.date || today);
+  const dateDisp = document.getElementById("pick-date-display"); if(dateDisp) dateDisp.textContent = formatDate(today);
   document.getElementById("pick-panel").classList.add("open");
   document.getElementById("pick-overlay").classList.add("open");
   updateMargin();
