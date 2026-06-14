@@ -7,7 +7,9 @@
   <meta name="apple-mobile-web-app-capable" content="yes"/>
   <meta name="apple-mobile-web-app-title" content="Momento Frutado"/>
   <title>Momento Frutado – Compras</title>
-  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800;900&display=swap" rel="stylesheet"/>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800;900&display=swap" rel="stylesheet"/>
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet"/>
   <style>
     :root {
@@ -24,7 +26,7 @@
       --error: #c62828;
     }
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    html, body { height: 100%; background: var(--bg); font-family: 'Nunito', sans-serif; color: var(--text); }
+    html, body { height: 100%; background: var(--bg); font-family: 'Poppins', sans-serif; color: var(--text); }
     input[type=number]::-webkit-inner-spin-button,
     input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; }
     input[type=number] { -moz-appearance: textfield; }
@@ -134,7 +136,7 @@
     /* SNACK */
     /* HISTORY */
     .hist-toggle { display:flex; background:#f0f0f0; border-radius:10px; padding:3px; margin-bottom:14px; }
-    .hist-toggle-btn { flex:1; padding:8px; border:none; background:transparent; border-radius:8px; font-size:13px; font-weight:700; color:#9e9e9e; cursor:pointer; font-family:'Nunito',sans-serif; }
+    .hist-toggle-btn { flex:1; padding:8px; border:none; background:transparent; border-radius:8px; font-size:13px; font-weight:700; color:#9e9e9e; cursor:pointer; font-family:'Poppins',sans-serif; }
     .hist-toggle-btn.active { background:#fff; color:#1a1a1a; box-shadow:0 1px 4px rgba(0,0,0,0.1); }
     .hist-week { background:#fff; border-radius:12px; border:1px solid #e0e0e0; margin-bottom:10px; overflow:hidden; }
     .hist-week-hdr { padding:12px 14px; background:#f5f5f5; display:flex; justify-content:space-between; align-items:center; cursor:pointer; }
@@ -164,23 +166,26 @@
     /* LONG PRESS PANEL */
     #pick-panel {
       position:fixed; bottom:0; left:50%; transform:translateX(-50%);
-      width:100%; max-width:600px; background:#7CA37C;
+      width:100%; max-width:600px; background:#4a7a5a;
       border-radius:20px 20px 0 0; padding:0 0 28px;
       box-shadow:0 -4px 24px rgba(0,0,0,0.2); z-index:200;
-      display:none; overflow:hidden;
+      display:none;
     }
     #pick-panel.open { display:block; }
     #pick-overlay { position:fixed; inset:0; background:rgba(0,0,0,0.3); z-index:199; display:none; }
     #pick-overlay.open { display:block; }
-    #pick-title { font-size:18px; font-weight:800; color:#ffffff; margin-bottom:16px; font-family:'Nunito',sans-serif; }
+    #pick-title { font-size:29px; font-weight:800; color:#ffffff; font-family:'Poppins',sans-serif; padding:18px 16px 14px; }
+    .pick-row { display:flex; align-items:center; gap:12px; padding:10px 16px 10px 16px; overflow:hidden; }
+    .pick-row:nth-child(even) { background:rgba(0,0,0,0.08); }
+    .pick-row:nth-child(odd)  { background:rgba(0,0,0,0.04); }
+    .pick-row-label { font-size:18px; font-weight:500; color:#fff; flex:1; white-space:nowrap; }
+    .pick-row-input { width:120px; max-width:120px; min-width:120px; height:44px; padding:0 14px; border:none !important; border-radius:22px !important; font-size:26px; font-weight:700; font-family:'Poppins',sans-serif; outline:none; background:#ffffff !important; color:#1a1a1a !important; text-align:center; -webkit-appearance:none; appearance:none; flex-shrink:0; box-sizing:border-box; }
     .pick-field-label { font-size:11px; font-weight:700; color:rgba(255,255,255,0.7); text-transform:uppercase; letter-spacing:0.5px; margin-bottom:5px; display:block; }
-    #pick-price { width:100%; padding:12px 14px; border:1.5px solid #444; border-radius:10px; font-size:18px; font-family:'Nunito',sans-serif; outline:none; margin-bottom:12px; background:#2a2a2a; color:#fff; }
-    #pick-price:focus { border-color:#7CA37C; }
-    #pick-sell-price { width:100%; padding:12px 14px; border:1.5px solid #444; border-radius:10px; font-size:18px; font-family:'Nunito',sans-serif; outline:none; margin-bottom:12px; background:#2a2a2a; color:#fff; }
+    #pick-sell-price { width:100%; padding:12px 14px; border:1.5px solid #444; border-radius:10px; font-size:18px; font-family:'Poppins',sans-serif; outline:none; margin-bottom:12px; background:#2a2a2a; color:#fff; }
     #pick-sell-price:focus { border-color:#7CA37C; }
-    #pick-supplier { width:100%; padding:12px 14px; border:1.5px solid #444; border-radius:10px; font-size:16px; font-family:'Nunito',sans-serif; outline:none; margin-bottom:12px; background:#2a2a2a; color:#fff; }
+    #pick-supplier { width:100%; padding:12px 14px; border:1.5px solid #444; border-radius:10px; font-size:16px; font-family:'Poppins',sans-serif; outline:none; margin-bottom:12px; background:#2a2a2a; color:#fff; }
     #pick-supplier:focus { border-color:#7CA37C; }
-    #pick-close { width:100%; padding:12px; border:1.5px solid #444; border-radius:10px; font-size:15px; font-weight:600; background:transparent; color:#888; cursor:pointer; font-family:'Nunito',sans-serif; }
+    #pick-close { width:100%; padding:12px; border:1.5px solid #444; border-radius:10px; font-size:15px; font-weight:600; background:transparent; color:#888; cursor:pointer; font-family:'Poppins',sans-serif; }
 
     #snackbar { position:fixed; bottom:24px; left:50%; transform:translateX(-50%); border-radius:8px; padding:9px 18px; font-size:13px; font-weight:600; box-shadow:0 3px 12px rgba(0,0,0,0.18); z-index:300; display:none; color:#fff; white-space:nowrap; }
     #snackbar.saving { background:#f57f17; }
@@ -201,14 +206,16 @@
     <div id="header-nav">
       <button class="hnav-btn active" data-view="list" id="brand-nav-btn">Momento Frutado</button>
       <div id="header-icons">
+        <span id="progress-pill" style="font-size:11px;font-weight:700;color:#666;padding:4px 8px;background:#222;border-radius:12px;align-self:center;"></span>
         <button class="hnav-btn" data-view="whatsapp"><span class="material-icons-round">chat_bubble_outline</span></button>
         <button class="hnav-btn" data-view="history"><span class="material-icons-round">history</span></button>
         <button class="hnav-btn" data-view="add"><span class="material-icons-round">tune</span></button>
       </div>
     </div>
-
-
-
+    <div id="progress-fill-wrap" style="height:3px;background:#222;margin-top:-1px;">
+      <div id="progress-fill" style="height:100%;width:0%;background:var(--green);transition:width 0.3s;border-radius:2px;"></div>
+    </div>
+    <div id="sync-label" style="font-size:10px;color:#555;text-align:right;padding:2px 16px 4px;"></div>
   </div>
 
   <div id="scroll-area">
@@ -271,19 +278,52 @@
 
   <!-- LONG PRESS PANEL -->
   <div id="pick-overlay"></div>
-  <div id="pick-panel" style="background:#1a1a1a;">
-    <div id="pick-title">Produto</div>
-    <label class="pick-field-label">💶 Preço de compra/kg</label>
-    <input id="pick-price" type="number" inputmode="decimal" placeholder="Ex: 1.20" step="0.01" min="0"/>
-    <label class="pick-field-label">🏷️ Preço de venda</label>
-    <input id="pick-sell-price" type="number" inputmode="decimal" placeholder="Ex: 2.50" step="0.01" min="0"/>
-    <label class="pick-field-label">📅 Data</label>
-    <input id="pick-date" type="date" style="width:100%;padding:12px 14px;border:1.5px solid #444;border-radius:10px;font-size:16px;font-family:'Nunito',sans-serif;outline:none;margin-bottom:12px;background:#2a2a2a;color:#fff;"/>
-    <label class="pick-field-label">🏪 Fornecedor</label>
-    <select id="pick-supplier">
-      <option value="">— escolher fornecedor —</option>
-    </select>
-    <button id="pick-close">Fechar</button>
+  <div id="pick-panel">
+    <div id="pick-title-row" style="display:flex; align-items:center; justify-content:space-between; padding:18px 16px 14px;">
+      <div id="pick-title" style="font-size:33px; font-weight:800; color:#ffffff; font-family:'Poppins',sans-serif;">Produto</div>
+      <button id="pick-close" style="border:none; background:rgba(255,255,255,0.2); color:#fff; border-radius:50%; width:36px; height:36px; display:flex; align-items:center; justify-content:center; cursor:pointer; flex-shrink:0;">
+        <span class="material-icons-round" style="font-size:20px;">close</span>
+      </button>
+    </div>
+    <div class="pick-row">
+      <span class="pick-row-label">Preço venda</span>
+      <input id="pick-sell-price" class="pick-row-input" type="number" inputmode="decimal" placeholder="0.00" step="0.01" min="0" style="font-size:22px !important; font-weight:900 !important; height:50px !important; width:130px !important; min-width:130px !important; max-width:130px !important; border-radius:25px !important;"/>
+    </div>
+    <div class="pick-row">
+      <span class="pick-row-label">Preço compra</span>
+      <input id="pick-price" class="pick-row-input" type="number" inputmode="decimal" placeholder="0.00" step="0.01" min="0" style="background:#a8d4aa !important; color:#1a3d1a !important; font-size:18px !important; font-weight:500 !important; width:90px !important; min-width:90px !important; max-width:90px !important; height:36px !important;"/>
+    </div>
+    <div class="pick-row">
+      <span class="pick-row-label">Fornecedor</span>
+      <button id="pick-supplier-btn" onclick="openSupplierPicker()" style="background:transparent;border:none;color:#f5c842;font-size:21px;font-weight:800;font-family:'Poppins',sans-serif;text-align:right;flex:1;cursor:pointer;padding:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">—</button>
+      <select id="pick-supplier" style="display:none"></select>
+    </div>
+    <div id="supplier-picker" style="display:none;position:fixed;bottom:0;left:0;right:0;background:#1e1e1e;border-radius:20px 20px 0 0;padding:16px;z-index:300;max-height:60vh;overflow-y:auto;"></div>
+    <div id="supplier-overlay" onclick="closeSupplierPicker()" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:299;"></div>
+    <div class="pick-row">
+      <span class="pick-row-label">Data</span>
+      <span id="pick-date-display" style="color:#a8d4aa;font-size:16px;font-weight:700;text-align:right;flex:1;cursor:pointer;" onclick="pickDateNative()">—</span>
+      <input id="pick-date" type="date" style="position:absolute;opacity:0;width:0;height:0;pointer-events:none;"/>
+    </div>
+    <div id="pick-margin" style="display:none; margin:10px 16px; background:rgba(255,255,255,0.15); border-radius:14px; padding:14px 16px;">
+      <div style="font-size:13px; font-weight:700; color:rgba(255,255,255,0.7); text-transform:uppercase; letter-spacing:0.5px; margin-bottom:10px;">Análise</div>
+      <div style="display:flex; justify-content:space-between; margin-bottom:6px;">
+        <span style="font-size:16px; color:rgba(255,255,255,0.8);">Custo c/ IVA 6%</span>
+        <span id="pick-cost-iva" style="font-size:16px; font-weight:700; color:#fff;">—</span>
+      </div>
+      <div style="display:flex; justify-content:space-between; margin-bottom:6px;">
+        <span style="font-size:16px; color:rgba(255,255,255,0.8);">Lucro/kg</span>
+        <span id="pick-profit" style="font-size:16px; font-weight:700; color:#fff;">—</span>
+      </div>
+      <div style="display:flex; justify-content:space-between; margin-bottom:10px;">
+        <span style="font-size:16px; color:rgba(255,255,255,0.8);">Margem</span>
+        <span id="pick-margin-pct" style="font-size:20px; font-weight:900; color:#fff;">—</span>
+      </div>
+      <div id="pick-suggestion" style="margin-top:10px; font-size:13px; color:rgba(255,255,255,0.7); display:none;"></div>
+      <div id="pick-margin-bar-wrap" style="height:6px; background:rgba(0,0,0,0.2); border-radius:3px; margin-top:8px; overflow:hidden; display:none;">
+        <div id="pick-margin-bar" style="height:100%; width:0%; background:#a8e6a8; border-radius:3px; transition:width 0.3s;"></div>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -362,7 +402,7 @@ let list     = {};
 let openCats = {};
 let saveTimer = null;
 let picked = {}; // key -> { done, price, supplier, date }
-let history = []; // array of weekly snapshots
+let snapHistory = []; // array of weekly snapshots (renamed from history to avoid window.history shadow)
 
 // ── HELPERS ───────────────────────────────────────────────────────────────────
 function gk(cat, item) { return `${cat}|||${item}`; }
@@ -382,12 +422,12 @@ function initOpen(prods) {
 }
 
 // ── LOCAL STORAGE ─────────────────────────────────────────────────────────────
-function payload() { return { products, subcats, list, picked, history }; }
+function payload() { return { products, subcats, list, picked, history: snapHistory }; }
 
 function applyLocal(r) {
   if (r.products) products = r.products;
   if (r.picked) picked = r.picked;
-  if (r.history) history = r.history;
+  if (r.history) snapHistory = r.history;
   if (r.subcats && Object.keys(r.subcats).length > 0) subcats = r.subcats;
   else subcats = JSON.parse(JSON.stringify(DEFAULT_SUBCATS));
   if (r.list) list = { ...buildEmpty(products), ...r.list };
@@ -396,12 +436,13 @@ function applyLocal(r) {
 }
 
 function sched() {
-  localStorage.setItem(LS_CACHE, JSON.stringify(payload()));
   clearTimeout(saveTimer);
   saveTimer = setTimeout(() => {
+    localStorage.setItem(LS_CACHE, JSON.stringify(payload()));
     const n = new Date();
-    document.getElementById("sync-label").textContent = `Guardado ${pad(n.getHours())}:${pad(n.getMinutes())}`;
-  }, 300);
+    const sl = document.getElementById("sync-label");
+    if (sl) sl.textContent = `Guardado ${pad(n.getHours())}:${pad(n.getMinutes())}`;
+  }, 400);
 }
 
 function boot() {
@@ -471,7 +512,7 @@ function renderCats(search) {
 
     const hdr = document.createElement("div"); hdr.className = "cat-header";
     hdr.innerHTML = `<span class="cat-name">${cat}</span><span class="cat-chevron ${open?"":"closed"}">▾</span>`;
-    hdr.addEventListener("click", () => { openCats[cat] = !open; renderCats(""); });
+    hdr.addEventListener("click", () => { openCats[cat] = !openCats[cat]; renderCats(""); });
     wrap.appendChild(hdr);
 
     const body = document.createElement("div"); body.className = "cat-body" + (open ? "" : " collapsed");
@@ -488,7 +529,7 @@ function renderCats(search) {
           const row = document.createElement("div");
           row.className = "item-row " + (idx % 2 === 0 ? "zebra-even" : "zebra-odd") + (active ? " active" : "");
           const nm = document.createElement("span"); nm.className = "item-name" + (active ? " active" : "") + (isPicked ? " picked" : "");
-          nm.innerHTML = item;
+          nm.textContent = item;
           const qtyEl = makeQty(key, Number(e.qty));
           if (isPicked) { const qd = qtyEl.querySelector(".qty-display"); if(qd) qd.classList.add("picked"); }
           row.dataset.key = key;
@@ -510,7 +551,7 @@ function renderCats(search) {
         const row = document.createElement("div");
         row.className = "item-row " + (idx % 2 === 0 ? "zebra-even" : "zebra-odd") + (active ? " active" : "");
         const nm = document.createElement("span"); nm.className = "item-name" + (active ? " active" : "") + (isPicked2 ? " picked" : "");
-        nm.innerHTML = item;
+        nm.textContent = item;
         const qtyEl2 = makeQty(key, Number(e.qty));
         if (isPicked2) { const qd = qtyEl2.querySelector(".qty-display"); if(qd) qd.classList.add("picked"); }
         row.dataset.key = key;
@@ -758,7 +799,7 @@ function renderHistory() {
   const c = document.getElementById("history-content"); if (!c) return;
   c.innerHTML = "";
 
-  if (!history.length) {
+  if (!snapHistory.length) {
     c.innerHTML = '<div class="hist-empty">Ainda não há histórico.<br>Quando limpares a lista, fica aqui guardado.</div>';
     return;
   }
@@ -777,7 +818,7 @@ function renderHistory() {
   btnProd.addEventListener("click", () => { btnProd.classList.add("active"); btnWeek.classList.remove("active"); prodView.style.display="block"; weekView.style.display="none"; });
 
   // BY WEEK
-  history.forEach((snap, si) => {
+  snapHistory.forEach((snap, si) => {
     const block = document.createElement("div"); block.className = "hist-week";
     const hdr = document.createElement("div"); hdr.className = "hist-week-hdr";
     hdr.innerHTML = `<span class="hist-week-label">${snap.label}</span><span class="hist-week-count">${snap.items.length} artigos</span>`;
@@ -793,7 +834,7 @@ function renderHistory() {
 
   // BY PRODUCT
   const byProduct = {};
-  history.forEach(snap => {
+  snapHistory.forEach(snap => {
     snap.items.forEach(it => {
       if (!byProduct[it.item]) byProduct[it.item] = [];
       byProduct[it.item].push({ date: snap.label, price: it.price, supplier: it.supplier });
@@ -839,8 +880,8 @@ document.getElementById("clear-btn").addEventListener("click", () => {
       snapshot.items.push({ cat, item, qty: e.qty, price: p.price||'', supplier: p.supplier||'', date: p.date||'' });
     }
   });
-  if (snapshot.items.length > 0) history.unshift(snapshot);
-  if (history.length > 52) history = history.slice(0, 52); // keep 1 year
+  if (snapshot.items.length > 0) snapHistory.unshift(snapshot);
+  if (snapHistory.length > 52) snapHistory = snapHistory.slice(0, 52); // keep 1 year
   Object.keys(list).forEach(k => { list[k] = { qty: 0 }; });
   picked = {};
   sched(); renderCats(""); renderWA();
@@ -876,6 +917,65 @@ document.getElementById("add-btn").addEventListener("click", () => {
 document.getElementById("cancel-btn").addEventListener("click", () => switchTo("list"));
 document.getElementById("wa-text").addEventListener("focus", e => e.target.select());
 document.getElementById("wa-prices-text").addEventListener("focus", e => e.target.select());
+
+// ── SUPPLIER PICKER ───────────────────────────────────────────────────────────
+function openSupplierPicker() {
+  if (!currentPickKey) return;
+  const picker = document.getElementById("supplier-picker");
+  const overlay = document.getElementById("supplier-overlay");
+  picker.innerHTML = "";
+
+  const title = document.createElement("div");
+  title.style.cssText = "font-size:16px;font-weight:800;color:#fff;margin-bottom:14px;";
+  title.textContent = "Escolher fornecedor";
+  picker.appendChild(title);
+
+  Object.entries(FORNECEDORES).forEach(([corridor, suppliers]) => {
+    const grpLabel = document.createElement("div");
+    grpLabel.style.cssText = "font-size:11px;font-weight:700;color:#888;text-transform:uppercase;letter-spacing:0.5px;margin:10px 0 6px;";
+    grpLabel.textContent = corridor;
+    picker.appendChild(grpLabel);
+    suppliers.forEach(s => {
+      const btn = document.createElement("button");
+      btn.style.cssText = "display:block;width:100%;text-align:left;padding:11px 14px;border:none;border-radius:8px;font-size:16px;font-family:'Poppins',sans-serif;cursor:pointer;margin-bottom:4px;font-weight:600;";
+      const isSel = picked[currentPickKey]?.supplier === s;
+      btn.style.background = isSel ? "#7CA37C" : "#2a2a2a";
+      btn.style.color = isSel ? "#fff" : "#ddd";
+      btn.textContent = s;
+      btn.addEventListener("click", () => {
+        picked[currentPickKey] = { ...picked[currentPickKey], supplier: s };
+        document.getElementById("pick-supplier-btn").textContent = s;
+        document.getElementById("pick-supplier").value = s;
+        sched();
+        closeSupplierPicker();
+      });
+      picker.appendChild(btn);
+    });
+  });
+
+  // New supplier option
+  const newBtn = document.createElement("button");
+  newBtn.style.cssText = "display:block;width:100%;text-align:left;padding:11px 14px;border:1.5px dashed #555;border-radius:8px;font-size:15px;font-family:'Poppins',sans-serif;cursor:pointer;margin-top:10px;font-weight:700;background:transparent;color:#aaa;";
+  newBtn.textContent = "+ Novo fornecedor...";
+  newBtn.addEventListener("click", () => {
+    closeSupplierPicker();
+    const name = prompt("Nome do novo fornecedor:");
+    if (!name || !name.trim()) return;
+    FORNECEDORES["A5"].push(name.trim());
+    picked[currentPickKey] = { ...picked[currentPickKey], supplier: name.trim() };
+    document.getElementById("pick-supplier-btn").textContent = name.trim();
+    sched();
+  });
+  picker.appendChild(newBtn);
+
+  picker.style.display = "block";
+  overlay.style.display = "block";
+}
+
+function closeSupplierPicker() {
+  document.getElementById("supplier-picker").style.display = "none";
+  document.getElementById("supplier-overlay").style.display = "none";
+}
 
 // ── LONG PRESS ───────────────────────────────────────────────────────────────
 function addLongPress(el, cb) {
@@ -921,10 +1021,13 @@ function openPickPanel(cat, item) {
   const sellEl = document.getElementById("pick-sell-price"); if(sellEl) sellEl.value = p.sellPrice || "";
   buildSupplierOptions();
   document.getElementById("pick-supplier").value = p.supplier || "";
+  document.getElementById("pick-supplier-btn").textContent = p.supplier || "—";
   const today = new Date().toISOString().split('T')[0];
   const dateEl = document.getElementById("pick-date"); if(dateEl) dateEl.value = p.date || today;
+  const dateDisp = document.getElementById("pick-date-display"); if(dateDisp) dateDisp.textContent = formatDate(p.date || today);
   document.getElementById("pick-panel").classList.add("open");
   document.getElementById("pick-overlay").classList.add("open");
+  updateMargin();
 }
 
 function closePickPanel() {
@@ -936,7 +1039,7 @@ function closePickPanel() {
 document.getElementById("pick-price").addEventListener("input", e => {
   if (!currentPickKey) return;
   picked[currentPickKey] = { ...picked[currentPickKey], price: e.target.value };
-  sched();
+  sched(); updateMargin();
 });
 
 document.getElementById("pick-sell-price").addEventListener("input", e => {
@@ -946,7 +1049,9 @@ document.getElementById("pick-sell-price").addEventListener("input", e => {
   const changed = newSellPrice !== oldSellPrice && newSellPrice !== "";
   picked[currentPickKey] = { ...picked[currentPickKey], sellPrice: newSellPrice, sellPriceChanged: changed };
   sched();
-  renderWA();
+  // Only re-render WA if that tab is visible
+  if (document.getElementById("view-whatsapp").classList.contains("active")) renderWA();
+  updateMargin();
 });
 
 document.getElementById("pick-supplier").addEventListener("change", e => {
@@ -968,11 +1073,68 @@ document.getElementById("pick-supplier").addEventListener("change", e => {
 document.getElementById("pick-date").addEventListener("change", e => {
   if (!currentPickKey) return;
   picked[currentPickKey] = { ...picked[currentPickKey], date: e.target.value };
+  document.getElementById("pick-date-display").textContent = formatDate(e.target.value);
   sched();
 });
 
 document.getElementById("pick-close").addEventListener("click", closePickPanel);
 document.getElementById("pick-overlay").addEventListener("click", closePickPanel);
+
+// ── MARGIN CALCULATOR ────────────────────────────────────────────────────────
+function updateMargin() {
+  const priceEl = document.getElementById("pick-price");
+  const sellEl  = document.getElementById("pick-sell-price");
+  const marginEl = document.getElementById("pick-margin");
+  if (!priceEl || !sellEl || !marginEl) return;
+
+  const buy  = parseFloat(priceEl.value);
+  const sell = parseFloat(sellEl.value);
+
+  if (!buy && !sell) { marginEl.style.display = "none"; return; }
+  marginEl.style.display = "block";
+
+  const costIVA = buy ? buy * 1.06 : null;
+  const profit  = (sell && costIVA) ? sell - costIVA : null;
+  const margin  = (profit && costIVA) ? (profit / sell) * 100 : null;
+
+  document.getElementById("pick-cost-iva").textContent = costIVA ? costIVA.toFixed(2) + "€/kg" : "—";
+  document.getElementById("pick-profit").textContent   = profit  ? (profit >= 0 ? "+" : "") + profit.toFixed(2) + "€/kg" : "—";
+  document.getElementById("pick-profit").style.color   = profit  ? (profit >= 0 ? "#a8e6a8" : "#ff9999") : "#fff";
+
+  if (margin !== null) {
+    document.getElementById("pick-margin-pct").textContent = margin.toFixed(1) + "%";
+    document.getElementById("pick-margin-pct").style.color = margin >= 30 ? "#a8e6a8" : margin >= 15 ? "#ffe082" : "#ff9999";
+    const barWrap = document.getElementById("pick-margin-bar-wrap");
+    const bar = document.getElementById("pick-margin-bar");
+    if (bar) { bar.style.width = Math.min(100, Math.max(0, margin)).toFixed(1) + "%"; bar.style.background = margin >= 30 ? "#a8e6a8" : margin >= 15 ? "#ffe082" : "#ff9999"; }
+    if (barWrap) barWrap.style.display = "block";
+    const sug = document.getElementById("pick-suggestion");
+    if (margin < 15) {
+      sug.style.display = "block";
+      const suggested = costIVA ? (costIVA / 0.7).toFixed(2) : "—";
+      sug.textContent = "⚠️ Margem baixa. Preço sugerido (30% margem): " + suggested + "€/kg";
+    } else { sug.style.display = "none"; }
+  } else {
+    document.getElementById("pick-margin-pct").textContent = "—";
+    const bar = document.getElementById("pick-margin-bar");
+    if (bar) bar.style.width = "0%";
+    const barWrap = document.getElementById("pick-margin-bar-wrap");
+    if (barWrap) barWrap.style.display = "none";
+  }
+}
+
+function pickDateNative() {
+  const inp = document.getElementById("pick-date");
+  inp.style.width = "100%"; inp.style.opacity = "1"; inp.style.position = "static";
+  inp.focus(); inp.click();
+  setTimeout(() => { inp.style.width = "0"; inp.style.opacity = "0"; inp.style.position = "absolute"; }, 500);
+}
+
+function formatDate(val) {
+  if (!val) return "—";
+  const [y,m,d] = val.split("-");
+  return `${d}/${m}/${y}`;
+}
 
 // ── START ─────────────────────────────────────────────────────────────────────
 boot();
