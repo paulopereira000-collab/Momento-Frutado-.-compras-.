@@ -164,10 +164,10 @@
     /* LONG PRESS PANEL */
     #pick-panel {
       position:fixed; bottom:0; left:50%; transform:translateX(-50%);
-      width:100%; max-width:600px; background:#1e1e1e;
-      border-radius:20px 20px 0 0; padding:20px 18px 32px;
-      box-shadow:0 -4px 24px rgba(0,0,0,0.4); z-index:200;
-      display:none;
+      width:100%; max-width:600px; background:#ffffff;
+      border-radius:20px 20px 0 0; padding:0 0 28px;
+      box-shadow:0 -4px 24px rgba(0,0,0,0.12); z-index:200;
+      display:none; overflow:hidden;
     }
     #pick-panel.open { display:block; }
     #pick-overlay { position:fixed; inset:0; background:rgba(0,0,0,0.3); z-index:199; display:none; }
@@ -933,13 +933,13 @@ function closePickPanel() {
   currentPickKey = null;
 }
 
-document.getElementById("pick-price").addEventListener("change", e => {
+document.getElementById("pick-price").addEventListener("input", e => {
   if (!currentPickKey) return;
   picked[currentPickKey] = { ...picked[currentPickKey], price: e.target.value };
   sched();
 });
 
-document.getElementById("pick-sell-price").addEventListener("change", e => {
+document.getElementById("pick-sell-price").addEventListener("input", e => {
   if (!currentPickKey) return;
   const newSellPrice = e.target.value;
   const oldSellPrice = picked[currentPickKey]?.sellPrice || "";
