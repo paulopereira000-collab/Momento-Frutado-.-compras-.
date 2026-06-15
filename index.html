@@ -248,13 +248,14 @@
           <div class="wa-sub">Vai à lista e insere as quantidades</div>
         </div>
         <div id="wa-prices" style="display:none; margin-bottom:16px;">
-          <div id="wa-prices-hint" style="background:#e8f5e9; border-radius:12px; padding:13px 15px; margin-bottom:12px; font-size:14px; color:#2e7d32; font-weight:600; line-height:1.5; border-left:4px solid #7CA37C;">👆 Mantém o dedo no texto → <strong>Seleccionar tudo</strong> → <strong>Copiar</strong></div>
-          <div style="font-size:12px; font-weight:600; color:#9e9e9e; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:8px;">Alterações de preço</div>
-          <textarea id="wa-prices-text" readonly style="width:100%; padding:14px; border-radius:12px; border:1px solid #e0e0e0; font-size:15px; line-height:2; font-family:monospace; color:#1a1a1a; background:#fff; resize:none; outline:none;"></textarea>
+          <div style="font-size:12px; font-weight:600; color:var(--md-primary); text-transform:uppercase; letter-spacing:0.5px; margin-bottom:8px;">Alterações de preço</div>
+          <textarea id="wa-prices-text" readonly style="width:100%; padding:14px; border-radius:12px; border:1px solid var(--md-outline-variant); font-size:15px; line-height:2; font-family:monospace; color:var(--md-primary); background:var(--md-surface); resize:none; outline:none;"></textarea>
         </div>
         <div id="wa-filled" style="display:none">
-          <div id="wa-hint">Mantém o dedo no texto → <strong>Seleccionar tudo</strong> → <strong>Copiar</strong></div>
           <textarea id="wa-text" readonly></textarea>
+          <button onclick="copyWA()" style="width:100%;margin-top:12px;padding:14px;background:var(--md-primary);color:#fff;border:none;border-radius:12px;font-size:16px;font-weight:600;font-family:'Outfit',sans-serif;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;">
+            <span class="material-icons-round" style="font-size:20px;">content_copy</span> Copiar lista
+          </button>
         </div>
       </div>
     </div>
@@ -1124,6 +1125,18 @@ document.getElementById("add-btn").addEventListener("click", () => {
 });
 document.getElementById("cancel-btn").addEventListener("click", () => switchTo("list"));
 document.getElementById("wa-text").addEventListener("focus", e => e.target.select());
+
+function copyWA() {
+  const text = document.getElementById("wa-text").value;
+  if (!text) return;
+  if (navigator.clipboard) {
+    navigator.clipboard.writeText(text).then(() => showSnack("Copiado!", "saved"));
+  } else {
+    const ta = document.getElementById("wa-text");
+    ta.select(); document.execCommand("copy");
+    showSnack("Copiado!", "saved");
+  }
+}
 document.getElementById("wa-prices-text").addEventListener("focus", e => e.target.select());
 
 // ── SUPPLIER PICKER ───────────────────────────────────────────────────────────
