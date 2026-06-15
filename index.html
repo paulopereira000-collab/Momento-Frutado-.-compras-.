@@ -41,7 +41,7 @@
       --md-dark-outline:         #3E5042;
     }
     *, *::before, *::after { box-sizing:border-box; margin:0; padding:0; }
-    html, body { height:100%; background:var(--md-surface); font-family:'Outfit',sans-serif; color:var(--md-on-surface); }
+    html, body { height:100%; background:var(--md-surface); font-family:'Outfit',sans-serif; color:var(--md-primary); }
     input[type=number]::-webkit-inner-spin-button,
     input[type=number]::-webkit-outer-spin-button { -webkit-appearance:none; }
     input[type=number] { -moz-appearance:textfield; }
@@ -51,7 +51,7 @@
     /* LOADING */
     #loading { display:flex; flex-direction:column; align-items:center; justify-content:center; height:100vh; gap:14px; background:var(--md-surface); }
     .ld-title { font-size:22px; font-weight:600; color:var(--md-primary); }
-    .ld-sub { font-size:12px; color:var(--md-on-surface-variant); }
+    .ld-sub { font-size:12px; color:var(--md-primary); }
 
     /* SHELL */
     #app { max-width:600px; margin:0 auto; min-height:100vh; display:flex; flex-direction:column; }
@@ -60,7 +60,7 @@
     #header { background:var(--md-surface-1); border-bottom:1px solid var(--md-outline-variant); padding:0 16px; position:sticky; top:0; z-index:100; box-shadow:0 1px 3px rgba(0,0,0,0.08); }
     #header-nav { display:flex; align-items:center; justify-content:space-between; padding:12px 0; }
     #header-icons { display:flex; gap:4px; }
-    .hnav-btn { border:none; background:transparent; color:var(--md-on-surface-variant); padding:8px; cursor:pointer; display:flex; align-items:center; justify-content:center; border-radius:50%; }
+    .hnav-btn { border:none; background:transparent; color:var(--md-primary); padding:8px; cursor:pointer; display:flex; align-items:center; justify-content:center; border-radius:50%; }
     .hnav-btn:active { background:rgba(61,107,53,0.12); }
     #brand-nav-btn { font-size:14px; font-weight:600; letter-spacing:0.5px; text-transform:uppercase; padding:8px; color:var(--md-primary); border-radius:8px; }
     .hnav-btn .material-icons-round { font-size:22px; }
@@ -93,9 +93,9 @@
 
     /* QTY */
     .qty-wrap { display:flex; align-items:center; gap:6px; }
-    .qty-display { width:56px; height:56px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:26px; font-weight:400; color:var(--md-on-surface-variant); background:transparent; border:2px solid var(--md-outline-variant); cursor:pointer; transition:all 0.2s; }
-    .qty-display.active { background:transparent; color:var(--md-primary); border:2.5px solid var(--md-primary); box-shadow:none; font-weight:600; }
-    .qty-input-inline { width:56px; height:56px; text-align:center; font-size:26px; font-weight:600; border:2.5px solid var(--md-primary); border-radius:50%; color:var(--md-primary); background:transparent; font-family:inherit; outline:none; }
+    .qty-display { width:56px; height:56px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:26px; font-weight:400; color:var(--md-primary); background:#ffffff; border:1px solid var(--md-primary); cursor:pointer; transition:all 0.2s; }
+    .qty-display.active { background:#ffffff; color:var(--md-primary); border:1.25px solid var(--md-primary); box-shadow:none; font-weight:600; }
+    .qty-input-inline { width:56px; height:56px; text-align:center; font-size:26px; font-weight:600; border:1.25px solid var(--md-primary); border-radius:50%; color:var(--md-primary); background:#ffffff; font-family:inherit; outline:none; }
 
     /* CLEAR */
     #clear-wrap { padding:20px 16px 0; }
@@ -103,68 +103,68 @@
 
     /* WHATSAPP */
     #wa-content { padding:16px; }
-    #wa-empty { text-align:center; padding:60px 20px; color:var(--md-on-surface-variant); }
+    #wa-empty { text-align:center; padding:60px 20px; color:var(--md-primary); }
     #wa-empty .wa-icon { font-size:52px; margin-bottom:12px; }
-    #wa-empty .wa-title { font-size:17px; font-weight:600; color:var(--md-on-surface); }
+    #wa-empty .wa-title { font-size:17px; font-weight:600; color:var(--md-primary); }
     #wa-empty .wa-sub { font-size:14px; margin-top:6px; }
-    #wa-hint { background:var(--md-primary-container); border-radius:12px; padding:13px 15px; margin-bottom:12px; font-size:14px; color:var(--md-on-primary-container); font-weight:600; line-height:1.5; border-left:4px solid var(--md-primary); }
-    #wa-text { width:100%; padding:14px; border-radius:12px; border:1px solid var(--md-outline-variant); font-size:15px; line-height:2; font-family:monospace; color:var(--md-on-surface); background:var(--md-surface); resize:none; outline:none; }
+    #wa-hint { background:var(--md-primary-container); border-radius:12px; padding:13px 15px; margin-bottom:12px; font-size:14px; color:var(--md-primary); font-weight:600; line-height:1.5; border-left:4px solid var(--md-primary); }
+    #wa-text { width:100%; padding:14px; border-radius:12px; border:1px solid var(--md-outline-variant); font-size:15px; line-height:2; font-family:monospace; color:var(--md-primary); background:var(--md-surface); resize:none; outline:none; }
     #wa-text:focus { border-color:var(--md-primary); }
 
     /* ADD/MANAGE */
     #add-content { padding:14px; }
     .form-card { background:var(--md-surface); border-radius:16px; padding:18px; border:1px solid var(--md-outline-variant); margin-bottom:14px; }
-    .form-card-title { font-size:15px; font-weight:600; color:var(--md-on-surface); margin-bottom:16px; }
-    .form-label { font-size:11px; font-weight:600; color:var(--md-on-surface-variant); margin-bottom:5px; display:block; text-transform:uppercase; letter-spacing:0.5px; }
-    .md-input, .md-select { width:100%; padding:12px 13px; border-radius:10px; border:1px solid var(--md-outline); font-size:16px; margin-bottom:12px; font-family:inherit; outline:none; background:var(--md-surface); color:var(--md-on-surface); transition:border-color 0.15s; }
+    .form-card-title { font-size:15px; font-weight:600; color:var(--md-primary); margin-bottom:16px; }
+    .form-label { font-size:11px; font-weight:600; color:var(--md-primary); margin-bottom:5px; display:block; text-transform:uppercase; letter-spacing:0.5px; }
+    .md-input, .md-select { width:100%; padding:12px 13px; border-radius:10px; border:1px solid var(--md-outline); font-size:16px; margin-bottom:12px; font-family:inherit; outline:none; background:var(--md-surface); color:var(--md-primary); transition:border-color 0.15s; }
     .md-input:focus, .md-select:focus { border-color:var(--md-primary); }
     .btn-primary { width:100%; padding:14px; background:var(--md-primary); color:var(--md-on-primary); border:none; border-radius:12px; font-size:16px; font-weight:600; margin-bottom:8px; }
-    .btn-secondary { width:100%; padding:12px; background:var(--md-primary-container); color:var(--md-on-primary-container); border:none; border-radius:12px; font-size:15px; font-weight:600; }
+    .btn-secondary { width:100%; padding:12px; background:var(--md-primary-container); color:var(--md-primary); border:none; border-radius:12px; font-size:15px; font-weight:600; }
     .manage-cat-block { background:var(--md-surface); border-radius:12px; border:1px solid var(--md-outline-variant); overflow:hidden; margin-bottom:10px; }
     .manage-cat-hdr { padding:11px 14px; background:var(--md-surface-1); display:flex; justify-content:space-between; align-items:center; cursor:pointer; border-bottom:1px solid var(--md-outline-variant); }
-    .manage-cat-hdr span { font-size:11px; font-weight:600; color:var(--md-on-surface-variant); text-transform:uppercase; letter-spacing:0.5px; }
+    .manage-cat-hdr span { font-size:11px; font-weight:600; color:var(--md-primary); text-transform:uppercase; letter-spacing:0.5px; }
     .manage-cat-body.collapsed { display:none; }
     .manage-subcat-block { background:var(--md-surface); border-radius:10px; margin:8px; border:1px solid var(--md-outline-variant); overflow:hidden; }
     .manage-subcat-hdr { display:flex; align-items:center; gap:8px; padding:11px 14px; background:var(--md-primary-container); border-bottom:1px solid var(--md-outline-variant); }
-    .manage-subcat-title { flex:1; font-size:13px; font-weight:600; color:var(--md-on-primary-container); text-transform:uppercase; letter-spacing:0.5px; }
+    .manage-subcat-title { flex:1; font-size:13px; font-weight:600; color:var(--md-primary); text-transform:uppercase; letter-spacing:0.5px; }
     .manage-row { display:flex; align-items:center; gap:8px; padding:14px; border-top:1px solid var(--md-outline-variant); background:var(--md-surface); }
-    .manage-name { flex:1; font-size:20px; font-weight:500; color:var(--md-on-surface); }
+    .manage-name { flex:1; font-size:20px; font-weight:500; color:var(--md-primary); }
     .manage-edit-input { flex:1; font-size:17px; border:1.5px solid var(--md-primary); border-radius:8px; padding:6px 10px; font-family:inherit; outline:none; background:var(--md-surface); }
     .manage-add-row { padding:10px 12px 14px; background:var(--md-surface); }
     .manage-add-input { width:100%; padding:12px 14px; border:1.5px solid var(--md-outline-variant); border-radius:10px; font-size:18px; font-family:inherit; outline:none; background:var(--md-surface); }
     .manage-add-input:focus { border-color:var(--md-primary); }
-    .btn-add-subcat { width:calc(100% - 16px); margin:8px; padding:10px; background:var(--md-primary-container); border:none; border-radius:8px; font-size:14px; font-weight:600; color:var(--md-on-primary-container); }
-    .btn-icon { width:36px; height:36px; border:none; border-radius:8px; display:flex; align-items:center; justify-content:center; flex-shrink:0; font-size:15px; background:transparent; }
-    .btn-edit { color:#1565c0; }
+    .btn-add-subcat { width:calc(100% - 16px); margin:8px; padding:10px; background:var(--md-primary-container); border:none; border-radius:8px; font-size:14px; font-weight:600; color:var(--md-primary); }
+    .btn-icon { width:36px; height:36px; border:none; border-radius:50%; display:flex; align-items:center; justify-content:center; flex-shrink:0; font-size:20px; background:transparent; }
+    .btn-edit { color:var(--md-primary); }
     .btn-move { color:var(--md-primary); }
     .btn-delete { color:var(--md-error); }
     .btn-save { color:var(--md-primary); }
-    .btn-cancel-edit { color:var(--md-on-surface-variant); }
+    .btn-cancel-edit { color:var(--md-outline); }
 
     /* HISTORY */
     .hist-toggle { display:flex; background:var(--md-surface-variant); border-radius:12px; padding:3px; margin-bottom:14px; border:1px solid var(--md-outline-variant); }
-    .hist-toggle-btn { flex:1; padding:8px; border:none; background:transparent; border-radius:10px; font-size:13px; font-weight:600; color:var(--md-on-surface-variant); cursor:pointer; font-family:'Outfit',sans-serif; }
+    .hist-toggle-btn { flex:1; padding:8px; border:none; background:transparent; border-radius:10px; font-size:13px; font-weight:600; color:var(--md-primary); cursor:pointer; font-family:'Outfit',sans-serif; }
     .hist-toggle-btn.active { background:var(--md-surface); color:var(--md-primary); box-shadow:0 1px 4px rgba(0,0,0,0.08); }
     .hist-week { background:var(--md-surface); border-radius:12px; border:1px solid var(--md-outline-variant); margin-bottom:10px; overflow:hidden; }
     .hist-week-hdr { padding:12px 14px; background:var(--md-surface-1); display:flex; justify-content:space-between; align-items:center; }
-    .hist-week-label { font-size:14px; font-weight:600; color:var(--md-on-surface); }
-    .hist-week-count { font-size:12px; color:var(--md-on-surface-variant); }
+    .hist-week-label { font-size:14px; font-weight:600; color:var(--md-primary); }
+    .hist-week-count { font-size:12px; color:var(--md-primary); }
     .hist-week-body.collapsed { display:none; }
     .hist-item { display:flex; align-items:center; padding:10px 14px; border-top:1px solid var(--md-outline-variant); gap:10px; }
-    .hist-item-name { flex:1; font-size:16px; color:var(--md-on-surface); font-weight:500; }
-    .hist-item-detail { font-size:13px; color:var(--md-on-surface-variant); text-align:right; line-height:1.5; }
+    .hist-item-name { flex:1; font-size:16px; color:var(--md-primary); font-weight:500; }
+    .hist-item-detail { font-size:13px; color:var(--md-primary); text-align:right; line-height:1.5; }
     .hist-product { background:var(--md-surface); border-radius:12px; border:1px solid var(--md-outline-variant); margin-bottom:10px; overflow:hidden; }
     .hist-product-hdr { padding:12px 14px; background:var(--md-surface-1); display:flex; justify-content:space-between; align-items:center; cursor:pointer; }
-    .hist-product-name { font-size:14px; font-weight:600; color:var(--md-on-surface); }
+    .hist-product-name { font-size:14px; font-weight:600; color:var(--md-primary); }
     .hist-product-body.collapsed { display:none; }
     .hist-price-row { display:flex; align-items:center; padding:10px 14px; border-top:1px solid var(--md-outline-variant); gap:10px; }
-    .hist-price-date { font-size:13px; color:var(--md-on-surface-variant); flex:1; }
+    .hist-price-date { font-size:13px; color:var(--md-primary); flex:1; }
     .hist-price-val { font-size:15px; font-weight:600; color:var(--md-primary); }
-    .hist-price-sup { font-size:13px; color:var(--md-on-surface-variant); }
-    .hist-empty { text-align:center; padding:60px 20px; color:var(--md-on-surface-variant); font-size:15px; }
+    .hist-price-sup { font-size:13px; color:var(--md-primary); }
+    .hist-empty { text-align:center; padding:60px 20px; color:var(--md-primary); font-size:15px; }
 
     /* PICKED */
-    .item-name.picked { color:var(--md-outline) !important; font-weight:400 !important; text-decoration:line-through; font-size:29px !important; }
+    .item-name.picked { color:var(--md-primary) !important; font-weight:400 !important; text-decoration:none; font-size:29px !important; opacity:0.4; }
     .qty-display.picked { opacity:0.35; }
     .pick-btn { border:none; background:transparent; font-size:20px; color:var(--md-outline-variant); cursor:pointer; padding:2px; flex-shrink:0; line-height:1; }
     .pick-btn.pick-hidden { visibility:hidden; pointer-events:none; }
@@ -176,35 +176,33 @@
     #voice-modal.open { display:block; }
     #voice-modal-overlay { position:absolute; inset:0; background:rgba(0,0,0,0.55); }
     #voice-modal-panel { position:absolute; bottom:0; left:0; right:0; background:var(--md-surface); border-radius:20px 20px 0 0; padding:20px 16px 32px; max-height:80vh; overflow-y:auto; }
-    #voice-modal-title { font-size:16px; font-weight:600; color:var(--md-on-surface); margin-bottom:6px; }
-    #voice-modal-transcript { font-size:14px; color:var(--md-on-surface-variant); margin-bottom:16px; padding:10px 12px; background:var(--md-surface-1); border-radius:10px; line-height:1.5; }
+    #voice-modal-title { font-size:16px; font-weight:600; color:var(--md-primary); margin-bottom:6px; }
+    #voice-modal-transcript { font-size:14px; color:var(--md-primary); margin-bottom:16px; padding:10px 12px; background:var(--md-surface-1); border-radius:10px; line-height:1.5; }
     #voice-modal-items { display:flex; flex-direction:column; gap:8px; margin-bottom:20px; }
     .voice-item-row { display:flex; align-items:center; gap:10px; padding:12px 14px; background:var(--md-surface-1); border-radius:12px; }
     .voice-item-row.not-found { background:var(--md-error-container); }
-    .voice-item-name { flex:1; font-size:16px; font-weight:600; color:var(--md-on-surface); }
+    .voice-item-name { flex:1; font-size:16px; font-weight:600; color:var(--md-primary); }
     .voice-item-name.not-found { color:var(--md-error); }
     .voice-item-qty { font-size:16px; font-weight:600; color:var(--md-primary); min-width:40px; text-align:right; }
     #voice-modal-actions { display:flex; gap:10px; }
     #voice-confirm-btn { flex:1; padding:14px; background:var(--md-primary); color:var(--md-on-primary); border:none; border-radius:14px; font-size:16px; font-weight:600; font-family:'Outfit',sans-serif; cursor:pointer; }
-    #voice-cancel-btn { padding:14px 20px; background:var(--md-surface-variant); color:var(--md-on-surface-variant); border:none; border-radius:14px; font-size:16px; font-weight:600; font-family:'Outfit',sans-serif; cursor:pointer; }
+    #voice-cancel-btn { padding:14px 20px; background:var(--md-surface-variant); color:var(--md-primary); border:none; border-radius:14px; font-size:16px; font-weight:600; font-family:'Outfit',sans-serif; cursor:pointer; }
 
     /* PICK PANEL */
-    #pick-panel { position:fixed; bottom:0; left:50%; transform:translateX(-50%); width:100%; max-width:600px; background:#5C7E60; border-radius:28px 28px 0 0; padding:0 0 32px; box-shadow:0 -4px 32px rgba(0,0,0,0.3); z-index:200; display:none; }
+    #pick-panel { position:fixed; bottom:0; left:50%; transform:translateX(-50%); width:100%; max-width:600px; background:var(--md-surface); border-radius:28px 28px 0 0; padding:0 0 32px; box-shadow:0 -4px 32px rgba(0,0,0,0.3); z-index:200; display:none; }
     #pick-panel.open { display:block; }
     #pick-overlay { position:fixed; inset:0; background:rgba(26,28,25,0.5); z-index:199; display:none; backdrop-filter:blur(4px); -webkit-backdrop-filter:blur(4px); }
     #pick-overlay.open { display:block; }
-    #pick-title { font-size:29px; font-weight:600; color:#ffffff; font-family:'Outfit',sans-serif; padding:20px 16px 12px; text-align:left; }
+    #pick-title { font-size:29px; font-weight:600; color:var(--md-primary); font-family:'Outfit',sans-serif; padding:20px 16px 12px; text-align:left; }
     .pick-row { display:flex; align-items:center; gap:12px; padding:12px 16px; overflow:hidden; }
-    .pick-row:nth-child(even) { background:transparent; }
-    .pick-row:nth-child(odd)  { background:transparent; }
-    .pick-row-label { font-size:18px; font-weight:500; color:#ffffff; flex:1; white-space:nowrap; }
-    .pick-row-input { width:120px; max-width:120px; min-width:120px; height:48px; padding:0 14px; border:none !important; border-radius:24px !important; font-size:26px; font-weight:600; font-family:'Outfit',sans-serif; outline:none; background:rgba(255,255,255,0.9) !important; color:#5C7E60 !important; text-align:center; -webkit-appearance:none; appearance:none; flex-shrink:0; box-sizing:border-box; }
-    .pick-field-label { font-size:11px; font-weight:600; color:rgba(226,232,218,0.6); text-transform:uppercase; letter-spacing:0.5px; margin-bottom:6px; display:block; }
-    #pick-sell-price { width:100%; padding:14px; border:1.5px solid rgba(255,255,255,0.3); border-radius:12px; font-size:26px; font-family:'Outfit',sans-serif; outline:none; margin-bottom:12px; background:rgba(0,0,0,0.15); color:#ffffff; opacity:0.85; }
-    #pick-sell-price:focus { border-color:#ffffff; opacity:1; }
-    #pick-supplier { width:100%; padding:14px; border:1.5px solid rgba(255,255,255,0.3); border-radius:12px; font-size:16px; font-family:'Outfit',sans-serif; outline:none; margin-bottom:12px; background:rgba(0,0,0,0.15); color:#ffffff; }
-    #pick-supplier:focus { border-color:#ffffff; }
-    #pick-close { width:100%; padding:13px; border:1.5px solid rgba(255,255,255,0.3); border-radius:12px; font-size:15px; font-weight:600; background:transparent; color:#ffffff; cursor:pointer; font-family:'Outfit',sans-serif; opacity:0.7; }
+    .pick-row-label { font-size:18px; font-weight:500; color:var(--md-primary); flex:1; white-space:nowrap; }
+    .pick-row-input { width:120px; max-width:120px; min-width:120px; height:48px; padding:0 14px; border:none !important; border-radius:24px !important; font-size:26px; font-weight:600; font-family:'Outfit',sans-serif; outline:none; background:var(--md-primary-container) !important; color:var(--md-on-primary-container) !important; text-align:center; -webkit-appearance:none; appearance:none; flex-shrink:0; box-sizing:border-box; }
+    .pick-field-label { font-size:11px; font-weight:600; color:var(--md-primary); text-transform:uppercase; letter-spacing:0.5px; margin-bottom:6px; display:block; }
+    #pick-sell-price { width:100%; padding:16px; border:2px solid var(--md-primary); border-radius:14px; font-size:32px; font-weight:600; font-family:'Outfit',sans-serif; outline:none; margin-bottom:12px; background:var(--md-primary-container); color:var(--md-on-primary-container); }
+    #pick-sell-price:focus { border-color:var(--md-on-primary-container); }
+    #pick-supplier { width:100%; padding:14px; border:1.5px solid var(--md-outline-variant); border-radius:12px; font-size:16px; font-family:'Outfit',sans-serif; outline:none; margin-bottom:12px; background:var(--md-surface-1); color:var(--md-primary); }
+    #pick-supplier:focus { border-color:var(--md-primary); }
+    #pick-close { width:100%; padding:13px; border:1.5px solid var(--md-outline-variant); border-radius:12px; font-size:15px; font-weight:600; background:transparent; color:var(--md-primary); cursor:pointer; font-family:'Outfit',sans-serif; }
 
     /* SNACKBAR */
     #snackbar { position:fixed; bottom:24px; left:50%; transform:translateX(-50%); border-radius:12px; padding:12px 24px; font-size:14px; font-weight:600; box-shadow:0 4px 16px rgba(0,0,0,0.2); z-index:300; display:none; color:#fff; white-space:nowrap; }
@@ -321,17 +319,17 @@
   <div id="pick-panel">
     <div id="pick-title-row" style="display:flex; align-items:center; justify-content:space-between; padding:18px 16px 6px;">
       <div>
-        <div id="pick-title" style="font-size:29px; font-weight:600; color:#ffffff; font-family:'Outfit',sans-serif; text-align:left;">Produto</div>
-        <div id="pick-date-display" style="font-size:13px; color:rgba(255,255,255,0.45); margin-top:3px;">—</div>
+        <div id="pick-title" style="font-size:29px; font-weight:600; color:var(--md-primary); font-family:'Outfit',sans-serif; text-align:left;">Produto</div>
+        <div id="pick-date-display" style="display:none;">—</div>
       </div>
       <div style="display:flex; gap:10px; align-items:center;">
-        <button id="pick-prev" title="Artigo anterior" style="border:none; background:rgba(255,255,255,0.15); color:#fff; border-radius:50%; width:36px; height:36px; display:flex; align-items:center; justify-content:center; cursor:pointer; flex-shrink:0;" onclick="goPrevItem()">
+        <button id="pick-prev" title="Artigo anterior" style="border:none; background:var(--md-surface-variant); color:var(--md-primary); border-radius:50%; width:36px; height:36px; display:flex; align-items:center; justify-content:center; cursor:pointer; flex-shrink:0;" onclick="goPrevItem()">
           <span class="material-icons-round" style="font-size:20px;">arrow_upward</span>
         </button>
-        <button id="pick-next" title="Próximo artigo" style="border:none; background:rgba(255,255,255,0.15); color:#fff; border-radius:50%; width:36px; height:36px; display:flex; align-items:center; justify-content:center; cursor:pointer; flex-shrink:0;" onclick="goNextItem()">
+        <button id="pick-next" title="Próximo artigo" style="border:none; background:var(--md-surface-variant); color:var(--md-primary); border-radius:50%; width:36px; height:36px; display:flex; align-items:center; justify-content:center; cursor:pointer; flex-shrink:0;" onclick="goNextItem()">
           <span class="material-icons-round" style="font-size:20px;">arrow_downward</span>
         </button>
-        <button id="pick-close" style="border:none; background:rgba(255,255,255,0.2); color:#fff; border-radius:50%; width:36px; height:36px; display:flex; align-items:center; justify-content:center; cursor:pointer; flex-shrink:0;">
+        <button id="pick-close" style="border:none; background:var(--md-surface-variant); color:var(--md-primary); border-radius:50%; width:36px; height:36px; display:flex; align-items:center; justify-content:center; cursor:pointer; flex-shrink:0;">
           <span class="material-icons-round" style="font-size:20px;">close</span>
         </button>
       </div>
@@ -346,29 +344,29 @@
     </div>
     <div class="pick-row">
       <span class="pick-row-label">Fornecedor</span>
-      <button id="pick-supplier-btn" onclick="openSupplierPicker()" style="background:transparent;border:none;color:#f5c842;font-size:21px;font-weight:600;font-family:'Outfit',sans-serif;text-align:right;flex:1;cursor:pointer;padding:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">—</button>
+      <button id="pick-supplier-btn" onclick="openSupplierPicker()" style="background:transparent;border:none;color:var(--md-primary);font-size:21px;font-weight:600;font-family:'Outfit',sans-serif;text-align:right;flex:1;cursor:pointer;padding:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">—</button>
       <select id="pick-supplier" style="display:none"></select>
     </div>
     <div id="supplier-picker" style="display:none;position:fixed;bottom:0;left:0;right:0;background:#1e1e1e;border-radius:20px 20px 0 0;padding:16px;z-index:300;max-height:60vh;overflow-y:auto;"></div>
     <div id="supplier-overlay" onclick="closeSupplierPicker()" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:299;"></div>
     <input id="pick-date" type="date" style="position:absolute;opacity:0;width:0;height:0;pointer-events:none;"/>
-    <div id="pick-margin" style="display:none; margin:10px 16px; background:rgba(255,255,255,0.15); border-radius:14px; padding:14px 16px;">
-      <div style="font-size:13px; font-weight:600; color:rgba(255,255,255,0.7); text-transform:uppercase; letter-spacing:0.5px; margin-bottom:10px;">Análise</div>
+    <div id="pick-margin" style="display:none; margin:10px 16px; background:var(--md-primary-container); border-radius:14px; padding:14px 16px; border:1.5px solid var(--md-outline-variant);">
+      <div style="font-size:11px; font-weight:600; color:var(--md-primary); text-transform:uppercase; letter-spacing:0.8px; margin-bottom:10px;">Análise</div>
       <div style="display:flex; justify-content:space-between; margin-bottom:6px;">
-        <span style="font-size:16px; color:rgba(255,255,255,0.8);">Custo c/ IVA 6%</span>
-        <span id="pick-cost-iva" style="font-size:16px; font-weight:600; color:#fff;">—</span>
+        <span style="font-size:16px; color:var(--md-primary);">Custo c/ IVA 6%</span>
+        <span id="pick-cost-iva" style="font-size:16px; font-weight:600; color:var(--md-on-primary-container);">—</span>
       </div>
       <div style="display:flex; justify-content:space-between; margin-bottom:6px;">
-        <span style="font-size:16px; color:rgba(255,255,255,0.8);">Lucro/kg</span>
-        <span id="pick-profit" style="font-size:16px; font-weight:600; color:#fff;">—</span>
+        <span style="font-size:16px; color:var(--md-primary);">Lucro/kg</span>
+        <span id="pick-profit" style="font-size:16px; font-weight:600; color:var(--md-on-primary-container);">—</span>
       </div>
       <div style="display:flex; justify-content:space-between; margin-bottom:10px;">
-        <span style="font-size:16px; color:rgba(255,255,255,0.8);">Margem</span>
-        <span id="pick-margin-pct" style="font-size:20px; font-weight:900; color:#fff;">—</span>
+        <span style="font-size:16px; color:var(--md-primary);">Margem</span>
+        <span id="pick-margin-pct" style="font-size:22px; font-weight:700; color:var(--md-on-primary-container);">—</span>
       </div>
-      <div id="pick-suggestion" style="margin-top:10px; font-size:13px; color:rgba(255,255,255,0.7); display:none;"></div>
-      <div id="pick-margin-bar-wrap" style="height:6px; background:rgba(0,0,0,0.2); border-radius:3px; margin-top:8px; overflow:hidden; display:none;">
-        <div id="pick-margin-bar" style="height:100%; width:0%; background:#a8e6a8; border-radius:3px; transition:width 0.3s;"></div>
+      <div id="pick-suggestion" style="margin-top:10px; font-size:13px; color:var(--md-primary); display:none;"></div>
+      <div id="pick-margin-bar-wrap" style="height:6px; background:var(--md-outline-variant); border-radius:3px; margin-top:8px; overflow:hidden; display:none;">
+        <div id="pick-margin-bar" style="height:100%; width:0%; background:var(--md-primary); border-radius:3px; transition:width 0.3s;"></div>
       </div>
     </div>
   </div>
@@ -385,60 +383,60 @@ const FORNECEDORES = {
   "A5":  ["Vintage","Eurofrutas","Eurobanan","Masterfruits","Eporifrutas","Luís Vicente","Figueira bananas"],
   "A6":  ["Manuel Batista","Frutaliana","Essência da fruta","Frutorbel","Leitão frutas","Cermouros","Frutas do norte","Ferreira da Silva","Manu frutas","Antonio Aurélio","Eusébio legumes","Rui ramos","Fruta real"],
   "A8":  ["Ashtari","Xico das cebolas","Eusébio Benavente","Hortovi","Frutipt","Belinha"],
-  "A10": ["Miranda batata","Edgar","Batata olho perdiz","Algarvios"]
+  "A10": ["Miranda batata","Edgar","B. olho perdiz","Algarvios"]
 };
 
 // ── DATA ──────────────────────────────────────────────────────────────────────
 const DEFAULT_PRODUCTS = {
   "Fruta": [
-    "Abacaxi","Uva Red Globe","Uva sem grainha","Mamão","Manga","Papaia","Abacate","Kiwi Gold","Kiwi",
+    "Abacaxi","Uva Red Globe","Uva s/ grainha","Mamão","Manga","Papaia","Abacate","Kiwi Gold","Kiwi",
     "Meloa","Melão branco","Melão verde","Melancia",
-    "Maçã Gala","Maçã Gold","Maçã Reineta","Maçã Granny","Maçã Fuji","Maçã Pink Lady","Pera Rocha","Pêra Conferência","Pera William","Pera Red",
+    "Maçã Gala","M. Gold","M. Reineta","Maçã Granny","Maçã Fuji","M. Pink Lady","Pera Rocha","P. Conferência","P. William","P. Red",
     "Banana","Banana Madeira",
     "Laranja","Clementina",
-    "Pêssego amarelo","Pêssego rosa","Pêssego vermelho","Paraguaio","Nectarina","Alperce","Ameixa vermelha","Ameixa amarela",
+    "Pêss. amarelo","Pêss. rosa","Pêss. vermelho","Pêss. Paraguaio","Nectarina","Alperce","Ameix. vermelha","Ameix. amarela",
     "Cereja (cx 2kg)","Morangos","Pitaia","Mirtilos","Framboesa",
-    "Mini Gold","Mini Gala","Mini Reineta","Mini Reinetas"
+    "Mini Gold","Mini Gala","Mini Reineta","Mini Rochas"
   ],
   "Legumes": [
     "Tomate","Tomate cacho","Tomate Xuxa","Tomate rosa","Tomate cherry",
-    "Pepino","Pimento verde","Pimento vermelho","Courgette","Beringela","Feijão verde","Feijão douradinho",
-    "Batata roxa","Batata agria","Batata assar","Batata olho perdiz","Batata doce laranja",
+    "Pepino","Piment. verde","Piment. verm.","Courgette","Beringela","Feijão verde","F. douradinho",
+    "Batata roxa","Batata agria","Batata assar","B. olho perdiz","B. doce laranja",
     "Cebola","Cebola nova","Cebola doce","Cebola roxa","Cebola mini","Chalota",
-    "Cogumelo branco","Cogumelo marrom","Cogumelo Shitake","Cogumelo Eringi",
+    "Cog. branco","Cog. marrom","Cog. Shitake","Cog. Eringi",
     "Espargos","Quiabos","Malagueta"
   ],
   "Azeitonas": ["Mista Ablu","Mista Edgar","Galega","Britada","Preta","Tremoços"],
   "Frutos secos": [
-    "Bolachas amendoim","Pinhão","Caju cru","Caju com sal","Caju sem sal",
-    "Amendoim com sal","Amendoim sem sal","Pistácio","Amêndoa miolo","Amêndoa sem pele",
-    "Amêndoa torrada","Amêndoa palitada","Amêndoa laminada","Avelã","Nozes miolo","Fruta italiana",
+    "Bol. Amendoim","Pinhão","Caju cru","Caju com sal","Caju sem sal",
+    "Amendoim c/ Sal","Amendoim s/ Sal","Pistácio","Amêndoa miolo","Amêndoa s/ Pele",
+    "Amêndoa Torr.","Amêndoa Palit.","Amêndoa Lamin.","Avelã","Nozes miolo","Fruta italiana",
     "Tâmara Medjool","Tâmara barata","Figos","Figos turcos","Favas","Arandos",
-    "Sultana branca miúda","Sultana preta miúda","Sultana XL","Ameixa seca","Alperce seco"
+    "Sultana Branca","Sultana Preta","Sultana XL","Ameixa seca","Alperce seco"
   ],
   "Consumíveis": [
-    "Filme","Saco 30×40 HD rolo (normais)","Saco 20×30×3 rolo (frutos secos)",
-    "Saco 40×60 HD rolo (horta)","Covetes 1kg","Covetes 500gr",
-    "Saco 30×40×3 LB solto (melão)","Saco 40×60 LD rolo (melancia)","Fita cola"
+    "Filme","Saco Normais","Saco Frutos Secos",
+    "Saco Horta","Covetes 1kg","Covetes 500gr",
+    "Saco Melão","Saco Melancia","Fita cola"
   ]
 };
 
 const DEFAULT_SUBCATS = {
   "Legumes": [
-    { name: "Tomate", items: ["Tomate","Tomate cacho","Tomate Xuxa","Tomate rosa","Tomate cherry","Pepino","Pimento verde","Pimento vermelho","Courgette","Beringela","Feijão verde","Feijão douradinho"] },
-    { name: "Batata", items: ["Batata roxa","Batata agria","Batata assar","Batata olho perdiz","Batata doce laranja"] },
+    { name: "Tomate", items: ["Tomate","Tomate cacho","Tomate Xuxa","Tomate rosa","Tomate cherry","Pepino","Piment. verde","Piment. verm.","Courgette","Beringela","Feijão verde","F. douradinho"] },
+    { name: "Batata", items: ["Batata roxa","Batata agria","Batata assar","B. olho perdiz","B. doce laranja"] },
     { name: "Cebola", items: ["Cebola","Cebola nova","Cebola doce","Cebola roxa","Cebola mini","Chalota"] },
-    { name: "Cogumelo", items: ["Cogumelo branco","Cogumelo marrom","Cogumelo Shitake","Cogumelo Eringi","Espargos","Quiabos","Malagueta"] }
+    { name: "Cogumelo", items: ["Cog. branco","Cog. marrom","Cog. Shitake","Cog. Eringi","Espargos","Quiabos","Malagueta"] }
   ],
   "Fruta": [
-    { name: "Tropical",        items: ["Abacaxi","Uva Red Globe","Uva sem grainha","Mamão","Manga","Papaia","Abacate","Kiwi Gold","Kiwi"] },
+    { name: "Tropical",        items: ["Abacaxi","Uva Red Globe","Uva s/ grainha","Mamão","Manga","Papaia","Abacate","Kiwi Gold","Kiwi"] },
     { name: "Melões",          items: ["Meloa","Melão branco","Melão verde","Melancia"] },
-    { name: "Maçãs e Peras",   items: ["Maçã Gala","Maçã Gold","Maçã Reineta","Maçã Granny","Maçã Fuji","Maçã Pink Lady","Pera Rocha","Pêra Conferência","Pera William","Pera Red"] },
+    { name: "Maçãs e Peras",   items: ["Maçã Gala","M. Gold","M. Reineta","Maçã Granny","Maçã Fuji","M. Pink Lady","Pera Rocha","P. Conferência","P. William","P. Red"] },
     { name: "Banana",          items: ["Banana","Banana Madeira"] },
     { name: "Citrinos",        items: ["Laranja","Clementina"] },
-    { name: "Prunóideas",      items: ["Pêssego amarelo","Pêssego rosa","Pêssego vermelho","Paraguaio","Nectarina","Alperce","Ameixa vermelha","Ameixa amarela"] },
+    { name: "Prunóideas",      items: ["Pêss. amarelo","Pêss. rosa","Pêss. vermelho","Pêss. Paraguaio","Nectarina","Alperce","Ameix. vermelha","Ameix. amarela"] },
     { name: "Frutos vermelhos",items: ["Cereja (cx 2kg)","Morangos","Pitaia","Mirtilos","Framboesa"] },
-    { name: "Mini",            items: ["Mini Gold","Mini Gala","Mini Reineta","Mini Reinetas"] }
+    { name: "Mini",            items: ["Mini Gold","Mini Gala","Mini Reineta","Mini Rochas"] }
   ]
 };
 
@@ -543,7 +541,7 @@ ${allItems.join(", ")}
 
 O utilizador disse: "${transcript}"
 
-Interpreta o que disse e extrai os artigos e quantidades. Faz correspondência aproximada com os produtos da lista (ex: "granny" = "Maçã Granny", "banana madeira" = "Banana Madeira", "pêssego vermelho" = "Pêssego vermelho").
+Interpreta o que disse e extrai os artigos e quantidades. Faz correspondência aproximada com os produtos da lista (ex: "granny" = "Maçã Granny", "banana madeira" = "Banana Madeira", "pêssego vermelho" = "Pêss. vermelho").
 
 Responde APENAS em JSON válido, sem mais texto, neste formato exacto:
 {"items":[{"name":"nome exacto do produto da lista","qty":numero},...],"unmatched":["palavra que não reconheceste"]}
@@ -868,13 +866,13 @@ function renderManage() {
         const gHdr = document.createElement("div"); gHdr.className = "manage-subcat-hdr";
         const gTitle = document.createElement("span"); gTitle.className = "manage-subcat-title"; gTitle.textContent = group.name;
 
-        const btnRen = document.createElement("button"); btnRen.className = "btn-icon btn-edit"; btnRen.textContent = "✏️";
+        const btnRen = document.createElement("button"); btnRen.className = "btn-icon btn-edit material-icons-round"; btnRen.textContent = "edit";
         btnRen.addEventListener("click", () => {
           const n = prompt("Novo nome:", group.name); if (!n||!n.trim()) return;
           subcats[cat][gi].name = n.trim(); sched(); renderManage();
         });
 
-        const btnDel = document.createElement("button"); btnDel.className = "btn-icon btn-delete"; btnDel.textContent = "🗑️";
+        const btnDel = document.createElement("button"); btnDel.className = "btn-icon btn-delete material-icons-round"; btnDel.textContent = "delete_outline";
         btnDel.addEventListener("click", () => {
           if (!confirm(`Apagar subcategoria "${group.name}"?`)) return;
           subcats[cat].splice(gi, 1); sched(); renderManage(); renderCats("");
@@ -888,11 +886,11 @@ function renderManage() {
           const row = document.createElement("div"); row.className = "manage-row";
           const nm = document.createElement("span"); nm.className = "manage-name"; nm.textContent = item;
 
-          const bE = document.createElement("button"); bE.className = "btn-icon btn-edit"; bE.textContent = "✏️";
+          const bE = document.createElement("button"); bE.className = "btn-icon btn-edit material-icons-round"; bE.textContent = "edit";
           bE.addEventListener("click", () => {
             const inp = document.createElement("input"); inp.className = "manage-edit-input"; inp.value = item;
-            const bS = document.createElement("button"); bS.className = "btn-icon btn-save"; bS.textContent = "✓";
-            const bC = document.createElement("button"); bC.className = "btn-icon btn-cancel-edit"; bC.textContent = "✕";
+            const bS = document.createElement("button"); bS.className = "btn-icon btn-save material-icons-round"; bS.textContent = "check";
+            const bC = document.createElement("button"); bC.className = "btn-icon btn-cancel-edit material-icons-round"; bC.textContent = "close";
             row.innerHTML = ""; row.appendChild(inp); row.appendChild(bS); row.appendChild(bC); inp.focus(); inp.select();
             const doSave = () => {
               const n = inp.value.trim(); if (!n||n===item) { renderManage(); return; }
@@ -906,7 +904,7 @@ function renderManage() {
             inp.addEventListener("keydown", e => { if(e.key==="Enter") doSave(); if(e.key==="Escape") renderManage(); });
           });
 
-          const bM = document.createElement("button"); bM.className = "btn-icon btn-move"; bM.textContent = "↕️";
+          const bM = document.createElement("button"); bM.className = "btn-icon btn-move material-icons-round"; bM.textContent = "swap_vert";
           bM.addEventListener("click", () => {
             const others = subcats[cat].filter((_, i) => i !== gi);
             if (!others.length) { alert("Não há outras subcategorias."); return; }
@@ -922,7 +920,7 @@ function renderManage() {
             sched(); renderManage(); renderCats("");
           });
 
-          const bD = document.createElement("button"); bD.className = "btn-icon btn-delete"; bD.textContent = "🗑️";
+          const bD = document.createElement("button"); bD.className = "btn-icon btn-delete material-icons-round"; bD.textContent = "delete_outline";
           bD.addEventListener("click", () => {
             if (!confirm(`Apagar "${item}"?`)) return;
             products[cat] = products[cat].filter(i => i !== item);
@@ -955,12 +953,12 @@ function renderManage() {
       items.forEach(item => {
         const row = document.createElement("div"); row.className = "manage-row";
         const nm = document.createElement("span"); nm.className = "manage-name"; nm.textContent = item;
-        const bE = document.createElement("button"); bE.className = "btn-icon btn-edit"; bE.textContent = "✏️";
-        const bD = document.createElement("button"); bD.className = "btn-icon btn-delete"; bD.textContent = "🗑️";
+        const bE = document.createElement("button"); bE.className = "btn-icon btn-edit material-icons-round"; bE.textContent = "edit";
+        const bD = document.createElement("button"); bD.className = "btn-icon btn-delete material-icons-round"; bD.textContent = "delete_outline";
         bE.addEventListener("click", () => {
           const inp = document.createElement("input"); inp.className = "manage-edit-input"; inp.value = item;
-          const bS = document.createElement("button"); bS.className = "btn-icon btn-save"; bS.textContent = "✓";
-          const bC = document.createElement("button"); bC.className = "btn-icon btn-cancel-edit"; bC.textContent = "✕";
+          const bS = document.createElement("button"); bS.className = "btn-icon btn-save material-icons-round"; bS.textContent = "check";
+          const bC = document.createElement("button"); bC.className = "btn-icon btn-cancel-edit material-icons-round"; bC.textContent = "close";
           row.innerHTML = ""; row.appendChild(inp); row.appendChild(bS); row.appendChild(bC); inp.focus(); inp.select();
           const ds = () => {
             const n = inp.value.trim(); if (!n||n===item) { renderManage(); return; }
@@ -1136,21 +1134,21 @@ function openSupplierPicker() {
   picker.innerHTML = "";
 
   const title = document.createElement("div");
-  title.style.cssText = "font-size:16px;font-weight:600;color:#fff;margin-bottom:14px;";
+  title.style.cssText = "font-size:20px;font-weight:600;color:var(--md-primary);margin-bottom:14px;";
   title.textContent = "Escolher fornecedor";
   picker.appendChild(title);
 
   Object.entries(FORNECEDORES).forEach(([corridor, suppliers]) => {
     const grpLabel = document.createElement("div");
-    grpLabel.style.cssText = "font-size:11px;font-weight:600;color:#888;text-transform:uppercase;letter-spacing:0.5px;margin:10px 0 6px;";
+    grpLabel.style.cssText = "font-size:12px;font-weight:600;color:var(--md-outline);text-transform:uppercase;letter-spacing:0.5px;margin:10px 0 6px;";
     grpLabel.textContent = corridor;
     picker.appendChild(grpLabel);
     suppliers.forEach(s => {
       const btn = document.createElement("button");
-      btn.style.cssText = "display:block;width:100%;text-align:left;padding:11px 14px;border:none;border-radius:8px;font-size:16px;font-family:'Outfit',sans-serif;cursor:pointer;margin-bottom:4px;font-weight:600;";
+      btn.style.cssText = "display:block;width:100%;text-align:left;padding:14px 16px;border:none;border-radius:10px;font-size:22px;font-family:'Outfit',sans-serif;cursor:pointer;margin-bottom:6px;font-weight:500;";
       const isSel = picked[currentPickKey]?.supplier === s;
-      btn.style.background = isSel ? "#7CA37C" : "#2a2a2a";
-      btn.style.color = isSel ? "#fff" : "#ddd";
+      btn.style.background = isSel ? "var(--md-primary)" : "var(--md-surface-1)";
+      btn.style.color = isSel ? "#fff" : "var(--md-primary)";
       btn.textContent = s;
       btn.addEventListener("click", () => {
         picked[currentPickKey] = { ...picked[currentPickKey], supplier: s };
@@ -1165,7 +1163,7 @@ function openSupplierPicker() {
 
   // New supplier option
   const newBtn = document.createElement("button");
-  newBtn.style.cssText = "display:block;width:100%;text-align:left;padding:11px 14px;border:1.5px dashed #555;border-radius:8px;font-size:15px;font-family:'Outfit',sans-serif;cursor:pointer;margin-top:10px;font-weight:600;background:transparent;color:#aaa;";
+  newBtn.style.cssText = "display:block;width:100%;text-align:left;padding:14px 16px;border:1.5px dashed var(--md-outline-variant);border-radius:10px;font-size:20px;font-family:'Outfit',sans-serif;cursor:pointer;margin-top:10px;font-weight:500;background:transparent;color:var(--md-primary);";
   newBtn.textContent = "+ Novo fornecedor...";
   newBtn.addEventListener("click", () => {
     closeSupplierPicker();
@@ -1340,14 +1338,14 @@ function updateMargin() {
 
   document.getElementById("pick-cost-iva").textContent = costIVA ? costIVA.toFixed(2) + "€/kg" : "—";
   document.getElementById("pick-profit").textContent   = profit  ? (profit >= 0 ? "+" : "") + profit.toFixed(2) + "€/kg" : "—";
-  document.getElementById("pick-profit").style.color   = profit  ? (profit >= 0 ? "#a8e6a8" : "#ff9999") : "#fff";
+  document.getElementById("pick-profit").style.color   = profit  ? (profit >= 0 ? "#3D6B35" : "#9B3A3A") : "var(--md-primary)";
 
   if (margin !== null) {
     document.getElementById("pick-margin-pct").textContent = margin.toFixed(1) + "%";
-    document.getElementById("pick-margin-pct").style.color = margin >= 30 ? "#a8e6a8" : margin >= 15 ? "#ffe082" : "#ff9999";
+    document.getElementById("pick-margin-pct").style.color = margin >= 30 ? "#3D6B35" : margin >= 15 ? "#5C7E60" : "#9B3A3A";
     const barWrap = document.getElementById("pick-margin-bar-wrap");
     const bar = document.getElementById("pick-margin-bar");
-    if (bar) { bar.style.width = Math.min(100, Math.max(0, margin)).toFixed(1) + "%"; bar.style.background = margin >= 30 ? "#a8e6a8" : margin >= 15 ? "#ffe082" : "#ff9999"; }
+    if (bar) { bar.style.width = Math.min(100, Math.max(0, margin)).toFixed(1) + "%"; bar.style.background = margin >= 30 ? "#3D6B35" : margin >= 15 ? "#7A9E7E" : "#9B3A3A"; }
     if (barWrap) barWrap.style.display = "block";
     const sug = document.getElementById("pick-suggestion");
     if (margin < 15) {
