@@ -254,17 +254,13 @@
       <div id="header-icons" style="display:flex; align-items:center; justify-content:space-between; width:100%;">
         <button class="hnav-btn active" data-view="dashboard"><span class="material-icons-round">home</span></button>
         <div style="display:flex; align-items:center; gap:0;">
-          <button id="filter-btn" title="Filtrar com quantidade" style="background:transparent;border:none;color:#555;cursor:pointer;padding:4px;display:none;align-items:center;align-self:center;" onclick="toggleFilter()">
-            <span class="material-icons-round" style="font-size:20px;">filter_list</span>
+          <button id="filter-btn" style="background:transparent;border:none;color:var(--md-primary);cursor:pointer;padding:8px;display:none;align-items:center;" onclick="toggleFilter()">
+            <span class="material-icons-round" style="font-size:22px;">filter_list</span>
           </button>
           <button class="hnav-btn" data-view="list"><span class="material-icons-round">shopping_basket</span></button>
-          <button class="hnav-btn" data-view="prices"><span class="material-icons-round">sell</span></button>
-          <button class="hnav-btn" data-view="orders"><span class="material-icons-round">receipt_long</span></button>
-          <button class="hnav-btn" data-view="tasks"><span class="material-icons-round">check_circle_outline</span></button>
-          <button class="hnav-btn" onclick="toggleSettingsMenu(event)" id="settings-btn"><span class="material-icons-round">more_vert</span></button>
+          <button class="hnav-btn" onclick="openSettings()" id="settings-btn"><span class="material-icons-round">more_vert</span></button>
         </div>
       </div>
-
     </div>
   </div>
 
@@ -439,11 +435,13 @@
       <div style="width:40px; height:4px; background:var(--md-outline-variant); border-radius:2px; margin:0 auto 20px;"></div>
       <div style="font-size:20px; font-weight:800; color:var(--md-primary); margin-bottom:20px;">Nova encomenda</div>
       <label style="font-size:11px; font-weight:700; color:var(--md-primary); text-transform:uppercase; letter-spacing:0.5px; display:block; margin-bottom:6px;">Cliente</label>
-      <input id="order-client" type="text" placeholder="Nome do cliente" style="width:100%; padding:14px; border-radius:10px; border:1.5px solid var(--md-outline-variant); font-size:18px; font-family:'Outfit',sans-serif; outline:none; margin-bottom:14px; background:var(--md-surface-1); color:var(--md-primary);"/>
+      <input id="order-client" type="text" placeholder="Nome do cliente" style="width:100%; padding:14px; border-radius:10px; border:1.5px solid var(--md-outline-variant); font-size:18px; font-family:'Outfit',sans-serif; outline:none; margin-bottom:14px; background:var(--md-surface-1); color:var(--md-primary);"
+        onkeydown="if(event.key==='Enter'){event.preventDefault();document.getElementById('order-items').focus();}"/>
       <label style="font-size:11px; font-weight:700; color:var(--md-primary); text-transform:uppercase; letter-spacing:0.5px; display:block; margin-bottom:6px;">O que pediu</label>
       <textarea id="order-items" placeholder="Ex: 2kg cerejas, 1 melancia, 500g morangos..." style="width:100%; padding:14px; border-radius:10px; border:1.5px solid var(--md-outline-variant); font-size:18px; font-family:'Outfit',sans-serif; outline:none; margin-bottom:14px; background:var(--md-surface-1); color:var(--md-primary); min-height:100px; resize:none;"></textarea>
       <label style="font-size:11px; font-weight:700; color:var(--md-primary); text-transform:uppercase; letter-spacing:0.5px; display:block; margin-bottom:6px;">Hora / Data (opcional)</label>
-      <input id="order-time" type="text" placeholder="Ex: Hoje às 17h, Sábado de manhã..." style="width:100%; padding:14px; border-radius:10px; border:1.5px solid var(--md-outline-variant); font-size:16px; font-family:'Outfit',sans-serif; outline:none; margin-bottom:20px; background:var(--md-surface-1); color:var(--md-primary);"/>
+      <input id="order-time" type="text" placeholder="Ex: Hoje às 17h, Sábado de manhã..." style="width:100%; padding:14px; border-radius:10px; border:1.5px solid var(--md-outline-variant); font-size:16px; font-family:'Outfit',sans-serif; outline:none; margin-bottom:20px; background:var(--md-surface-1); color:var(--md-primary);"
+        onkeydown="if(event.key==='Enter'){event.preventDefault();saveOrder();}"/>
       <div style="display:flex; gap:10px;">
         <button onclick="closeOrderModal()" style="padding:16px 20px; background:var(--md-surface-variant); color:var(--md-primary); border:none; border-radius:12px; font-size:16px; font-weight:600; font-family:'Outfit',sans-serif; cursor:pointer;">Cancelar</button>
         <button onclick="saveOrder()" style="flex:1; padding:16px; background:var(--md-primary); color:#fff; border:none; border-radius:12px; font-size:16px; font-weight:700; font-family:'Outfit',sans-serif; cursor:pointer;">Guardar</button>
@@ -470,7 +468,22 @@
       </div>
     </div>
 
-    <!-- ── RESUMO ──────────────────────────────────────────────────────────── -->
+    <!-- ── DEFINIÇÕES ─────────────────────────────────────────────────────── -->
+    <div id="view-settings" class="view">
+      <div style="padding:28px 20px 0;">
+        <div style="font-size:13px; color:var(--md-primary); opacity:0.6; margin-bottom:4px; font-weight:500;">MENU</div>
+        <div style="font-size:48px; font-weight:900; color:var(--md-primary); line-height:0.95; letter-spacing:-2px; margin-bottom:32px;">Definições</div>
+      </div>
+      <div style="padding:0 20px; display:flex; flex-direction:column; gap:0;">
+        <button onclick="switchTo('prices')" style="background:none; border:none; border-bottom:1px solid var(--md-outline-variant); padding:16px 0; text-align:left; cursor:pointer; width:100%; font-size:22px; font-weight:700; color:var(--md-primary); font-family:'Outfit',sans-serif;">PREÇOS</button>
+        <button onclick="switchTo('orders')" style="background:none; border:none; border-bottom:1px solid var(--md-outline-variant); padding:16px 0; text-align:left; cursor:pointer; width:100%; font-size:22px; font-weight:700; color:var(--md-primary); font-family:'Outfit',sans-serif;">ENCOMENDAS</button>
+        <button onclick="switchTo('tasks')" style="background:none; border:none; border-bottom:1px solid var(--md-outline-variant); padding:16px 0; text-align:left; cursor:pointer; width:100%; font-size:22px; font-weight:700; color:var(--md-primary); font-family:'Outfit',sans-serif;">TAREFAS</button>
+        <button onclick="switchTo('whatsapp')" style="background:none; border:none; border-bottom:1px solid var(--md-outline-variant); padding:14px 0; text-align:left; cursor:pointer; width:100%; font-size:17px; font-weight:500; color:var(--md-primary); font-family:'Outfit',sans-serif;">💬 WhatsApp</button>
+        <button onclick="switchTo('history')" style="background:none; border:none; border-bottom:1px solid var(--md-outline-variant); padding:14px 0; text-align:left; cursor:pointer; width:100%; font-size:17px; font-weight:500; color:var(--md-primary); font-family:'Outfit',sans-serif;">🕐 Histórico</button>
+        <button onclick="switchTo('suppliers')" style="background:none; border:none; border-bottom:1px solid var(--md-outline-variant); padding:14px 0; text-align:left; cursor:pointer; width:100%; font-size:17px; font-weight:500; color:var(--md-primary); font-family:'Outfit',sans-serif;">👥 Fornecedores</button>
+        <button onclick="switchTo('add')" style="background:none; border:none; padding:14px 0; text-align:left; cursor:pointer; width:100%; font-size:17px; font-weight:500; color:var(--md-primary); font-family:'Outfit',sans-serif;">⚙️ Gestão</button>
+      </div>
+    </div>
     <div id="view-resumo" class="view">
       <div style="padding:28px 20px;">
         <div style="font-size:32px; font-weight:900; color:var(--md-primary); line-height:1.1; margin-bottom:8px;">Resumo</div>
@@ -619,11 +632,13 @@
     </div>
     <div class="pick-row">
       <span class="pick-row-label">Preço venda</span>
-      <input id="pick-sell-price" class="pick-row-input" type="number" inputmode="decimal" placeholder="0.00" step="0.01" min="0"/>
+      <input id="pick-sell-price" class="pick-row-input" type="number" inputmode="decimal" placeholder="0.00" step="0.01" min="0"
+        onkeydown="if(event.key==='Enter'){event.preventDefault();document.getElementById('pick-price').focus();}"/>
     </div>
     <div class="pick-row">
       <span class="pick-row-label">Preço compra</span>
-      <input id="pick-price" class="pick-row-input" type="number" inputmode="decimal" placeholder="0.00" step="0.01" min="0"/>
+      <input id="pick-price" class="pick-row-input" type="number" inputmode="decimal" placeholder="0.00" step="0.01" min="0"
+        onkeydown="if(event.key==='Enter'){event.preventDefault();document.getElementById('pick-notes').focus();}"/>
     </div>
     <div class="pick-row">
       <span class="pick-row-label">Fornecedor</span>
@@ -638,7 +653,8 @@
     <input id="pick-date" type="date" style="position:absolute;opacity:0;width:0;height:0;pointer-events:none;"/>
     <div style="padding:8px 16px 0;">
       <span class="pick-field-label">Notas</span>
-      <input id="pick-notes" type="text" placeholder="Ex: só se estiver barato, pedir ao João..." style="width:100%; padding:12px 14px; border:1.5px solid var(--md-outline-variant); border-radius:12px; font-size:15px; font-family:'Outfit',sans-serif; outline:none; background:var(--md-surface-1); color:var(--md-primary); margin-bottom:8px;"/>
+      <input id="pick-notes" type="text" placeholder="Ex: só se estiver barato, pedir ao João..." style="width:100%; padding:12px 14px; border:1.5px solid var(--md-outline-variant); border-radius:12px; font-size:15px; font-family:'Outfit',sans-serif; outline:none; background:var(--md-surface-1); color:var(--md-primary); margin-bottom:8px;"
+        onkeydown="if(event.key==='Enter'){event.preventDefault();document.getElementById('pick-min-stock').focus();}"/>
     </div>
     <div style="padding:0 16px 8px; display:flex; align-items:center; justify-content:space-between;">
       <span class="pick-field-label" style="margin-bottom:0;">IVA</span>
@@ -650,7 +666,8 @@
     <div style="padding:0 16px 8px;">
       <span class="pick-field-label">Stock mínimo</span>
       <div style="display:flex; align-items:center; gap:10px;">
-        <input id="pick-min-stock" type="number" inputmode="numeric" placeholder="—" min="0" style="width:80px; padding:10px 14px; border:1.5px solid var(--md-outline-variant); border-radius:12px; font-size:18px; font-weight:700; font-family:'Outfit',sans-serif; outline:none; background:var(--md-surface-1); color:var(--md-primary); text-align:center;"/>
+        <input id="pick-min-stock" type="number" inputmode="numeric" placeholder="—" min="0" style="width:80px; padding:10px 14px; border:1.5px solid var(--md-outline-variant); border-radius:12px; font-size:18px; font-weight:700; font-family:'Outfit',sans-serif; outline:none; background:var(--md-surface-1); color:var(--md-primary); text-align:center;"
+          onkeydown="if(event.key==='Enter'){event.preventDefault();closePickPanel();}"/>
         <span style="font-size:14px; color:var(--md-primary); opacity:0.6;">caixas mínimo</span>
       </div>
     </div>
@@ -677,13 +694,16 @@
 </div>
 
 <!-- SETTINGS BOTTOM SHEET -->
-<div <div id="settings-overlay" onclick="closeSettingsMenu()" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.5); z-index:498;"></div>
+<div id="settings-overlay" onclick="closeSettingsMenu()" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.5); z-index:498;"></div>
 <div id="settings-sheet" style="display:none; position:fixed; bottom:0; left:0; right:0; background:#F5F7F2; border-radius:20px 20px 0 0; z-index:499; padding-bottom:40px;">
   <div style="width:40px; height:4px; background:#ccc; border-radius:2px; margin:16px auto 12px;"></div>
-  <button onclick="switchTo('whatsapp'); closeSettingsMenu();" style="display:block; width:100%; padding:18px 24px; border:none; border-bottom:1px solid #ddd; background:none; font-size:18px; font-weight:500; color:#5C7E60; text-align:left; cursor:pointer; font-family:Outfit,sans-serif;">💬 WhatsApp</button>
-  <button onclick="switchTo('history'); closeSettingsMenu();" style="display:block; width:100%; padding:18px 24px; border:none; border-bottom:1px solid #ddd; background:none; font-size:18px; font-weight:500; color:#5C7E60; text-align:left; cursor:pointer; font-family:Outfit,sans-serif;">🕐 Histórico</button>
-  <button onclick="switchTo('suppliers'); closeSettingsMenu();" style="display:block; width:100%; padding:18px 24px; border:none; border-bottom:1px solid #ddd; background:none; font-size:18px; font-weight:500; color:#5C7E60; text-align:left; cursor:pointer; font-family:Outfit,sans-serif;">👥 Fornecedores</button>
-  <button onclick="switchTo('add'); closeSettingsMenu();" style="display:block; width:100%; padding:18px 24px; border:none; background:none; font-size:18px; font-weight:500; color:#5C7E60; text-align:left; cursor:pointer; font-family:Outfit,sans-serif;">⚙️ Gestão</button>
+  <button onclick="switchTo('prices'); closeSettingsMenu();" style="display:block; width:100%; padding:18px 24px; border:none; border-bottom:1px solid #ddd; background:none; font-size:20px; font-weight:700; color:#5C7E60; text-align:left; cursor:pointer; font-family:Outfit,sans-serif;">PREÇOS</button>
+  <button onclick="switchTo('orders'); closeSettingsMenu();" style="display:block; width:100%; padding:18px 24px; border:none; border-bottom:1px solid #ddd; background:none; font-size:20px; font-weight:700; color:#5C7E60; text-align:left; cursor:pointer; font-family:Outfit,sans-serif;">ENCOMENDAS</button>
+  <button onclick="switchTo('tasks'); closeSettingsMenu();" style="display:block; width:100%; padding:18px 24px; border:none; border-bottom:1px solid #ddd; background:none; font-size:20px; font-weight:700; color:#5C7E60; text-align:left; cursor:pointer; font-family:Outfit,sans-serif;">TAREFAS</button>
+  <button onclick="switchTo('whatsapp'); closeSettingsMenu();" style="display:block; width:100%; padding:16px 24px; border:none; border-bottom:1px solid #ddd; background:none; font-size:16px; font-weight:500; color:#5C7E60; text-align:left; cursor:pointer; font-family:Outfit,sans-serif;">💬 WhatsApp</button>
+  <button onclick="switchTo('history'); closeSettingsMenu();" style="display:block; width:100%; padding:16px 24px; border:none; border-bottom:1px solid #ddd; background:none; font-size:16px; font-weight:500; color:#5C7E60; text-align:left; cursor:pointer; font-family:Outfit,sans-serif;">🕐 Histórico</button>
+  <button onclick="switchTo('suppliers'); closeSettingsMenu();" style="display:block; width:100%; padding:16px 24px; border:none; border-bottom:1px solid #ddd; background:none; font-size:16px; font-weight:500; color:#5C7E60; text-align:left; cursor:pointer; font-family:Outfit,sans-serif;">👥 Fornecedores</button>
+  <button onclick="switchTo('add'); closeSettingsMenu();" style="display:block; width:100%; padding:16px 24px; border:none; background:none; font-size:16px; font-weight:500; color:#5C7E60; text-align:left; cursor:pointer; font-family:Outfit,sans-serif;">⚙️ Gestão</button>
 </div>
 
 
@@ -700,13 +720,6 @@ function formatPrice(val) {
   return n.toFixed(2);
 }
 const CLOSED_BY_DEFAULT = ["Azeitonas","Frutos secos","Consumíveis"];
-
-const FORNECEDORES = {
-  "A5":  ["Vintage","Eurofrutas","Eurobanan","Masterfruits","Eporifrutas","Luís Vicente","Figueira bananas"],
-  "A6":  ["Manuel Batista","Frutaliana","Essência da fruta","Frutorbel","Leitão frutas","Cermouros","Frutas do norte","Ferreira da Silva","Manu frutas","Antonio Aurélio","Eusébio legumes","Rui ramos","Fruta real"],
-  "A8":  ["Ashtari","Xico das cebolas","Eusébio Benavente","Hortovi","Frutipt","Belinha"],
-  "A10": ["Miranda batata","Edgar","B. olho perdiz","Algarvios"]
-};
 
 // ── DATA ──────────────────────────────────────────────────────────────────────
 const DEFAULT_PRODUCTS = {
@@ -953,11 +966,7 @@ function closeVoiceModal() {
 }
 
 // ── SWITCH VIEW ───────────────────────────────────────────────────────────────
-function switchView(name) {
-  // Simulate clicking the nav button for this view
-  const btn = document.querySelector(`.hnav-btn[data-view="${name}"]`);
-  if (btn) btn.click();
-}
+
 
 // ── DASHBOARD ─────────────────────────────────────────────────────────────────
 function renderDashboard() {
@@ -1007,7 +1016,7 @@ function renderDashboard() {
 function toggleTaskDash(id) { toggleTask(id); renderDashboard(); }
 function deleteTaskDash(id) { deleteTask(id); renderDashboard(); }
 
-// ── FORNECEDORES ──────────────────────────────────────────────────────────────
+// ── FORNECEDORES (lista dinâmica em suppliers[]) ────────────────────────────────
 function openSupplierModal() {
   document.getElementById('sup-name').value  = '';
   document.getElementById('sup-type').value  = '';
@@ -1024,7 +1033,7 @@ function callCurrentSupplier() {
   if (!name) return;
   const sup = suppliers.find(s => s.name === name);
   if (sup?.phone) {
-    window.location.href = `tel:${sup.phone}`;
+    window.location.href = 'tel:' + sup.phone;
   } else {
     showSnack('Sem telefone para este fornecedor', 'error');
   }
@@ -1034,11 +1043,7 @@ function updateSupplierCallBtn(supplierName) {
   const btn = document.getElementById('pick-supplier-call-btn');
   if (!btn) return;
   const sup = suppliers.find(s => s.name === supplierName);
-  if (sup?.phone) {
-    btn.style.display = 'flex';
-  } else {
-    btn.style.display = 'none';
-  }
+  btn.style.display = (sup?.phone) ? 'flex' : 'none';
 }
 
 function saveSupplier() {
@@ -1571,18 +1576,20 @@ function updatePickedPrice(input) {
   showSnack('Preço guardado ✓', 'saved');
 }
 
-function toggleSettingsMenu(e) {
-  if (e) { e.stopPropagation(); e.preventDefault(); }
-  const sheet = document.getElementById('settings-sheet');
-  const overlay = document.getElementById('settings-overlay');
-  const isHidden = sheet.style.display === 'none' || sheet.style.display === '';
-  sheet.style.display = isHidden ? 'flex' : 'none';
-  overlay.style.display = isHidden ? 'block' : 'none';
+function openSettings() {
+  switchTo('settings');
 }
 
 function closeSettingsMenu() {
-  document.getElementById('settings-sheet').style.display = 'none';
-  document.getElementById('settings-overlay').style.display = 'none';
+  // apenas esconde o sheet se existir — não chama switchTo
+  const sheet = document.getElementById('settings-sheet');
+  const overlay = document.getElementById('settings-overlay');
+  if (sheet) sheet.style.display = 'none';
+  if (overlay) overlay.style.display = 'none';
+}
+
+function toggleSettingsMenu(e) {
+  openSettings();
 }
 
 function toggleFilter() {
@@ -1706,7 +1713,8 @@ function renderCats(search) {
             warn.style.cssText = 'font-size:14px; margin-left:2px;'; nm.appendChild(warn);
           }
           row.dataset.key = key;
-          addLongPress(row, () => openPickPanel(cat, item));
+          nm.style.cursor = 'pointer';
+          nm.addEventListener("click", () => openPickPanel(cat, item));
           row.appendChild(nm);
           const pb = document.createElement("button");
           pb.className = "pick-btn material-icons-round" + (isPicked ? " picked" : "") + (active ? "" : " pick-hidden");
@@ -1742,7 +1750,8 @@ function renderCats(search) {
           warn2.style.cssText = 'font-size:14px; margin-left:2px;'; nm.appendChild(warn2);
         }
         row.dataset.key = key;
-        addLongPress(row, () => openPickPanel(cat, item));
+        nm.style.cursor = 'pointer';
+        nm.addEventListener("click", () => openPickPanel(cat, item));
         row.appendChild(nm);
         const pb2 = document.createElement("button");
         pb2.className = "pick-btn material-icons-round" + (isPicked2 ? " picked" : "") + (active ? "" : " pick-hidden");
@@ -1771,7 +1780,36 @@ function makeQty(key, qty) {
     const inp = document.createElement("input"); inp.type = "number"; inp.inputMode = "numeric"; inp.pattern = "[0-9]*"; inp.className = "qty-input-inline"; inp.value = qty > 0 ? qty : "";
     wrap.replaceChild(inp, display); inp.focus(); inp.select();
     const commit = () => { const n = parseInt(inp.value, 10); list[key] = { qty: isNaN(n)||n<0?0:Math.min(999,n) }; sched(); rr(); };
-    inp.addEventListener("blur", commit); inp.addEventListener("keydown", e => { if (e.key==="Enter") inp.blur(); });
+    inp.addEventListener("blur", commit);
+    inp.addEventListener("keydown", e => {
+      if (e.key !== "Enter") return;
+      e.preventDefault();
+      // Find next row BEFORE anything changes
+      const allRows = Array.from(document.querySelectorAll('.item-row'));
+      const currentRow = wrap.closest('.item-row');
+      const idx = allRows.indexOf(currentRow);
+      let nextDisplay = null;
+      for (let i = idx + 1; i < allRows.length; i++) {
+        const nd = allRows[i].querySelector('.qty-display');
+        if (nd) { nextDisplay = nd; break; }
+      }
+      // Remove blur listener so commit doesn't rerender
+      inp.removeEventListener("blur", commit);
+      // Save value
+      const n = parseInt(inp.value, 10);
+      list[key] = { qty: isNaN(n)||n<0?0:Math.min(999,n) };
+      sched();
+      // Restore display
+      const displayNew = document.createElement("div");
+      displayNew.className = "qty-display" + (list[key].qty > 0 ? " active" : "");
+      displayNew.textContent = list[key].qty > 0 ? list[key].qty : "—";
+      wrap.replaceChild(displayNew, inp);
+      // Click next
+      if (nextDisplay) {
+        nextDisplay.scrollIntoView({ behavior:'smooth', block:'center' });
+        nextDisplay.click();
+      }
+    });
   });
 
   wrap.appendChild(display);
@@ -2066,17 +2104,22 @@ function switchTo(v) {
   const filterBtn = document.getElementById("filter-btn");
   if (filterBtn) filterBtn.style.display = v === "list" ? "flex" : "none";
   closeSettingsMenu();
+  if (v !== "list") { const s = document.getElementById("list-search"); if(s) s.value = ""; }
   if (v==="whatsapp")  renderWA();
   if (v==="add")       renderAdd();
   if (v==="history")   renderHistory();
   if (v==="dashboard") renderDashboard();
   if (v==="orders")    renderOrders();
   if (v==="prices")    renderPrices();
+  if (v==="settings")  {}
   if (v==="resumo")    {}
 }
 
 // ── EVENTS ────────────────────────────────────────────────────────────────────
-document.querySelectorAll(".hnav-btn").forEach(b => b.addEventListener("click", () => switchTo(b.dataset.view)));
+document.querySelectorAll(".hnav-btn").forEach(b => {
+  if (b.id === "settings-btn") return; // tem onclick próprio
+  b.addEventListener("click", () => switchTo(b.dataset.view));
+});
 document.getElementById("clear-btn").addEventListener("click", () => {
   if (!confirm("Limpar lista e guardar histórico?")) return;
   const snapshot = {
@@ -2097,7 +2140,6 @@ document.getElementById("clear-btn").addEventListener("click", () => {
   Object.keys(list).forEach(k => { list[k] = { qty: 0 }; });
   Object.keys(picked).forEach(k => {
     picked[k] = { ...picked[k], done: false };
-    delete picked[k].done;
   });
   sched(); renderCats(""); renderWA();
 });
@@ -2153,48 +2195,54 @@ function openSupplierPicker() {
   picker.innerHTML = "";
 
   const title = document.createElement("div");
-  title.style.cssText = "font-size:20px;font-weight:600;color:var(--md-primary);margin-bottom:14px;";
+  title.style.cssText = "font-size:20px;font-weight:700;color:var(--md-primary);margin-bottom:16px;";
   title.textContent = "Escolher fornecedor";
   picker.appendChild(title);
 
-  Object.entries(FORNECEDORES).forEach(([corridor, suppliers]) => {
-    const grpLabel = document.createElement("div");
-    grpLabel.style.cssText = "font-size:12px;font-weight:600;color:var(--md-outline);text-transform:uppercase;letter-spacing:0.5px;margin:10px 0 6px;";
-    grpLabel.textContent = corridor;
-    picker.appendChild(grpLabel);
+  if (suppliers.length === 0) {
+    const empty = document.createElement("div");
+    empty.style.cssText = "font-size:16px;color:var(--md-primary);opacity:0.5;text-align:center;padding:24px 0;";
+    empty.textContent = "Sem fornecedores. Adiciona na secção Fornecedores.";
+    picker.appendChild(empty);
+  } else {
     suppliers.forEach(s => {
       const btn = document.createElement("button");
       btn.style.cssText = "display:block;width:100%;text-align:left;padding:14px 16px;border:none;border-radius:10px;font-size:22px;font-family:'Outfit',sans-serif;cursor:pointer;margin-bottom:6px;font-weight:500;";
-      const isSel = picked[currentPickKey]?.supplier === s;
+      const isSel = picked[currentPickKey]?.supplier === s.name;
       btn.style.background = isSel ? "var(--md-primary)" : "var(--md-surface-1)";
       btn.style.color = isSel ? "#fff" : "var(--md-primary)";
-      btn.textContent = s;
+      btn.textContent = s.name;
+      if (s.type) {
+        const sub = document.createElement("div");
+        sub.style.cssText = "font-size:13px;opacity:0.6;font-weight:400;margin-top:2px;";
+        sub.textContent = s.type;
+        btn.appendChild(sub);
+      }
       btn.addEventListener("click", () => {
-        picked[currentPickKey] = { ...picked[currentPickKey], supplier: s };
-        document.getElementById("pick-supplier-btn").textContent = s;
-        document.getElementById("pick-supplier").value = s;
-        updateSupplierCallBtn(s);
+        picked[currentPickKey] = { ...picked[currentPickKey], supplier: s.name };
+        document.getElementById("pick-supplier-btn").textContent = s.name;
+        document.getElementById("pick-supplier").value = s.name;
+        updateSupplierCallBtn(s.name);
         sched();
         closeSupplierPicker();
       });
       picker.appendChild(btn);
     });
-  });
+  }
 
-  // New supplier option
-  const newBtn = document.createElement("button");
-  newBtn.style.cssText = "display:block;width:100%;text-align:left;padding:14px 16px;border:1.5px dashed var(--md-outline-variant);border-radius:10px;font-size:20px;font-family:'Outfit',sans-serif;cursor:pointer;margin-top:10px;font-weight:500;background:transparent;color:var(--md-primary);";
-  newBtn.textContent = "+ Novo fornecedor...";
-  newBtn.addEventListener("click", () => {
-    closeSupplierPicker();
-    const name = prompt("Nome do novo fornecedor:");
-    if (!name || !name.trim()) return;
-    FORNECEDORES["A5"].push(name.trim());
-    picked[currentPickKey] = { ...picked[currentPickKey], supplier: name.trim() };
-    document.getElementById("pick-supplier-btn").textContent = name.trim();
+  // Limpar fornecedor
+  const clearBtn = document.createElement("button");
+  clearBtn.style.cssText = "display:block;width:100%;text-align:left;padding:14px 16px;border:1.5px dashed var(--md-outline-variant);border-radius:10px;font-size:18px;font-family:'Outfit',sans-serif;cursor:pointer;margin-top:10px;font-weight:500;background:transparent;color:var(--md-outline);";
+  clearBtn.textContent = "✕ Remover fornecedor";
+  clearBtn.addEventListener("click", () => {
+    picked[currentPickKey] = { ...picked[currentPickKey], supplier: "" };
+    document.getElementById("pick-supplier-btn").textContent = "—";
+    document.getElementById("pick-supplier").value = "";
+    updateSupplierCallBtn("");
     sched();
+    closeSupplierPicker();
   });
-  picker.appendChild(newBtn);
+  picker.appendChild(clearBtn);
 
   picker.style.display = "block";
   overlay.style.display = "block";
@@ -2220,24 +2268,13 @@ let currentPickKey = null;
 
 function buildSupplierOptions() {
   const sel = document.getElementById("pick-supplier");
-  sel.innerHTML = '<option value="">— escolher fornecedor —</option>';
-  Object.entries(FORNECEDORES).forEach(([corridor, suppliers]) => {
-    const grp = document.createElement("optgroup");
-    grp.label = corridor;
-    suppliers.forEach(s => {
-      const opt = document.createElement("option");
-      opt.value = s; opt.textContent = s;
-      grp.appendChild(opt);
-    });
-    sel.appendChild(grp);
+  sel.innerHTML = '<option value="">— Sem fornecedor —</option>';
+  suppliers.forEach(s => {
+    const opt = document.createElement("option");
+    opt.value = s.name;
+    opt.textContent = s.name + (s.type ? ' (' + s.type + ')' : '');
+    sel.appendChild(opt);
   });
-  // Custom option
-  const grp2 = document.createElement("optgroup");
-  grp2.label = "Outro";
-  const opt2 = document.createElement("option");
-  opt2.value = "__novo__"; opt2.textContent = "+ Novo fornecedor...";
-  grp2.appendChild(opt2);
-  sel.appendChild(grp2);
 }
 
 function openPickPanel(cat, item) {
@@ -2362,7 +2399,7 @@ document.getElementById("pick-supplier").addEventListener("change", e => {
     const name = prompt("Nome do novo fornecedor:");
     if (!name || !name.trim()) { e.target.value = picked[currentPickKey]?.supplier || ""; return; }
     // Add to A5 by default
-    FORNECEDORES["A5"].push(name.trim());
+    // fornecedor adicionado via suppliers
     picked[currentPickKey] = { ...picked[currentPickKey], supplier: name.trim() };
     buildSupplierOptions();
     document.getElementById("pick-supplier").value = name.trim();
