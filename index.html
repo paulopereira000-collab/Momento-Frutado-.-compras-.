@@ -44,7 +44,8 @@
       --md-dark-outline:         #3E5042;
     }
     *, *::before, *::after { box-sizing:border-box; margin:0; padding:0; }
-    html, body { height:100%; background:var(--md-surface); font-family:'Outfit',sans-serif; color:var(--md-primary); }
+    html, body { height:100%; background:var(--md-surface); font-family:'Outfit',sans-serif; color:var(--md-primary); user-select:none; -webkit-user-select:none; -webkit-touch-callout:none; }
+    input, textarea { user-select:text; -webkit-user-select:text; }
     input[type=number]::-webkit-inner-spin-button,
     input[type=number]::-webkit-outer-spin-button { -webkit-appearance:none; }
     input[type=number] { -moz-appearance:textfield; }
@@ -272,10 +273,10 @@
       <div style="padding:20px 16px 8px; display:flex; align-items:center; justify-content:space-between;">
         <div style="display:flex; align-items:center; gap:12px;">
           <span class="material-icons-round" style="font-size:44px; color:var(--md-primary); opacity:0.5;">shopping_basket</span>
-          <div style="font-size:52px; font-weight:900; color:var(--md-primary); letter-spacing:-1px; line-height:1; opacity:0.5;">Compras</div>
+          <div style="font-size:52px; font-weight:700; color:var(--md-primary); letter-spacing:-1px; line-height:1; opacity:0.5;">Compras</div>
         </div>
         <button onclick="toggleFilter()" style="background:none; border:none; cursor:pointer; padding:8px; display:flex; align-items:center; opacity:0.5;">
-          <span class="material-icons-round" id="list-filter-icon" style="font-size:28px; color:var(--md-primary);">visibility_off</span>
+          <span class="material-icons-round" id="list-filter-icon" style="font-size:28px; color:var(--md-primary);">visibility</span>
         </button>
       </div>
       <div style="padding:0 14px 6px;">
@@ -294,7 +295,7 @@
       <div style="padding:20px 16px 8px;">
         <div style="display:flex; align-items:center; gap:12px;">
           <span class="material-icons-round" style="font-size:44px; color:var(--md-primary); opacity:0.5;">chat_bubble_outline</span>
-          <div style="font-size:52px; font-weight:900; color:var(--md-primary); letter-spacing:-1px; line-height:1; opacity:0.5;">WhatsApp</div>
+          <div style="font-size:52px; font-weight:700; color:var(--md-primary); letter-spacing:-1px; line-height:1; opacity:0.5;">WhatsApp</div>
         </div>
       </div>
       <div id="wa-content">
@@ -320,7 +321,7 @@
       <div style="padding:20px 16px 8px;">
         <div style="display:flex; align-items:center; gap:12px;">
           <span class="material-icons-round" style="font-size:44px; color:var(--md-primary); opacity:0.5;">history</span>
-          <div style="font-size:52px; font-weight:900; color:var(--md-primary); letter-spacing:-1px; line-height:1; opacity:0.5;">Histórico</div>
+          <div style="font-size:52px; font-weight:700; color:var(--md-primary); letter-spacing:-1px; line-height:1; opacity:0.5;">Histórico</div>
         </div>
       </div>
       <div id="history-content" style="padding:14px"></div>
@@ -331,7 +332,7 @@
       <div style="padding:20px 16px 8px; display:flex; align-items:center; justify-content:space-between;">
         <div style="display:flex; align-items:center; gap:12px;">
           <span class="material-icons-round" style="font-size:44px; color:var(--md-primary); opacity:0.5;">check_circle</span>
-          <div style="font-size:52px; font-weight:900; color:var(--md-primary); letter-spacing:-1px; line-height:1; opacity:0.5;">Fazer</div>
+          <div style="font-size:52px; font-weight:700; color:var(--md-primary); letter-spacing:-1px; line-height:1; opacity:0.5;">Fazer</div>
         </div>
         <button onclick="openTaskModal()" style="background:var(--md-primary); color:#fff; border:none; border-radius:50%; width:44px; height:44px; display:flex; align-items:center; justify-content:center; cursor:pointer; flex-shrink:0;">
           <span class="material-icons-round" style="font-size:26px;">add</span>
@@ -399,7 +400,7 @@
       <div style="padding:20px 16px 8px; display:flex; align-items:center; justify-content:space-between;">
         <div style="display:flex; align-items:center; gap:12px;">
           <span class="material-icons-round" style="font-size:44px; color:var(--md-primary); opacity:0.5;">contacts</span>
-          <div style="font-size:52px; font-weight:900; color:var(--md-primary); letter-spacing:-1px; line-height:1; opacity:0.5;">Fornecedores</div>
+          <div style="font-size:52px; font-weight:700; color:var(--md-primary); letter-spacing:-1px; line-height:1; opacity:0.5;">Fornecedores</div>
         </div>
         <button onclick="openSupplierModal()" style="background:var(--md-primary); color:#fff; border:none; border-radius:10px; padding:10px 16px; font-size:14px; font-weight:700; font-family:'Outfit',sans-serif; display:flex; align-items:center; gap:6px; cursor:pointer; flex-shrink:0;">
           <span class="material-icons-round" style="font-size:18px;">add</span> Novo
@@ -421,7 +422,7 @@
       <div style="padding:20px 16px 8px;">
         <div style="display:flex; align-items:center; gap:12px;">
           <span class="material-icons-round" style="font-size:44px; color:var(--md-primary); opacity:0.5;">point_of_sale</span>
-          <div style="font-size:52px; font-weight:900; color:var(--md-primary); letter-spacing:-1px; line-height:1; opacity:0.5;">Vendas</div>
+          <div style="font-size:52px; font-weight:700; color:var(--md-primary); letter-spacing:-1px; line-height:1; opacity:0.5;">Vendas</div>
         </div>
         <div id="sales-summary" style="font-size:14px; color:var(--md-primary); opacity:0.6; margin-top:8px; margin-bottom:12px;"></div>
       </div>
@@ -543,7 +544,7 @@
       <div style="padding:20px 16px 8px;">
         <div style="display:flex; align-items:center; gap:12px;">
           <span class="material-icons-round" style="font-size:44px; color:var(--md-primary); opacity:0.5;">sell</span>
-          <div style="font-size:52px; font-weight:900; color:var(--md-primary); letter-spacing:-1px; line-height:1; opacity:0.5;">Preços</div>
+          <div style="font-size:52px; font-weight:700; color:var(--md-primary); letter-spacing:-1px; line-height:1; opacity:0.5;">Preços</div>
         </div>
         <div id="prices-completude" style="font-size:13px; color:var(--md-primary); margin-top:4px; opacity:0.6;"></div>
       </div>
@@ -609,11 +610,13 @@
     <div class="pick-row">
       <span class="pick-row-label">Preço venda</span>
       <input id="pick-sell-price" class="pick-row-input" type="number" inputmode="decimal" placeholder="0.00" step="0.01" min="0"
+        onfocus="this.select()"
         onkeydown="if(event.key==='Enter'){event.preventDefault();document.getElementById('pick-price').focus();}"/>
     </div>
     <div class="pick-row">
       <span class="pick-row-label">Preço compra</span>
       <input id="pick-price" class="pick-row-input" type="number" inputmode="decimal" placeholder="0.00" step="0.01" min="0"
+        onfocus="this.select()"
         onkeydown="if(event.key==='Enter'){event.preventDefault();document.getElementById('pick-notes').focus();}"/>
     </div>
     <div class="pick-row">
@@ -643,6 +646,7 @@
       <span class="pick-field-label">Stock mínimo</span>
       <div style="display:flex; align-items:center; gap:10px;">
         <input id="pick-min-stock" type="number" inputmode="numeric" placeholder="—" min="0" style="width:80px; padding:10px 14px; border:1.5px solid var(--md-outline-variant); border-radius:12px; font-size:18px; font-weight:700; font-family:'Outfit',sans-serif; outline:none; background:var(--md-surface-1); color:var(--md-primary); text-align:center;"
+          onfocus="this.select()"
           onkeydown="if(event.key==='Enter'){event.preventDefault();closePickPanel();}"/>
         <span style="font-size:14px; color:var(--md-primary); opacity:0.6;">caixas mínimo</span>
       </div>
@@ -1276,17 +1280,26 @@ function renderPrices() {
       const hasBuy  = !!(p?.price && p.price !== '');
       const hasSell = !!(p?.sellPrice && p.sellPrice !== '');
       if (hasBuy || hasSell) withPrice++;
+
+      // Calcular margem para alerta
+      const lowMargin = isLowMargin(key, item);
+
       if (!search || item.toLowerCase().includes(search)) {
         allRows.push({ cat, item, key,
           sellPrice: p?.sellPrice || '',
           buyPrice:  p?.price || '',
-          hasPrice:  hasBuy || hasSell
+          hasPrice:  hasBuy || hasSell,
+          lowMargin
         });
       }
     });
   });
 
-  if (completude) completude.textContent = withPrice + ' de ' + total + ' artigos com preço definido';
+  const lowMarginCount = allRows.filter(r => r.lowMargin).length;
+  if (completude) {
+    completude.innerHTML = withPrice + ' de ' + total + ' artigos com preço definido' + (lowMarginCount > 0 ? ' · <span class="material-icons-round" style="font-size:28px;vertical-align:middle;color:#9B3A3A;">warning</span> ' + lowMarginCount + ' com margem baixa' : '');
+    completude.style.color = lowMarginCount > 0 ? '#9B3A3A' : 'var(--md-primary)';
+  }
   empty.style.display = allRows.length ? 'none' : 'block';
 
   const byCat = {};
@@ -1325,16 +1338,26 @@ function renderPrices() {
 
     catItems.forEach(r => {
       const row = document.createElement('div');
-      row.style.cssText = 'display:flex; align-items:center; padding:14px 4px; border-bottom:1px solid var(--md-outline-variant); gap:10px;';
+      row.style.cssText = 'display:flex; align-items:center; padding:14px 4px; border-bottom:1px solid var(--md-outline-variant); gap:10px;' + (r.lowMargin ? ' background:rgba(155,58,58,0.08);' : '');
 
       // Item name
       const nameSpan = document.createElement('span');
-      nameSpan.style.cssText = 'flex:1; font-size:26px; font-weight:400; color:var(--md-primary); line-height:1.2; cursor:pointer;';
-      nameSpan.textContent = r.item;
+      nameSpan.style.cssText = 'flex:1; font-size:26px; font-weight:400; color:' + (r.lowMargin ? '#9B3A3A' : 'var(--md-primary)') + '; line-height:1.2; cursor:pointer; display:flex; align-items:center; gap:8px;';
+      const nameText = document.createElement('span');
+      nameText.textContent = r.item;
+      nameSpan.appendChild(nameText);
+      if (r.lowMargin) {
+        const warnIcon = document.createElement('span');
+        warnIcon.className = 'material-icons-round';
+        warnIcon.textContent = 'warning';
+        warnIcon.title = 'Margem abaixo de 20%';
+        warnIcon.style.cssText = 'font-size:40px; color:#9B3A3A;';
+        nameSpan.appendChild(warnIcon);
+      }
       nameSpan.dataset.pricekey  = r.key;
       nameSpan.dataset.pricecat  = r.cat;
       nameSpan.dataset.priceitem = r.item;
-      addLongPress(nameSpan, () => openPickPanel(r.cat, r.item));
+      nameSpan.addEventListener("click", () => openPickPanel(r.cat, r.item));
       row.appendChild(nameSpan);
 
       // Inputs container
@@ -1489,7 +1512,7 @@ function renderSales() {
 function toggleFilter() {
   filterActive = !filterActive;
   const titleIcon = document.getElementById("list-filter-icon");
-  if (titleIcon) titleIcon.textContent = filterActive ? "visibility" : "visibility_off";
+  if (titleIcon) titleIcon.textContent = filterActive ? "visibility_off" : "visibility";
   renderCats("");
 }
 
@@ -1574,6 +1597,18 @@ function renderHdr() {
 }
 
 // ── RENDER CATS ───────────────────────────────────────────────────────────────
+function isLowMargin(key, item) {
+  const p = picked[key];
+  if (!p?.price || !p?.sellPrice) return false;
+  const buy  = parseFloat(p.price);
+  const sell = parseFloat(p.sellPrice);
+  if (!buy || !sell) return false;
+  const ivaRate = p.iva === 23 ? 1.23 : (getIVA(item) === 0.23 ? 1.23 : 1.06);
+  const costIVA = buy * ivaRate;
+  const margin  = ((sell - costIVA) / sell) * 100;
+  return margin < 20;
+}
+
 function renderCats(search) {
   const c = document.getElementById("cat-list"); c.innerHTML = "";
   Object.entries(products).forEach(([cat, items]) => {
@@ -1617,6 +1652,13 @@ function renderCats(search) {
             const warn = document.createElement('span'); warn.textContent = '⚠️'; warn.title = 'Abaixo do stock mínimo (' + p_min + ')';
             warn.style.cssText = 'font-size:14px; margin-left:2px;'; nm.appendChild(warn);
           }
+          if (isLowMargin(key, item)) {
+            row.style.color = '#9B3A3A';
+            nm.style.color = '#9B3A3A';
+            const warnM = document.createElement('span'); warnM.className = 'material-icons-round'; warnM.textContent = 'warning';
+            warnM.title = 'Margem abaixo de 20%'; warnM.style.cssText = 'font-size:32px; margin-left:4px; color:#9B3A3A; vertical-align:middle;';
+            nm.appendChild(warnM);
+          }
           row.dataset.key = key;
           nm.style.cursor = 'pointer';
           nm.addEventListener("click", () => openPickPanel(cat, item));
@@ -1653,6 +1695,13 @@ function renderCats(search) {
         if (p_min2 && Number(e.qty) > 0 && Number(e.qty) < Number(p_min2)) {
           const warn2 = document.createElement('span'); warn2.textContent = '⚠️'; warn2.title = 'Abaixo do stock mínimo (' + p_min2 + ')';
           warn2.style.cssText = 'font-size:14px; margin-left:2px;'; nm.appendChild(warn2);
+        }
+        if (isLowMargin(key, item)) {
+          row.style.color = '#9B3A3A';
+          nm.style.color = '#9B3A3A';
+          const warnM2 = document.createElement('span'); warnM2.className = 'material-icons-round'; warnM2.textContent = 'warning';
+          warnM2.title = 'Margem abaixo de 20%'; warnM2.style.cssText = 'font-size:32px; margin-left:4px; color:#9B3A3A; vertical-align:middle;';
+          nm.appendChild(warnM2);
         }
         row.dataset.key = key;
         nm.style.cursor = 'pointer';
@@ -2009,7 +2058,7 @@ function switchTo(v) {
   if (v !== "list") {
     filterActive = false;
     const titleIcon = document.getElementById("list-filter-icon");
-    if (titleIcon) titleIcon.textContent = "visibility_off";
+    if (titleIcon) titleIcon.textContent = "visibility";
   }
   closeSettingsMenu();
   if (v !== "list") { const s = document.getElementById("list-search"); if(s) s.value = ""; }
@@ -2356,17 +2405,24 @@ function updateMargin() {
 
   if (margin !== null) {
     document.getElementById("pick-margin-pct").textContent = margin.toFixed(1) + "%";
-    document.getElementById("pick-margin-pct").style.color = margin >= 30 ? "#3D6B35" : margin >= 15 ? "#5C7E60" : "#9B3A3A";
+    document.getElementById("pick-margin-pct").style.color = margin >= 30 ? "#3D6B35" : margin >= 20 ? "#5C7E60" : "#9B3A3A";
     const barWrap = document.getElementById("pick-margin-bar-wrap");
     const bar = document.getElementById("pick-margin-bar");
-    if (bar) { bar.style.width = Math.min(100, Math.max(0, margin)).toFixed(1) + "%"; bar.style.background = margin >= 30 ? "#3D6B35" : margin >= 15 ? "#7A9E7E" : "#9B3A3A"; }
+    if (bar) { bar.style.width = Math.min(100, Math.max(0, margin)).toFixed(1) + "%"; bar.style.background = margin >= 30 ? "#3D6B35" : margin >= 20 ? "#7A9E7E" : "#9B3A3A"; }
     if (barWrap) barWrap.style.display = "block";
     const sug = document.getElementById("pick-suggestion");
-    if (margin < 15) {
+    if (margin < 20) {
+      marginEl.style.background = "rgba(155,58,58,0.12)";
+      marginEl.style.borderColor = "#9B3A3A";
       sug.style.display = "block";
-      const suggested = costIVA ? (costIVA / 0.7).toFixed(2) : "—";
-      sug.textContent = "⚠️ Margem baixa. Preço sugerido (30% margem): " + suggested + "€/kg";
-    } else { sug.style.display = "none"; }
+      sug.style.color = "#9B3A3A";
+      const suggested = costIVA ? (costIVA / 0.8).toFixed(2) : "—";
+      sug.innerHTML = '<span class="material-icons-round" style="font-size:28px;vertical-align:middle;">warning</span> Margem abaixo de 20%. Preço sugerido (30% margem): ' + suggested + '€/kg';
+    } else {
+      marginEl.style.background = "var(--md-primary-container)";
+      marginEl.style.borderColor = "var(--md-outline-variant)";
+      sug.style.display = "none";
+    }
   } else {
     document.getElementById("pick-margin-pct").textContent = "—";
     const bar = document.getElementById("pick-margin-bar");
