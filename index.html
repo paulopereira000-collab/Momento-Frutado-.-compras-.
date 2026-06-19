@@ -910,14 +910,17 @@
         <div style="padding:36px 20px 0;">
           <div id="dash-date" style="font-size:13px; color:var(--md-white); opacity:0.7; margin-bottom:4px; font-weight:600; text-transform:lowercase; letter-spacing:0.5px;"></div>
           <div id="dash-greeting" style="font-size:40px; font-weight:200; line-height:1.1; color:var(--md-white); opacity:0.95; text-transform:lowercase;"></div>
-          <div style="font-size:32px; font-weight:700; letter-spacing:-0.5px; line-height:1.1; margin-top:10px; text-transform:lowercase; color:var(--md-amber);">momento<br>frutado</div>
         </div>
 
         <!-- Resumo rápido — dados reais do negócio, não decoração -->
-        <div id="dash-summary" style="padding:22px 20px 0; display:flex; gap:14px; justify-content:center;"></div>
+        <div id="dash-summary" style="padding:26px 20px 0; display:flex; gap:14px; justify-content:center;"></div>
+
+        <div style="padding:0 20px;">
+          <div style="font-size:32px; font-weight:700; letter-spacing:-0.5px; line-height:1.1; margin-top:26px; margin-bottom:26px; text-transform:lowercase; color:var(--md-amber);">momento<br>frutado</div>
+        </div>
 
         <!-- Links — minúsculas, mesmo tamanho, sem espaçamento extra entre eles -->
-        <div style="padding:30px 20px 0; display:flex; flex-direction:column; gap:0;">
+        <div style="padding:0px 20px 0; display:flex; flex-direction:column; gap:0;">
           <button onclick="switchTo('list')" style="background:none; border:none; padding:4px 0; text-align:left; cursor:pointer; width:100%; display:flex; align-items:center; gap:14px;">
             <span id="dash-dot-list" style="width:10px; height:10px; border-radius:50%; border:1.5px solid var(--md-white); opacity:0.68; flex-shrink:0"></span>
             <span style="font-size:28px; font-weight:700; color:var(--md-white); opacity:0.76; text-transform:lowercase;">compras</span>
@@ -1529,38 +1532,80 @@ function renderDashSummary() {
     else salesCardLabel = 'Última venda';
   }
 
-  // Card 2: itens ainda por marcar/picar na lista de compras atual
-  const totalItems  = Object.keys(list).length;
-  const pickedItems = Object.values(picked).filter(p => p && p.done).length;
-  const remainingItems = Math.max(0, totalItems - pickedItems);
+  // Card 2: produto mais comprado na última semana (proxy via histórico do MARL)
+  let topProductValue = '—';
+  let topProductLabel = 'Sem compras';
+  const sevenDaysAgo = new Date(Date.now() - 7 * 86400000).toISOString().split('T')[0];
+  const recentSnaps = snapHistory.filter(s => s.date >= sevenDaysAgo);
+  if (recentSnaps.length) {
+    const qtyByItem = {};
+    recentSnaps.forEach(snap => {
+      (snap.items || []).forEach(it => {
+        const qty = Number(it.qty) || 0;
+        if (qty > 0) qtyByItem[it.item] = (qtyByItem[it.item] || 0) + qty;
+      });
+    });
+    const sortedItems = Object.entries(qtyByItem).sort((a, b) => b[1] - a[1]);
+    if (sortedItems.length) {
+      const [name, qty] = sortedItems[0];
+      topProductValue = qty % 1 === 0 ? `${qty}kg` : `${qty.toFixed(1)}kg`;
+      topProductLabel = name;
+    }
+  }
 
-  // Card 3: tarefas pendentes
-  const pendingTasks = tasks.filter(t => !t.done).length;
+  // Card 3: produto com maior subida de preço (compara última compra vs anterior, por produto)
+  let priceUpValue = '—';
+  let priceUpLabel = 'Sem variação';
+  {
+    const pricesByItem = {}; // item -> [{date, price}]
+    snapHistory.slice().reverse().forEach(snap => { // do mais antigo ao mais recente
+      (snap.items || []).forEach(it => {
+        const price = Number(it.price);
+        if (price > 0) {
+          if (!pricesByItem[it.item]) pricesByItem[it.item] = [];
+          pricesByItem[it.item].push(price);
+        }
+      });
+    });
+    let best = null;
+    Object.entries(pricesByItem).forEach(([name, prices]) => {
+      if (prices.length < 2) return;
+      const prev = prices[prices.length - 2];
+      const last = prices[prices.length - 1];
+      if (prev > 0) {
+        const change = (last - prev) / prev * 100;
+        if (!best || change > best.change) best = { name, change };
+      }
+    });
+    if (best && best.change > 0) {
+      priceUpValue = `↑${best.change.toFixed(0)}%`;
+      priceUpLabel = best.name;
+    } else if (best) {
+      priceUpValue = `↓${Math.abs(best.change).toFixed(0)}%`;
+      priceUpLabel = best.name;
+    }
+  }
 
   const cards = [
     { value: salesCardValue, label: salesCardLabel, view: 'sales', dotId: 'dash-dot-sales' },
-    { value: String(remainingItems), label: remainingItems === 1 ? 'item por picar' : 'itens por picar', view: 'list', dotId: 'dash-dot-list' },
-    { value: String(pendingTasks), label: pendingTasks === 1 ? 'tarefa pendente' : 'tarefas pendentes', view: 'tasks', dotId: 'dash-dot-tasks' },
+    { value: topProductValue, label: topProductLabel, view: 'history', dotId: null },
+    { value: priceUpValue, label: priceUpLabel, view: 'prices', dotId: null },
   ];
 
   cards.forEach(c => {
     const card = document.createElement('button');
     card.onclick = () => switchTo(c.view);
-    card.style.cssText = 'width:100px; height:100px; border-radius:50%; background:rgba(255,255,255,0.15); border:1px solid rgba(255,255,255,0.25); display:flex; flex-direction:column; align-items:center; justify-content:center; cursor:pointer; flex-shrink:0; gap:2px;';
+    card.style.cssText = 'width:100px; height:100px; border-radius:50%; background:rgba(255,255,255,0.15); border:2px solid var(--md-amber); display:flex; flex-direction:column; align-items:center; justify-content:center; cursor:pointer; flex-shrink:0; gap:2px;';
     card.innerHTML = `
-      <div style="font-size:22px; font-weight:700; color:var(--md-white); line-height:1;">${c.value}</div>
-      <div style="font-size:10px; color:var(--md-white); opacity:0.7; text-align:center; padding:0 8px; line-height:1.2;">${c.label}</div>
+      <div style="font-size:20px; font-weight:700; color:var(--md-white); line-height:1;">${c.value}</div>
+      <div style="font-size:10px; color:var(--md-white); opacity:0.7; text-align:center; padding:0 6px; line-height:1.2; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; max-width:84px;">${c.label}</div>
     `;
     wrap.appendChild(card);
   });
 
-  // Indicadores funcionais: o ponto fica mais forte/visível quando há algo pendente
-  const dotList  = document.getElementById('dash-dot-list');
+  // Indicador funcional: o ponto de vendas fica mais forte quando há vendas
   const dotSales = document.getElementById('dash-dot-sales');
-  const dotTasks = document.getElementById('dash-dot-tasks');
-  if (dotList)  dotList.style.opacity  = remainingItems > 0 ? '0.95' : '0.3';
   if (dotSales) dotSales.style.opacity = sales.length === 0 ? '0.3' : '0.95';
-  if (dotTasks) dotTasks.style.opacity = pendingTasks > 0 ? '0.85' : '0.4';
 }
 
 
