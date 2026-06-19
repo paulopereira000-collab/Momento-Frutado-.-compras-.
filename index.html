@@ -1545,58 +1545,27 @@ function renderDashSummary() {
     }
   }
 
-  // Card 3: previsão de vendas para a semana que entra — combina tendência
-  // recente (últimas 3-4 semanas) com a mesma época do ano passado.
-  let forecastValue = '—';
-  let forecastLabel = 'Sem previsão';
-  let forecastAlert = false;
+  // Card 3: como está o último dia de venda comparado com a média habitual
+  // desse mesmo dia da semana (Terça/Sexta/Sábado) — comparação direta com
+  // dados reais, sem tentar prever o futuro.
+  let dayCompareValue = '—';
+  let dayCompareLabel = 'Sem dados';
+  let dayCompareAlert = false;
   {
-    const sortedSales = [...sales].sort((a, b) => a.date.localeCompare(b.date));
-    if (sortedSales.length >= 4) {
-      // Agrupar vendas por semana (chave = ano-semana ISO simplificado por data de início de semana)
-      const weekKey = (dateStr) => {
-        const d = new Date(dateStr);
-        const day = d.getDay();
-        const monday = new Date(d); monday.setDate(d.getDate() - ((day + 6) % 7));
-        return monday.toISOString().split('T')[0];
-      };
-      const totalsByWeek = {};
-      sortedSales.forEach(s => {
-        const wk = weekKey(s.date);
-        totalsByWeek[wk] = (totalsByWeek[wk] || 0) + s.total;
-      });
-      const weekKeys = Object.keys(totalsByWeek).sort();
-
-      // Sinal 1: tendência das últimas 3-4 semanas (regressão simples por variação média)
-      let trendPct = null;
-      if (weekKeys.length >= 3) {
-        const lastWeeks = weekKeys.slice(-4).map(k => totalsByWeek[k]);
-        const diffs = [];
-        for (let i = 1; i < lastWeeks.length; i++) {
-          if (lastWeeks[i-1] > 0) diffs.push((lastWeeks[i] - lastWeeks[i-1]) / lastWeeks[i-1]);
+    const sortedSales = [...sales].sort((a, b) => b.date.localeCompare(a.date));
+    if (sortedSales.length >= 2) {
+      const lastSale = sortedSales[0];
+      const lastDayOfWeek = new Date(lastSale.date).getDay();
+      const sameDaySales = sortedSales.slice(1).filter(s => new Date(s.date).getDay() === lastDayOfWeek);
+      if (sameDaySales.length >= 2) {
+        const avg = sameDaySales.reduce((a, s) => a + s.total, 0) / sameDaySales.length;
+        if (avg > 0) {
+          const diffPct = ((lastSale.total - avg) / avg) * 100;
+          const dayNames = ['domingo','segunda','terça','quarta','quinta','sexta','sábado'];
+          dayCompareValue = (diffPct >= 0 ? '+' : '') + diffPct.toFixed(0) + '%';
+          dayCompareLabel = 'vs média ' + dayNames[lastDayOfWeek];
+          dayCompareAlert = Math.abs(diffPct) >= 20; // diferença grande face ao habitual
         }
-        if (diffs.length) trendPct = (diffs.reduce((a,b) => a+b, 0) / diffs.length) * 100;
-      }
-
-      // Sinal 2: mesma semana do ano passado vs a semana equivalente mais próxima de agora
-      let yoyPct = null;
-      const currentWeekStart = new Date(weekKeys[weekKeys.length - 1]);
-      const lastYearWeekStart = new Date(currentWeekStart); lastYearWeekStart.setFullYear(lastYearWeekStart.getFullYear() - 1);
-      const lastYearKey = lastYearWeekStart.toISOString().split('T')[0];
-      // procura a semana do ano passado mais próxima (±7 dias de tolerância)
-      const closeKey = weekKeys.find(k => Math.abs(new Date(k) - lastYearWeekStart) < 8 * 86400000);
-      if (closeKey && totalsByWeek[closeKey] > 0) {
-        const thisYearSameWeek = totalsByWeek[weekKeys[weekKeys.length - 1]];
-        yoyPct = ((thisYearSameWeek - totalsByWeek[closeKey]) / totalsByWeek[closeKey]) * 100;
-      }
-
-      // Combinar os 2 sinais (média simples dos que existirem)
-      const signals = [trendPct, yoyPct].filter(v => v !== null);
-      if (signals.length) {
-        const combined = signals.reduce((a,b) => a+b, 0) / signals.length;
-        forecastValue = (combined >= 0 ? '+' : '') + combined.toFixed(0) + '%';
-        forecastLabel = 'previsão p/ semana';
-        forecastAlert = Math.abs(combined) >= 15; // alerta visual se a variação for grande
       }
     }
   }
@@ -1604,14 +1573,14 @@ function renderDashSummary() {
   const cards = [
     { value: salesCardValue, label: salesCardLabel, view: 'sales', dotId: 'dash-dot-sales' },
     { value: topProductValue, label: topProductLabel, view: 'history', dotId: null },
-    { value: forecastValue, label: forecastLabel, view: 'resumo', dotId: null, alert: forecastAlert },
+    { value: dayCompareValue, label: dayCompareLabel, view: 'resumo', dotId: null, alert: dayCompareAlert },
   ];
 
   cards.forEach(c => {
     const card = document.createElement('button');
     card.onclick = () => switchTo(c.view);
     const borderColor = c.alert ? 'var(--md-error)' : 'var(--md-amber)';
-    card.style.cssText = `width:100px; height:100px; border-radius:50%; background:rgba(255,255,255,0.15); border:2px solid ${borderColor}; display:flex; flex-direction:column; align-items:center; justify-content:center; cursor:pointer; flex-shrink:0; gap:2px; position:relative;`;
+    card.style.cssText = `width:100px; height:100px; border-radius:50%; background:transparent; border:2px solid ${borderColor}; display:flex; flex-direction:column; align-items:center; justify-content:center; cursor:pointer; flex-shrink:0; gap:2px; position:relative;`;
     if (c.alert) {
       card.innerHTML = `
         <span style="position:absolute; top:-4px; right:-2px; width:18px; height:18px; border-radius:50%; background:var(--md-error); color:white; font-size:12px; font-weight:800; display:flex; align-items:center; justify-content:center;">!</span>
