@@ -1545,53 +1545,85 @@ function renderDashSummary() {
     }
   }
 
-  // Card 3: produto com maior subida de preço (compara última compra vs anterior, por produto)
-  let priceUpValue = '—';
-  let priceUpLabel = 'Sem variação';
+  // Card 3: previsão de vendas para a semana que entra — combina tendência
+  // recente (últimas 3-4 semanas) com a mesma época do ano passado.
+  let forecastValue = '—';
+  let forecastLabel = 'Sem previsão';
+  let forecastAlert = false;
   {
-    const pricesByItem = {}; // item -> [{date, price}]
-    snapHistory.slice().reverse().forEach(snap => { // do mais antigo ao mais recente
-      (snap.items || []).forEach(it => {
-        const price = Number(it.price);
-        if (price > 0) {
-          if (!pricesByItem[it.item]) pricesByItem[it.item] = [];
-          pricesByItem[it.item].push(price);
-        }
+    const sortedSales = [...sales].sort((a, b) => a.date.localeCompare(b.date));
+    if (sortedSales.length >= 4) {
+      // Agrupar vendas por semana (chave = ano-semana ISO simplificado por data de início de semana)
+      const weekKey = (dateStr) => {
+        const d = new Date(dateStr);
+        const day = d.getDay();
+        const monday = new Date(d); monday.setDate(d.getDate() - ((day + 6) % 7));
+        return monday.toISOString().split('T')[0];
+      };
+      const totalsByWeek = {};
+      sortedSales.forEach(s => {
+        const wk = weekKey(s.date);
+        totalsByWeek[wk] = (totalsByWeek[wk] || 0) + s.total;
       });
-    });
-    let best = null;
-    Object.entries(pricesByItem).forEach(([name, prices]) => {
-      if (prices.length < 2) return;
-      const prev = prices[prices.length - 2];
-      const last = prices[prices.length - 1];
-      if (prev > 0) {
-        const change = (last - prev) / prev * 100;
-        if (!best || change > best.change) best = { name, change };
+      const weekKeys = Object.keys(totalsByWeek).sort();
+
+      // Sinal 1: tendência das últimas 3-4 semanas (regressão simples por variação média)
+      let trendPct = null;
+      if (weekKeys.length >= 3) {
+        const lastWeeks = weekKeys.slice(-4).map(k => totalsByWeek[k]);
+        const diffs = [];
+        for (let i = 1; i < lastWeeks.length; i++) {
+          if (lastWeeks[i-1] > 0) diffs.push((lastWeeks[i] - lastWeeks[i-1]) / lastWeeks[i-1]);
+        }
+        if (diffs.length) trendPct = (diffs.reduce((a,b) => a+b, 0) / diffs.length) * 100;
       }
-    });
-    if (best && best.change > 0) {
-      priceUpValue = `↑${best.change.toFixed(0)}%`;
-      priceUpLabel = best.name;
-    } else if (best) {
-      priceUpValue = `↓${Math.abs(best.change).toFixed(0)}%`;
-      priceUpLabel = best.name;
+
+      // Sinal 2: mesma semana do ano passado vs a semana equivalente mais próxima de agora
+      let yoyPct = null;
+      const currentWeekStart = new Date(weekKeys[weekKeys.length - 1]);
+      const lastYearWeekStart = new Date(currentWeekStart); lastYearWeekStart.setFullYear(lastYearWeekStart.getFullYear() - 1);
+      const lastYearKey = lastYearWeekStart.toISOString().split('T')[0];
+      // procura a semana do ano passado mais próxima (±7 dias de tolerância)
+      const closeKey = weekKeys.find(k => Math.abs(new Date(k) - lastYearWeekStart) < 8 * 86400000);
+      if (closeKey && totalsByWeek[closeKey] > 0) {
+        const thisYearSameWeek = totalsByWeek[weekKeys[weekKeys.length - 1]];
+        yoyPct = ((thisYearSameWeek - totalsByWeek[closeKey]) / totalsByWeek[closeKey]) * 100;
+      }
+
+      // Combinar os 2 sinais (média simples dos que existirem)
+      const signals = [trendPct, yoyPct].filter(v => v !== null);
+      if (signals.length) {
+        const combined = signals.reduce((a,b) => a+b, 0) / signals.length;
+        forecastValue = (combined >= 0 ? '+' : '') + combined.toFixed(0) + '%';
+        forecastLabel = 'previsão p/ semana';
+        forecastAlert = Math.abs(combined) >= 15; // alerta visual se a variação for grande
+      }
     }
   }
 
   const cards = [
     { value: salesCardValue, label: salesCardLabel, view: 'sales', dotId: 'dash-dot-sales' },
     { value: topProductValue, label: topProductLabel, view: 'history', dotId: null },
-    { value: priceUpValue, label: priceUpLabel, view: 'prices', dotId: null },
+    { value: forecastValue, label: forecastLabel, view: 'resumo', dotId: null, alert: forecastAlert },
   ];
 
   cards.forEach(c => {
     const card = document.createElement('button');
     card.onclick = () => switchTo(c.view);
-    card.style.cssText = 'width:100px; height:100px; border-radius:50%; background:rgba(255,255,255,0.15); border:2px solid var(--md-amber); display:flex; flex-direction:column; align-items:center; justify-content:center; cursor:pointer; flex-shrink:0; gap:2px;';
-    card.innerHTML = `
-      <div style="font-size:20px; font-weight:700; color:var(--md-white); line-height:1;">${c.value}</div>
-      <div style="font-size:10px; color:var(--md-white); opacity:0.7; text-align:center; padding:0 6px; line-height:1.2; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; max-width:84px;">${c.label}</div>
-    `;
+    const borderColor = c.alert ? 'var(--md-error)' : 'var(--md-amber)';
+    card.style.cssText = `width:100px; height:100px; border-radius:50%; background:rgba(255,255,255,0.15); border:2px solid ${borderColor}; display:flex; flex-direction:column; align-items:center; justify-content:center; cursor:pointer; flex-shrink:0; gap:2px; position:relative;`;
+    if (c.alert) {
+      card.innerHTML = `
+        <span style="position:absolute; top:-4px; right:-2px; width:18px; height:18px; border-radius:50%; background:var(--md-error); color:white; font-size:12px; font-weight:800; display:flex; align-items:center; justify-content:center;">!</span>
+        <div style="font-size:20px; font-weight:700; color:var(--md-white); line-height:1;">${c.value}</div>
+        <div style="font-size:10px; color:var(--md-white); opacity:0.7; text-align:center; padding:0 6px; line-height:1.2; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; max-width:84px;">${c.label}</div>
+      `;
+    } else {
+      card.innerHTML = `
+        <div style="font-size:20px; font-weight:700; color:var(--md-white); line-height:1;">${c.value}</div>
+        <div style="font-size:10px; color:var(--md-white); opacity:0.7; text-align:center; padding:0 6px; line-height:1.2; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; max-width:84px;">${c.label}</div>
+      `;
+    }
     wrap.appendChild(card);
   });
 
