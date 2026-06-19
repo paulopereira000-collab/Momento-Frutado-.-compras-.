@@ -35,6 +35,11 @@
       --md-error:                #9B3A3A;
       --md-error-container:      #F5E0E0;
       --md-on-error-container:   #4A1010;
+      --md-error-soft:           #c62828;   /* erro inline em fundo claro */
+      --md-error-bg:             #fff3f3;   /* fundo de aviso de erro */
+
+      --md-success:              #3D6B35;   /* valores positivos, setas "recebido" */
+      --md-accent:               #7A9E7E;   /* destaque terça-feira / seed */
 
       /* Painel dark — verde muito escuro seco */
       --md-dark-surface:         #1E2620;
@@ -42,10 +47,44 @@
       --md-dark-surface-2:       #2C372E;
       --md-dark-on-surface:      #DCE8DC;
       --md-dark-outline:         #3E5042;
+
+      /* Dourado/laranja — gradiente de destaque dos títulos grandes */
+      --md-gold:                 #D9A02B;
+      --md-orange:               #E8762C;
+      --md-amber:                #F2C94C;   /* destaque nav ativo */
+      --md-amber-dark:           #E8A000;   /* estado "a guardar" */
+
+      /* Neutros — UI escura (teclados, pickers) e texto secundário em fundo claro */
+      --md-white:                #FFFFFF;
+      --md-neutral-90:           #2c2c2c;   /* fundo tecla/picker */
+      --md-neutral-80:           #3a3a3a;   /* fundo tecla:active */
+      --md-neutral-70:           #1e1e1e;   /* fundo modal escuro */
+      --md-neutral-40:           #666;      /* texto secundário sobre claro */
+      --md-neutral-35:           #555;      /* borda dashed sobre escuro */
+      --md-neutral-30:           #999;      /* cabeçalhos de secção */
+      --md-neutral-25:           #9e9e9e;   /* placeholder "a interpretar" */
+      --md-neutral-20:           #757575;   /* texto vazio/aviso */
+      --md-neutral-15:           #aaa;      /* texto vazio sobre escuro */
+      --md-neutral-10:           #bbb;      /* ícone secundário sobre escuro */
+      --md-neutral-bg:           #f5f5f5;   /* fundo botão neutro */
+
+      /* Altura do cabeçalho fixo — usada para o dashboard não ficar por trás dele */
+      --header-height: 66px;
+
+      /* Cores de fruta — uso exclusivo no efeito decorativo do fundo do dashboard */
+      --frt-morango: #E94E5C;
+      --frt-uva:     #8E5BB5;
+      --frt-lima:    #8BC34A;
+      --frt-laranja-deg: #F2994A;
     }
     *, *::before, *::after { box-sizing:border-box; margin:0; padding:0; }
-    html, body { height:100%; background:var(--md-surface); font-family:'Outfit',sans-serif; color:var(--md-primary); user-select:none; -webkit-user-select:none; -webkit-touch-callout:none; }
+    html, body {
+      height:100%;
+      background:var(--md-surface);
+      font-family:'Outfit',sans-serif; color:var(--md-primary); user-select:none; -webkit-user-select:none; -webkit-touch-callout:none;
+    }
     input, textarea { user-select:text; -webkit-user-select:text; }
+    input[type="number"] { user-select:none; -webkit-user-select:none; -webkit-touch-callout:none; }
     input[type=number]::-webkit-inner-spin-button,
     input[type=number]::-webkit-outer-spin-button { -webkit-appearance:none; }
     input[type=number] { -moz-appearance:textfield; }
@@ -61,14 +100,14 @@
     #app { max-width:600px; margin:0 auto; min-height:100vh; display:flex; flex-direction:column; }
 
     /* HEADER */
-    #header { background:var(--md-primary-dark); border-bottom:none; padding:0 16px; position:sticky; top:0; z-index:100; box-shadow:0 2px 8px rgba(0,0,0,0.15); }
+    #header { background:var(--md-primary-dark); border-bottom:none; padding:0 16px; position:sticky; top:0; z-index:100; box-shadow:0 2px 8px rgba(0,0,0,0.15); min-height:var(--header-height); box-sizing:border-box; }
     #header-nav { display:flex; align-items:center; justify-content:space-between; padding:12px 0; }
     #header-icons { display:flex; gap:4px; }
     .hnav-btn { border:none; background:transparent; color:rgba(255,255,255,0.7); padding:8px; cursor:pointer; display:flex; align-items:center; justify-content:center; border-radius:50%; }
     .hnav-btn:active { background:rgba(255,255,255,0.15); }
     #brand-nav-btn { font-size:14px; font-weight:600; letter-spacing:0.5px; text-transform:uppercase; padding:8px; color:var(--md-primary); border-radius:8px; }
     .hnav-btn .material-icons-round { font-size:22px; }
-    .hnav-btn.active { color:#fff; background:rgba(255,255,255,0.15); border-radius:50%; }
+    .hnav-btn.active { color:var(--md-white); background:rgba(255,255,255,0.15); border-radius:50%; }
 
     /* SCROLL */
     #scroll-area { flex:1; overflow-y:auto; padding-bottom:24px; position:relative; }
@@ -76,11 +115,16 @@
     .view.active { display:block; }
     #view-dashboard.active { display:flex; flex-direction:column; min-height:calc(100vh - 60px); }
 
+    /* FUNDO DO DASHBOARD — degradê verde seco → verde muito escuro */
+    .dash-gradient-bg {
+      background:linear-gradient(160deg, var(--md-primary) 0%, var(--md-primary-dark) 40%, #1a2e1c 100%);
+    }
+
     /* CATEGORY */
     .cat-wrap { padding:12px 14px 0; }
     .cat-header { display:flex; align-items:center; justify-content:space-between; padding:10px 12px; cursor:pointer; user-select:none; background:var(--md-primary); border-radius:12px; margin-bottom:6px; }
-    .cat-name { font-size:12px; font-weight:600; color:#ffffff; text-transform:uppercase; letter-spacing:0.8px; }
-    .cat-chevron { font-size:16px; color:#ffffff; transition:transform 0.2s; }
+    .cat-name { font-size:12px; font-weight:600; color:var(--md-white); text-transform:uppercase; letter-spacing:0.8px; }
+    .cat-chevron { font-size:16px; color:var(--md-white); transition:transform 0.2s; }
     .cat-chevron.closed { transform:rotate(-90deg); }
     .cat-body.collapsed { display:none; }
     .cat-body { background:var(--md-surface); border-radius:12px; overflow:hidden; border:1px solid var(--md-outline-variant); margin-top:2px; }
@@ -98,13 +142,14 @@
 
     /* QTY */
     .qty-wrap { display:flex; align-items:center; gap:6px; }
-    .qty-display { width:56px; height:56px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:26px; font-weight:400; color:var(--md-primary); background:#ffffff; border:1px solid var(--md-primary); cursor:pointer; transition:all 0.2s; }
-    .qty-display.active { background:#ffffff; color:var(--md-primary); border:1.25px solid var(--md-primary); box-shadow:none; font-weight:600; }
-    .qty-input-inline { width:56px; height:56px; text-align:center; font-size:26px; font-weight:600; border:1.25px solid var(--md-primary); border-radius:50%; color:var(--md-primary); background:#ffffff; font-family:inherit; outline:none; }
+    .qty-display { width:56px; height:56px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:26px; font-weight:400; color:var(--md-primary); background:var(--md-white); border:1px solid var(--md-primary); cursor:pointer; transition:all 0.2s; }
+    .qty-display.active { background:var(--md-white); color:var(--md-primary); border:1.25px solid var(--md-primary); box-shadow:none; font-weight:600; }
+    .qty-input-inline { width:56px; height:56px; text-align:center; font-size:26px; font-weight:600; border:1.25px solid var(--md-primary); border-radius:50%; color:var(--md-primary); background:var(--md-white); font-family:inherit; outline:none; }
 
     /* CLEAR */
-    #clear-wrap { padding:20px 16px 0; }
-    #clear-btn { width:100%; padding:14px; background:var(--md-error-container); border:none; border-radius:12px; color:var(--md-on-error-container); font-size:15px; font-weight:600; display:flex; align-items:center; justify-content:center; gap:8px; }
+    #clear-wrap { padding:20px 16px 0; display:flex; gap:10px; }
+    #clear-btn { flex:1; padding:14px; background:var(--md-primary); border:none; border-radius:12px; color:var(--md-white); font-size:15px; font-weight:600; display:flex; align-items:center; justify-content:center; gap:8px; cursor:pointer; }
+    #delete-list-btn { flex:1; padding:14px; background:var(--md-error-container); border:none; border-radius:12px; color:var(--md-on-error-container); font-size:15px; font-weight:600; display:flex; align-items:center; justify-content:center; gap:8px; cursor:pointer; }
 
     /* WHATSAPP */
     #wa-content { padding:16px; }
@@ -127,7 +172,7 @@
     .btn-secondary { width:100%; padding:14px; background:var(--md-primary-container); color:var(--md-primary); border:none; border-radius:12px; font-size:16px; font-weight:600; }
     .manage-cat-block { background:var(--md-surface); border-radius:12px; border:1px solid var(--md-outline-variant); overflow:hidden; margin-bottom:10px; }
     .manage-cat-hdr { padding:14px 16px; background:var(--md-primary); display:flex; justify-content:space-between; align-items:center; cursor:pointer; border-bottom:1px solid var(--md-outline-variant); }
-    .manage-cat-hdr span { font-size:13px; font-weight:700; color:#fff; text-transform:uppercase; letter-spacing:0.5px; }
+    .manage-cat-hdr span { font-size:13px; font-weight:700; color:var(--md-white); text-transform:uppercase; letter-spacing:0.5px; }
     .manage-cat-body.collapsed { display:none; }
     .manage-subcat-block { background:var(--md-surface); border-radius:10px; margin:8px; border:1px solid var(--md-outline-variant); overflow:hidden; }
     .manage-subcat-hdr { display:flex; align-items:center; gap:8px; padding:12px 14px; background:var(--md-primary-container); border-bottom:1px solid var(--md-outline-variant); }
@@ -203,6 +248,8 @@
     .pick-row-label { font-size:18px; font-weight:500; color:var(--md-primary); flex:1; white-space:nowrap; }
     .pick-row-input { width:120px; max-width:120px; min-width:120px; height:48px; padding:0 14px; border:none !important; border-radius:24px !important; font-size:26px; font-weight:600; font-family:'Outfit',sans-serif; outline:none; background:var(--md-primary-container) !important; color:var(--md-on-primary-container) !important; text-align:center; -webkit-appearance:none; appearance:none; flex-shrink:0; box-sizing:border-box; }
     .pick-field-label { font-size:11px; font-weight:600; color:var(--md-primary); text-transform:uppercase; letter-spacing:0.5px; margin-bottom:6px; display:block; }
+    .vasil-key { height:60px; border:none; border-radius:14px; background:var(--md-neutral-90); color:var(--md-white); font-size:26px; font-weight:600; font-family:'Outfit',sans-serif; cursor:pointer; display:flex; align-items:center; justify-content:center; }
+    .vasil-key:active { background:var(--md-neutral-80); }
     #pick-sell-price { width:100%; padding:16px; border:2px solid var(--md-primary); border-radius:14px; font-size:32px; font-weight:600; font-family:'Outfit',sans-serif; outline:none; margin-bottom:12px; background:var(--md-primary-container); color:var(--md-on-primary-container); }
     #pick-sell-price:focus { border-color:var(--md-on-primary-container); }
     #pick-supplier { width:100%; padding:14px; border:1.5px solid var(--md-outline-variant); border-radius:12px; font-size:16px; font-family:'Outfit',sans-serif; outline:none; margin-bottom:12px; background:var(--md-surface-1); color:var(--md-primary); }
@@ -210,8 +257,8 @@
     #pick-close { width:100%; padding:13px; border:1.5px solid var(--md-outline-variant); border-radius:12px; font-size:15px; font-weight:600; background:transparent; color:var(--md-primary); cursor:pointer; font-family:'Outfit',sans-serif; }
 
     /* SNACKBAR */
-    #snackbar { position:fixed; bottom:24px; left:50%; transform:translateX(-50%); border-radius:12px; padding:12px 24px; font-size:14px; font-weight:600; box-shadow:0 4px 16px rgba(0,0,0,0.2); z-index:300; display:none; color:#fff; white-space:nowrap; }
-    #snackbar.saving { background:#E8A000; }
+    #snackbar { position:fixed; bottom:24px; left:50%; transform:translateX(-50%); border-radius:12px; padding:12px 24px; font-size:14px; font-weight:600; box-shadow:0 4px 16px rgba(0,0,0,0.2); z-index:300; display:none; color:var(--md-white); white-space:nowrap; }
+    #snackbar.saving { background:var(--md-amber-dark); }
     #snackbar.saved  { background:var(--md-primary); }
     #snackbar.error  { background:var(--md-error); }
 
@@ -220,7 +267,7 @@
     .task-card:last-child { border-bottom:none; }
     .task-check { width:28px; height:28px; border-radius:50%; border:1.5px solid var(--md-primary); display:flex; align-items:center; justify-content:center; cursor:pointer; flex-shrink:0; transition:all 0.2s; background:transparent; }
     .task-check.done { background:var(--md-primary); border-color:var(--md-primary); }
-    .task-check.done .material-icons-round { font-size:18px; color:#fff; }
+    .task-check.done .material-icons-round { font-size:18px; color:var(--md-white); }
     .task-check .material-icons-round { font-size:18px; color:transparent; }
     .task-text { flex:1; font-size:20px; font-weight:500; color:var(--md-primary); }
     .task-text.done { text-decoration:line-through; color:var(--md-outline); font-weight:400; }
@@ -235,7 +282,7 @@
     .supplier-type { font-size:13px; color:var(--md-primary); margin-top:2px; }
     .supplier-phone { font-size:14px; color:var(--md-primary); margin-top:4px; display:flex; align-items:center; gap:4px; font-weight:600; }
     .supplier-notes { font-size:12px; color:var(--md-primary); margin-top:4px; }
-    .supplier-btns { display:flex; flex-direction:column; gap:8px; }
+    .supplier-btns { display:flex; flex-direction:column; gap:8px; align-self:center; }
     .sup-btn { width:40px; height:40px; border-radius:50%; border:none; display:flex; align-items:center; justify-content:center; cursor:pointer; }
     .sup-btn-call { background:var(--md-primary-container); }
     .sup-btn-call .material-icons-round { font-size:20px; color:var(--md-on-primary-container); }
@@ -254,8 +301,8 @@
   <div id="header">
     <div id="header-nav">
       <div id="header-icons" style="display:flex; align-items:center; justify-content:space-between; width:100%;">
-        <div style="display:flex; align-items:center; gap:8px;">
-          <button class="hnav-btn active" data-view="dashboard" style="font-size:13px; font-weight:400; letter-spacing:1px; color:#F2C94C; padding:6px 8px; text-transform:uppercase; white-space:nowrap; background:transparent; border-radius:0;">Momento Frutado</button>
+        <div id="header-title-wrap" style="display:flex; align-items:center; gap:8px;">
+          <button class="hnav-btn active" data-view="dashboard" style="font-size:13px; font-weight:400; letter-spacing:1px; color:var(--md-amber); padding:6px 8px; text-transform:uppercase; white-space:nowrap; background:transparent; border-radius:0;">Momento Frutado</button>
         </div>
         <div style="display:flex; align-items:center; gap:0;">
           <button class="hnav-btn" id="list-nav-btn" data-view="list" style="font-size:11px; font-weight:700; letter-spacing:0.5px; padding:8px 10px;"><span class="material-icons-round">shopping_basket</span></button>
@@ -272,28 +319,50 @@
     <div id="view-list" class="view">
       <div style="padding:20px 16px 8px; display:flex; align-items:center; justify-content:space-between;">
         <div style="display:flex; align-items:center; gap:12px;">
-          <div style="font-size:52px; font-weight:700; letter-spacing:-1px; line-height:1; background:linear-gradient(90deg, #D9A02B, #E8762C); -webkit-background-clip:text; background-clip:text; color:transparent;">Compras</div>
+          <div style="font-size:52px; font-weight:700; letter-spacing:-1px; line-height:1; background:linear-gradient(90deg, var(--md-gold), var(--md-orange)); -webkit-background-clip:text; background-clip:text; color:transparent;">Compras</div>
         </div>
-        <button onclick="toggleFilter()" style="background:none; border:none; cursor:pointer; padding:8px; display:flex; align-items:center; opacity:0.5;">
-          <span class="material-icons-round" id="list-filter-icon" style="font-size:28px; color:var(--md-primary);">visibility</span>
-        </button>
+        <div style="display:flex; align-items:center; gap:4px;">
+          <button onclick="toggleVasilQuickPanel()" style="background:none; border:none; cursor:pointer; padding:8px; display:flex; align-items:center; opacity:0.5; position:relative;">
+            <span class="material-icons-round" style="font-size:26px; color:var(--md-primary);">inventory_2</span>
+            <span id="vasil-quick-badge" style="display:none; position:absolute; top:2px; right:2px; width:8px; height:8px; border-radius:50%; background:var(--md-orange);"></span>
+          </button>
+          <button onclick="toggleFilter()" style="background:none; border:none; cursor:pointer; padding:8px; display:flex; align-items:center; opacity:0.5;">
+            <span class="material-icons-round" id="list-filter-icon" style="font-size:28px; color:var(--md-primary);">visibility</span>
+          </button>
+        </div>
       </div>
-      <div style="padding:0 14px 6px;">
-        <div style="position:relative;">
-          <span class="material-icons-round" style="position:absolute; left:12px; top:50%; transform:translateY(-50%); font-size:20px; color:var(--md-primary); opacity:0.4; pointer-events:none;">search</span>
-          <input id="list-search" type="text" placeholder="Pesquisar"
-            style="width:100%; padding:11px 12px 11px 40px; border:1.5px solid var(--md-outline-variant); border-radius:12px; font-size:16px; font-family:'Outfit',sans-serif; color:var(--md-primary); background:rgba(92,126,96,0.08); outline:none;"
-            oninput="renderCats(this.value)"/>
+
+      <!-- Painel rápido de vasilhame -->
+      <div id="vasil-quick-panel" style="display:none; padding:0 16px 12px;">
+        <div style="background:var(--md-surface); border-radius:14px; border:1px solid var(--md-outline-variant); padding:14px;">
+          <div style="font-size:13px; font-weight:700; color:var(--md-primary); opacity:0.6; text-transform:uppercase; letter-spacing:1px; margin-bottom:10px;">Vasilhame desta compra</div>
+          <div id="vasil-quick-steppers"></div>
+          <div style="margin-top:10px;">
+            <select id="vasil-quick-supplier" style="width:100%; padding:11px; border:1.5px solid var(--md-outline-variant); border-radius:10px; font-size:14px; font-family:'Outfit',sans-serif; color:var(--md-primary); background:var(--md-surface-1); outline:none;">
+              <option value="">Fornecedor…</option>
+            </select>
+          </div>
+          <button onclick="confirmVasilQuick()" style="width:100%; margin-top:10px; padding:12px; background:var(--md-primary); color:var(--md-white); border:none; border-radius:10px; font-size:14px; font-weight:700; font-family:'Outfit',sans-serif; cursor:pointer;">Registar entrada</button>
         </div>
+      </div>
+
+      <div style="padding:8px 16px 12px; position:relative;">
+        <span class="material-icons-round" style="position:absolute; left:28px; top:50%; transform:translateY(-50%); font-size:20px; color:var(--md-primary); opacity:0.4; pointer-events:none;">search</span>
+        <input id="list-search" type="text" placeholder="Pesquisar"
+          style="width:100%; padding:12px 12px 12px 40px; border:1.5px solid var(--md-outline-variant); border-radius:12px; font-size:16px; font-family:'Outfit',sans-serif; color:var(--md-primary); background:rgba(92,126,96,0.08); outline:none;"
+          oninput="renderCats(this.value)"/>
       </div>
       <div id="cat-list" style="padding-top:4px"></div>
-      <div id="clear-wrap"><button id="clear-btn">Limpar lista</button></div>
+      <div id="clear-wrap">
+        <button id="clear-btn"><span class="material-icons-round" style="font-size:18px;">save</span>Gravar</button>
+        <button id="delete-list-btn"><span class="material-icons-round" style="font-size:18px;">delete_outline</span>Apagar</button>
+      </div>
     </div>
 
     <div id="view-whatsapp" class="view">
       <div style="padding:20px 16px 8px;">
         <div style="display:flex; align-items:center; gap:12px;">
-          <div style="font-size:52px; font-weight:700; letter-spacing:-1px; line-height:1; background:linear-gradient(90deg, #D9A02B, #E8762C); -webkit-background-clip:text; background-clip:text; color:transparent;">WhatsApp</div>
+          <div style="font-size:52px; font-weight:700; letter-spacing:-1px; line-height:1; background:linear-gradient(90deg, var(--md-gold), var(--md-orange)); -webkit-background-clip:text; background-clip:text; color:transparent;">WhatsApp</div>
         </div>
       </div>
       <div id="wa-content">
@@ -308,7 +377,7 @@
         </div>
         <div id="wa-filled" style="display:none">
           <textarea id="wa-text" readonly></textarea>
-          <button onclick="copyWA()" style="width:100%;margin-top:12px;padding:14px;background:var(--md-primary);color:#fff;border:none;border-radius:12px;font-size:16px;font-weight:600;font-family:'Outfit',sans-serif;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;">
+          <button onclick="copyWA()" style="width:100%;margin-top:12px;padding:14px;background:var(--md-primary);color:var(--md-white);border:none;border-radius:12px;font-size:16px;font-weight:600;font-family:'Outfit',sans-serif;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;">
             <span class="material-icons-round" style="font-size:20px;">content_copy</span> Copiar lista
           </button>
         </div>
@@ -318,7 +387,7 @@
     <div id="view-history" class="view">
       <div style="padding:20px 16px 8px;">
         <div style="display:flex; align-items:center; gap:12px;">
-          <div style="font-size:52px; font-weight:700; letter-spacing:-1px; line-height:1; background:linear-gradient(90deg, #D9A02B, #E8762C); -webkit-background-clip:text; background-clip:text; color:transparent;">Histórico</div>
+          <div style="font-size:52px; font-weight:700; letter-spacing:-1px; line-height:1; background:linear-gradient(90deg, var(--md-gold), var(--md-orange)); -webkit-background-clip:text; background-clip:text; color:transparent;">Histórico</div>
         </div>
       </div>
       <div id="history-content" style="padding:14px"></div>
@@ -328,39 +397,36 @@
     <div id="view-tasks" class="view">
       <div style="padding:20px 16px 8px; display:flex; align-items:center; justify-content:space-between;">
         <div style="display:flex; align-items:center; gap:12px;">
-          <div style="font-size:52px; font-weight:700; letter-spacing:-1px; line-height:1; background:linear-gradient(90deg, #D9A02B, #E8762C); -webkit-background-clip:text; background-clip:text; color:transparent;">Fazer</div>
+          <div style="font-size:52px; font-weight:700; letter-spacing:-1px; line-height:1; background:linear-gradient(90deg, var(--md-gold), var(--md-orange)); -webkit-background-clip:text; background-clip:text; color:transparent;">Fazer</div>
         </div>
-        <button id="tasks-add-btn" onclick="openTaskModal()" style="background:var(--md-primary); color:#fff; border:none; border-radius:50%; width:44px; height:44px; display:flex; align-items:center; justify-content:center; cursor:pointer; flex-shrink:0;">
+        <button id="tasks-add-btn" onclick="openAddChooser()" style="background:var(--md-primary); color:var(--md-white); border:none; border-radius:50%; width:44px; height:44px; display:flex; align-items:center; justify-content:center; cursor:pointer; flex-shrink:0;">
           <span class="material-icons-round" style="font-size:26px;">add</span>
         </button>
       </div>
 
-      <!-- Tabs: Lista vs Projetos -->
-      <div style="padding:0 16px 12px; display:flex; gap:8px;">
-        <button id="tasks-tab-list" onclick="setTasksTab('list')" style="flex:1; padding:10px; border:none; border-radius:10px; font-size:14px; font-weight:700; font-family:'Outfit',sans-serif; cursor:pointer; background:var(--md-primary); color:#fff;">Lista</button>
-        <button id="tasks-tab-projects" onclick="setTasksTab('projects')" style="flex:1; padding:10px; border:none; border-radius:10px; font-size:14px; font-weight:700; font-family:'Outfit',sans-serif; cursor:pointer; background:var(--md-surface-variant); color:var(--md-primary);">Projetos</button>
-      </div>
-
-      <!-- LISTA SIMPLES -->
-      <div id="tasks-panel-list">
-        <div id="tasks-list" style="padding:8px 16px 32px; display:flex; flex-direction:column; gap:0;">
-          <div id="tasks-empty" style="text-align:center; padding:60px 20px; color:var(--md-primary); opacity:0.5;">
-            <span class="material-icons-round" style="font-size:48px; display:block; margin-bottom:12px;">check_circle</span>
-            <div style="font-size:17px; font-weight:600;">Sem tarefas</div>
-            <div style="font-size:14px; margin-top:6px;">Adiciona a primeira tarefa</div>
-          </div>
+      <!-- Tudo junto: tarefas simples e projetos numa única lista -->
+      <div id="tasks-list" style="padding:8px 16px 32px; display:flex; flex-direction:column; gap:14px;">
+        <div id="tasks-empty" style="text-align:center; padding:60px 20px; color:var(--md-primary); opacity:0.5;">
+          <span class="material-icons-round" style="font-size:48px; display:block; margin-bottom:12px;">check_circle</span>
+          <div style="font-size:17px; font-weight:600;">Nada para fazer</div>
+          <div style="font-size:14px; margin-top:6px;">Toca em + para adicionar uma tarefa ou projeto</div>
         </div>
       </div>
+    </div>
 
-      <!-- PROJETOS -->
-      <div id="tasks-panel-projects" style="display:none;">
-        <div id="projects-list" style="padding:8px 16px 32px; display:flex; flex-direction:column; gap:14px;">
-          <div id="projects-empty" style="text-align:center; padding:60px 20px; color:var(--md-primary); opacity:0.5;">
-            <span class="material-icons-round" style="font-size:48px; display:block; margin-bottom:12px;">folder_open</span>
-            <div style="font-size:17px; font-weight:600;">Sem projetos</div>
-            <div style="font-size:14px; margin-top:6px;">Cria um projeto para organizar várias tarefas com notas</div>
-          </div>
-        </div>
+    <!-- ESCOLHA: TAREFA OU PROJETO -->
+    <div id="add-chooser-overlay" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.5); z-index:299; backdrop-filter:blur(4px);" onclick="closeAddChooser()"></div>
+    <div id="add-chooser-panel" style="display:none; position:fixed; bottom:0; left:50%; transform:translateX(-50%); width:100%; max-width:600px; background:var(--md-surface); border-radius:24px 24px 0 0; padding:20px 20px 40px; z-index:300;">
+      <div style="font-size:20px; font-weight:700; color:var(--md-primary); margin-bottom:16px;">O que queres adicionar?</div>
+      <div style="display:flex; gap:10px;">
+        <button onclick="closeAddChooser(); openTaskModal();" style="flex:1; padding:20px; background:var(--md-surface-1); border:1.5px solid var(--md-outline-variant); border-radius:14px; cursor:pointer; display:flex; flex-direction:column; align-items:center; gap:8px;">
+          <span class="material-icons-round" style="font-size:30px; color:var(--md-primary);">check_circle</span>
+          <span style="font-size:15px; font-weight:700; color:var(--md-primary); font-family:'Outfit',sans-serif;">Tarefa</span>
+        </button>
+        <button onclick="closeAddChooser(); openProjectModal();" style="flex:1; padding:20px; background:var(--md-surface-1); border:1.5px solid var(--md-outline-variant); border-radius:14px; cursor:pointer; display:flex; flex-direction:column; align-items:center; gap:8px;">
+          <span class="material-icons-round" style="font-size:30px; color:var(--md-primary);">folder</span>
+          <span style="font-size:15px; font-weight:700; color:var(--md-primary); font-family:'Outfit',sans-serif;">Projeto</span>
+        </button>
       </div>
     </div>
 
@@ -371,7 +437,7 @@
       <input id="project-title" type="text" placeholder="Título do projeto" style="width:100%; padding:14px; border:1.5px solid var(--md-outline-variant); border-radius:12px; font-size:18px; font-family:'Outfit',sans-serif; outline:none; margin-bottom:14px; background:var(--md-surface-1); color:var(--md-primary);"/>
       <div style="display:flex; gap:10px;">
         <button onclick="closeProjectModal()" style="padding:16px 20px; background:var(--md-surface-variant); color:var(--md-primary); border:none; border-radius:12px; font-size:16px; font-weight:600; font-family:'Outfit',sans-serif; cursor:pointer;">Cancelar</button>
-        <button onclick="saveProject()" style="flex:1; padding:16px; background:var(--md-primary); color:#fff; border:none; border-radius:12px; font-size:16px; font-weight:700; font-family:'Outfit',sans-serif; cursor:pointer;">Criar</button>
+        <button onclick="saveProject()" style="flex:1; padding:16px; background:var(--md-primary); color:var(--md-white); border:none; border-radius:12px; font-size:16px; font-weight:700; font-family:'Outfit',sans-serif; cursor:pointer;">Criar</button>
       </div>
     </div>
 
@@ -383,66 +449,134 @@
       <textarea id="ptask-notes" placeholder="Notas (opcional)" style="width:100%; min-height:90px; padding:14px; border:1.5px solid var(--md-outline-variant); border-radius:12px; font-size:15px; font-family:'Outfit',sans-serif; outline:none; margin-bottom:20px; background:var(--md-surface-1); color:var(--md-primary); resize:vertical;"></textarea>
       <div style="display:flex; gap:10px;">
         <button onclick="closePTaskModal()" style="padding:16px 20px; background:var(--md-surface-variant); color:var(--md-primary); border:none; border-radius:12px; font-size:16px; font-weight:600; font-family:'Outfit',sans-serif; cursor:pointer;">Cancelar</button>
-        <button onclick="savePTask()" style="flex:1; padding:16px; background:var(--md-primary); color:#fff; border:none; border-radius:12px; font-size:16px; font-weight:700; font-family:'Outfit',sans-serif; cursor:pointer;">Guardar</button>
+        <button onclick="savePTask()" style="flex:1; padding:16px; background:var(--md-primary); color:var(--md-white); border:none; border-radius:12px; font-size:16px; font-weight:700; font-family:'Outfit',sans-serif; cursor:pointer;">Guardar</button>
       </div>
     </div>
 
 
     <!-- ── DEFINIÇÕES ─────────────────────────────────────────────────────── -->
     <div id="view-settings" class="view">
-      <div style="padding:0 20px; display:flex; flex-direction:column; gap:0; margin-top:24px;">
+      <!-- Backup — secção de segurança de dados no topo -->
+      <div style="margin:20px 16px 0; background:var(--md-surface); border-radius:14px; border:1px solid var(--md-outline-variant); overflow:hidden;">
+        <div style="padding:12px 16px 8px; font-size:11px; font-weight:700; color:var(--md-primary); opacity:0.5; text-transform:uppercase; letter-spacing:1px;">Segurança de dados</div>
+        <button onclick="exportBackup()" style="background:none; border:none; border-top:1px solid var(--md-outline-variant); padding:14px 16px; text-align:left; cursor:pointer; width:100%; font-size:17px; font-weight:500; color:var(--md-primary); font-family:'Outfit',sans-serif; display:flex; align-items:center; gap:12px;">
+          <span class="material-icons-round" style="font-size:20px; color:var(--md-primary);">backup</span>
+          <div>
+            <div>Exportar backup completo</div>
+            <div style="font-size:12px; opacity:0.5; margin-top:1px;">Guarda todos os dados num ficheiro JSON</div>
+          </div>
+        </button>
+        <button onclick="document.getElementById('import-backup-file').click()" style="background:none; border:none; border-top:1px solid var(--md-outline-variant); padding:14px 16px; text-align:left; cursor:pointer; width:100%; font-size:17px; font-weight:500; color:var(--md-primary); font-family:'Outfit',sans-serif; display:flex; align-items:center; gap:12px;">
+          <span class="material-icons-round" style="font-size:20px; color:var(--md-error);">restore</span>
+          <div>
+            <div>Importar backup</div>
+            <div style="font-size:12px; opacity:0.5; margin-top:1px;">Restaura todos os dados a partir de um ficheiro</div>
+          </div>
+        </button>
+        <input id="import-backup-file" type="file" accept=".json" style="display:none" onchange="importBackup(event)"/>
+      </div>
+
+      <div style="padding:0 16px; display:flex; flex-direction:column; gap:0; margin-top:16px;">
         <button onclick="switchTo('whatsapp')" style="background:none; border:none; border-bottom:1px solid var(--md-outline-variant); padding:14px 0; text-align:left; cursor:pointer; width:100%; font-size:17px; font-weight:500; color:var(--md-primary); font-family:'Outfit',sans-serif; display:flex; align-items:center; gap:12px;"><span class="material-icons-round" style="font-size:20px;">chat_bubble_outline</span>WhatsApp</button>
         <button onclick="switchTo('history')" style="background:none; border:none; border-bottom:1px solid var(--md-outline-variant); padding:14px 0; text-align:left; cursor:pointer; width:100%; font-size:17px; font-weight:500; color:var(--md-primary); font-family:'Outfit',sans-serif; display:flex; align-items:center; gap:12px;"><span class="material-icons-round" style="font-size:20px;">history</span>Histórico</button>
         <button onclick="switchTo('suppliers')" style="background:none; border:none; border-bottom:1px solid var(--md-outline-variant); padding:14px 0; text-align:left; cursor:pointer; width:100%; font-size:17px; font-weight:500; color:var(--md-primary); font-family:'Outfit',sans-serif; display:flex; align-items:center; gap:12px;"><span class="material-icons-round" style="font-size:20px;">contacts</span>Fornecedores</button>
-        <button onclick="switchTo('add')" style="background:none; border:none; padding:14px 0; text-align:left; cursor:pointer; width:100%; font-size:17px; font-weight:500; color:var(--md-primary); font-family:'Outfit',sans-serif; display:flex; align-items:center; gap:12px;"><span class="material-icons-round" style="font-size:20px;">category</span>Gestão de produtos</button>
+        <button onclick="switchTo('vasilhame')" style="background:none; border:none; border-bottom:1px solid var(--md-outline-variant); padding:14px 0; text-align:left; cursor:pointer; width:100%; font-size:17px; font-weight:500; color:var(--md-primary); font-family:'Outfit',sans-serif; display:flex; align-items:center; gap:12px;"><span class="material-icons-round" style="font-size:20px;">inventory_2</span>Vasilhame</button>
+        <button onclick="switchTo('add')" style="background:none; border:none; border-bottom:1px solid var(--md-outline-variant); padding:14px 0; text-align:left; cursor:pointer; width:100%; font-size:17px; font-weight:500; color:var(--md-primary); font-family:'Outfit',sans-serif; display:flex; align-items:center; gap:12px;"><span class="material-icons-round" style="font-size:20px;">category</span>Gestão de produtos</button>
+        <button onclick="document.getElementById('import-sales-file').click()" style="background:none; border:none; border-bottom:1px solid var(--md-outline-variant); padding:14px 0; text-align:left; cursor:pointer; width:100%; font-size:17px; font-weight:500; color:var(--md-primary); font-family:'Outfit',sans-serif; display:flex; align-items:center; gap:12px;"><span class="material-icons-round" style="font-size:20px;">file_upload</span>Importar histórico de vendas</button>
+        <input id="import-sales-file" type="file" accept=".json" style="display:none" onchange="importSalesJSON(event)"/>
+        <button onclick="document.getElementById('import-suppliers-file').click()" style="background:none; border:none; padding:14px 0; text-align:left; cursor:pointer; width:100%; font-size:17px; font-weight:500; color:var(--md-primary); font-family:'Outfit',sans-serif; display:flex; align-items:center; gap:12px;"><span class="material-icons-round" style="font-size:20px;">group_add</span>Importar fornecedores</button>
+        <input id="import-suppliers-file" type="file" accept=".json" style="display:none" onchange="importSuppliersJSON(event)"/>
       </div>
     </div>
 
-    <!-- ── DASHBOARD ───────────────────────────────────────────────────────── -->
-    <div id="view-dashboard" class="view active" style="background:var(--md-surface);">
-
-      <!-- Saudação -->
-      <div style="padding:28px 20px 0;">
-        <div id="dash-date" style="font-size:13px; color:var(--md-primary); margin-bottom:4px; font-weight:500;"></div>
-        <div id="dash-greeting" style="font-size:37px; font-weight:200; line-height:1.2; color:var(--md-primary); opacity:0.5;"></div>
-        <div style="font-size:70px; font-weight:700; line-height:0.95; letter-spacing:-2px; margin-top:2px; background:linear-gradient(90deg, #D9A02B, #E8762C); -webkit-background-clip:text; background-clip:text; color:transparent;">Momento<br>Frutado</div>
+    <!-- ── VASILHAME ───────────────────────────────────────────────────────── -->
+    <div id="view-vasilhame" class="view">
+      <div style="padding:20px 16px 8px;">
+        <div style="font-size:52px; font-weight:700; letter-spacing:-1px; line-height:1; background:linear-gradient(90deg, var(--md-gold), var(--md-orange)); -webkit-background-clip:text; background-clip:text; color:transparent;">Vasilhame</div>
       </div>
 
-      <!-- Links — 20% mais espaço acima (padding 28->34px) -->
-      <div style="padding:34px 20px 0; display:flex; flex-direction:column; gap:0;">
-        <button onclick="switchTo('list')" style="background:none; border:none; padding:8px 0; text-align:left; cursor:pointer; width:100%; display:flex; align-items:center; gap:14px;">
-          <span style="width:14px; height:14px; border-radius:50%; border:2px solid var(--md-primary); opacity:0.5; flex-shrink:0;"></span>
-          <span style="font-size:26px; font-weight:700; color:var(--md-primary); opacity:0.5;">COMPRAS</span>
-        </button>
-        <button onclick="switchTo('sales')" style="background:none; border:none; padding:8px 0; text-align:left; cursor:pointer; width:100%; display:flex; align-items:center; gap:14px;">
-          <span style="width:14px; height:14px; border-radius:50%; border:2px solid var(--md-primary); opacity:0.5; flex-shrink:0;"></span>
-          <span style="font-size:26px; font-weight:700; color:var(--md-primary); opacity:0.5;">VENDAS</span>
-        </button>
-        <button onclick="switchTo('tasks')" style="background:none; border:none; padding:8px 0; text-align:left; cursor:pointer; width:100%; display:flex; align-items:center; gap:14px;">
-          <span style="width:14px; height:14px; border-radius:50%; border:2px solid var(--md-primary); opacity:0.5; flex-shrink:0;"></span>
-          <span style="font-size:26px; font-weight:700; color:var(--md-primary); opacity:0.5;">FAZER</span>
-        </button>
-      </div>
+      <div style="padding:0 16px 16px;">
+        <!-- Registo rápido -->
+        <div style="border-radius:14px; overflow:hidden; margin-bottom:20px; box-shadow:0 1px 3px rgba(0,0,0,0.08); background:var(--md-surface);">
 
-      <!-- Spacer empurra tarefas para o fundo -->
-      <div style="flex:1;"></div>
+          <!-- Entregamos / Recebemos — escreve a quantidade no teclado próprio da app -->
+          <div class="pick-row">
+            <span class="pick-row-label">Entregamos</span>
+            <button type="button" id="vasil-qty-credit-btn" onclick="openVasilKeypad('credit')" class="pick-row-input" style="cursor:pointer;">0</button>
+            <input type="hidden" id="vasil-qty-credit" value=""/>
+          </div>
+          <div class="pick-row">
+            <span class="pick-row-label">Recebemos</span>
+            <button type="button" id="vasil-qty-debit-btn" onclick="openVasilKeypad('debit')" class="pick-row-input" style="cursor:pointer;">0</button>
+            <input type="hidden" id="vasil-qty-debit" value=""/>
+          </div>
 
-      <!-- Tarefas na base — discretas -->
-      <div style="padding:0 20px 80px; opacity:0.7;">
-        <div id="dash-tasks-preview" style="background:transparent; overflow:hidden;">
-          <div id="dash-tasks-empty" style="padding:8px 0; color:var(--md-primary); font-size:13px;"></div>
+          <!-- Fornecedor — abre painel rápido com pesquisa -->
+          <div class="pick-row">
+            <span class="pick-row-label">Fornecedor</span>
+            <button id="vasil-supplier-btn" onclick="openVasilSupplierPicker()" type="button" style="background:var(--md-primary-container); border:none; border-radius:24px; height:48px; padding:0 18px; font-size:18px; font-weight:600; font-family:'Outfit',sans-serif; color:var(--md-on-primary-container); cursor:pointer; display:flex; align-items:center; gap:6px; flex-shrink:0; max-width:60%; overflow:hidden;">
+              <span id="vasil-supplier-label" style="overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">Escolher…</span>
+              <span class="material-icons-round" style="font-size:18px; opacity:0.7; flex-shrink:0;">expand_more</span>
+            </button>
+            <input type="hidden" id="vasil-supplier" value=""/>
+          </div>
+          <!-- Picker de fornecedor (bottom sheet com pesquisa, agrupado por pavilhão) -->
+          <div id="vasil-supplier-picker" style="display:none;position:fixed;bottom:0;left:0;right:0;background:var(--md-neutral-70);border-radius:20px 20px 0 0;padding:16px;z-index:300;max-height:50vh;overflow-y:auto; transition:top 0.15s, max-height 0.15s;"></div>
+          <div id="vasil-supplier-overlay" onclick="closeVasilSupplierPicker()" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:299;"></div>
+          </div>
+
+          <!-- Tipo de caixa -->
+          <div class="pick-row">
+            <span class="pick-row-label">Caixa</span>
+            <button id="vasil-boxtype-btn" onclick="openVasilBoxPicker()" type="button" style="background:var(--md-primary-container); border:none; border-radius:24px; height:48px; padding:0 18px; font-size:18px; font-weight:600; font-family:'Outfit',sans-serif; color:var(--md-on-primary-container); cursor:pointer; display:flex; align-items:center; gap:6px; flex-shrink:0;">
+              <span id="vasil-boxtype-label">Caixa 1kg</span>
+              <span class="material-icons-round" style="font-size:18px; opacity:0.7;">expand_more</span>
+            </button>
+            <input type="hidden" id="vasil-boxtype" value="Caixa 1kg"/>
+          </div>
+
+          <div style="padding:16px 18px 18px; display:flex; justify-content:flex-end;">
+            <button onclick="saveVasilMov()" style="background:var(--md-gold); color:var(--md-white); border:none; border-radius:50%; width:52px; height:52px; display:flex; align-items:center; justify-content:center; cursor:pointer; flex-shrink:0;">
+              <span class="material-icons-round" style="font-size:26px;">check</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Picker de tipo de caixa (bottom sheet, mesmo estilo do fornecedor) -->
+        <div id="vasil-box-picker" style="display:none;position:fixed;bottom:0;left:0;right:0;background:var(--md-neutral-70);border-radius:20px 20px 0 0;padding:16px;z-index:300;max-height:60vh;overflow-y:auto;"></div>
+        <div id="vasil-box-overlay" onclick="closeVasilBoxPicker()" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:299;"></div>
+
+        <!-- Saldos por fornecedor -->
+        <button onclick="toggleVasilBalances()" style="width:100%; background:none; border:none; padding:0; margin-bottom:10px; display:flex; align-items:center; justify-content:space-between; cursor:pointer;">
+          <span style="font-size:13px; font-weight:700; color:var(--md-primary); opacity:0.6; text-transform:uppercase; letter-spacing:1px;">Saldo por fornecedor</span>
+          <span class="material-icons-round" id="vasil-balances-chevron" style="font-size:20px; color:var(--md-primary); opacity:0.6; transition:transform 0.2s; transform:rotate(180deg);">expand_more</span>
+        </button>
+        <div id="vasil-balances">
+          <div id="vasil-balances-empty" style="text-align:center; padding:40px 20px; color:var(--md-primary); opacity:0.4;">
+            <div style="font-size:17px; font-weight:600;">Sem movimentos ainda</div>
+            <div style="font-size:14px; margin-top:6px;">Regista as caixas recebidas e devolvidas</div>
+          </div>
+        </div>
+
+        <!-- Histórico -->
+        <button onclick="toggleVasilHistory()" style="width:100%; background:none; border:none; padding:0; margin:20px 0 10px; display:flex; align-items:center; justify-content:space-between; cursor:pointer;">
+          <span style="font-size:13px; font-weight:700; color:var(--md-primary); opacity:0.6; text-transform:uppercase; letter-spacing:1px;">Histórico de movimentos</span>
+          <span class="material-icons-round" id="vasil-history-chevron" style="font-size:20px; color:var(--md-primary); opacity:0.6; transition:transform 0.2s;">expand_more</span>
+        </button>
+        <div id="vasil-history-list" style="display:none;">
+          <div id="vasil-history-empty" style="text-align:center; padding:40px 20px; color:var(--md-primary); opacity:0.4;">
+            <div style="font-size:14px;">Sem registos</div>
+          </div>
         </div>
       </div>
-
-    </div>
 
     <!-- ── FORNECEDORES ─────────────────────────────────────────────────────── -->
     <div id="view-suppliers" class="view">
-      <div style="padding:20px 16px 8px; display:flex; align-items:center; justify-content:space-between;">
-        <div style="display:flex; align-items:center; gap:12px;">
-          <div style="font-size:52px; font-weight:700; letter-spacing:-1px; line-height:1; background:linear-gradient(90deg, #D9A02B, #E8762C); -webkit-background-clip:text; background-clip:text; color:transparent;">Fornecedores</div>
+      <div style="padding:20px 16px 8px; display:flex; align-items:center; justify-content:space-between; gap:10px;">
+        <div style="display:flex; align-items:center; gap:12px; min-width:0; overflow:hidden;">
+          <div style="font-size:38px; font-weight:700; letter-spacing:-1px; line-height:1; background:linear-gradient(90deg, var(--md-gold), var(--md-orange)); -webkit-background-clip:text; background-clip:text; color:transparent; white-space:nowrap;">Fornecedores</div>
         </div>
-        <button onclick="openSupplierModal()" style="background:var(--md-primary); color:#fff; border:none; border-radius:10px; padding:10px 16px; font-size:14px; font-weight:700; font-family:'Outfit',sans-serif; display:flex; align-items:center; gap:6px; cursor:pointer; flex-shrink:0;">
+        <button onclick="openSupplierModal()" style="background:var(--md-primary); color:var(--md-white); border:none; border-radius:10px; padding:10px 16px; font-size:14px; font-weight:700; font-family:'Outfit',sans-serif; display:flex; align-items:center; gap:6px; cursor:pointer; flex-shrink:0;">
           <span class="material-icons-round" style="font-size:18px;">add</span> Novo
         </button>
       </div>
@@ -459,11 +593,16 @@
 
     <!-- ── VENDAS ─────────────────────────────────────────────────────────── -->
     <div id="view-sales" class="view">
-      <div style="padding:20px 16px 8px;">
+      <div style="padding:20px 16px 8px; display:flex; align-items:center; justify-content:space-between;">
         <div style="display:flex; align-items:center; gap:12px;">
-          <div style="font-size:52px; font-weight:700; letter-spacing:-1px; line-height:1; background:linear-gradient(90deg, #D9A02B, #E8762C); -webkit-background-clip:text; background-clip:text; color:transparent;">Vendas</div>
+          <div style="font-size:52px; font-weight:700; letter-spacing:-1px; line-height:1; background:linear-gradient(90deg, var(--md-gold), var(--md-orange)); -webkit-background-clip:text; background-clip:text; color:transparent;">Vendas</div>
         </div>
-        <div id="sales-summary" style="font-size:14px; color:var(--md-primary); opacity:0.6; margin-top:8px; margin-bottom:12px;"></div>
+        <button onclick="switchTo('resumo')" style="background:none; border:none; cursor:pointer; padding:8px; display:flex; align-items:center; opacity:0.5;">
+          <span class="material-icons-round" style="font-size:28px; color:var(--md-primary);">bar_chart</span>
+        </button>
+      </div>
+      <div style="padding:4px 16px 0;">
+        <div id="sales-summary" style="font-size:14px; color:var(--md-primary); opacity:0.6; margin-bottom:12px;"></div>
       </div>
       <div style="padding:0 16px 16px;">
 
@@ -474,12 +613,10 @@
             <input id="sales-date" type="date" style="width:100%; padding:12px; border:1.5px solid var(--md-outline-variant); border-radius:10px; font-size:15px; font-family:'Outfit',sans-serif; color:var(--md-primary); background:var(--md-surface-1); outline:none;"/>
           </div>
           <div style="display:flex; flex-direction:column; gap:10px;">
-            <input id="sales-total" type="number" inputmode="decimal" placeholder="Total POS (€)" step="0.01" min="0"
-              style="width:100%; padding:14px; border:1.5px solid var(--md-outline-variant); border-radius:10px; font-size:22px; font-weight:700; font-family:'Outfit',sans-serif; color:var(--md-primary); background:var(--md-surface-1); outline:none;"
-              onfocus="this.select()"
-              onkeydown="if(event.key==='Enter'){event.preventDefault();saveSale();}"/>
+            <button type="button" id="sales-total-btn" data-placeholder="Total POS (€)" onclick="openNumKeypadFor('sales-total', {decimal:true})" style="width:100%; padding:14px; border:1.5px solid var(--md-outline-variant); border-radius:10px; font-size:22px; font-weight:700; font-family:'Outfit',sans-serif; color:var(--md-primary); background:var(--md-surface-1); cursor:pointer; text-align:left;">Total POS (€)</button>
+            <input type="hidden" id="sales-total" value=""/>
             <div style="display:flex; justify-content:flex-end;">
-              <button onclick="saveSale()" style="background:var(--md-primary); color:#fff; border:none; border-radius:50%; width:52px; height:52px; display:flex; align-items:center; justify-content:center; cursor:pointer; flex-shrink:0;">
+              <button onclick="saveSale()" style="background:var(--md-primary); color:var(--md-white); border:none; border-radius:50%; width:52px; height:52px; display:flex; align-items:center; justify-content:center; cursor:pointer; flex-shrink:0;">
                 <span class="material-icons-round" style="font-size:26px;">check</span>
               </button>
             </div>
@@ -487,8 +624,11 @@
         </div>
 
         <!-- Lista de vendas -->
-        <div style="font-size:13px; font-weight:700; color:var(--md-primary); opacity:0.6; text-transform:uppercase; letter-spacing:1px; margin-bottom:10px;">Histórico</div>
-        <div id="sales-list">
+        <button onclick="toggleSalesHistory()" style="width:100%; background:none; border:none; padding:0; margin-bottom:10px; display:flex; align-items:center; justify-content:space-between; cursor:pointer;">
+          <span style="font-size:13px; font-weight:700; color:var(--md-primary); opacity:0.6; text-transform:uppercase; letter-spacing:1px;">Histórico</span>
+          <span class="material-icons-round" id="sales-history-chevron" style="font-size:20px; color:var(--md-primary); opacity:0.6; transition:transform 0.2s;">expand_more</span>
+        </button>
+        <div id="sales-list" style="display:none;">
           <div id="sales-empty" style="text-align:center; padding:40px 20px; color:var(--md-primary); opacity:0.4;">
             <div style="font-size:17px; font-weight:600;">Sem registos ainda</div>
             <div style="font-size:14px; margin-top:6px;">Regista o total do POS no final de cada dia</div>
@@ -497,14 +637,170 @@
       </div>
     </div>
 
+    <!-- ── DESPESAS (página própria) ───────────────────────────────────────────── -->
+    <div id="view-expenses" class="view">
+      <div style="padding:20px 16px 8px; display:flex; align-items:center; justify-content:space-between;">
+        <div style="display:flex; align-items:center; gap:12px;">
+          <div style="font-size:52px; font-weight:700; letter-spacing:-1px; line-height:1; background:linear-gradient(90deg, var(--md-gold), var(--md-orange)); -webkit-background-clip:text; background-clip:text; color:transparent;">Despesas</div>
+        </div>
+        <button onclick="switchTo('resumo')" style="background:none; border:none; cursor:pointer; padding:8px; display:flex; align-items:center; opacity:0.5;">
+          <span class="material-icons-round" style="font-size:28px; color:var(--md-primary);">bar_chart</span>
+        </button>
+      </div>
+      <div style="padding:0 16px 16px;">
+
+        <!-- Despesas: abas -->
+        <div style="display:flex; gap:6px; margin-bottom:14px;">
+          <button id="exp-tab-occasional" onclick="setExpenseTab('occasional')" style="flex:1; padding:9px; border:none; border-radius:9px; font-size:13px; font-weight:700; font-family:'Outfit',sans-serif; cursor:pointer; background:var(--md-primary); color:var(--md-white);">Ocasional</button>
+          <button id="exp-tab-monthly" onclick="setExpenseTab('monthly')" style="flex:1; padding:9px; border:none; border-radius:9px; font-size:13px; font-weight:700; font-family:'Outfit',sans-serif; cursor:pointer; background:var(--md-surface-variant); color:var(--md-primary);">Mensal</button>
+          <button id="exp-tab-yearly" onclick="setExpenseTab('yearly')" style="flex:1; padding:9px; border:none; border-radius:9px; font-size:13px; font-weight:700; font-family:'Outfit',sans-serif; cursor:pointer; background:var(--md-surface-variant); color:var(--md-primary);">Anual</button>
+        </div>
+
+        <!-- OCASIONAL -->
+        <div id="exp-panel-occasional">
+          <div style="background:var(--md-surface); border-radius:14px; border:1px solid var(--md-outline-variant); padding:18px; margin-bottom:20px;">
+            <div style="margin-bottom:12px;">
+              <input id="expense-date" type="date" style="width:100%; padding:12px; border:1.5px solid var(--md-outline-variant); border-radius:10px; font-size:15px; font-family:'Outfit',sans-serif; color:var(--md-primary); background:var(--md-surface-1); outline:none;"/>
+            </div>
+            <div style="margin-bottom:12px;">
+              <input id="expense-name" type="text" placeholder="Nome da despesa (ex: Almoço com fornecedor)" style="width:100%; padding:12px; border:1.5px solid var(--md-outline-variant); border-radius:10px; font-size:15px; font-family:'Outfit',sans-serif; color:var(--md-primary); background:var(--md-surface-1); outline:none;"/>
+            </div>
+            <div style="margin-bottom:12px;">
+              <select id="expense-category" style="width:100%; padding:12px; border:1.5px solid var(--md-outline-variant); border-radius:10px; font-size:15px; font-family:'Outfit',sans-serif; color:var(--md-primary); background:var(--md-surface-1); outline:none;">
+                <option value="Refeições">Refeições</option>
+                <option value="Gasóleo">Gasóleo</option>
+                <option value="Material">Material</option>
+                <option value="Diversos">Diversos</option>
+              </select>
+            </div>
+            <div style="display:flex; flex-direction:column; gap:10px;">
+              <button type="button" id="expense-amount-btn" data-placeholder="Valor (€)" onclick="openNumKeypadFor('expense-amount', {decimal:true})" style="width:100%; padding:14px; border:1.5px solid var(--md-outline-variant); border-radius:10px; font-size:22px; font-weight:700; font-family:'Outfit',sans-serif; color:var(--md-primary); background:var(--md-surface-1); cursor:pointer; text-align:left;">Valor (€)</button>
+              <input type="hidden" id="expense-amount" value=""/>
+              <div style="display:flex; justify-content:flex-end;">
+                <button onclick="saveExpense()" style="background:var(--md-primary); color:var(--md-white); border:none; border-radius:50%; width:52px; height:52px; display:flex; align-items:center; justify-content:center; cursor:pointer; flex-shrink:0;">
+                  <span class="material-icons-round" style="font-size:26px;">check</span>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <button onclick="toggleExpensesHistory()" style="width:100%; background:none; border:none; padding:0; margin-bottom:10px; display:flex; align-items:center; justify-content:space-between; cursor:pointer;">
+            <span style="font-size:13px; font-weight:700; color:var(--md-primary); opacity:0.6; text-transform:uppercase; letter-spacing:1px;">Despesas registadas</span>
+            <span class="material-icons-round" id="expenses-history-chevron" style="font-size:20px; color:var(--md-primary); opacity:0.6; transition:transform 0.2s;">expand_more</span>
+          </button>
+          <div id="expenses-list" style="display:none; margin-bottom:20px;">
+            <div id="expenses-empty" style="text-align:center; padding:40px 20px; color:var(--md-primary); opacity:0.4;">
+              <div style="font-size:17px; font-weight:600;">Sem despesas ainda</div>
+              <div style="font-size:14px; margin-top:6px;">Regista combustível, refeições e outros gastos</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- MENSAL -->
+        <div id="exp-panel-monthly" style="display:none;">
+          <div style="background:var(--md-surface); border-radius:14px; border:1px solid var(--md-outline-variant); padding:18px; margin-bottom:20px;">
+            <div style="font-size:13px; font-weight:700; color:var(--md-primary); opacity:0.6; text-transform:uppercase; letter-spacing:1px; margin-bottom:12px;">Nova despesa mensal</div>
+            <div style="margin-bottom:12px;">
+              <input id="rexp-monthly-name" type="text" placeholder="Nome da despesa (ex: Renda do armazém)" style="width:100%; padding:12px; border:1.5px solid var(--md-outline-variant); border-radius:10px; font-size:15px; font-family:'Outfit',sans-serif; color:var(--md-primary); background:var(--md-surface-1); outline:none;"/>
+            </div>
+            <div style="margin-bottom:12px;">
+              <select id="rexp-monthly-category" style="width:100%; padding:12px; border:1.5px solid var(--md-outline-variant); border-radius:10px; font-size:15px; font-family:'Outfit',sans-serif; color:var(--md-primary); background:var(--md-surface-1); outline:none;">
+                <option value="Renda">Renda</option>
+                <option value="Seguro">Seguro</option>
+                <option value="Conta de luz">Conta de luz</option>
+                <option value="Conta de água">Conta de água</option>
+                <option value="Impostos">Impostos</option>
+                <option value="Manutenção">Manutenção</option>
+                <option value="Salários">Salários</option>
+                <option value="Outro">Outro</option>
+              </select>
+            </div>
+            <div style="margin-bottom:12px;">
+              <label style="font-size:12px; color:var(--md-primary); opacity:0.6; display:block; margin-bottom:6px;">Dia do mês em que é pago</label>
+              <button type="button" id="rexp-monthly-day-btn" data-placeholder="Dia (1-31)" onclick="openNumKeypadFor('rexp-monthly-day', {decimal:false})" style="width:100%; padding:12px; border:1.5px solid var(--md-outline-variant); border-radius:10px; font-size:15px; font-family:'Outfit',sans-serif; color:var(--md-primary); background:var(--md-surface-1); cursor:pointer; text-align:left;">Dia (1-31)</button>
+              <input type="hidden" id="rexp-monthly-day" value=""/>
+            </div>
+            <div style="display:flex; flex-direction:column; gap:10px;">
+              <button type="button" id="rexp-monthly-amount-btn" data-placeholder="Valor (€)" onclick="openNumKeypadFor('rexp-monthly-amount', {decimal:true})" style="width:100%; padding:14px; border:1.5px solid var(--md-outline-variant); border-radius:10px; font-size:22px; font-weight:700; font-family:'Outfit',sans-serif; color:var(--md-primary); background:var(--md-surface-1); cursor:pointer; text-align:left;">Valor (€)</button>
+              <input type="hidden" id="rexp-monthly-amount" value=""/>
+              <div style="display:flex; justify-content:flex-end;">
+                <button onclick="saveRecurringExpense('monthly')" style="background:var(--md-primary); color:var(--md-white); border:none; border-radius:50%; width:52px; height:52px; display:flex; align-items:center; justify-content:center; cursor:pointer; flex-shrink:0;">
+                  <span class="material-icons-round" style="font-size:26px;">check</span>
+                </button>
+              </div>
+            </div>
+          </div>
+          <div id="rexp-monthly-list" style="margin-bottom:20px;">
+            <div id="rexp-monthly-empty" style="text-align:center; padding:40px 20px; color:var(--md-primary); opacity:0.4;">
+              <div style="font-size:17px; font-weight:600;">Sem despesas mensais</div>
+              <div style="font-size:14px; margin-top:6px;">Renda, seguros e contas fixas todos os meses</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ANUAL -->
+        <div id="exp-panel-yearly" style="display:none;">
+          <div style="background:var(--md-surface); border-radius:14px; border:1px solid var(--md-outline-variant); padding:18px; margin-bottom:20px;">
+            <div style="font-size:13px; font-weight:700; color:var(--md-primary); opacity:0.6; text-transform:uppercase; letter-spacing:1px; margin-bottom:12px;">Nova despesa anual</div>
+            <div style="margin-bottom:12px;">
+              <input id="rexp-yearly-name" type="text" placeholder="Nome da despesa (ex: Seguro do veículo)" style="width:100%; padding:12px; border:1.5px solid var(--md-outline-variant); border-radius:10px; font-size:15px; font-family:'Outfit',sans-serif; color:var(--md-primary); background:var(--md-surface-1); outline:none;"/>
+            </div>
+            <div style="margin-bottom:12px;">
+              <select id="rexp-yearly-category" style="width:100%; padding:12px; border:1.5px solid var(--md-outline-variant); border-radius:10px; font-size:15px; font-family:'Outfit',sans-serif; color:var(--md-primary); background:var(--md-surface-1); outline:none;">
+                <option value="Seguro">Seguro</option>
+                <option value="Licença">Licença</option>
+                <option value="Impostos">Impostos</option>
+                <option value="Manutenção">Manutenção</option>
+                <option value="Outro">Outro</option>
+              </select>
+            </div>
+            <div style="display:flex; gap:10px; margin-bottom:12px;">
+              <div style="flex:1;">
+                <label style="font-size:12px; color:var(--md-primary); opacity:0.6; display:block; margin-bottom:6px;">Mês</label>
+                <select id="rexp-yearly-month" style="width:100%; padding:12px; border:1.5px solid var(--md-outline-variant); border-radius:10px; font-size:15px; font-family:'Outfit',sans-serif; color:var(--md-primary); background:var(--md-surface-1); outline:none;">
+                  <option value="1">Janeiro</option><option value="2">Fevereiro</option><option value="3">Março</option>
+                  <option value="4">Abril</option><option value="5">Maio</option><option value="6">Junho</option>
+                  <option value="7">Julho</option><option value="8">Agosto</option><option value="9">Setembro</option>
+                  <option value="10">Outubro</option><option value="11">Novembro</option><option value="12">Dezembro</option>
+                </select>
+              </div>
+              <div style="flex:1;">
+                <label style="font-size:12px; color:var(--md-primary); opacity:0.6; display:block; margin-bottom:6px;">Dia</label>
+                <button type="button" id="rexp-yearly-day-btn" data-placeholder="Dia" onclick="openNumKeypadFor('rexp-yearly-day', {decimal:false})" style="width:100%; padding:12px; border:1.5px solid var(--md-outline-variant); border-radius:10px; font-size:15px; font-family:'Outfit',sans-serif; color:var(--md-primary); background:var(--md-surface-1); cursor:pointer; text-align:left;">Dia</button>
+                <input type="hidden" id="rexp-yearly-day" value=""/>
+              </div>
+            </div>
+            <div style="display:flex; flex-direction:column; gap:10px;">
+              <button type="button" id="rexp-yearly-amount-btn" data-placeholder="Valor (€)" onclick="openNumKeypadFor('rexp-yearly-amount', {decimal:true})" style="width:100%; padding:14px; border:1.5px solid var(--md-outline-variant); border-radius:10px; font-size:22px; font-weight:700; font-family:'Outfit',sans-serif; color:var(--md-primary); background:var(--md-surface-1); cursor:pointer; text-align:left;">Valor (€)</button>
+              <input type="hidden" id="rexp-yearly-amount" value=""/>
+              <div style="display:flex; justify-content:flex-end;">
+                <button onclick="saveRecurringExpense('yearly')" style="background:var(--md-primary); color:var(--md-white); border:none; border-radius:50%; width:52px; height:52px; display:flex; align-items:center; justify-content:center; cursor:pointer; flex-shrink:0;">
+                  <span class="material-icons-round" style="font-size:26px;">check</span>
+                </button>
+              </div>
+            </div>
+          </div>
+          <div id="rexp-yearly-list" style="margin-bottom:20px;">
+            <div id="rexp-yearly-empty" style="text-align:center; padding:40px 20px; color:var(--md-primary); opacity:0.4;">
+              <div style="font-size:17px; font-weight:600;">Sem despesas anuais</div>
+              <div style="font-size:14px; margin-top:6px;">Seguros, licenças e outras despesas anuais</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <div id="view-resumo" class="view">
-      <div style="padding:28px 20px;">
-        <div style="font-size:32px; font-weight:900; color:var(--md-primary); line-height:1.1; margin-bottom:8px;">Resumo</div>
-        <div style="font-size:14px; color:var(--md-primary); margin-bottom:32px;">Evolução das compras</div>
-        <div style="text-align:center; padding:48px 20px; color:var(--md-primary);">
-          <span class="material-icons-round" style="font-size:52px; display:block; margin-bottom:16px; color:var(--md-outline-variant);">bar_chart</span>
-          <div style="font-size:17px; font-weight:700; color:var(--md-primary); margin-bottom:8px;">Em construção</div>
-          <div style="font-size:14px; line-height:1.6;">Os gráficos de evolução de compras vão aparecer aqui à medida que fores registando semanas no histórico.</div>
+      <div style="padding:20px 16px 8px; display:flex; align-items:center; justify-content:space-between;">
+        <div style="display:flex; align-items:center; gap:12px;">
+          <div style="font-size:52px; font-weight:700; letter-spacing:-1px; line-height:1; background:linear-gradient(90deg, var(--md-gold), var(--md-orange)); -webkit-background-clip:text; background-clip:text; color:transparent;">Resumo</div>
+        </div>
+      </div>
+      <div id="resumo-content" style="padding:8px 16px 32px;">
+        <div id="resumo-empty" style="text-align:center; padding:60px 20px; color:var(--md-primary); opacity:0.5;">
+          <span class="material-icons-round" style="font-size:48px; display:block; margin-bottom:12px;">bar_chart</span>
+          <div style="font-size:17px; font-weight:600;">Ainda sem dados suficientes</div>
+          <div style="font-size:14px; margin-top:6px;">Regista vendas para veres a evolução aqui</div>
         </div>
       </div>
     </div>
@@ -522,7 +818,7 @@
       <input id="sup-notes" type="text" placeholder="Corredor MARL, dias de entrega..." style="width:100%; padding:14px; border-radius:10px; border:1.5px solid var(--md-outline-variant); font-size:16px; font-family:'Outfit',sans-serif; outline:none; margin-bottom:20px; background:var(--md-surface-1); color:var(--md-primary);"/>
       <div style="display:flex; gap:10px;">
         <button onclick="closeSupplierModal()" style="padding:16px 20px; background:var(--md-surface-variant); color:var(--md-primary); border:none; border-radius:12px; font-size:16px; font-weight:600; font-family:'Outfit',sans-serif; cursor:pointer;">Cancelar</button>
-        <button onclick="saveSupplier()" style="flex:1; padding:16px; background:var(--md-primary); color:#fff; border:none; border-radius:12px; font-size:16px; font-weight:700; font-family:'Outfit',sans-serif; cursor:pointer;">Guardar</button>
+        <button onclick="saveSupplier()" style="flex:1; padding:16px; background:var(--md-primary); color:var(--md-white); border:none; border-radius:12px; font-size:16px; font-weight:700; font-family:'Outfit',sans-serif; cursor:pointer;">Guardar</button>
       </div>
     </div>
 
@@ -535,7 +831,7 @@
       <input id="task-text" type="text" placeholder="Ex: Pintar parede, Comprar prateleira..." style="width:100%; padding:14px; border-radius:10px; border:1.5px solid var(--md-outline-variant); font-size:16px; font-family:'Outfit',sans-serif; outline:none; margin-bottom:20px; background:var(--md-surface-1); color:var(--md-primary);"/>
       <div style="display:flex; gap:10px;">
         <button onclick="closeTaskModal()" style="padding:16px 20px; background:var(--md-surface-variant); color:var(--md-primary); border:none; border-radius:12px; font-size:16px; font-weight:600; font-family:'Outfit',sans-serif; cursor:pointer;">Cancelar</button>
-        <button onclick="saveTask()" style="flex:1; padding:16px; background:var(--md-primary); color:#fff; border:none; border-radius:12px; font-size:16px; font-weight:700; font-family:'Outfit',sans-serif; cursor:pointer;">Guardar</button>
+        <button onclick="saveTask()" style="flex:1; padding:16px; background:var(--md-primary); color:var(--md-white); border:none; border-radius:12px; font-size:16px; font-weight:700; font-family:'Outfit',sans-serif; cursor:pointer;">Guardar</button>
       </div>
     </div>
 
@@ -582,7 +878,7 @@
     <div id="view-prices" class="view">
       <div style="padding:20px 16px 8px;">
         <div style="display:flex; align-items:center; gap:12px;">
-          <div style="font-size:52px; font-weight:700; letter-spacing:-1px; line-height:1; background:linear-gradient(90deg, #D9A02B, #E8762C); -webkit-background-clip:text; background-clip:text; color:transparent;">Preços</div>
+          <div style="font-size:52px; font-weight:700; letter-spacing:-1px; line-height:1; background:linear-gradient(90deg, var(--md-gold), var(--md-orange)); -webkit-background-clip:text; background-clip:text; color:transparent;">Preços</div>
         </div>
         <div id="prices-completude" style="font-size:13px; color:var(--md-primary); margin-top:4px; opacity:0.6;"></div>
       </div>
@@ -597,6 +893,55 @@
           <span class="material-icons-round" style="font-size:48px; display:block; margin-bottom:12px;">search_off</span>
           <div style="font-size:17px; font-weight:600;">Sem resultados</div>
         </div>
+      </div>
+    </div>
+    </div>
+
+    <!-- ── DASHBOARD ───────────────────────────────────────────────────────── -->
+    <div id="view-dashboard" class="view active" style="position:absolute; top:var(--header-height); left:0; right:0; bottom:0; overflow:hidden;">
+
+      <!-- Fundo: degradê verde seco → amarelo torrado, intensidade ligada às vendas -->
+      <div id="dash-bg-style" class="dash-gradient-bg" style="position:absolute; inset:0; overflow:hidden;"></div>
+
+      <!-- Conteúdo por cima -->
+      <div style="position:relative; z-index:2; min-height:100%; display:flex; flex-direction:column;">
+
+        <!-- Saudação -->
+        <div style="padding:36px 20px 0;">
+          <div id="dash-date" style="font-size:13px; color:var(--md-white); opacity:0.7; margin-bottom:4px; font-weight:600; text-transform:lowercase; letter-spacing:0.5px;"></div>
+          <div id="dash-greeting" style="font-size:40px; font-weight:200; line-height:1.1; color:var(--md-white); opacity:0.95; text-transform:lowercase;"></div>
+          <div style="font-size:32px; font-weight:700; letter-spacing:-0.5px; line-height:1.1; margin-top:10px; text-transform:lowercase; color:var(--md-amber);">momento<br>frutado</div>
+        </div>
+
+        <!-- Resumo rápido — dados reais do negócio, não decoração -->
+        <div id="dash-summary" style="padding:22px 20px 0; display:flex; gap:14px; justify-content:center;"></div>
+
+        <!-- Links — minúsculas, mesmo tamanho, sem espaçamento extra entre eles -->
+        <div style="padding:30px 20px 0; display:flex; flex-direction:column; gap:0;">
+          <button onclick="switchTo('list')" style="background:none; border:none; padding:4px 0; text-align:left; cursor:pointer; width:100%; display:flex; align-items:center; gap:14px;">
+            <span id="dash-dot-list" style="width:10px; height:10px; border-radius:50%; border:1.5px solid var(--md-white); opacity:0.68; flex-shrink:0"></span>
+            <span style="font-size:28px; font-weight:700; color:var(--md-white); opacity:0.76; text-transform:lowercase;">compras</span>
+          </button>
+          <button onclick="switchTo('sales')" style="background:none; border:none; padding:4px 0; text-align:left; cursor:pointer; width:100%; display:flex; align-items:center; gap:14px;">
+            <span id="dash-dot-sales" style="width:10px; height:10px; border-radius:50%; border:1.5px solid var(--md-white); opacity:0.68; flex-shrink:0"></span>
+            <span style="font-size:28px; font-weight:700; color:var(--md-white); opacity:0.76; text-transform:lowercase;">vendas</span>
+          </button>
+          <button onclick="switchTo('tasks')" style="background:none; border:none; padding:4px 0; text-align:left; cursor:pointer; width:100%; display:flex; align-items:center; gap:14px;">
+            <span id="dash-dot-tasks" style="width:10px; height:10px; border-radius:50%; border:1.5px solid var(--md-white); opacity:0.68; flex-shrink:0"></span>
+            <span style="font-size:28px; font-weight:700; color:var(--md-white); opacity:0.76; text-transform:lowercase;">fazer</span>
+          </button>
+        </div>
+
+        <!-- Spacer empurra tarefas para o fundo -->
+        <div style="flex:1;"></div>
+
+        <!-- Tarefas na base — discretas -->
+        <div style="padding:0 20px 80px; opacity:0.9;">
+          <div id="dash-tasks-preview" style="background:transparent; overflow:hidden;">
+            <div id="dash-tasks-empty" style="padding:8px 0; color:var(--md-white); font-size:13px"></div>
+          </div>
+        </div>
+
       </div>
     </div>
   </div>
@@ -640,7 +985,7 @@
         <button id="pick-next" title="Próximo artigo" style="border:none; background:var(--md-surface-variant); color:var(--md-primary); border-radius:50%; width:36px; height:36px; display:flex; align-items:center; justify-content:center; cursor:pointer; flex-shrink:0;" onclick="goNextItem()">
           <span class="material-icons-round" style="font-size:20px;">arrow_downward</span>
         </button>
-        <button id="pick-close" style="border:none; background:var(--md-surface-variant); color:var(--md-primary); border-radius:50%; width:36px; height:36px; display:flex; align-items:center; justify-content:center; cursor:pointer; flex-shrink:0;">
+        <button id="pick-close" style="border:none; background:var(--md-gold); color:var(--md-white); border-radius:50%; width:36px; height:36px; display:flex; align-items:center; justify-content:center; cursor:pointer; flex-shrink:0;">
           <span class="material-icons-round" style="font-size:20px;">close</span>
         </button>
       </div>
@@ -648,12 +993,14 @@
     <div class="pick-row">
       <span class="pick-row-label">Preço venda</span>
       <input id="pick-sell-price" class="pick-row-input" type="number" inputmode="decimal" placeholder="0.00" step="0.01" min="0"
+        autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" data-lpignore="true" data-form-type="other"
         onfocus="this.select()"
         onkeydown="if(event.key==='Enter'){event.preventDefault();document.getElementById('pick-price').focus();}"/>
     </div>
     <div class="pick-row">
       <span class="pick-row-label">Preço compra</span>
       <input id="pick-price" class="pick-row-input" type="number" inputmode="decimal" placeholder="0.00" step="0.01" min="0"
+        autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" data-lpignore="true" data-form-type="other"
         onfocus="this.select()"
         onkeydown="if(event.key==='Enter'){event.preventDefault();document.getElementById('pick-notes').focus();}"/>
     </div>
@@ -665,27 +1012,42 @@
       </button>
       <select id="pick-supplier" style="display:none"></select>
     </div>
-    <div id="supplier-picker" style="display:none;position:fixed;bottom:0;left:0;right:0;background:#1e1e1e;border-radius:20px 20px 0 0;padding:16px;z-index:300;max-height:60vh;overflow-y:auto;"></div>
+    <div id="supplier-picker" style="display:none;position:fixed;bottom:0;left:0;right:0;background:var(--md-neutral-70);border-radius:20px 20px 0 0;padding:16px;z-index:300;max-height:60vh;overflow-y:auto; transition:top 0.15s, max-height 0.15s;"></div>
     <div id="supplier-overlay" onclick="closeSupplierPicker()" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:299;"></div>
     <input id="pick-date" type="date" style="position:absolute;opacity:0;width:0;height:0;pointer-events:none;"/>
+
+    <!-- Vasilhame deste produto -->
+    <div style="padding:0 16px 8px;">
+      <span class="pick-field-label">Vasilhame</span>
+      <div style="display:flex; gap:6px; margin-bottom:8px;">
+        <button id="pick-vasil-no" onclick="setPickVasilhame(false)" style="flex:1; padding:9px; border:none; border-radius:9px; font-size:13px; font-weight:700; font-family:'Outfit',sans-serif; cursor:pointer; background:var(--md-primary); color:var(--md-white);">Sem vasilhame</button>
+        <button id="pick-vasil-yes" onclick="setPickVasilhame(true)" style="flex:1; padding:9px; border:none; border-radius:9px; font-size:13px; font-weight:700; font-family:'Outfit',sans-serif; cursor:pointer; background:var(--md-surface-variant); color:var(--md-primary);">Tem vasilhame</button>
+      </div>
+      <div id="pick-vasil-detail" style="display:none; align-items:center; gap:10px;">
+        <select id="pick-vasil-type" onchange="onPickVasilChange()" style="flex:1; padding:11px; border:1.5px solid var(--md-outline-variant); border-radius:10px; font-size:14px; font-family:'Outfit',sans-serif; color:var(--md-primary); background:var(--md-surface-1); outline:none;"></select>
+        <div id="pick-vasil-qty-display" style="width:60px; padding:11px 0; font-size:16px; font-weight:700; font-family:'Outfit',sans-serif; color:var(--md-primary); text-align:center;">—</div>
+      </div>
+      <div id="pick-vasil-qty-hint" style="display:none; font-size:12px; color:var(--md-primary); opacity:0.5; margin-top:4px;">Quantidade = a que escolheste na lista</div>
+    </div>
     <div style="padding:8px 16px 0;">
-      <span class="pick-field-label">Notas</span>
-      <input id="pick-notes" type="text" placeholder="Ex: só se estiver barato, pedir ao João..." style="width:100%; padding:12px 14px; border:1.5px solid var(--md-outline-variant); border-radius:12px; font-size:15px; font-family:'Outfit',sans-serif; outline:none; background:var(--md-surface-1); color:var(--md-primary); margin-bottom:8px;"
-        onkeydown="if(event.key==='Enter'){event.preventDefault();document.getElementById('pick-min-stock').focus();}"/>
+      <input id="pick-notes" type="text" placeholder="+ Adicionar nota (ex: pedir ao João...)" style="width:100%; padding:10px 2px; border:none; border-bottom:1px solid var(--md-outline-variant); border-radius:0; font-size:14px; font-style:italic; font-family:'Outfit',sans-serif; outline:none; background:transparent; color:var(--md-primary); opacity:0.75; margin-bottom:8px;"
+        onkeydown="if(event.key==='Enter'){event.preventDefault();this.blur();}"/>
     </div>
     <div style="padding:0 16px 8px; display:flex; align-items:center; justify-content:space-between;">
       <span class="pick-field-label" style="margin-bottom:0;">IVA</span>
       <div style="display:flex; gap:0; background:var(--md-surface-variant); border-radius:8px; padding:2px;">
-        <button id="iva-btn-6" onclick="setPickIVA(6)" style="padding:6px 14px; border:none; border-radius:6px; font-size:13px; font-weight:700; font-family:inherit; cursor:pointer; background:var(--md-primary); color:#fff;">6%</button>
+        <button id="iva-btn-6" onclick="setPickIVA(6)" style="padding:6px 14px; border:none; border-radius:6px; font-size:13px; font-weight:700; font-family:inherit; cursor:pointer; background:var(--md-primary); color:var(--md-white);">6%</button>
         <button id="iva-btn-23" onclick="setPickIVA(23)" style="padding:6px 14px; border:none; border-radius:6px; font-size:13px; font-weight:700; font-family:inherit; cursor:pointer; background:transparent; color:var(--md-primary);">23%</button>
       </div>
     </div>
     <div style="padding:0 16px 8px;">
       <span class="pick-field-label">Stock mínimo</span>
       <div style="display:flex; align-items:center; gap:10px;">
-        <input id="pick-min-stock" type="number" inputmode="numeric" placeholder="—" min="0" style="width:80px; padding:10px 14px; border:1.5px solid var(--md-outline-variant); border-radius:12px; font-size:18px; font-weight:700; font-family:'Outfit',sans-serif; outline:none; background:var(--md-surface-1); color:var(--md-primary); text-align:center;"
+        <input id="pick-min-stock" type="number" inputmode="numeric" placeholder="—" min="0"
+          autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" data-lpignore="true" data-form-type="other"
+          style="width:80px; padding:10px 14px; border:1.5px solid var(--md-outline-variant); border-radius:12px; font-size:18px; font-weight:700; font-family:'Outfit',sans-serif; outline:none; background:var(--md-surface-1); color:var(--md-primary); text-align:center;"
           onfocus="this.select()"
-          onkeydown="if(event.key==='Enter'){event.preventDefault();closePickPanel();}"/>
+          onkeydown="if(event.key==='Enter'){event.preventDefault();this.blur();}"/>
         <span style="font-size:14px; color:var(--md-primary); opacity:0.6;">caixas mínimo</span>
       </div>
     </div>
@@ -710,6 +1072,30 @@
     </div>
   </div>
 </div>
+
+<!-- ── TECLADO NUMÉRICO GLOBAL (substitui o teclado nativo em todos os campos numéricos) ──
+     Evita o teclado nativo do Android e a barra de autofill do Chrome em toda a app. -->
+<div id="numkeypad" style="display:none;position:fixed;bottom:0;left:0;right:0;background:var(--md-neutral-70);border-radius:20px 20px 0 0;padding:20px 16px;z-index:500;">
+  <div style="text-align:center; font-size:48px; font-weight:700; color:var(--md-white); font-family:'Outfit',sans-serif; margin-bottom:18px; min-height:58px;" id="numkeypad-display">0</div>
+  <div style="display:grid; grid-template-columns:repeat(3, 1fr); gap:10px;">
+    <button type="button" onclick="numKeypadPress('1')" class="vasil-key">1</button>
+    <button type="button" onclick="numKeypadPress('2')" class="vasil-key">2</button>
+    <button type="button" onclick="numKeypadPress('3')" class="vasil-key">3</button>
+    <button type="button" onclick="numKeypadPress('4')" class="vasil-key">4</button>
+    <button type="button" onclick="numKeypadPress('5')" class="vasil-key">5</button>
+    <button type="button" onclick="numKeypadPress('6')" class="vasil-key">6</button>
+    <button type="button" onclick="numKeypadPress('7')" class="vasil-key">7</button>
+    <button type="button" onclick="numKeypadPress('8')" class="vasil-key">8</button>
+    <button type="button" onclick="numKeypadPress('9')" class="vasil-key">9</button>
+    <button type="button" id="numkeypad-decimal" onclick="numKeypadPress('.')" class="vasil-key">,</button>
+    <button type="button" onclick="numKeypadPress('0')" class="vasil-key">0</button>
+    <button type="button" onclick="numKeypadBackspace()" class="vasil-key" style="background:var(--md-neutral-80);"><span class="material-icons-round" style="font-size:22px;">backspace</span></button>
+  </div>
+  <button type="button" onclick="closeNumKeypad(true)" style="width:100%; margin-top:14px; padding:14px; background:var(--md-gold); border:none; border-radius:14px; color:var(--md-white); font-size:18px; font-weight:700; font-family:'Outfit',sans-serif; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:8px;">
+    <span class="material-icons-round" style="font-size:22px;">check</span> Confirmar
+  </button>
+</div>
+<div id="numkeypad-overlay" onclick="closeNumKeypad(true)" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:499;"></div>
 
 
 
@@ -818,11 +1204,15 @@ let picked = {}; // key -> { done, price, supplier, date }
 let snapHistory = []; // array of weekly snapshots
 let filterActive = false;
 let suppliers = []; // fornecedores
+let vasilhameMovs = []; // movimentos { id, date, supplier, boxType, qty, direction:'debit'|'credit' }
+const VASILHAME_TYPES = ['Caixa 1kg', 'Caixa espanhola', 'Petit', 'Tabuleiro', 'Palote'];
 let tasks = [];     // tarefas
 let projects = [];  // projetos: { id, title, tasks: [{id, text, notes, done}] }
 let currentProjectId = null;
 let tasksTab = 'list';
 let sales = [];     // vendas diárias { date, total, label }
+let expenses = [];  // despesas ocasionais { id, date, category, amount }
+let recurringExpenses = []; // despesas fixas { id, type:'monthly'|'yearly', category, amount, day, month (só anual), lastGenerated }
 
 // ── HELPERS ───────────────────────────────────────────────────────────────────
 function gk(cat, item) { return `${cat}|||${item}`; }
@@ -842,7 +1232,7 @@ function initOpen(prods) {
 }
 
 // ── LOCAL STORAGE ─────────────────────────────────────────────────────────────
-function payload() { return { products, subcats, list, picked, history: snapHistory, suppliers, tasks, sales, projects }; }
+function payload() { return { products, subcats, list, picked, history: snapHistory, suppliers, tasks, sales, projects, expenses, recurringExpenses, vasilhameMovs }; }
 
 function applyLocal(r) {
   if (r.products) products = r.products;
@@ -852,6 +1242,9 @@ function applyLocal(r) {
   if (r.tasks) tasks = r.tasks;
   if (r.sales) sales = r.sales;
   if (r.projects) projects = r.projects;
+  if (r.expenses) expenses = r.expenses;
+  if (r.recurringExpenses) recurringExpenses = r.recurringExpenses;
+  if (r.vasilhameMovs) vasilhameMovs = r.vasilhameMovs;
   if (r.subcats && Object.keys(r.subcats).length > 0) subcats = r.subcats;
   else subcats = JSON.parse(JSON.stringify(DEFAULT_SUBCATS));
   if (r.list) list = { ...buildEmpty(products), ...r.list };
@@ -897,7 +1290,7 @@ function startVoice() {
     listeningState.style.display = "none";
     resultState.style.display = "block";
     document.getElementById("voice-modal-transcript").textContent = `"${transcript}"`;
-    document.getElementById("voice-modal-items").innerHTML = `<div style="text-align:center;padding:20px;color:#9e9e9e;">A interpretar...</div>`;
+    document.getElementById("voice-modal-items").innerHTML = `<div style="text-align:center;padding:20px;color:var(--md-neutral-25);">A interpretar...</div>`;
     await interpretVoice(transcript);
   };
 
@@ -942,7 +1335,7 @@ Se não conseguires corresponder um produto, coloca-o em unmatched. As quantidad
     voiceParsedItems = parsed.items || [];
     renderVoiceItems(parsed);
   } catch(err) {
-    document.getElementById("voice-modal-items").innerHTML = `<div style="color:#c62828;padding:12px;">Erro ao interpretar. Tenta de novo.</div>`;
+    document.getElementById("voice-modal-items").innerHTML = `<div style="color:var(--md-error-soft);padding:12px;">Erro ao interpretar. Tenta de novo.</div>`;
   }
 }
 
@@ -951,7 +1344,7 @@ function renderVoiceItems(parsed) {
   container.innerHTML = "";
 
   if (!parsed.items || parsed.items.length === 0) {
-    container.innerHTML = `<div style="color:#757575;padding:12px;">Não consegui identificar nenhum artigo. Tenta de novo.</div>`;
+    container.innerHTML = `<div style="color:var(--md-neutral-20);padding:12px;">Não consegui identificar nenhum artigo. Tenta de novo.</div>`;
     return;
   }
 
@@ -965,7 +1358,7 @@ function renderVoiceItems(parsed) {
 
   if (parsed.unmatched && parsed.unmatched.length > 0) {
     const warn = document.createElement("div");
-    warn.style.cssText = "font-size:12px;color:#c62828;margin-top:8px;padding:8px 12px;background:#fff3f3;border-radius:10px;";
+    warn.style.cssText = "font-size:12px;color:var(--md-error-soft);margin-top:8px;padding:8px 12px;background:var(--md-white)3f3;border-radius:10px;";
     warn.textContent = `Não reconhecido: ${parsed.unmatched.join(", ")}`;
     container.appendChild(warn);
   }
@@ -1005,11 +1398,11 @@ function getDynamicGreeting() {
   // Madrugada — dias de MARL (seg=1, qui=4)
   if (h < 7 && (day === 1 || day === 4)) {
     const msgs = [
-      "Hora do MARL! 🌙",
-      "Madrugada de compras",
-      "O MARL não espera",
-      "Enquanto a cidade dorme...",
-      "Café antes de tudo"
+      "Quem chega primeiro, vence",
+      "Madrugada de vencedores",
+      "O MARL não espera por ti",
+      "Enquanto dormem, tu constróis",
+      "Café primeiro, depois o mundo"
     ];
     return msgs[Math.floor(Math.random() * msgs.length)];
   }
@@ -1018,9 +1411,9 @@ function getDynamicGreeting() {
   if (h < 13 && (day === 1 || day === 4)) {
     const msgs = [
       "Bom dia de compras,",
-      "Dia de MARL!",
-      "Às compras!",
-      "Que os preços estejam bons,"
+      "Hoje escolhes o melhor",
+      "Às compras, com olho de mestre",
+      "Que os preços te sorriam,"
     ];
     return msgs[Math.floor(Math.random() * msgs.length)];
   }
@@ -1029,8 +1422,8 @@ function getDynamicGreeting() {
   if ((day === 0 || day === 3) && h >= 18) {
     const msgs = [
       "Amanhã é dia de MARL,",
-      "Lista pronta para amanhã?",
-      "MARL amanhã cedo,"
+      "Lista pronta? Vais arrasar",
+      "MARL amanhã, descansa hoje"
     ];
     return msgs[Math.floor(Math.random() * msgs.length)];
   }
@@ -1039,8 +1432,8 @@ function getDynamicGreeting() {
   if (day === 2 || day === 5 || day === 6) {
     if (h < 7) {
       const msgs = [
-        "Madrugada de vendas 🌙",
-        "Cedo para a banca,"
+        "Cedo na banca, cedo a vencer",
+        "Hoje é uma nova oportunidade"
       ];
       return msgs[Math.floor(Math.random() * msgs.length)];
     }
@@ -1048,7 +1441,7 @@ function getDynamicGreeting() {
       const msgs = [
         "Bom dia de vendas,",
         "Hoje é dia de banca!",
-        "Boas vendas hoje,"
+        "Boas vendas, mereces!"
       ];
       return msgs[Math.floor(Math.random() * msgs.length)];
     }
@@ -1056,24 +1449,26 @@ function getDynamicGreeting() {
       const msgs = [
         "Boa tarde de vendas,",
         "Como está a correr?",
-        "Boa tarde, chefe,"
+        "Boa tarde, o dia é teu"
       ];
       return msgs[Math.floor(Math.random() * msgs.length)];
     }
     const msgs = [
-      "Boa noite, foi um dia longo,",
-      "Mereceste descansar,",
-      "Boa noite chefe,"
+      "Foi um dia longo, deste o melhor",
+      "Mereces descansar, chefe",
+      "Boa noite, orgulha-te"
     ];
     return msgs[Math.floor(Math.random() * msgs.length)];
   }
 
   // Genérico por hora
-  if (h < 7)  return ["Madrugada,", "Ainda de pé?", "Noite longa,"][Math.floor(Math.random()*3)];
-  if (h < 12) return ["Bom dia,", "Pronto para mais um dia?", "Bom dia, chefe,"][Math.floor(Math.random()*3)];
-  if (h < 18) return ["Boa tarde,", "Como vai isso?", "Boa tarde, chefe,"][Math.floor(Math.random()*3)];
-  return ["Boa noite,", "Já mereces descansar,", "Boa noite, chefe,"][Math.floor(Math.random()*3)];
+  if (h < 7)  return ["Madrugada com propósito,", "Ainda de pé? Admirável", "Noite longa, vale a pena"][Math.floor(Math.random()*3)];
+  if (h < 12) return ["Bom dia,", "Pronto para conquistar?", "Bom dia, chefe — hoje é teu"][Math.floor(Math.random()*3)];
+  if (h < 18) return ["Boa tarde,", "Continua a construir o sonho", "Boa tarde, força nisso"][Math.floor(Math.random()*3)];
+  return ["Boa noite,", "Já mereces descansar, chefe", "Boa noite, orgulha-te do caminho"][Math.floor(Math.random()*3)];
 }
+
+
 
 // ── DASHBOARD ─────────────────────────────────────────────────────────────────
 function renderDashboard() {
@@ -1092,6 +1487,7 @@ function renderDashboard() {
     dateEl.textContent = days[now2.getDay()] + ', ' + now2.getDate() + ' ' + months[now2.getMonth()];
   }
 
+  renderDashSummary();
 
   // Tasks interactive list
   const preview = document.getElementById('dash-tasks-preview');
@@ -1105,14 +1501,68 @@ function renderDashboard() {
   if (all.length === 0) empty.textContent = '';
   all.forEach(t => {
     const card = document.createElement('div');
-    card.style.cssText = 'display:flex; align-items:center; gap:10px; padding:8px 0; border-bottom:1px solid var(--md-outline-variant);';
+    card.style.cssText = 'display:flex; align-items:center; gap:10px; padding:8px 0; border-bottom:1px solid rgba(61,86,64,0.2);';
     card.innerHTML = `
-      <button onclick="toggleTaskDash(${t.id})" style="width:18px; height:18px; border-radius:50%; border:1.5px solid var(--md-primary); background:transparent; display:flex; align-items:center; justify-content:center; cursor:pointer; flex-shrink:0; padding:0;"></button>
-      <span style="flex:1; font-size:14px; color:var(--md-primary);">${t.text}</span>
+      <button onclick="toggleTaskDash(${t.id})" style="width:18px; height:18px; border-radius:50%; border:1.5px solid var(--md-primary-dark); background:transparent; display:flex; align-items:center; justify-content:center; cursor:pointer; flex-shrink:0; padding:0;"></button>
+      <span style="flex:1; font-size:14px; color:var(--md-primary-dark)">${t.text}</span>
     `;
     preview.insertBefore(card, empty);
   });
 }
+
+// ── RESUMO RÁPIDO DO DASHBOARD — dados reais, não decoração ─────────────────
+function renderDashSummary() {
+  const wrap = document.getElementById('dash-summary');
+  if (!wrap) return;
+  wrap.innerHTML = '';
+
+  // Card 1: última venda registada (normalmente "ontem")
+  let salesCardValue = '—';
+  let salesCardLabel = 'Sem vendas';
+  if (sales.length) {
+    const lastSale = [...sales].sort((a, b) => b.date.localeCompare(a.date))[0];
+    const todayStr = new Date().toISOString().split('T')[0];
+    const yesterday = new Date(Date.now() - 86400000).toISOString().split('T')[0];
+    salesCardValue = lastSale.total.toFixed(0) + '€';
+    if (lastSale.date === todayStr) salesCardLabel = 'Vendas hoje';
+    else if (lastSale.date === yesterday) salesCardLabel = 'Vendas ontem';
+    else salesCardLabel = 'Última venda';
+  }
+
+  // Card 2: itens ainda por marcar/picar na lista de compras atual
+  const totalItems  = Object.keys(list).length;
+  const pickedItems = Object.values(picked).filter(p => p && p.done).length;
+  const remainingItems = Math.max(0, totalItems - pickedItems);
+
+  // Card 3: tarefas pendentes
+  const pendingTasks = tasks.filter(t => !t.done).length;
+
+  const cards = [
+    { value: salesCardValue, label: salesCardLabel, view: 'sales', dotId: 'dash-dot-sales' },
+    { value: String(remainingItems), label: remainingItems === 1 ? 'item por picar' : 'itens por picar', view: 'list', dotId: 'dash-dot-list' },
+    { value: String(pendingTasks), label: pendingTasks === 1 ? 'tarefa pendente' : 'tarefas pendentes', view: 'tasks', dotId: 'dash-dot-tasks' },
+  ];
+
+  cards.forEach(c => {
+    const card = document.createElement('button');
+    card.onclick = () => switchTo(c.view);
+    card.style.cssText = 'width:100px; height:100px; border-radius:50%; background:rgba(255,255,255,0.15); border:1px solid rgba(255,255,255,0.25); display:flex; flex-direction:column; align-items:center; justify-content:center; cursor:pointer; flex-shrink:0; gap:2px;';
+    card.innerHTML = `
+      <div style="font-size:22px; font-weight:700; color:var(--md-white); line-height:1;">${c.value}</div>
+      <div style="font-size:10px; color:var(--md-white); opacity:0.7; text-align:center; padding:0 8px; line-height:1.2;">${c.label}</div>
+    `;
+    wrap.appendChild(card);
+  });
+
+  // Indicadores funcionais: o ponto fica mais forte/visível quando há algo pendente
+  const dotList  = document.getElementById('dash-dot-list');
+  const dotSales = document.getElementById('dash-dot-sales');
+  const dotTasks = document.getElementById('dash-dot-tasks');
+  if (dotList)  dotList.style.opacity  = remainingItems > 0 ? '0.95' : '0.3';
+  if (dotSales) dotSales.style.opacity = sales.length === 0 ? '0.3' : '0.95';
+  if (dotTasks) dotTasks.style.opacity = pendingTasks > 0 ? '0.85' : '0.4';
+}
+
 
 function toggleTaskDash(id) { toggleTask(id); renderDashboard(); }
 function deleteTaskDash(id) { deleteTask(id); renderDashboard(); }
@@ -1180,26 +1630,47 @@ function deleteSupplier(id) {
 function renderSuppliers() {
   const list_el = document.getElementById('suppliers-list');
   const empty = document.getElementById('suppliers-empty');
-  list_el.querySelectorAll('.supplier-card').forEach(c => c.remove());
+  list_el.querySelectorAll('.supplier-card, .supplier-section-hdr').forEach(c => c.remove());
   empty.style.display = suppliers.length ? 'none' : 'block';
+  if (suppliers.length === 0) return;
+
+  // Agrupar por pavilhão (type). Ordem: A5, A6, A8, A10, depois outros, depois sem pavilhão.
+  const knownOrder = ['A5', 'A6', 'A8', 'A10'];
+  const groups = {};
   suppliers.forEach(s => {
-    const card = document.createElement('div');
-    card.className = 'supplier-card';
-    const initials = s.name.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
-    card.innerHTML = `
-      <div class="supplier-avatar">${initials}</div>
-      <div class="supplier-info">
-        <div class="supplier-name">${s.name}</div>
-        ${s.type  ? `<div class="supplier-type">${s.type}</div>` : ''}
-        ${s.phone ? `<div class="supplier-phone"><span class="material-icons-round" style="font-size:16px;">phone</span>${s.phone}</div>` : ''}
-        ${s.notes ? `<div class="supplier-notes">📝 ${s.notes}</div>` : ''}
-      </div>
-      <div class="supplier-btns">
-        ${s.phone ? `<a href="tel:${s.phone}" style="text-decoration:none"><button class="sup-btn sup-btn-call"><span class="material-icons-round">phone</span></button></a>` : ''}
-        <button class="sup-btn sup-btn-del" onclick="deleteSupplier(${s.id})"><span class="material-icons-round">delete_outline</span></button>
-      </div>
-    `;
-    list_el.insertBefore(card, empty);
+    const key = (s.type || '').trim() || '__none__';
+    if (!groups[key]) groups[key] = [];
+    groups[key].push(s);
+  });
+
+  const otherKeys = Object.keys(groups).filter(k => k !== '__none__' && !knownOrder.includes(k)).sort();
+  const orderedKeys = [...knownOrder.filter(k => groups[k]), ...otherKeys, ...(groups['__none__'] ? ['__none__'] : [])];
+
+  orderedKeys.forEach(groupKey => {
+    const hdr = document.createElement('div');
+    hdr.className = 'supplier-section-hdr';
+    hdr.style.cssText = 'font-size:13px; font-weight:700; color:var(--md-primary); opacity:0.6; text-transform:uppercase; letter-spacing:1px; margin:18px 2px 8px;';
+    hdr.textContent = groupKey === '__none__' ? 'Sem pavilhão' : groupKey;
+    list_el.insertBefore(hdr, empty);
+
+    groups[groupKey].forEach(s => {
+      const card = document.createElement('div');
+      card.className = 'supplier-card';
+      const initials = s.name.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
+      card.innerHTML = `
+        <div class="supplier-avatar">${initials}</div>
+        <div class="supplier-info">
+          <div class="supplier-name">${s.name}</div>
+          ${s.phone ? `<div class="supplier-phone"><span class="material-icons-round" style="font-size:16px;">phone</span>${s.phone}</div>` : ''}
+          ${s.notes ? `<div class="supplier-notes">📝 ${s.notes}</div>` : ''}
+        </div>
+        <div class="supplier-btns">
+          ${s.phone ? `<a href="tel:${s.phone}" style="text-decoration:none"><button class="sup-btn sup-btn-call"><span class="material-icons-round">phone</span></button></a>` : ''}
+          <button class="sup-btn sup-btn-del" onclick="deleteSupplier(${s.id})"><span class="material-icons-round">delete_outline</span></button>
+        </div>
+      `;
+      list_el.insertBefore(card, empty);
+    });
   });
 }
 
@@ -1231,14 +1702,23 @@ function deleteTask(id) {
 }
 
 function renderTasks() {
+  renderTasksAndProjects();
+}
+
+function renderTasksAndProjects() {
   const list_el = document.getElementById('tasks-list');
   const empty = document.getElementById('tasks-empty');
-  list_el.querySelectorAll('.task-card').forEach(c => c.remove());
+  list_el.querySelectorAll('.task-card, .project-card').forEach(c => c.remove());
+
+  const hasContent = tasks.length > 0 || projects.length > 0;
+  empty.style.display = hasContent ? 'none' : 'block';
+
+  // Projetos primeiro (blocos maiores), depois tarefas simples
+  projects.forEach(proj => appendProjectCard(list_el, empty, proj));
+
   const pending = tasks.filter(t => !t.done);
   const done    = tasks.filter(t =>  t.done);
-  const all     = [...pending, ...done];
-  empty.style.display = all.length ? 'none' : 'block';
-  all.forEach(t => {
+  [...pending, ...done].forEach(t => {
     const card = document.createElement('div');
     card.className = 'task-card';
     card.innerHTML = `
@@ -1252,31 +1732,15 @@ function renderTasks() {
   });
 }
 
-// ── TABS: LISTA / PROJETOS ──────────────────────────────────────────────────────
-function setTasksTab(tab) {
-  tasksTab = tab;
-  const listPanel = document.getElementById('tasks-panel-list');
-  const projPanel = document.getElementById('tasks-panel-projects');
-  const tabList = document.getElementById('tasks-tab-list');
-  const tabProj = document.getElementById('tasks-tab-projects');
-  const addBtn  = document.getElementById('tasks-add-btn');
+// ── ESCOLHA: TAREFA OU PROJETO ──────────────────────────────────────────────────
+function openAddChooser() {
+  document.getElementById('add-chooser-overlay').style.display = 'block';
+  document.getElementById('add-chooser-panel').style.display   = 'block';
+}
 
-  if (tab === 'list') {
-    listPanel.style.display = 'block';
-    projPanel.style.display = 'none';
-    tabList.style.background = 'var(--md-primary)'; tabList.style.color = '#fff';
-    tabProj.style.background = 'var(--md-surface-variant)'; tabProj.style.color = 'var(--md-primary)';
-    addBtn.onclick = openTaskModal;
-    currentProjectId = null;
-    renderTasks();
-  } else {
-    listPanel.style.display = 'none';
-    projPanel.style.display = 'block';
-    tabProj.style.background = 'var(--md-primary)'; tabProj.style.color = '#fff';
-    tabList.style.background = 'var(--md-surface-variant)'; tabList.style.color = 'var(--md-primary)';
-    addBtn.onclick = openProjectModal;
-    renderProjects();
-  }
+function closeAddChooser() {
+  document.getElementById('add-chooser-overlay').style.display = 'none';
+  document.getElementById('add-chooser-panel').style.display   = 'none';
 }
 
 // ── PROJETOS ──────────────────────────────────────────────────────────────────
@@ -1354,85 +1818,84 @@ function editPTaskNotes(projectId, taskId, notes) {
 }
 
 function renderProjects() {
-  const container = document.getElementById('projects-list');
-  const empty = document.getElementById('projects-empty');
-  if (!container) return;
-  container.querySelectorAll('.project-card').forEach(c => c.remove());
-  empty.style.display = projects.length ? 'none' : 'block';
+  renderTasksAndProjects();
+}
 
-  projects.forEach(proj => {
-    const card = document.createElement('div');
-    card.className = 'project-card';
-    card.style.cssText = 'background:var(--md-surface); border-radius:16px; border:1px solid var(--md-outline-variant); overflow:hidden;';
+function appendProjectCard(container, empty, proj) {
+  const card = document.createElement('div');
+  card.className = 'project-card';
+  card.style.cssText = 'background:var(--md-surface); border-radius:14px; border:1px solid var(--md-outline-variant); overflow:hidden;';
 
-    const pending = proj.tasks.filter(t => !t.done).length;
-    const total   = proj.tasks.length;
+  const pending = proj.tasks.filter(t => !t.done).length;
+  const total   = proj.tasks.length;
 
-    const header = document.createElement('div');
-    header.style.cssText = 'padding:16px 16px 12px; display:flex; align-items:center; justify-content:space-between; background:var(--md-primary);';
-    header.innerHTML = `
+  const header = document.createElement('div');
+  header.style.cssText = 'padding:16px; display:flex; align-items:center; justify-content:space-between; border-bottom:1px solid var(--md-outline-variant);';
+  header.innerHTML = `
+    <div style="display:flex; align-items:center; gap:10px;">
+      <span class="material-icons-round" style="font-size:20px; color:var(--md-primary); opacity:0.6;">folder</span>
       <div>
-        <div style="font-size:19px; font-weight:700; color:#fff;">${proj.title}</div>
-        <div style="font-size:12px; color:rgba(255,255,255,0.7); margin-top:2px;">${pending} de ${total} por fazer</div>
+        <div style="font-size:20px; font-weight:800; color:var(--md-primary);">${proj.title}</div>
+        <div style="font-size:13px; color:var(--md-primary); opacity:0.5; margin-top:2px;">${pending} de ${total} por fazer</div>
       </div>
-    `;
-    const delBtn = document.createElement('button');
-    delBtn.style.cssText = 'background:none; border:none; cursor:pointer; padding:6px;';
-    delBtn.innerHTML = '<span class="material-icons-round" style="color:rgba(255,255,255,0.7); font-size:20px;">delete_outline</span>';
-    delBtn.addEventListener('click', () => deleteProject(proj.id));
-    header.appendChild(delBtn);
-    card.appendChild(header);
+    </div>
+  `;
+  const delBtn = document.createElement('button');
+  delBtn.style.cssText = 'background:none; border:none; cursor:pointer; padding:6px;';
+  delBtn.innerHTML = '<span class="material-icons-round" style="color:var(--md-outline-variant); font-size:20px;">delete_outline</span>';
+  delBtn.addEventListener('click', () => deleteProject(proj.id));
+  header.appendChild(delBtn);
+  card.appendChild(header);
 
-    const body = document.createElement('div');
-    body.style.cssText = 'padding:6px 4px;';
+  const body = document.createElement('div');
+  body.style.cssText = 'padding:6px 4px;';
 
-    proj.tasks.forEach(t => {
-      const row = document.createElement('div');
-      row.style.cssText = 'padding:12px 16px; border-bottom:1px solid var(--md-outline-variant);';
+  proj.tasks.forEach(t => {
+    const row = document.createElement('div');
+    row.style.cssText = 'padding:12px 16px; border-bottom:1px solid var(--md-outline-variant);';
 
-      const topRow = document.createElement('div');
-      topRow.style.cssText = 'display:flex; align-items:center; gap:12px;';
+    const topRow = document.createElement('div');
+    topRow.style.cssText = 'display:flex; align-items:center; gap:12px;';
 
-      const checkBtn = document.createElement('button');
-      checkBtn.style.cssText = `width:24px; height:24px; border-radius:50%; border:1.5px solid var(--md-primary); background:${t.done ? 'var(--md-primary)' : 'transparent'}; display:flex; align-items:center; justify-content:center; cursor:pointer; flex-shrink:0; padding:0;`;
-      checkBtn.innerHTML = t.done ? '<span class="material-icons-round" style="font-size:16px;color:#fff;">check</span>' : '';
-      checkBtn.addEventListener('click', () => togglePTask(proj.id, t.id));
-      topRow.appendChild(checkBtn);
+    const checkBtn = document.createElement('button');
+    checkBtn.style.cssText = `width:24px; height:24px; border-radius:50%; border:1.5px solid var(--md-primary); background:${t.done ? 'var(--md-primary)' : 'transparent'}; display:flex; align-items:center; justify-content:center; cursor:pointer; flex-shrink:0; padding:0;`;
+    checkBtn.innerHTML = t.done ? '<span class="material-icons-round" style="font-size:16px;color:var(--md-white);">check</span>' : '';
+    checkBtn.addEventListener('click', () => togglePTask(proj.id, t.id));
+    topRow.appendChild(checkBtn);
 
-      const textSpan = document.createElement('span');
-      textSpan.style.cssText = `flex:1; font-size:17px; color:var(--md-primary); ${t.done ? 'text-decoration:line-through; opacity:0.5;' : ''}`;
-      textSpan.textContent = t.text;
-      topRow.appendChild(textSpan);
+    const textSpan = document.createElement('span');
+    textSpan.style.cssText = `flex:1; font-size:17px; color:var(--md-primary); ${t.done ? 'text-decoration:line-through; opacity:0.5;' : ''}`;
+    textSpan.textContent = t.text;
+    topRow.appendChild(textSpan);
 
-      const delTaskBtn = document.createElement('button');
-      delTaskBtn.style.cssText = 'background:none; border:none; cursor:pointer; padding:4px;';
-      delTaskBtn.innerHTML = '<span class="material-icons-round" style="font-size:18px; color:var(--md-outline-variant);">close</span>';
-      delTaskBtn.addEventListener('click', () => deletePTask(proj.id, t.id));
-      topRow.appendChild(delTaskBtn);
+    const delTaskBtn = document.createElement('button');
+    delTaskBtn.style.cssText = 'background:none; border:none; cursor:pointer; padding:4px;';
+    delTaskBtn.innerHTML = '<span class="material-icons-round" style="font-size:18px; color:var(--md-outline-variant);">close</span>';
+    delTaskBtn.addEventListener('click', () => deletePTask(proj.id, t.id));
+    topRow.appendChild(delTaskBtn);
 
-      row.appendChild(topRow);
+    row.appendChild(topRow);
 
-      // Notes textarea
-      const notesArea = document.createElement('textarea');
-      notesArea.placeholder = 'Notas...';
-      notesArea.value = t.notes || '';
-      notesArea.style.cssText = 'width:100%; margin-top:8px; padding:10px 12px; border:1px solid var(--md-outline-variant); border-radius:10px; font-size:14px; font-family:\'Outfit\',sans-serif; color:var(--md-primary); background:var(--md-surface-1); outline:none; resize:vertical; min-height:40px;';
-      notesArea.addEventListener('blur', () => editPTaskNotes(proj.id, t.id, notesArea.value));
-      row.appendChild(notesArea);
+    // Notes textarea
+    const notesArea = document.createElement('textarea');
+    notesArea.placeholder = 'Notas...';
+    notesArea.value = t.notes || '';
+    notesArea.style.cssText = 'width:100%; margin-top:8px; padding:10px 12px; border:1px solid var(--md-outline-variant); border-radius:10px; font-size:14px; font-family:\'Outfit\',sans-serif; color:var(--md-primary); background:var(--md-surface-1); outline:none; resize:vertical; min-height:40px;';
+    notesArea.addEventListener('blur', () => editPTaskNotes(proj.id, t.id, notesArea.value));
+    row.appendChild(notesArea);
 
-      body.appendChild(row);
-    });
-
-    // Add task button within project
-    const addTaskBtn = document.createElement('button');
-    addTaskBtn.style.cssText = 'width:100%; padding:14px; background:none; border:none; color:var(--md-primary); font-size:15px; font-weight:600; font-family:\'Outfit\',sans-serif; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:6px;';
-    addTaskBtn.innerHTML = '<span class="material-icons-round" style="font-size:18px;">add</span> Adicionar tarefa';
-    addTaskBtn.addEventListener('click', () => openPTaskModal(proj.id));
-    body.appendChild(addTaskBtn);
-
-    card.appendChild(body);
-    container.insertBefore(card, empty);
+    body.appendChild(row);
   });
+
+  // Add task button within project
+  const addTaskBtn = document.createElement('button');
+  addTaskBtn.style.cssText = 'width:100%; padding:14px; background:none; border:none; color:var(--md-primary); font-size:15px; font-weight:600; font-family:\'Outfit\',sans-serif; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:6px;';
+  addTaskBtn.innerHTML = '<span class="material-icons-round" style="font-size:18px;">add</span> Adicionar tarefa';
+  addTaskBtn.addEventListener('click', () => openPTaskModal(proj.id));
+  body.appendChild(addTaskBtn);
+
+  card.appendChild(body);
+  container.insertBefore(card, empty);
 }
 
 
@@ -1458,20 +1921,31 @@ function exportJSON() {
   showSnack('Backup exportado ✓', 'saved');
 }
 
-function importJSON(event) {
+function importSalesJSON(event) {
   const file = event.target.files[0];
   if (!file) return;
   const reader = new FileReader();
   reader.onload = e => {
     try {
-      const data = JSON.parse(e.target.result);
-      applyLocal(data);
+      const imported = JSON.parse(e.target.result);
+      if (!Array.isArray(imported)) throw new Error('formato inválido');
+      let added = 0, skipped = 0;
+      imported.forEach(rec => {
+        if (!rec.date || typeof rec.total !== 'number') return;
+        const exists = sales.find(s => s.date === rec.date);
+        if (exists) { skipped++; return; }
+        let label = rec.label;
+        if (!label) {
+          const d = new Date(rec.date + 'T12:00:00');
+          label = d.toLocaleDateString('pt-PT', { weekday:'short', day:'2-digit', month:'short' });
+        }
+        sales.push({ date: rec.date, total: rec.total, label });
+        added++;
+      });
+      sales.sort((a, b) => a.date.localeCompare(b.date));
       sched();
-      renderCats('');
-      renderSuppliers();
-      renderTasks();
-      renderDashboard();
-      showSnack('Backup importado ✓', 'saved');
+      renderSales();
+      showSnack(`${added} dias importados${skipped ? ', ' + skipped + ' já existiam' : ''} ✓`, 'saved');
     } catch {
       showSnack('Ficheiro inválido', 'error');
     }
@@ -1479,6 +1953,96 @@ function importJSON(event) {
   reader.readAsText(file);
   event.target.value = '';
 }
+
+function importSuppliersJSON(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    try {
+      const imported = JSON.parse(e.target.result);
+      if (!Array.isArray(imported)) throw new Error('formato inválido');
+      let added = 0, skipped = 0;
+      imported.forEach(rec => {
+        if (!rec.name) return;
+        const exists = suppliers.find(s => s.name.trim().toLowerCase() === rec.name.trim().toLowerCase());
+        if (exists) { skipped++; return; }
+        suppliers.push({
+          id: Date.now() + Math.random(),
+          name: rec.name.trim(),
+          type: rec.type || '',
+          phone: rec.phone || '',
+          notes: rec.notes || ''
+        });
+        added++;
+      });
+      sched();
+      renderSuppliers();
+      showSnack(`${added} fornecedores importados${skipped ? ', ' + skipped + ' já existiam' : ''} ✓`, 'saved');
+    } catch {
+      showSnack('Ficheiro inválido', 'error');
+    }
+  };
+  reader.readAsText(file);
+  event.target.value = '';
+}
+
+// ── BACKUP COMPLETO — exporta e importa todos os dados ───────────────────────
+function exportBackup() {
+  const data = payload();
+  data._backupDate = new Date().toISOString();
+  data._version = 'mf_backup_v1';
+  const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  const dateStr = new Date().toISOString().split('T')[0];
+  a.href = url;
+  a.download = `momento-frutado-backup-${dateStr}.json`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+  showSnack('Backup exportado com sucesso ✓', 'saved');
+}
+
+function importBackup(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    try {
+      const data = JSON.parse(e.target.result);
+      // Validação básica
+      if (!data.products && !data.sales && !data.suppliers) throw new Error('formato inválido');
+      if (!confirm('Isto vai substituir TODOS os dados actuais pelo backup. Tens a certeza?')) return;
+      // Restaurar cada variável global
+      if (data.products)          products          = data.products;
+      if (data.subcats)           subcats           = data.subcats;
+      if (data.list)              list              = data.list;
+      if (data.picked)            picked            = data.picked;
+      if (data.history)           snapHistory       = data.history;
+      if (data.suppliers)         suppliers         = data.suppliers;
+      if (data.tasks)             tasks             = data.tasks;
+      if (data.sales)             sales             = data.sales;
+      if (data.projects)          projects          = data.projects;
+      if (data.expenses)          expenses          = data.expenses;
+      if (data.recurringExpenses) recurringExpenses = data.recurringExpenses;
+      if (data.vasilhameMovs)     vasilhameMovs     = data.vasilhameMovs;
+      // Guardar e re-renderizar
+      sched();
+      renderCats('');
+      renderSuppliers();
+      renderTasks();
+      renderDashboard();
+      showSnack('Backup restaurado com sucesso ✓', 'saved');
+    } catch(err) {
+      showSnack('Ficheiro inválido ou corrompido', 'error');
+    }
+  };
+  reader.readAsText(file);
+  event.target.value = '';
+}
+
 
 // ── PREÇOS DE VENDA ───────────────────────────────────────────────────────────
 function renderPrices() {
@@ -1519,8 +2083,8 @@ function renderPrices() {
 
   const lowMarginCount = allRows.filter(r => r.lowMargin).length;
   if (completude) {
-    completude.innerHTML = withPrice + ' de ' + total + ' artigos com preço definido' + (lowMarginCount > 0 ? ' · <span class="material-icons-round" style="font-size:28px;vertical-align:middle;color:#9B3A3A;">warning</span> ' + lowMarginCount + ' com margem baixa' : '');
-    completude.style.color = lowMarginCount > 0 ? '#9B3A3A' : 'var(--md-primary)';
+    completude.innerHTML = withPrice + ' de ' + total + ' artigos com preço definido' + (lowMarginCount > 0 ? ' · <span class="material-icons-round" style="font-size:28px;vertical-align:middle;color:var(--md-error);">warning</span> ' + lowMarginCount + ' com margem baixa' : '');
+    completude.style.color = lowMarginCount > 0 ? 'var(--md-error)' : 'var(--md-primary)';
   }
   empty.style.display = allRows.length ? 'none' : 'block';
 
@@ -1539,7 +2103,7 @@ function renderPrices() {
     const labelLeft = document.createElement('div');
     labelLeft.style.cssText = 'display:flex; align-items:center; gap:10px;';
     const labelName = document.createElement('span');
-    labelName.style.cssText = 'font-size:12px; font-weight:700; color:#fff; text-transform:uppercase; letter-spacing:1px;';
+    labelName.style.cssText = 'font-size:12px; font-weight:700; color:var(--md-white); text-transform:uppercase; letter-spacing:1px;';
     labelName.textContent = cat;
     const labelCount = document.createElement('span');
     labelCount.style.cssText = 'font-size:11px; color:rgba(255,255,255,0.6); font-weight:500;';
@@ -1548,7 +2112,7 @@ function renderPrices() {
     labelLeft.appendChild(labelCount);
     const chevron = document.createElement('span');
     chevron.className = 'material-icons-round';
-    chevron.style.cssText = 'font-size:18px; color:#fff; opacity:0.7; transition:transform 0.2s;';
+    chevron.style.cssText = 'font-size:18px; color:var(--md-white); opacity:0.7; transition:transform 0.2s;';
     chevron.textContent = 'expand_less';
     catLabel.appendChild(labelLeft);
     catLabel.appendChild(chevron);
@@ -1564,7 +2128,7 @@ function renderPrices() {
 
       // Item name
       const nameSpan = document.createElement('span');
-      nameSpan.style.cssText = 'flex:1; font-size:26px; font-weight:400; color:' + (r.lowMargin ? '#9B3A3A' : 'var(--md-primary)') + '; line-height:1.2; cursor:pointer; display:flex; align-items:center; gap:8px;';
+      nameSpan.style.cssText = 'flex:1; font-size:26px; font-weight:400; color:' + (r.lowMargin ? 'var(--md-error)' : 'var(--md-primary)') + '; line-height:1.2; cursor:pointer; display:flex; align-items:center; gap:8px;';
       const nameText = document.createElement('span');
       nameText.textContent = r.item;
       nameSpan.appendChild(nameText);
@@ -1573,7 +2137,7 @@ function renderPrices() {
         warnIcon.className = 'material-icons-round';
         warnIcon.textContent = 'warning';
         warnIcon.title = 'Margem abaixo de 20%';
-        warnIcon.style.cssText = 'font-size:40px; color:#9B3A3A;';
+        warnIcon.style.cssText = 'font-size:40px; color:var(--md-error);';
         nameSpan.appendChild(warnIcon);
       }
       nameSpan.dataset.pricekey  = r.key;
@@ -1689,6 +2253,643 @@ function deleteSale(date) {
   showSnack('Registo removido', 'saved');
 }
 
+// ── DESPESAS ──────────────────────────────────────────────────────────────────
+function saveExpense() {
+  const dateVal = document.getElementById('expense-date').value;
+  const name = document.getElementById('expense-name').value.trim();
+  const category = document.getElementById('expense-category').value;
+  const amountVal = document.getElementById('expense-amount').value.trim();
+  if (!dateVal)  { showSnack('Indica a data', 'error'); return; }
+  if (!amountVal) { showSnack('Indica o valor', 'error'); return; }
+  const amount = parseFloat(amountVal);
+  if (isNaN(amount) || amount <= 0) { showSnack('Valor inválido', 'error'); return; }
+
+  expenses.push({ id: Date.now(), date: dateVal, name, category, amount });
+  expenses.sort((a, b) => b.date.localeCompare(a.date));
+
+  sched();
+  document.getElementById('expense-amount').value = '';
+  document.getElementById('expense-name').value = '';
+  renderExpenses();
+  showSnack('Despesa registada ✓', 'saved');
+}
+
+function deleteExpense(id) {
+  expenses = expenses.filter(e => e.id !== id);
+  sched(); renderExpenses();
+  showSnack('Despesa removida', 'saved');
+}
+
+function toggleExpensesHistory() {
+  const list = document.getElementById('expenses-list');
+  const chevron = document.getElementById('expenses-history-chevron');
+  const isOpen = list.style.display !== 'none';
+  list.style.display = isOpen ? 'none' : 'block';
+  chevron.style.transform = isOpen ? 'rotate(0deg)' : 'rotate(180deg)';
+}
+
+const EXPENSE_CATEGORY_ICONS = { 'Refeições':'restaurant', 'Gasóleo':'local_gas_station', 'Material':'inventory_2', 'Diversos':'category', 'Impostos':'account_balance', 'Manutenção':'build', 'Salários':'payments' };
+
+function renderExpenses() {
+  const container = document.getElementById('expenses-list');
+  const empty = document.getElementById('expenses-empty');
+  if (!container) return;
+  const dateInput = document.getElementById('expense-date');
+  if (dateInput && !dateInput.value) dateInput.value = new Date().toISOString().split('T')[0];
+
+  container.querySelectorAll('.expense-row').forEach(r => r.remove());
+  empty.style.display = expenses.length ? 'none' : 'block';
+
+  expenses.forEach(e => {
+    const row = document.createElement('div');
+    row.className = 'expense-row';
+    row.style.cssText = 'display:flex; align-items:center; padding:14px 0; border-bottom:1px solid var(--md-outline-variant); gap:12px;';
+    const icon = EXPENSE_CATEGORY_ICONS[e.category] || 'category';
+    row.innerHTML = `
+      <span class="material-icons-round" style="font-size:22px; color:var(--md-primary); opacity:0.5;">${icon}</span>
+      <div style="flex:1;">
+        <div style="font-size:16px; font-weight:600; color:var(--md-primary);">${e.name ? e.name : e.category}</div>
+        <div style="font-size:12px; color:var(--md-primary); opacity:0.5;">${e.name ? e.category + ' · ' : ''}${e.date}</div>
+      </div>
+      <div style="font-size:20px; font-weight:800; color:var(--md-error);">-${e.amount.toFixed(2)}€</div>
+      <button onclick="deleteExpense(${e.id})" style="background:none; border:none; cursor:pointer; padding:4px;">
+        <span class="material-icons-round" style="font-size:18px; color:var(--md-outline-variant);">delete_outline</span>
+      </button>
+    `;
+    container.insertBefore(row, empty);
+  });
+}
+
+// ── VASILHAME ─────────────────────────────────────────────────────────────────
+let vasilDirection = 'debit';
+
+// Ao definir quantidade num dos lados (Entregamos/Recebemos), define a direção
+// e limpa o outro lado, já que um movimento só pode ser um ou outro.
+function onVasilQtyInput(dir) {
+  vasilDirection = dir;
+  const creditInput = document.getElementById('vasil-qty-credit');
+  const debitInput = document.getElementById('vasil-qty-debit');
+  const creditBtn = document.getElementById('vasil-qty-credit-btn');
+  const debitBtn = document.getElementById('vasil-qty-debit-btn');
+  if (dir === 'credit') {
+    if (debitInput.value) { debitInput.value = ''; debitBtn.textContent = '0'; }
+  } else {
+    if (creditInput.value) { creditInput.value = ''; creditBtn.textContent = '0'; }
+  }
+}
+
+// ── TECLADO NUMÉRICO GLOBAL (evita o teclado nativo do Android e a barra de autofill) ──
+// Substitui qualquer input numérico da app: associa-se a um <input hidden> + um botão
+// que mostra o valor. Chamar openNumKeypad(inputId, btnId, {decimal, onConfirm}).
+let numKeypadState = null; // { inputId, btnId, decimal, onConfirm }
+
+function openNumKeypad(inputId, btnId, opts) {
+  opts = opts || {};
+  numKeypadState = { inputId, btnId, decimal: !!opts.decimal, onConfirm: opts.onConfirm || null };
+  const input = document.getElementById(inputId);
+  const display = document.getElementById('numkeypad-display');
+  display.textContent = (input.value || '0').replace('.', ',');
+  const decimalBtn = document.getElementById('numkeypad-decimal');
+  decimalBtn.style.opacity = numKeypadState.decimal ? '1' : '0.3';
+  decimalBtn.disabled = !numKeypadState.decimal;
+  document.getElementById('numkeypad').style.display = 'block';
+  document.getElementById('numkeypad-overlay').style.display = 'block';
+}
+
+// Atalho prático: liga automaticamente um botão+input pelo padrão "<id>" / "<id>-btn"
+function openNumKeypadFor(baseId, opts) {
+  openNumKeypad(baseId, baseId + '-btn', opts);
+}
+
+function numKeypadPress(char) {
+  const display = document.getElementById('numkeypad-display');
+  let current = display.textContent === '0' ? '' : display.textContent;
+  if (char === '.') {
+    if (!numKeypadState || !numKeypadState.decimal) return;
+    if (current.includes(',')) return; // já tem vírgula decimal
+    display.textContent = (current || '0') + ',';
+    return;
+  }
+  if (current.replace(',', '').length >= 7) return; // limite razoável de dígitos
+  display.textContent = current + char;
+}
+
+function numKeypadBackspace() {
+  const display = document.getElementById('numkeypad-display');
+  const next = display.textContent.slice(0, -1);
+  display.textContent = next || '0';
+}
+
+function closeNumKeypad(commit) {
+  const state = numKeypadState;
+  // Fecha o teclado primeiro — antes de correr onConfirm, que pode legitimamente
+  // reabrir o teclado de seguida (ex: avançar para o próximo produto da lista).
+  document.getElementById('numkeypad').style.display = 'none';
+  document.getElementById('numkeypad-overlay').style.display = 'none';
+  numKeypadState = null;
+
+  if (commit && state) {
+    const display = document.getElementById('numkeypad-display');
+    let raw = display.textContent === '0' ? '' : display.textContent;
+    raw = raw.replace(',', '.').replace(/\.$/, ''); // remove vírgula/ponto solto no fim
+    const input = state.inputId ? document.getElementById(state.inputId) : null;
+    const btn = state.btnId ? document.getElementById(state.btnId) : null;
+    if (input) input.value = raw;
+    if (btn) {
+      const placeholder = btn.dataset.placeholder || (state.decimal ? '0.00' : '0');
+      btn.textContent = raw || placeholder;
+    }
+    if (state.onConfirm) state.onConfirm(raw);
+  }
+}
+
+// Wrapper específico do vasilhame, mantém a integração com a direção (credit/debit)
+function openVasilKeypad(dir) {
+  const baseId = dir === 'credit' ? 'vasil-qty-credit' : 'vasil-qty-debit';
+  openNumKeypadFor(baseId, { decimal: false, onConfirm: (val) => { if (val) onVasilQtyInput(dir); } });
+}
+
+function populateVasilSelects() {
+  // O tipo de caixa por defeito já vem definido no HTML (Caixa 1kg); nada a popular aqui.
+}
+
+// ── PICKER DE TIPO DE CAIXA (vasilhame) — mesmo estilo do fornecedor ───────────
+function openVasilBoxPicker() {
+  const picker = document.getElementById("vasil-box-picker");
+  const overlay = document.getElementById("vasil-box-overlay");
+  picker.innerHTML = "";
+
+  const title = document.createElement("div");
+  title.style.cssText = "font-size:20px;font-weight:700;color:var(--md-primary);margin-bottom:16px;";
+  title.textContent = "Tipo de caixa";
+  picker.appendChild(title);
+
+  const current = document.getElementById('vasil-boxtype').value;
+  VASILHAME_TYPES.forEach(t => {
+    const btn = document.createElement("button");
+    btn.style.cssText = "display:block;width:100%;text-align:left;padding:14px 16px;border:none;border-radius:10px;font-size:22px;font-family:'Outfit',sans-serif;cursor:pointer;margin-bottom:6px;font-weight:500;";
+    const isSel = current === t;
+    btn.style.background = isSel ? "var(--md-primary)" : "var(--md-surface-1)";
+    btn.style.color = isSel ? "var(--md-white)" : "var(--md-primary)";
+    btn.textContent = t;
+    btn.addEventListener("click", () => {
+      document.getElementById('vasil-boxtype').value = t;
+      document.getElementById('vasil-boxtype-label').textContent = t;
+      closeVasilBoxPicker();
+    });
+    picker.appendChild(btn);
+  });
+
+  picker.style.display = "block";
+  overlay.style.display = "block";
+}
+
+function closeVasilBoxPicker() {
+  document.getElementById("vasil-box-picker").style.display = "none";
+  document.getElementById("vasil-box-overlay").style.display = "none";
+}
+
+// ── PICKER RÁPIDO DE FORNECEDOR (vasilhame) — agrupado por pavilhão + pesquisa ──
+function openVasilSupplierPicker() {
+  const picker = document.getElementById("vasil-supplier-picker");
+  const overlay = document.getElementById("vasil-supplier-overlay");
+  picker.innerHTML = "";
+
+  // Barra de pesquisa — criada apenas UMA vez para nunca perder o foco ao digitar
+  const searchBar = document.createElement("input");
+  searchBar.id = "vasil-supplier-quicksearch";
+  searchBar.type = "search";
+  searchBar.name = "vasil-search-" + Date.now(); // nome único evita o autofill associar a campos guardados
+  searchBar.placeholder = "Pesquisar fornecedor…";
+  searchBar.autocomplete = "off";
+  searchBar.setAttribute("autocorrect", "off");
+  searchBar.setAttribute("autocapitalize", "off");
+  searchBar.setAttribute("spellcheck", "false");
+  searchBar.setAttribute("data-lpignore", "true"); // ignora LastPass e gestores semelhantes
+  searchBar.setAttribute("data-form-type", "other"); // sinaliza ao Chrome que não é um campo de login/pagamento
+  searchBar.style.cssText = "width:100%; box-sizing:border-box; padding:14px 16px; border:none; border-radius:12px; font-size:18px; font-family:'Outfit',sans-serif; color:var(--md-white); background:var(--md-neutral-90); outline:none; margin-bottom:14px;";
+  searchBar.addEventListener("input", () => renderVasilSupplierResults(searchBar.value));
+  picker.appendChild(searchBar);
+
+  // Contentor dos resultados — este sim é recriado a cada tecla
+  const results = document.createElement("div");
+  results.id = "vasil-supplier-results";
+  picker.appendChild(results);
+
+  // Ao tocar na lista para fazer scroll, esconde o teclado (tira o foco da pesquisa)
+  results.addEventListener("touchstart", () => {
+    if (document.activeElement === searchBar) searchBar.blur();
+  }, { passive: true });
+
+  renderVasilSupplierResults('');
+  picker.style.display = "block";
+  overlay.style.display = "block";
+
+  // Reposiciona o painel para caber sempre na área visível, mesmo com teclado e barra de autofill abertos
+  if (window.visualViewport) {
+    vasilSupplierViewportHandler = () => {
+      const vv = window.visualViewport;
+      picker.style.bottom = 'auto';
+      picker.style.top = vv.offsetTop + 'px';
+      picker.style.maxHeight = (vv.height - 16) + 'px';
+    };
+    window.visualViewport.addEventListener('resize', vasilSupplierViewportHandler);
+    window.visualViewport.addEventListener('scroll', vasilSupplierViewportHandler);
+    vasilSupplierViewportHandler();
+  }
+
+  setTimeout(() => searchBar.focus(), 50);
+}
+let vasilSupplierViewportHandler = null;
+
+function renderVasilSupplierResults(query) {
+  const results = document.getElementById("vasil-supplier-results");
+  if (!results) return;
+  results.innerHTML = "";
+
+  const q = (query || '').trim().toLowerCase();
+  const filtered = suppliers.filter(s => s.name.toLowerCase().includes(q));
+
+  if (filtered.length === 0) {
+    const empty = document.createElement("div");
+    empty.style.cssText = "font-size:16px;color:var(--md-neutral-15);text-align:center;padding:24px 0;";
+    empty.textContent = "Sem resultados";
+    results.appendChild(empty);
+  } else {
+    const knownOrder = ['A5', 'A6', 'A8', 'A10'];
+    const groups = {};
+    filtered.forEach(s => {
+      const key = (s.type || '').trim() || '__none__';
+      if (!groups[key]) groups[key] = [];
+      groups[key].push(s);
+    });
+    const otherKeys = Object.keys(groups).filter(k => k !== '__none__' && !knownOrder.includes(k)).sort();
+    const orderedKeys = [...knownOrder.filter(k => groups[k]), ...otherKeys, ...(groups['__none__'] ? ['__none__'] : [])];
+
+    orderedKeys.forEach(groupKey => {
+      const hdr = document.createElement("div");
+      hdr.style.cssText = "font-size:13px;font-weight:700;color:var(--md-neutral-30);text-transform:uppercase;letter-spacing:1px;margin:18px 2px 8px;";
+
+      groups[groupKey].forEach(s => {
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.style.cssText = "display:block;width:100%;text-align:left;padding:14px 16px;border:none;border-radius:10px;font-size:21px;font-family:'Outfit',sans-serif;cursor:pointer;margin-bottom:6px;font-weight:500;";
+        const isSel = document.getElementById('vasil-supplier').value === s.name;
+        btn.style.background = isSel ? "var(--md-primary)" : "var(--md-neutral-90)";
+        btn.style.color = isSel ? "var(--md-white)" : "var(--md-white)";
+        btn.textContent = s.name;
+        btn.addEventListener("click", () => {
+          document.getElementById('vasil-supplier').value = s.name;
+          document.getElementById('vasil-supplier-label').textContent = s.name;
+          closeVasilSupplierPicker();
+        });
+        results.appendChild(btn);
+      });
+    });
+  }
+}
+
+function closeVasilSupplierPicker() {
+  const picker = document.getElementById("vasil-supplier-picker");
+  picker.style.display = "none";
+  document.getElementById("vasil-supplier-overlay").style.display = "none";
+  picker.style.bottom = '0';
+  picker.style.top = 'auto';
+  picker.style.maxHeight = '50vh';
+  if (window.visualViewport && vasilSupplierViewportHandler) {
+    window.visualViewport.removeEventListener('resize', vasilSupplierViewportHandler);
+    window.visualViewport.removeEventListener('scroll', vasilSupplierViewportHandler);
+    vasilSupplierViewportHandler = null;
+  }
+}
+
+// ── PAINEL RÁPIDO DE VASILHAME (na lista de Compras) ───────────────────────────
+let vasilQuickQtys = {}; // { 'Palote': 3, 'Tabuleiro': 1, ... } — só os tocados
+
+function toggleVasilQuickPanel() {
+  const panel = document.getElementById('vasil-quick-panel');
+  const isOpen = panel.style.display !== 'none';
+  panel.style.display = isOpen ? 'none' : 'block';
+  if (!isOpen) renderVasilQuickPanel();
+}
+
+function renderVasilQuickPanel() {
+  const stepperWrap = document.getElementById('vasil-quick-steppers');
+  const supplierSel = document.getElementById('vasil-quick-supplier');
+  if (!stepperWrap || !supplierSel) return;
+
+  // popular fornecedores
+  const currentSupplier = supplierSel.value;
+  supplierSel.innerHTML = '<option value="">Fornecedor…</option>' +
+    suppliers.map(s => `<option value="${s.name}">${s.name}</option>`).join('');
+  if (currentSupplier && suppliers.find(s => s.name === currentSupplier)) supplierSel.value = currentSupplier;
+
+  stepperWrap.innerHTML = VASILHAME_TYPES.map(t => {
+    const qty = vasilQuickQtys[t] || 0;
+    return `
+      <div style="display:flex; align-items:center; justify-content:space-between; padding:8px 0; border-bottom:1px solid var(--md-outline-variant);">
+        <span style="font-size:14px; color:var(--md-primary); font-weight:600;">${t}</span>
+        <div style="display:flex; align-items:center; gap:10px;">
+          <button onclick="vasilQuickStep('${t}', -1)" style="width:30px; height:30px; border-radius:50%; border:1.5px solid var(--md-outline-variant); background:var(--md-surface-1); color:var(--md-primary); font-size:18px; font-weight:700; cursor:pointer; display:flex; align-items:center; justify-content:center; padding:0;">−</button>
+          <span style="font-size:16px; font-weight:700; color:var(--md-primary); width:22px; text-align:center;">${qty}</span>
+          <button onclick="vasilQuickStep('${t}', 1)" style="width:30px; height:30px; border-radius:50%; border:none; background:var(--md-primary); color:var(--md-white); font-size:18px; font-weight:700; cursor:pointer; display:flex; align-items:center; justify-content:center; padding:0;">+</button>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+function vasilQuickStep(boxType, delta) {
+  const current = vasilQuickQtys[boxType] || 0;
+  const next = Math.max(0, current + delta);
+  if (next === 0) delete vasilQuickQtys[boxType];
+  else vasilQuickQtys[boxType] = next;
+  renderVasilQuickPanel();
+  updateVasilQuickBadge();
+}
+
+function updateVasilQuickBadge() {
+  const badge = document.getElementById('vasil-quick-badge');
+  if (!badge) return;
+  const hasAny = Object.keys(vasilQuickQtys).length > 0;
+  badge.style.display = hasAny ? 'block' : 'none';
+}
+
+function confirmVasilQuick() {
+  const supplier = document.getElementById('vasil-quick-supplier').value;
+  const entries = Object.entries(vasilQuickQtys);
+  if (entries.length === 0) { showSnack('Indica pelo menos uma caixa', 'error'); return; }
+  if (!supplier) { showSnack('Escolhe o fornecedor', 'error'); return; }
+
+  const today = new Date().toISOString().split('T')[0];
+  entries.forEach(([boxType, qty]) => {
+    vasilhameMovs.push({ id: Date.now() + Math.random(), date: today, supplier, boxType, qty, direction: 'debit' });
+  });
+  sched();
+  vasilQuickQtys = {};
+  document.getElementById('vasil-quick-panel').style.display = 'none';
+  updateVasilQuickBadge();
+  showSnack('Vasilhame registado ✓', 'saved');
+}
+
+function saveVasilMov() {
+  const supplier = document.getElementById('vasil-supplier').value;
+  const boxType = document.getElementById('vasil-boxtype').value;
+  const qtyVal = vasilDirection === 'credit'
+    ? document.getElementById('vasil-qty-credit').value.trim()
+    : document.getElementById('vasil-qty-debit').value.trim();
+  if (!supplier) { showSnack('Escolhe o fornecedor', 'error'); return; }
+  if (!qtyVal) { showSnack('Indica a quantidade', 'error'); return; }
+  const qty = parseInt(qtyVal, 10);
+  if (isNaN(qty) || qty <= 0) { showSnack('Quantidade inválida', 'error'); return; }
+
+  vasilhameMovs.push({
+    id: Date.now(),
+    date: new Date().toISOString().split('T')[0],
+    supplier, boxType, qty,
+    direction: vasilDirection
+  });
+  sched();
+  document.getElementById('vasil-qty-credit').value = '';
+  document.getElementById('vasil-qty-debit').value = '';
+  document.getElementById('vasil-qty-credit-btn').textContent = '0';
+  document.getElementById('vasil-qty-debit-btn').textContent = '0';
+  document.getElementById('vasil-supplier-label').textContent = 'Escolher…';
+  document.getElementById('vasil-supplier').value = '';
+  renderVasilhame();
+  showSnack(vasilDirection === 'debit' ? 'Entrada registada ✓' : 'Devolução registada ✓', 'saved');
+}
+
+function deleteVasilMov(id) {
+  vasilhameMovs = vasilhameMovs.filter(m => m.id !== id);
+  sched();
+  renderVasilhame();
+}
+
+function toggleVasilHistory() {
+  const list = document.getElementById('vasil-history-list');
+  const chevron = document.getElementById('vasil-history-chevron');
+  const isOpen = list.style.display !== 'none';
+  list.style.display = isOpen ? 'none' : 'block';
+  chevron.style.transform = isOpen ? 'rotate(0deg)' : 'rotate(180deg)';
+}
+
+function toggleVasilBalances() {
+  const list = document.getElementById('vasil-balances');
+  const chevron = document.getElementById('vasil-balances-chevron');
+  const isOpen = list.style.display !== 'none';
+  list.style.display = isOpen ? 'none' : 'block';
+  chevron.style.transform = isOpen ? 'rotate(0deg)' : 'rotate(180deg)';
+}
+
+function renderVasilhame() {
+  populateVasilSelects();
+
+  // ── Saldos por fornecedor × tipo de caixa ──
+  const balancesContainer = document.getElementById('vasil-balances');
+  const balancesEmpty = document.getElementById('vasil-balances-empty');
+  if (balancesContainer) {
+    balancesContainer.querySelectorAll('.vasil-balance-card').forEach(c => c.remove());
+
+    // balances[supplier][boxType] = saldo (débito - crédito)
+    const balances = {};
+    vasilhameMovs.forEach(m => {
+      if (!balances[m.supplier]) balances[m.supplier] = {};
+      if (!balances[m.supplier][m.boxType]) balances[m.supplier][m.boxType] = 0;
+      balances[m.supplier][m.boxType] += (m.direction === 'debit' ? m.qty : -m.qty);
+    });
+
+    const supplierNames = Object.keys(balances).sort();
+    balancesEmpty.style.display = supplierNames.length ? 'none' : 'block';
+
+    supplierNames.forEach(supplierName => {
+      const boxBalances = balances[supplierName];
+      const nonZero = VASILHAME_TYPES.filter(t => (boxBalances[t] || 0) !== 0);
+      if (nonZero.length === 0) return; // tudo devolvido, não mostra
+
+      const card = document.createElement('div');
+      card.className = 'vasil-balance-card';
+      card.style.cssText = 'background:var(--md-surface); border-radius:14px; border:1px solid var(--md-outline-variant); padding:16px; margin-bottom:12px;';
+      let rowsHtml = '';
+      nonZero.forEach(t => {
+        const val = boxBalances[t];
+        rowsHtml += `
+          <div style="display:flex; justify-content:space-between; padding:6px 0;">
+            <span style="font-size:14px; color:var(--md-primary); opacity:0.8;">${t}</span>
+            <span style="font-size:16px; font-weight:700; color:${val > 0 ? 'var(--md-error)' : 'var(--md-success)'};">${val > 0 ? val : Math.abs(val) + ' a mais'}</span>
+          </div>
+        `;
+      });
+      card.innerHTML = `
+        <div style="font-size:16px; font-weight:700; color:var(--md-primary); margin-bottom:6px;">${supplierName}</div>
+        ${rowsHtml}
+      `;
+      balancesContainer.insertBefore(card, balancesEmpty);
+    });
+
+    if (supplierNames.length && balancesContainer.querySelectorAll('.vasil-balance-card').length === 0) {
+      balancesEmpty.style.display = 'block';
+      balancesEmpty.querySelector('div').textContent = 'Tudo devolvido ✓';
+    }
+  }
+
+  // ── Histórico ──
+  const histContainer = document.getElementById('vasil-history-list');
+  const histEmpty = document.getElementById('vasil-history-empty');
+  if (histContainer) {
+    histContainer.querySelectorAll('.vasil-hist-row').forEach(r => r.remove());
+    const sorted = [...vasilhameMovs].sort((a, b) => b.date.localeCompare(a.date) || b.id - a.id);
+    histEmpty.style.display = sorted.length ? 'none' : 'block';
+    sorted.forEach(m => {
+      const row = document.createElement('div');
+      row.className = 'vasil-hist-row';
+      row.style.cssText = 'display:flex; align-items:center; padding:12px 0; border-bottom:1px solid var(--md-outline-variant); gap:12px;';
+      const isDebit = m.direction === 'debit';
+      row.innerHTML = `
+        <span class="material-icons-round" style="font-size:20px; color:${isDebit ? 'var(--md-error)' : 'var(--md-success)'};">${isDebit ? 'call_received' : 'call_made'}</span>
+        <div style="flex:1;">
+          <div style="font-size:15px; font-weight:600; color:var(--md-primary);">${m.boxType} · ${m.supplier}</div>
+          <div style="font-size:12px; color:var(--md-primary); opacity:0.5;">${m.date} · ${isDebit ? 'Recebido' : 'Devolvido'}</div>
+        </div>
+        <div style="font-size:16px; font-weight:700; color:var(--md-primary);">${isDebit ? '+' : '-'}${m.qty}</div>
+        <button onclick="deleteVasilMov(${m.id})" style="background:none; border:none; cursor:pointer; padding:4px;">
+          <span class="material-icons-round" style="font-size:18px; color:var(--md-outline-variant);">delete_outline</span>
+        </button>
+      `;
+      histContainer.insertBefore(row, histEmpty);
+    });
+  }
+}
+
+
+function setExpenseTab(tab) {
+  const panels = { occasional: 'exp-panel-occasional', monthly: 'exp-panel-monthly', yearly: 'exp-panel-yearly' };
+  const tabs   = { occasional: 'exp-tab-occasional', monthly: 'exp-tab-monthly', yearly: 'exp-tab-yearly' };
+  Object.keys(panels).forEach(k => {
+    document.getElementById(panels[k]).style.display = (k === tab) ? 'block' : 'none';
+    const btn = document.getElementById(tabs[k]);
+    btn.style.background = (k === tab) ? 'var(--md-primary)' : 'var(--md-surface-variant)';
+    btn.style.color = (k === tab) ? 'var(--md-white)' : 'var(--md-primary)';
+  });
+  if (tab === 'monthly') renderRecurringExpenses('monthly');
+  if (tab === 'yearly') renderRecurringExpenses('yearly');
+}
+
+// ── DESPESAS RECORRENTES (MENSAL / ANUAL) ──────────────────────────────────────
+function saveRecurringExpense(type) {
+  const name = document.getElementById(`rexp-${type}-name`)?.value.trim() || '';
+  const category = document.getElementById(`rexp-${type}-category`).value;
+  const amountVal = document.getElementById(`rexp-${type}-amount`).value.trim();
+  const day = parseInt(document.getElementById(`rexp-${type}-day`).value, 10);
+  if (!amountVal || isNaN(day) || day < 1 || day > 31) { showSnack('Preenche dia e valor', 'error'); return; }
+  const amount = parseFloat(amountVal);
+  if (isNaN(amount) || amount <= 0) { showSnack('Valor inválido', 'error'); return; }
+
+  const entry = { id: Date.now(), type, name, category, amount, day, lastGenerated: null };
+  if (type === 'yearly') {
+    entry.month = parseInt(document.getElementById('rexp-yearly-month').value, 10);
+  }
+  recurringExpenses.push(entry);
+  sched();
+  document.getElementById(`rexp-${type}-amount`).value = '';
+  document.getElementById(`rexp-${type}-day`).value = '';
+  const nameEl = document.getElementById(`rexp-${type}-name`); if (nameEl) nameEl.value = '';
+  generateRecurringExpenses();
+  renderRecurringExpenses(type);
+  showSnack('Despesa fixa criada ✓', 'saved');
+}
+
+function deleteRecurringExpense(id) {
+  recurringExpenses = recurringExpenses.filter(r => r.id !== id);
+  sched();
+  renderRecurringExpenses('monthly');
+  renderRecurringExpenses('yearly');
+}
+
+function renderRecurringExpenses(type) {
+  const container = document.getElementById(`rexp-${type}-list`);
+  if (!container) return;
+  const empty = document.getElementById(`rexp-${type}-empty`);
+  container.querySelectorAll('.rexp-row').forEach(r => r.remove());
+  const items = recurringExpenses.filter(r => r.type === type);
+  empty.style.display = items.length ? 'none' : 'block';
+
+  const monthNames = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
+  items.forEach(r => {
+    const row = document.createElement('div');
+    row.className = 'rexp-row';
+    row.style.cssText = 'display:flex; align-items:center; padding:14px; background:var(--md-surface); border-radius:12px; border:1px solid var(--md-outline-variant); gap:12px; margin-bottom:10px;';
+    const icon = EXPENSE_CATEGORY_ICONS[r.category] || 'category';
+    const whenLabel = type === 'monthly' ? `Dia ${r.day} de cada mês` : `${r.day} de ${monthNames[r.month-1]}, todos os anos`;
+    row.innerHTML = `
+      <span class="material-icons-round" style="font-size:22px; color:var(--md-primary); opacity:0.5;">${icon}</span>
+      <div style="flex:1;">
+        <div style="font-size:16px; font-weight:600; color:var(--md-primary);">${r.name ? r.name : r.category}</div>
+        <div style="font-size:12px; color:var(--md-primary); opacity:0.5;">${r.name ? r.category + ' · ' : ''}${whenLabel}</div>
+      </div>
+      <div style="font-size:18px; font-weight:800; color:var(--md-error);">-${r.amount.toFixed(2)}€</div>
+      <button onclick="deleteRecurringExpense(${r.id})" style="background:none; border:none; cursor:pointer; padding:4px;">
+        <span class="material-icons-round" style="font-size:18px; color:var(--md-outline-variant);">delete_outline</span>
+      </button>
+    `;
+    container.insertBefore(row, empty);
+  });
+}
+
+// Gera lançamentos em falta em `expenses` para todas as despesas fixas até hoje
+function generateRecurringExpenses() {
+  const today = new Date();
+  const todayStr = today.toISOString().split('T')[0];
+  let changed = false;
+
+  recurringExpenses.forEach(r => {
+    if (r.type === 'monthly') {
+      let cursor = r.lastGenerated ? new Date(r.lastGenerated + 'T00:00:00') : new Date(today.getFullYear(), today.getMonth(), 1);
+      let y = cursor.getFullYear(), m = cursor.getMonth();
+      while (true) {
+        const lastDayOfMonth = new Date(y, m + 1, 0).getDate();
+        const day = Math.min(r.day, lastDayOfMonth);
+        const dateStr = `${y}-${String(m+1).padStart(2,'0')}-${String(day).padStart(2,'0')}`;
+        if (dateStr > todayStr) break;
+        const exists = expenses.find(e => e.recurringId === r.id && e.date === dateStr);
+        if (!exists) {
+          expenses.push({ id: Date.now() + Math.random(), date: dateStr, name: r.name || '', category: r.category, amount: r.amount, recurringId: r.id });
+          changed = true;
+        }
+        r.lastGenerated = dateStr;
+        m++; if (m > 11) { m = 0; y++; }
+        if (y > today.getFullYear() + 1) break;
+      }
+    } else if (r.type === 'yearly') {
+      let y = r.lastGenerated ? parseInt(r.lastGenerated.slice(0,4), 10) : today.getFullYear();
+      while (true) {
+        const lastDayOfMonth = new Date(y, r.month, 0).getDate();
+        const day = Math.min(r.day, lastDayOfMonth);
+        const dateStr = `${y}-${String(r.month).padStart(2,'0')}-${String(day).padStart(2,'0')}`;
+        if (dateStr > todayStr) break;
+        const exists = expenses.find(e => e.recurringId === r.id && e.date === dateStr);
+        if (!exists) {
+          expenses.push({ id: Date.now() + Math.random(), date: dateStr, name: r.name || '', category: r.category, amount: r.amount, recurringId: r.id });
+          changed = true;
+        }
+        r.lastGenerated = dateStr;
+        y++;
+        if (y > today.getFullYear() + 1) break;
+      }
+    }
+  });
+
+  if (changed) { expenses.sort((a, b) => b.date.localeCompare(a.date)); sched(); }
+}
+
+function toggleSalesHistory() {
+  const list = document.getElementById('sales-list');
+  const chevron = document.getElementById('sales-history-chevron');
+  const isOpen = list.style.display !== 'none';
+  list.style.display = isOpen ? 'none' : 'block';
+  chevron.style.transform = isOpen ? 'rotate(0deg)' : 'rotate(180deg)';
+}
+
 function renderSales() {
   const container = document.getElementById('sales-list');
   const empty     = document.getElementById('sales-empty');
@@ -1707,7 +2908,9 @@ function renderSales() {
     const total = sales.reduce((a, s) => a + s.total, 0);
     const avg   = total / sales.length;
     const best  = sales.reduce((a, s) => s.total > a.total ? s : a, sales[0]);
-    summary.textContent = `${sales.length} dias · Média ${avg.toFixed(2)}€ · Melhor ${best.label}: ${best.total.toFixed(2)}€`;
+    const totalExpenses = expenses.reduce((a, e) => a + e.amount, 0);
+    const net = total - totalExpenses;
+    summary.innerHTML = `${sales.length} dias · Média ${avg.toFixed(2)}€ · Melhor ${best.label}: ${best.total.toFixed(2)}€` + (totalExpenses > 0 ? `<br>Despesas: -${totalExpenses.toFixed(2)}€ · <span style="font-weight:700; color:${net >= 0 ? 'var(--md-success)' : 'var(--md-error)'};">Líquido: ${net.toFixed(2)}€</span>` : '');
   } else {
     summary.textContent = '';
   }
@@ -1731,12 +2934,352 @@ function renderSales() {
   });
 }
 
+// ── RESUMO / ANÁLISE DE VENDAS ──────────────────────────────────────────────────
+function renderResumo() {
+  const content = document.getElementById('resumo-content');
+  const empty = document.getElementById('resumo-empty');
+  if (!content) return;
+
+  if (sales.length < 3) {
+    empty.style.display = 'block';
+    content.querySelectorAll('.resumo-block').forEach(b => b.remove());
+    return;
+  }
+  empty.style.display = 'none';
+  content.querySelectorAll('.resumo-block').forEach(b => b.remove());
+
+  const sorted = [...sales].sort((a, b) => a.date.localeCompare(b.date));
+
+  // ── Bloco 0: Contexto — esta semana vs semana passada ──
+  const today = new Date();
+  const dayOfWeek = today.getDay(); // 0=Dom, 1=Seg...
+  const startOfThisWeek = new Date(today); startOfThisWeek.setDate(today.getDate() - dayOfWeek);
+  const startOfLastWeek = new Date(startOfThisWeek); startOfLastWeek.setDate(startOfThisWeek.getDate() - 7);
+  const fmt = d => d.toISOString().split('T')[0];
+
+  const thisWeekSales = sorted.filter(s => s.date >= fmt(startOfThisWeek) && s.date <= fmt(today));
+  const lastWeekSales = sorted.filter(s => s.date >= fmt(startOfLastWeek) && s.date < fmt(startOfThisWeek));
+  const thisWeekTotal = thisWeekSales.reduce((a, s) => a + s.total, 0);
+  const lastWeekTotal = lastWeekSales.reduce((a, s) => a + s.total, 0);
+  const weekDiff = lastWeekTotal > 0 ? ((thisWeekTotal - lastWeekTotal) / lastWeekTotal * 100) : null;
+
+  // Média global por dia de venda (para referência)
+  const allAvg = sorted.length > 0 ? sorted.reduce((a,s) => a + s.total, 0) / sorted.length : 0;
+  const lastSale = sorted[sorted.length - 1];
+  const lastVsAvg = allAvg > 0 ? ((lastSale.total - allAvg) / allAvg * 100) : null;
+
+  const ctxBlock = document.createElement('div');
+  ctxBlock.className = 'resumo-block';
+  ctxBlock.style.cssText = 'background:var(--md-surface); border-radius:14px; border:1px solid var(--md-outline-variant); padding:18px; margin-bottom:20px;';
+
+  let weekHtml = '';
+  if (weekDiff !== null) {
+    const arrow = weekDiff >= 0 ? '↑' : '↓';
+    const color = weekDiff >= 0 ? 'var(--md-success)' : 'var(--md-error)';
+    weekHtml = `
+      <div style="display:flex; justify-content:space-between; align-items:flex-end; margin-bottom:14px; padding-bottom:14px; border-bottom:1px solid var(--md-outline-variant);">
+        <div>
+          <div style="font-size:11px; font-weight:700; color:var(--md-primary); opacity:0.5; text-transform:uppercase; letter-spacing:1px; margin-bottom:4px;">esta semana</div>
+          <div style="font-size:30px; font-weight:800; color:var(--md-primary);">${thisWeekTotal.toFixed(0)}€</div>
+        </div>
+        <div style="text-align:right;">
+          <div style="font-size:11px; font-weight:700; color:var(--md-primary); opacity:0.5; text-transform:uppercase; letter-spacing:1px; margin-bottom:4px;">vs semana passada</div>
+          <div style="font-size:22px; font-weight:700; color:${color};">${arrow} ${Math.abs(weekDiff).toFixed(1)}%</div>
+        </div>
+      </div>`;
+  } else {
+    weekHtml = `<div style="font-size:28px; font-weight:800; color:var(--md-primary); margin-bottom:14px; padding-bottom:14px; border-bottom:1px solid var(--md-outline-variant);">${thisWeekTotal.toFixed(0)}€ <span style="font-size:13px; opacity:0.5; font-weight:500;">esta semana</span></div>`;
+  }
+
+  let lastSaleHtml = '';
+  if (lastVsAvg !== null) {
+    const arrow = lastVsAvg >= 0 ? '↑' : '↓';
+    const color = lastVsAvg >= 0 ? 'var(--md-success)' : 'var(--md-error)';
+    lastSaleHtml = `
+      <div style="display:flex; justify-content:space-between; align-items:center;">
+        <div>
+          <div style="font-size:11px; font-weight:700; color:var(--md-primary); opacity:0.5; text-transform:uppercase; letter-spacing:1px; margin-bottom:2px;">última venda</div>
+          <div style="font-size:18px; font-weight:700; color:var(--md-primary);">${lastSale.total.toFixed(0)}€</div>
+          <div style="font-size:11px; color:var(--md-primary); opacity:0.5;">${lastSale.label || lastSale.date}</div>
+        </div>
+        <div style="text-align:right;">
+          <div style="font-size:11px; font-weight:700; color:var(--md-primary); opacity:0.5; text-transform:uppercase; letter-spacing:1px; margin-bottom:2px;">vs tua média</div>
+          <div style="font-size:18px; font-weight:700; color:${color};">${arrow} ${Math.abs(lastVsAvg).toFixed(1)}%</div>
+          <div style="font-size:11px; color:var(--md-primary); opacity:0.5;">média: ${allAvg.toFixed(0)}€</div>
+        </div>
+      </div>`;
+  }
+
+  ctxBlock.innerHTML = weekHtml + lastSaleHtml;
+  content.appendChild(ctxBlock);
+
+  // ── Bloco 1: Gráficos de evolução, um por dia da semana ──
+  const weekdayNamesFull = ['Domingo','Segunda','Terça','Quarta','Quinta','Sexta','Sábado'];
+  const targetDays = ['Terça','Sexta','Sábado'];
+  const dayColors = { 'Terça':'var(--md-accent)', 'Sexta':'var(--md-gold)', 'Sábado':'var(--md-orange)' };
+
+  targetDays.forEach(dayName => {
+    const dayIdx = weekdayNamesFull.indexOf(dayName);
+    const dayData = sorted.filter(s => new Date(s.date + 'T00:00:00').getDay() === dayIdx);
+    if (dayData.length < 2) return;
+
+    const recent = dayData.slice(-15);
+    const chartBlock = document.createElement('div');
+    chartBlock.className = 'resumo-block';
+    chartBlock.style.cssText = 'background:var(--md-surface); border-radius:14px; border:1px solid var(--md-outline-variant); padding:18px; margin-bottom:20px;';
+
+    const label1 = document.createElement('div');
+    label1.style.cssText = 'font-size:13px; font-weight:700; color:var(--md-primary); opacity:0.6; text-transform:uppercase; letter-spacing:1px; margin-bottom:14px;';
+    label1.textContent = dayName;
+    chartBlock.appendChild(label1);
+
+    const maxVal = Math.max(...recent.map(s => s.total));
+    const minVal = Math.min(...recent.map(s => s.total));
+    const w = 100, h = 110, pad = 4;
+    const color = dayColors[dayName];
+    const points = recent.map((s, i) => {
+      const x = pad + (i / Math.max(1, recent.length - 1)) * (w - pad * 2);
+      const y = h - pad - ((s.total - minVal) / Math.max(1, maxVal - minVal || 1)) * (h - pad * 2);
+      return `${x},${y}`;
+    }).join(' ');
+
+    const svgWrap = document.createElement('div');
+    svgWrap.innerHTML = `
+      <svg viewBox="0 0 ${w} ${h}" style="width:100%; height:110px; display:block;" preserveAspectRatio="none">
+        <polyline points="${points}" fill="none" stroke="${color}" stroke-width="1.5" vector-effect="non-scaling-stroke"/>
+        ${recent.map((s, i) => {
+          const x = pad + (i / Math.max(1, recent.length - 1)) * (w - pad * 2);
+          const y = h - pad - ((s.total - minVal) / Math.max(1, maxVal - minVal || 1)) * (h - pad * 2);
+          return `<circle cx="${x}" cy="${y}" r="1.4" fill="${color}"/>`;
+        }).join('')}
+      </svg>
+    `;
+    chartBlock.appendChild(svgWrap);
+
+    const rangeLabel = document.createElement('div');
+    rangeLabel.style.cssText = 'display:flex; justify-content:space-between; font-size:11px; color:var(--md-primary); opacity:0.5; margin-top:6px;';
+    rangeLabel.innerHTML = `<span>${recent[0].label || recent[0].date}</span><span>${recent[recent.length-1].label || recent[recent.length-1].date}</span>`;
+    chartBlock.appendChild(rangeLabel);
+
+    content.appendChild(chartBlock);
+  });
+
+  // ── Bloco 2: Médias por dia da semana ──
+  const weekdayNames = ['Domingo','Segunda','Terça','Quarta','Quinta','Sexta','Sábado'];
+  const byWeekday = {};
+  sorted.forEach(s => {
+    const d = new Date(s.date + 'T00:00:00');
+    const wd = weekdayNames[d.getDay()];
+    if (!byWeekday[wd]) byWeekday[wd] = [];
+    byWeekday[wd].push(s.total);
+  });
+
+  const wdBlock = document.createElement('div');
+  wdBlock.className = 'resumo-block';
+  wdBlock.style.cssText = 'background:var(--md-surface); border-radius:14px; border:1px solid var(--md-outline-variant); padding:18px; margin-bottom:20px;';
+  const label2 = document.createElement('div');
+  label2.style.cssText = 'font-size:13px; font-weight:700; color:var(--md-primary); opacity:0.6; text-transform:uppercase; letter-spacing:1px; margin-bottom:14px;';
+  label2.textContent = 'Média por dia';
+  wdBlock.appendChild(label2);
+
+  const maxWdAvg = Math.max(...Object.values(byWeekday).map(v => v.reduce((a,b)=>a+b,0)/v.length));
+  weekdayNames.forEach(wd => {
+    if (!byWeekday[wd]) return;
+    const vals = byWeekday[wd];
+    const avg = vals.reduce((a,b)=>a+b,0) / vals.length;
+    const pct = (avg / maxWdAvg) * 100;
+    const row = document.createElement('div');
+    row.style.cssText = 'margin-bottom:12px;';
+    row.innerHTML = `
+      <div style="display:flex; justify-content:space-between; font-size:14px; color:var(--md-primary); margin-bottom:4px;">
+        <span style="font-weight:600;">${wd}</span>
+        <span style="font-weight:700;">${avg.toFixed(0)}€</span>
+      </div>
+      <div style="height:8px; background:var(--md-outline-variant); border-radius:4px; overflow:hidden;">
+        <div style="height:100%; width:${pct}%; background:linear-gradient(90deg, var(--md-gold), var(--md-orange)); border-radius:4px;"></div>
+      </div>
+    `;
+    wdBlock.appendChild(row);
+  });
+  content.appendChild(wdBlock);
+
+  // ── Bloco 2.5: Sazonalidade — comparação ano a ano por mês ──
+  const monthNamesShort = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
+  const byYearMonth = {}; // { '01': { '2025': total, '2026': total } }
+  sorted.forEach(s => {
+    const [y, mo] = s.date.split('-');
+    if (!byYearMonth[mo]) byYearMonth[mo] = {};
+    if (!byYearMonth[mo][y]) byYearMonth[mo][y] = 0;
+    byYearMonth[mo][y] += s.total;
+  });
+  const yearsPresent = [...new Set(sorted.map(s => s.date.slice(0,4)))].sort();
+
+  if (yearsPresent.length >= 2) {
+    const yearColors = { };
+    const palette = ['var(--md-accent)', 'var(--md-orange)', 'var(--md-gold)', 'var(--md-error)'];
+    yearsPresent.forEach((y, i) => yearColors[y] = palette[i % palette.length]);
+
+    const seasonBlock = document.createElement('div');
+    seasonBlock.className = 'resumo-block';
+    seasonBlock.style.cssText = 'background:var(--md-surface); border-radius:14px; border:1px solid var(--md-outline-variant); padding:18px; margin-bottom:20px;';
+    const labelSeason = document.createElement('div');
+    labelSeason.style.cssText = 'font-size:13px; font-weight:700; color:var(--md-primary); opacity:0.6; text-transform:uppercase; letter-spacing:1px; margin-bottom:6px;';
+    labelSeason.textContent = 'Sazonalidade — mês a mês, ano a ano';
+    seasonBlock.appendChild(labelSeason);
+
+    // Legend
+    const legend = document.createElement('div');
+    legend.style.cssText = 'display:flex; gap:14px; margin-bottom:14px;';
+    yearsPresent.forEach(y => {
+      legend.innerHTML += `<span style="font-size:12px; color:var(--md-primary); display:flex; align-items:center; gap:5px;"><span style="width:10px; height:10px; border-radius:50%; background:${yearColors[y]}; display:inline-block;"></span>${y}</span>`;
+    });
+    seasonBlock.appendChild(legend);
+
+    const maxYM = Math.max(...Object.values(byYearMonth).flatMap(o => Object.values(o)));
+    monthNamesShort.forEach((mName, idx) => {
+      const moKey = String(idx + 1).padStart(2, '0');
+      const dataForMonth = byYearMonth[moKey];
+      if (!dataForMonth) return;
+      const row = document.createElement('div');
+      row.style.cssText = 'margin-bottom:10px;';
+      let barsHtml = '';
+      yearsPresent.forEach(y => {
+        const val = dataForMonth[y] || 0;
+        const pct = maxYM > 0 ? (val / maxYM) * 100 : 0;
+        barsHtml += `
+          <div style="display:flex; align-items:center; gap:6px; margin-bottom:2px;">
+            <div style="flex:1; height:7px; background:var(--md-outline-variant); border-radius:3px; overflow:hidden;">
+              <div style="height:100%; width:${pct}%; background:${yearColors[y]}; border-radius:3px;"></div>
+            </div>
+            <span style="font-size:11px; color:var(--md-primary); opacity:0.7; width:54px; text-align:right;">${val > 0 ? val.toFixed(0)+'€' : '—'}</span>
+          </div>
+        `;
+      });
+      row.innerHTML = `<div style="font-size:13px; font-weight:600; color:var(--md-primary); margin-bottom:4px;">${mName}</div>${barsHtml}`;
+      seasonBlock.appendChild(row);
+    });
+    content.appendChild(seasonBlock);
+  }
+
+  // ── Bloco 3: Comparação mensal ──
+  const byMonth = {};
+  sorted.forEach(s => {
+    const m = s.date.slice(0, 7);
+    if (!byMonth[m]) byMonth[m] = [];
+    byMonth[m].push(s.total);
+  });
+  const monthNames = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
+  const monthKeys = Object.keys(byMonth).sort();
+
+  if (monthKeys.length >= 2) {
+    const monthBlock = document.createElement('div');
+    monthBlock.className = 'resumo-block';
+    monthBlock.style.cssText = 'background:var(--md-surface); border-radius:14px; border:1px solid var(--md-outline-variant); padding:18px; margin-bottom:20px;';
+    const label3 = document.createElement('div');
+    label3.style.cssText = 'font-size:13px; font-weight:700; color:var(--md-primary); opacity:0.6; text-transform:uppercase; letter-spacing:1px; margin-bottom:14px;';
+    label3.textContent = 'Comparação mensal';
+    monthBlock.appendChild(label3);
+
+    const maxMonthTotal = Math.max(...monthKeys.map(m => byMonth[m].reduce((a,b)=>a+b,0)));
+    monthKeys.forEach(m => {
+      const total = byMonth[m].reduce((a,b)=>a+b,0);
+      const pct = (total / maxMonthTotal) * 100;
+      const [y, mo] = m.split('-');
+      const row = document.createElement('div');
+      row.style.cssText = 'margin-bottom:12px;';
+      row.innerHTML = `
+        <div style="display:flex; justify-content:space-between; font-size:14px; color:var(--md-primary); margin-bottom:4px;">
+          <span style="font-weight:600;">${monthNames[parseInt(mo,10)-1]} ${y}</span>
+          <span style="font-weight:700;">${total.toFixed(0)}€</span>
+        </div>
+        <div style="height:8px; background:var(--md-outline-variant); border-radius:4px; overflow:hidden;">
+          <div style="height:100%; width:${pct}%; background:var(--md-primary); border-radius:4px;"></div>
+        </div>
+      `;
+      monthBlock.appendChild(row);
+    });
+    content.appendChild(monthBlock);
+  }
+
+  // ── Bloco 3.5: Lucro líquido (vendas - despesas) ──
+  if (expenses.length > 0) {
+    const totalSales = sorted.reduce((a, s) => a + s.total, 0);
+    const totalExp   = expenses.reduce((a, e) => a + e.amount, 0);
+    const net = totalSales - totalExp;
+    const profitBlock = document.createElement('div');
+    profitBlock.className = 'resumo-block';
+    profitBlock.style.cssText = 'background:var(--md-surface); border-radius:14px; border:1px solid var(--md-outline-variant); padding:18px; margin-bottom:20px;';
+    profitBlock.innerHTML = `
+      <div style="font-size:13px; font-weight:700; color:var(--md-primary); opacity:0.6; text-transform:uppercase; letter-spacing:1px; margin-bottom:14px;">Lucro líquido</div>
+      <div style="display:flex; justify-content:space-between; margin-bottom:8px;">
+        <span style="font-size:14px; color:var(--md-primary); opacity:0.7;">Vendas</span>
+        <span style="font-size:16px; font-weight:700; color:var(--md-primary);">+${totalSales.toFixed(2)}€</span>
+      </div>
+      <div style="display:flex; justify-content:space-between; margin-bottom:12px;">
+        <span style="font-size:14px; color:var(--md-primary); opacity:0.7;">Despesas</span>
+        <span style="font-size:16px; font-weight:700; color:var(--md-error);">-${totalExp.toFixed(2)}€</span>
+      </div>
+      <div style="border-top:1px solid var(--md-outline-variant); padding-top:12px; display:flex; justify-content:space-between;">
+        <span style="font-size:15px; font-weight:700; color:var(--md-primary);">Líquido</span>
+        <span style="font-size:22px; font-weight:800; color:${net >= 0 ? 'var(--md-success)' : 'var(--md-error)'};">${net.toFixed(2)}€</span>
+      </div>
+    `;
+    content.appendChild(profitBlock);
+  }
+
+  // ── Bloco 4: Melhor e pior dia ──
+  const best = sorted.reduce((a, s) => s.total > a.total ? s : a, sorted[0]);
+  const worst = sorted.reduce((a, s) => s.total < a.total ? s : a, sorted[0]);
+  const extremesBlock = document.createElement('div');
+  extremesBlock.className = 'resumo-block';
+  extremesBlock.style.cssText = 'display:flex; gap:12px; margin-bottom:20px;';
+  extremesBlock.innerHTML = `
+    <div style="flex:1; background:var(--md-surface); border-radius:14px; border:1px solid var(--md-outline-variant); padding:16px;">
+      <div style="font-size:11px; font-weight:700; color:var(--md-primary); opacity:0.5; text-transform:uppercase; letter-spacing:1px; margin-bottom:6px;">Melhor dia</div>
+      <div style="font-size:22px; font-weight:800; color:var(--md-success);">${best.total.toFixed(0)}€</div>
+      <div style="font-size:12px; color:var(--md-primary); opacity:0.6; margin-top:2px;">${best.label || best.date}</div>
+    </div>
+    <div style="flex:1; background:var(--md-surface); border-radius:14px; border:1px solid var(--md-outline-variant); padding:16px;">
+      <div style="font-size:11px; font-weight:700; color:var(--md-primary); opacity:0.5; text-transform:uppercase; letter-spacing:1px; margin-bottom:6px;">Pior dia</div>
+      <div style="font-size:22px; font-weight:800; color:var(--md-error);">${worst.total.toFixed(0)}€</div>
+      <div style="font-size:12px; color:var(--md-primary); opacity:0.6; margin-top:2px;">${worst.label || worst.date}</div>
+    </div>
+  `;
+  content.appendChild(extremesBlock);
+}
+
 function toggleFilter() {
   filterActive = !filterActive;
   const titleIcon = document.getElementById("list-filter-icon");
   if (titleIcon) titleIcon.textContent = filterActive ? "visibility_off" : "visibility";
   renderCats("");
 }
+
+// ── ANTI-AUTOFILL GLOBAL ─────────────────────────────────────────────────────
+// O Chrome para Android mostra uma barra de sugestões (senhas/cartões/endereços)
+// em qualquer input que pareça um campo de login ou pagamento — mesmo sendo só
+// uma quantidade de caixas. Esta função neutraliza isso em toda a app.
+function disableAutofillEverywhere() {
+  const skip = ['date', 'hidden', 'checkbox', 'file', 'radio'];
+  document.querySelectorAll('input').forEach(el => {
+    if (skip.includes(el.type)) return;
+    el.setAttribute('autocomplete', 'off');
+    el.setAttribute('autocorrect', 'off');
+    el.setAttribute('autocapitalize', 'off');
+    el.setAttribute('spellcheck', 'false');
+    el.setAttribute('data-lpignore', 'true');
+    el.setAttribute('data-form-type', 'other');
+    if (!el.name) el.name = 'field-' + (el.id || Math.random().toString(36).slice(2));
+  });
+}
+// Observa o DOM e aplica automaticamente a novos inputs criados por modais (tarefas,
+// fornecedores, projetos, etc.), sem precisar de chamar a função manualmente em cada um.
+let autofillDebounce = null;
+const autofillObserver = new MutationObserver(() => {
+  clearTimeout(autofillDebounce);
+  autofillDebounce = setTimeout(disableAutofillEverywhere, 150);
+});
+autofillObserver.observe(document.body, { childList: true, subtree: true });
 
 function boot() {
   const cached = localStorage.getItem(LS_CACHE);
@@ -1767,6 +3310,8 @@ function boot() {
 
   document.getElementById("loading").style.display = "none";
   document.getElementById("app").style.cssText = "display:flex;flex-direction:column;";
+  generateRecurringExpenses();
+  disableAutofillEverywhere();
   renderCats("");
   renderSuppliers();
   renderTasks();
@@ -1814,8 +3359,10 @@ function pad(n) { return n.toString().padStart(2, "0"); }
 function renderHdr() {
   const total  = Object.keys(list).length;
   const filled = Object.values(list).filter(e => Number(e.qty) > 0).length;
-  document.getElementById("progress-pill").textContent = `${filled}/${total}`;
-  document.getElementById("progress-fill").style.width = total ? `${(filled/total)*100}%` : "0%";
+  const pillEl = document.getElementById("progress-pill");
+  const fillEl = document.getElementById("progress-fill");
+  if (pillEl) pillEl.textContent = `${filled}/${total}`;
+  if (fillEl) fillEl.style.width = total ? `${(filled/total)*100}%` : "0%";
 }
 
 // ── RENDER CATS ───────────────────────────────────────────────────────────────
@@ -1875,10 +3422,10 @@ function renderCats(search) {
             warn.style.cssText = 'font-size:14px; margin-left:2px;'; nm.appendChild(warn);
           }
           if (isLowMargin(key, item)) {
-            row.style.color = '#9B3A3A';
-            nm.style.color = '#9B3A3A';
+            row.style.color = 'var(--md-error)';
+            nm.style.color = 'var(--md-error)';
             const warnM = document.createElement('span'); warnM.className = 'material-icons-round'; warnM.textContent = 'warning';
-            warnM.title = 'Margem abaixo de 20%'; warnM.style.cssText = 'font-size:32px; margin-left:4px; color:#9B3A3A; vertical-align:middle;';
+            warnM.title = 'Margem abaixo de 20%'; warnM.style.cssText = 'font-size:32px; margin-left:4px; color:var(--md-error); vertical-align:middle;';
             nm.appendChild(warnM);
           }
           row.dataset.key = key;
@@ -1919,10 +3466,10 @@ function renderCats(search) {
           warn2.style.cssText = 'font-size:14px; margin-left:2px;'; nm.appendChild(warn2);
         }
         if (isLowMargin(key, item)) {
-          row.style.color = '#9B3A3A';
-          nm.style.color = '#9B3A3A';
+          row.style.color = 'var(--md-error)';
+          nm.style.color = 'var(--md-error)';
           const warnM2 = document.createElement('span'); warnM2.className = 'material-icons-round'; warnM2.textContent = 'warning';
-          warnM2.title = 'Margem abaixo de 20%'; warnM2.style.cssText = 'font-size:32px; margin-left:4px; color:#9B3A3A; vertical-align:middle;';
+          warnM2.title = 'Margem abaixo de 20%'; warnM2.style.cssText = 'font-size:32px; margin-left:4px; color:var(--md-error); vertical-align:middle;';
           nm.appendChild(warnM2);
         }
         row.dataset.key = key;
@@ -1954,6 +3501,7 @@ function makeQty(key, qty) {
   const display = document.createElement("div"); display.className = "qty-display" + (qty > 0 ? " active" : ""); display.textContent = qty > 0 ? qty : "—";
   display.addEventListener("click", () => {
     const inp = document.createElement("input"); inp.type = "number"; inp.inputMode = "numeric"; inp.pattern = "[0-9]*"; inp.className = "qty-input-inline"; inp.value = qty > 0 ? qty : "";
+    inp.autocomplete = "off"; inp.setAttribute("autocorrect","off"); inp.setAttribute("autocapitalize","off"); inp.setAttribute("spellcheck","false"); inp.setAttribute("data-lpignore","true"); inp.setAttribute("data-form-type","other");
     wrap.replaceChild(inp, display); inp.focus(); inp.select();
     const commit = () => { const n = parseInt(inp.value, 10); list[key] = { qty: isNaN(n)||n<0?0:Math.min(999,n) }; sched(); rr(); };
     inp.addEventListener("blur", commit);
@@ -2044,7 +3592,7 @@ function renderManage() {
   btnExp.addEventListener("click", () => { Object.keys(products).forEach(k => { window._mO[k] = true; }); renderManage(); });
   const btnCol = document.createElement("button");
   btnCol.textContent = "Colapsar tudo";
-  btnCol.style.cssText = "flex:1; padding:10px; background:#f5f5f5; border:none; border-radius:8px; font-size:13px; font-weight:600; color:#666; cursor:pointer; font-family:inherit;";
+  btnCol.style.cssText = "flex:1; padding:10px; background:var(--md-neutral-bg); border:none; border-radius:8px; font-size:13px; font-weight:600; color:var(--md-neutral-40); cursor:pointer; font-family:inherit;";
   btnCol.addEventListener("click", () => { Object.keys(products).forEach(k => { window._mO[k] = false; }); renderManage(); });
   toggleAll.appendChild(btnExp); toggleAll.appendChild(btnCol);
   c.appendChild(toggleAll);
@@ -2233,7 +3781,7 @@ function renderHistory() {
 
     const delBtn = document.createElement("button");
     delBtn.innerHTML = `<span class="material-icons-round" style="font-size:18px;">delete_outline</span>`;
-    delBtn.style.cssText = "border:none; background:transparent; color:#bbb; cursor:pointer; padding:6px; display:flex; align-items:center; flex-shrink:0;";
+    delBtn.style.cssText = "border:none; background:transparent; color:var(--md-neutral-10); cursor:pointer; padding:6px; display:flex; align-items:center; flex-shrink:0;";
     delBtn.addEventListener("click", ev => {
       ev.stopPropagation();
       if (!confirm(`Apagar "${snap.label}"?`)) return;
@@ -2288,14 +3836,23 @@ function switchTo(v) {
   const titles = { dashboard:'', list:'Compras', prices:'Preços', tasks:'Tarefas', history:'Histórico', whatsapp:'WhatsApp', suppliers:'Fornecedores', add:'Gestão de produtos', sales:'Vendas', settings:'Definições' };
   const titleEl = document.getElementById('header-title');
   if (titleEl) titleEl.textContent = titles[v] || '';
+
+  // Cabeçalho sempre visível, igual em todos os separadores incluindo o dashboard.
+
+  const scrollArea = document.getElementById('scroll-area');
+  if (scrollArea) scrollArea.style.paddingBottom = (v === 'dashboard') ? '0' : '24px';
   if (v==="whatsapp")  renderWA();
   if (v==="add")       renderAdd();
   if (v==="history")   renderHistory();
   if (v==="dashboard") renderDashboard();
   if (v==="prices")    renderPrices();
-  if (v==="tasks")     setTasksTab(tasksTab);
+  if (v==="tasks")     renderTasksAndProjects();
   if (v==="sales")     renderSales();
-  if (v==="resumo")    {}
+  if (v==="expenses")  { generateRecurringExpenses(); renderExpenses(); }
+  if (v==="resumo")    renderResumo();
+  if (v==="vasilhame") renderVasilhame();
+  if (v==="suppliers") renderSuppliers();
+  disableAutofillEverywhere();
 }
 
 // ── EVENTS ────────────────────────────────────────────────────────────────────
@@ -2310,11 +3867,23 @@ document.getElementById("clear-btn").addEventListener("click", () => {
     label: new Date().toLocaleDateString('pt-PT', { day:'2-digit', month:'short', year:'numeric' }),
     items: []
   };
+  const todayStr = new Date().toISOString().split('T')[0];
   Object.entries(list).forEach(([key, e]) => {
     if (Number(e.qty) > 0) {
       const p = picked[key] || {};
       const [cat, item] = key.split('|||');
       snapshot.items.push({ cat, item, qty: e.qty, price: p.price||'', sellPrice: p.sellPrice||'', supplier: p.supplier||'', date: p.date||'' });
+      // Gera movimento de vasilhame (débito) se este produto tiver vasilhame marcado
+      if (p.vasilhame && p.vasilhame.boxType && p.supplier) {
+        vasilhameMovs.push({
+          id: Date.now() + Math.random(),
+          date: todayStr,
+          supplier: p.supplier,
+          boxType: p.vasilhame.boxType,
+          qty: (p.vasilhame.qty && p.vasilhame.qty > 0) ? p.vasilhame.qty : 1,
+          direction: 'debit'
+        });
+      }
     }
   });
   if (snapshot.items.length > 0) snapHistory.unshift(snapshot);
@@ -2325,6 +3894,15 @@ document.getElementById("clear-btn").addEventListener("click", () => {
     picked[k] = { ...picked[k], done: false };
   });
   sched(); renderCats(""); renderWA();
+  showSnack('Lista gravada e limpa ✓', 'saved');
+});
+document.getElementById("delete-list-btn").addEventListener("click", () => {
+  if (!confirm("Apagar tudo sem gravar? Esta ação não pode ser desfeita.")) return;
+  // Limpeza total — quantidades, picagem, preços e fornecedor, sem criar histórico
+  Object.keys(list).forEach(k => { list[k] = { qty: 0 }; });
+  Object.keys(picked).forEach(k => { picked[k] = {}; });
+  sched(); renderCats(""); renderWA();
+  showSnack('Lista apagada', 'error');
 });
 document.getElementById("cat-select").addEventListener("change", e => {
   const cat = e.target.value;
@@ -2378,44 +3956,120 @@ function openSupplierPicker() {
   picker.innerHTML = "";
 
   const title = document.createElement("div");
-  title.style.cssText = "font-size:20px;font-weight:700;color:var(--md-primary);margin-bottom:16px;";
+  title.style.cssText = "font-size:20px;font-weight:700;color:var(--md-primary);margin-bottom:14px;";
   title.textContent = "Escolher fornecedor";
   picker.appendChild(title);
 
+  // Barra de pesquisa — criada apenas UMA vez para nunca perder o foco ao digitar
+  const searchBar = document.createElement("input");
+  searchBar.id = "supplier-picker-quicksearch";
+  searchBar.type = "search";
+  searchBar.name = "supplier-search-" + Date.now(); // nome único evita o autofill associar a campos guardados
+  searchBar.placeholder = "Pesquisar fornecedor…";
+  searchBar.autocomplete = "off";
+  searchBar.setAttribute("autocorrect", "off");
+  searchBar.setAttribute("autocapitalize", "off");
+  searchBar.setAttribute("spellcheck", "false");
+  searchBar.setAttribute("data-lpignore", "true");
+  searchBar.setAttribute("data-form-type", "other");
+  searchBar.style.cssText = "width:100%; box-sizing:border-box; padding:14px 16px; border:none; border-radius:12px; font-size:18px; font-family:'Outfit',sans-serif; color:var(--md-white); background:var(--md-neutral-90); outline:none; margin-bottom:14px;";
+  searchBar.addEventListener("input", () => renderSupplierPickerResults(searchBar.value));
+  picker.appendChild(searchBar);
+
+  // Contentor dos resultados — este sim é recriado a cada tecla
+  const results = document.createElement("div");
+  results.id = "supplier-picker-results";
+  picker.appendChild(results);
+
+  // Ao tocar na lista para fazer scroll, esconde o teclado (tira o foco da pesquisa)
+  results.addEventListener("touchstart", () => {
+    if (document.activeElement === searchBar) searchBar.blur();
+  }, { passive: true });
+
+  renderSupplierPickerResults('');
+  picker.style.display = "block";
+  overlay.style.display = "block";
+
+  // Reposiciona o painel para caber sempre na área visível, mesmo com teclado e barra de autofill abertos
+  if (window.visualViewport) {
+    supplierPickerViewportHandler = () => {
+      const vv = window.visualViewport;
+      picker.style.bottom = 'auto';
+      picker.style.top = vv.offsetTop + 'px';
+      picker.style.maxHeight = (vv.height - 16) + 'px';
+    };
+    window.visualViewport.addEventListener('resize', supplierPickerViewportHandler);
+    window.visualViewport.addEventListener('scroll', supplierPickerViewportHandler);
+    supplierPickerViewportHandler();
+  }
+
+  setTimeout(() => searchBar.focus(), 50);
+}
+let supplierPickerViewportHandler = null;
+
+function renderSupplierPickerResults(query) {
+  const results = document.getElementById("supplier-picker-results");
+  if (!results) return;
+  results.innerHTML = "";
+
   if (suppliers.length === 0) {
     const empty = document.createElement("div");
-    empty.style.cssText = "font-size:16px;color:var(--md-primary);opacity:0.5;text-align:center;padding:24px 0;";
+    empty.style.cssText = "font-size:16px;color:var(--md-neutral-15);text-align:center;padding:24px 0;";
     empty.textContent = "Sem fornecedores. Adiciona na secção Fornecedores.";
-    picker.appendChild(empty);
+    results.appendChild(empty);
+    return;
+  }
+
+  const q = (query || '').trim().toLowerCase();
+  const filtered = suppliers.filter(s => s.name.toLowerCase().includes(q));
+
+  if (filtered.length === 0) {
+    const empty = document.createElement("div");
+    empty.style.cssText = "font-size:16px;color:var(--md-neutral-15);text-align:center;padding:24px 0;";
+    empty.textContent = "Sem resultados";
+    results.appendChild(empty);
   } else {
-    suppliers.forEach(s => {
-      const btn = document.createElement("button");
-      btn.style.cssText = "display:block;width:100%;text-align:left;padding:14px 16px;border:none;border-radius:10px;font-size:22px;font-family:'Outfit',sans-serif;cursor:pointer;margin-bottom:6px;font-weight:500;";
-      const isSel = picked[currentPickKey]?.supplier === s.name;
-      btn.style.background = isSel ? "var(--md-primary)" : "var(--md-surface-1)";
-      btn.style.color = isSel ? "#fff" : "var(--md-primary)";
-      btn.textContent = s.name;
-      if (s.type) {
-        const sub = document.createElement("div");
-        sub.style.cssText = "font-size:13px;opacity:0.6;font-weight:400;margin-top:2px;";
-        sub.textContent = s.type;
-        btn.appendChild(sub);
-      }
-      btn.addEventListener("click", () => {
-        picked[currentPickKey] = { ...picked[currentPickKey], supplier: s.name };
-        document.getElementById("pick-supplier-btn").textContent = s.name;
-        document.getElementById("pick-supplier").value = s.name;
-        updateSupplierCallBtn(s.name);
-        sched();
-        closeSupplierPicker();
+    const knownOrder = ['A5', 'A6', 'A8', 'A10'];
+    const groups = {};
+    filtered.forEach(s => {
+      const key = (s.type || '').trim() || '__none__';
+      if (!groups[key]) groups[key] = [];
+      groups[key].push(s);
+    });
+    const otherKeys = Object.keys(groups).filter(k => k !== '__none__' && !knownOrder.includes(k)).sort();
+    const orderedKeys = [...knownOrder.filter(k => groups[k]), ...otherKeys, ...(groups['__none__'] ? ['__none__'] : [])];
+
+    orderedKeys.forEach(groupKey => {
+      const hdr = document.createElement("div");
+      hdr.style.cssText = "font-size:13px;font-weight:700;color:var(--md-neutral-30);text-transform:uppercase;letter-spacing:1px;margin:18px 2px 8px;";
+      hdr.textContent = groupKey === '__none__' ? 'Sem pavilhão' : groupKey;
+      results.appendChild(hdr);
+
+      groups[groupKey].forEach(s => {
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.style.cssText = "display:block;width:100%;text-align:left;padding:14px 16px;border:none;border-radius:10px;font-size:21px;font-family:'Outfit',sans-serif;cursor:pointer;margin-bottom:6px;font-weight:500;";
+        const isSel = picked[currentPickKey]?.supplier === s.name;
+        btn.style.background = isSel ? "var(--md-primary)" : "var(--md-neutral-90)";
+        btn.style.color = "var(--md-white)";
+        btn.textContent = s.name;
+        btn.addEventListener("click", () => {
+          picked[currentPickKey] = { ...picked[currentPickKey], supplier: s.name };
+          document.getElementById("pick-supplier-btn").textContent = s.name;
+          document.getElementById("pick-supplier").value = s.name;
+          updateSupplierCallBtn(s.name);
+          sched();
+          closeSupplierPicker();
+        });
+        results.appendChild(btn);
       });
-      picker.appendChild(btn);
     });
   }
 
   // Limpar fornecedor
   const clearBtn = document.createElement("button");
-  clearBtn.style.cssText = "display:block;width:100%;text-align:left;padding:14px 16px;border:1.5px dashed var(--md-outline-variant);border-radius:10px;font-size:18px;font-family:'Outfit',sans-serif;cursor:pointer;margin-top:10px;font-weight:500;background:transparent;color:var(--md-outline);";
+  clearBtn.type = "button";
+  clearBtn.style.cssText = "display:block;width:100%;text-align:left;padding:14px 16px;border:1.5px dashed var(--md-neutral-35);border-radius:10px;font-size:18px;font-family:'Outfit',sans-serif;cursor:pointer;margin-top:10px;font-weight:500;background:transparent;color:var(--md-neutral-15);";
   clearBtn.textContent = "✕ Remover fornecedor";
   clearBtn.addEventListener("click", () => {
     picked[currentPickKey] = { ...picked[currentPickKey], supplier: "" };
@@ -2425,15 +4079,21 @@ function openSupplierPicker() {
     sched();
     closeSupplierPicker();
   });
-  picker.appendChild(clearBtn);
-
-  picker.style.display = "block";
-  overlay.style.display = "block";
+  results.appendChild(clearBtn);
 }
 
 function closeSupplierPicker() {
-  document.getElementById("supplier-picker").style.display = "none";
+  const picker = document.getElementById("supplier-picker");
+  picker.style.display = "none";
   document.getElementById("supplier-overlay").style.display = "none";
+  picker.style.bottom = '0';
+  picker.style.top = 'auto';
+  picker.style.maxHeight = '60vh';
+  if (window.visualViewport && supplierPickerViewportHandler) {
+    window.visualViewport.removeEventListener('resize', supplierPickerViewportHandler);
+    window.visualViewport.removeEventListener('scroll', supplierPickerViewportHandler);
+    supplierPickerViewportHandler = null;
+  }
 }
 
 // ── LONG PRESS ───────────────────────────────────────────────────────────────
@@ -2480,6 +4140,15 @@ function openPickPanel(cat, item) {
   const itemIVA = p.iva || (getIVA(item) === 0.23 ? 23 : 6);
   setPickIVA(itemIVA, true);
   const minEl   = document.getElementById("pick-min-stock"); if(minEl) minEl.value = p.minStock || "";
+  // Vasilhame — a quantidade é sempre a mesma que foi escolhida na lista para este produto
+  populateVasilTypeSelect();
+  setPickVasilhame(!!p.vasilhame, true);
+  const listQty = Number(list[key]?.qty || 0);
+  const qtyDisplay = document.getElementById('pick-vasil-qty-display');
+  if (qtyDisplay) qtyDisplay.textContent = listQty > 0 ? listQty : '—';
+  if (p.vasilhame) {
+    document.getElementById('pick-vasil-type').value = p.vasilhame.boxType || VASILHAME_TYPES[0];
+  }
   document.getElementById("pick-panel").classList.add("open");
   document.getElementById("pick-overlay").classList.add("open");
   updateMargin();
@@ -2487,9 +4156,9 @@ function openPickPanel(cat, item) {
 
 function setPickIVA(rate, noSave) {
   document.getElementById('iva-btn-6').style.background  = rate === 6  ? 'var(--md-primary)' : 'transparent';
-  document.getElementById('iva-btn-6').style.color       = rate === 6  ? '#fff' : 'var(--md-primary)';
+  document.getElementById('iva-btn-6').style.color       = rate === 6  ? 'var(--md-white)' : 'var(--md-primary)';
   document.getElementById('iva-btn-23').style.background = rate === 23 ? 'var(--md-primary)' : 'transparent';
-  document.getElementById('iva-btn-23').style.color      = rate === 23 ? '#fff' : 'var(--md-primary)';
+  document.getElementById('iva-btn-23').style.color      = rate === 23 ? 'var(--md-white)' : 'var(--md-primary)';
   const lbl = document.getElementById('pick-iva-label');
   if (lbl) lbl.textContent = 'Custo c/ IVA ' + rate + '%';
   if (!noSave && currentPickKey) {
@@ -2499,7 +4168,55 @@ function setPickIVA(rate, noSave) {
   updateMargin();
 }
 
+function populateVasilTypeSelect() {
+  const sel = document.getElementById('pick-vasil-type');
+  if (!sel) return;
+  if (!sel.dataset.populated) {
+    sel.innerHTML = VASILHAME_TYPES.map(t => `<option value="${t}">${t}</option>`).join('');
+    sel.dataset.populated = '1';
+  }
+}
+
+function setPickVasilhame(hasIt, noSave) {
+  const noBtn = document.getElementById('pick-vasil-no');
+  const yesBtn = document.getElementById('pick-vasil-yes');
+  const detail = document.getElementById('pick-vasil-detail');
+  const hint = document.getElementById('pick-vasil-qty-hint');
+  if (hasIt) {
+    yesBtn.style.background = 'var(--md-primary)'; yesBtn.style.color = 'var(--md-white)';
+    noBtn.style.background = 'var(--md-surface-variant)'; noBtn.style.color = 'var(--md-primary)';
+    detail.style.display = 'flex';
+    if (hint) hint.style.display = 'block';
+  } else {
+    noBtn.style.background = 'var(--md-primary)'; noBtn.style.color = 'var(--md-white)';
+    yesBtn.style.background = 'var(--md-surface-variant)'; yesBtn.style.color = 'var(--md-primary)';
+    detail.style.display = 'none';
+    if (hint) hint.style.display = 'none';
+  }
+  if (!noSave && currentPickKey) {
+    if (hasIt) {
+      onPickVasilChange();
+    } else {
+      picked[currentPickKey] = { ...picked[currentPickKey], vasilhame: null };
+      sched();
+    }
+  }
+}
+
+function onPickVasilChange() {
+  if (!currentPickKey) return;
+  const boxType = document.getElementById('pick-vasil-type').value;
+  const qty = Number(list[currentPickKey]?.qty || 0);
+  picked[currentPickKey] = { ...picked[currentPickKey], vasilhame: { boxType, qty: qty > 0 ? qty : null } };
+  sched();
+}
+
 function closePickPanel() {
+  // Garante que a quantidade de vasilhame fica gravada mesmo que o campo não tenha perdido o foco
+  const vasilDetail = document.getElementById('pick-vasil-detail');
+  if (vasilDetail && vasilDetail.style.display !== 'none' && currentPickKey) {
+    onPickVasilChange();
+  }
   document.getElementById("pick-panel").classList.remove("open");
   document.getElementById("pick-overlay").classList.remove("open");
   currentPickKey = null;
@@ -2623,21 +4340,21 @@ function updateMargin() {
 
   document.getElementById("pick-cost-iva").textContent = costIVA ? costIVA.toFixed(2) + "€/kg" : "—";
   document.getElementById("pick-profit").textContent   = profit  ? (profit >= 0 ? "+" : "") + profit.toFixed(2) + "€/kg" : "—";
-  document.getElementById("pick-profit").style.color   = profit  ? (profit >= 0 ? "#3D6B35" : "#9B3A3A") : "var(--md-primary)";
+  document.getElementById("pick-profit").style.color   = profit  ? (profit >= 0 ? "var(--md-success)" : "var(--md-error)") : "var(--md-primary)";
 
   if (margin !== null) {
     document.getElementById("pick-margin-pct").textContent = margin.toFixed(1) + "%";
-    document.getElementById("pick-margin-pct").style.color = margin >= 30 ? "#3D6B35" : margin >= 20 ? "#5C7E60" : "#9B3A3A";
+    document.getElementById("pick-margin-pct").style.color = margin >= 30 ? "var(--md-success)" : margin >= 20 ? "var(--md-primary)" : "var(--md-error)";
     const barWrap = document.getElementById("pick-margin-bar-wrap");
     const bar = document.getElementById("pick-margin-bar");
-    if (bar) { bar.style.width = Math.min(100, Math.max(0, margin)).toFixed(1) + "%"; bar.style.background = margin >= 30 ? "#3D6B35" : margin >= 20 ? "#7A9E7E" : "#9B3A3A"; }
+    if (bar) { bar.style.width = Math.min(100, Math.max(0, margin)).toFixed(1) + "%"; bar.style.background = margin >= 30 ? "var(--md-success)" : margin >= 20 ? "var(--md-accent)" : "var(--md-error)"; }
     if (barWrap) barWrap.style.display = "block";
     const sug = document.getElementById("pick-suggestion");
     if (margin < 20) {
       marginEl.style.background = "rgba(155,58,58,0.12)";
-      marginEl.style.borderColor = "#9B3A3A";
+      marginEl.style.borderColor = "var(--md-error)";
       sug.style.display = "block";
-      sug.style.color = "#9B3A3A";
+      sug.style.color = "var(--md-error)";
       const suggested = costIVA ? (costIVA / 0.8).toFixed(2) : "—";
       sug.innerHTML = '<span class="material-icons-round" style="font-size:28px;vertical-align:middle;">warning</span> Margem abaixo de 20%. Preço sugerido (30% margem): ' + suggested + '€/kg';
     } else {
