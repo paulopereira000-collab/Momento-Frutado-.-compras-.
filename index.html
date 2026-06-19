@@ -900,12 +900,11 @@
 
         <!-- Saudação -->
         <div style="padding:36px 20px 0 44px;">
-          <div id="dash-date" style="font-size:13px; color:var(--md-white); opacity:0.7; margin-bottom:4px; font-weight:600; text-transform:lowercase; letter-spacing:0.5px;"></div>
           <div id="dash-greeting" style="font-size:40px; font-weight:200; line-height:1.1; color:var(--md-white); opacity:0.95; text-transform:lowercase;"></div>
         </div>
 
         <!-- Resumo rápido — dados reais do negócio, não decoração -->
-        <div id="dash-summary" style="padding:26px 20px 0; display:flex; gap:14px; justify-content:center;"></div>
+        <div id="dash-summary" style="padding:40px 20px 0; display:flex; gap:14px; justify-content:center;"></div>
 
         <div style="padding:0 20px 0 44px;">
           <div style="font-size:32px; font-weight:700; letter-spacing:-0.5px; line-height:1.1; margin-top:26px; margin-bottom:26px; text-transform:lowercase; color:var(--md-amber);">momento<br>frutado</div>
@@ -1474,13 +1473,6 @@ function renderDashboard() {
   const months = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
 
   document.getElementById('dash-greeting').textContent = getDynamicGreeting();
-  const dateEl = document.getElementById('dash-date');
-  if (dateEl) {
-    const days = ['Domingo','Segunda','Terça','Quarta','Quinta','Sexta','Sábado'];
-    const months = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
-    const now2 = new Date();
-    dateEl.textContent = days[now2.getDay()] + ', ' + now2.getDate() + ' ' + months[now2.getMonth()];
-  }
 
   renderDashSummary();
 
@@ -3860,9 +3852,18 @@ function renderHistory() {
   });
 }
 
-function switchTo(v) {
+function switchTo(v, fromPopState) {
   document.querySelectorAll(".hnav-btn").forEach(x => x.classList.toggle("active", x.dataset.view===v));
   document.querySelectorAll(".view").forEach(el => el.classList.toggle("active", el.id===`view-${v}`));
+  // Regista no histórico do browser, para o botão/gesto de retroceder do telemóvel
+  // voltar ao dashboard em vez de fechar a app — exceto quando já viemos de um popstate.
+  if (!fromPopState) {
+    if (v === 'dashboard') {
+      history.replaceState({ view: 'dashboard' }, '', '');
+    } else {
+      history.pushState({ view: v }, '', '');
+    }
+  }
   if (v !== "list") {
     filterActive = false;
     const titleIcon = document.getElementById("list-filter-icon");
@@ -4422,8 +4423,14 @@ function formatDate(val) {
   return `${d}/${m}/${y}`;
 }
 
+// ── BOTÃO/GESTO DE RETROCEDER — volta sempre ao dashboard ───────────────────
+window.addEventListener('popstate', () => {
+  switchTo('dashboard', true);
+});
+
 // ── START ─────────────────────────────────────────────────────────────────────
 boot();
+history.replaceState({ view: 'dashboard' }, '', '');
 </script>
 </body>
 </html>
