@@ -634,159 +634,151 @@
             <div style="font-size:14px; margin-top:6px;">Regista o total do POS no final de cada dia</div>
           </div>
         </div>
-      </div>
-    </div>
 
-    <!-- ── DESPESAS (página própria) ───────────────────────────────────────────── -->
-    <div id="view-expenses" class="view">
-      <div style="padding:20px 16px 8px; display:flex; align-items:center; justify-content:space-between;">
-        <div style="display:flex; align-items:center; gap:12px;">
-          <div style="font-size:52px; font-weight:700; letter-spacing:-1px; line-height:1; background:linear-gradient(90deg, var(--md-gold), var(--md-orange)); -webkit-background-clip:text; background-clip:text; color:transparent;">Despesas</div>
-        </div>
-        <button onclick="switchTo('resumo')" style="background:none; border:none; cursor:pointer; padding:8px; display:flex; align-items:center; opacity:0.5;">
-          <span class="material-icons-round" style="font-size:28px; color:var(--md-primary);">bar_chart</span>
-        </button>
-      </div>
-      <div style="padding:0 16px 16px;">
+        <!-- ── DESPESAS — junto a Vendas, mesmo título visual ───────────────── -->
+        <div style="margin-top:36px; padding-top:24px; border-top:1px solid var(--md-outline-variant);">
+          <div style="font-size:52px; font-weight:700; letter-spacing:-1px; line-height:1; background:linear-gradient(90deg, var(--md-gold), var(--md-orange)); -webkit-background-clip:text; background-clip:text; color:transparent; margin-bottom:14px;">Despesas</div>
 
-        <!-- Despesas: abas -->
-        <div style="display:flex; gap:6px; margin-bottom:14px;">
-          <button id="exp-tab-occasional" onclick="setExpenseTab('occasional')" style="flex:1; padding:9px; border:none; border-radius:9px; font-size:13px; font-weight:700; font-family:'Outfit',sans-serif; cursor:pointer; background:var(--md-primary); color:var(--md-white);">Ocasional</button>
-          <button id="exp-tab-monthly" onclick="setExpenseTab('monthly')" style="flex:1; padding:9px; border:none; border-radius:9px; font-size:13px; font-weight:700; font-family:'Outfit',sans-serif; cursor:pointer; background:var(--md-surface-variant); color:var(--md-primary);">Mensal</button>
-          <button id="exp-tab-yearly" onclick="setExpenseTab('yearly')" style="flex:1; padding:9px; border:none; border-radius:9px; font-size:13px; font-weight:700; font-family:'Outfit',sans-serif; cursor:pointer; background:var(--md-surface-variant); color:var(--md-primary);">Anual</button>
-        </div>
+          <!-- Despesas: abas -->
+          <div style="display:flex; gap:6px; margin-bottom:14px;">
+            <button id="exp-tab-occasional" onclick="setExpenseTab('occasional')" style="flex:1; padding:9px; border:none; border-radius:9px; font-size:13px; font-weight:700; font-family:'Outfit',sans-serif; cursor:pointer; background:var(--md-primary); color:var(--md-white);">Ocasional</button>
+            <button id="exp-tab-monthly" onclick="setExpenseTab('monthly')" style="flex:1; padding:9px; border:none; border-radius:9px; font-size:13px; font-weight:700; font-family:'Outfit',sans-serif; cursor:pointer; background:var(--md-surface-variant); color:var(--md-primary);">Mensal</button>
+            <button id="exp-tab-yearly" onclick="setExpenseTab('yearly')" style="flex:1; padding:9px; border:none; border-radius:9px; font-size:13px; font-weight:700; font-family:'Outfit',sans-serif; cursor:pointer; background:var(--md-surface-variant); color:var(--md-primary);">Anual</button>
+          </div>
 
-        <!-- OCASIONAL -->
-        <div id="exp-panel-occasional">
-          <div style="background:var(--md-surface); border-radius:14px; border:1px solid var(--md-outline-variant); padding:18px; margin-bottom:20px;">
-            <div style="margin-bottom:12px;">
-              <input id="expense-date" type="date" style="width:100%; padding:12px; border:1.5px solid var(--md-outline-variant); border-radius:10px; font-size:15px; font-family:'Outfit',sans-serif; color:var(--md-primary); background:var(--md-surface-1); outline:none;"/>
-            </div>
-            <div style="margin-bottom:12px;">
-              <input id="expense-name" type="text" placeholder="Nome da despesa (ex: Almoço com fornecedor)" style="width:100%; padding:12px; border:1.5px solid var(--md-outline-variant); border-radius:10px; font-size:15px; font-family:'Outfit',sans-serif; color:var(--md-primary); background:var(--md-surface-1); outline:none;"/>
-            </div>
-            <div style="margin-bottom:12px;">
-              <select id="expense-category" style="width:100%; padding:12px; border:1.5px solid var(--md-outline-variant); border-radius:10px; font-size:15px; font-family:'Outfit',sans-serif; color:var(--md-primary); background:var(--md-surface-1); outline:none;">
-                <option value="Refeições">Refeições</option>
-                <option value="Gasóleo">Gasóleo</option>
-                <option value="Material">Material</option>
-                <option value="Diversos">Diversos</option>
-              </select>
-            </div>
-            <div style="display:flex; flex-direction:column; gap:10px;">
-              <button type="button" id="expense-amount-btn" data-placeholder="Valor (€)" onclick="openNumKeypadFor('expense-amount', {decimal:true})" style="width:100%; padding:14px; border:1.5px solid var(--md-outline-variant); border-radius:10px; font-size:22px; font-weight:700; font-family:'Outfit',sans-serif; color:var(--md-primary); background:var(--md-surface-1); cursor:pointer; text-align:left;">Valor (€)</button>
-              <input type="hidden" id="expense-amount" value=""/>
-              <div style="display:flex; justify-content:flex-end;">
-                <button onclick="saveExpense()" style="background:var(--md-primary); color:var(--md-white); border:none; border-radius:50%; width:52px; height:52px; display:flex; align-items:center; justify-content:center; cursor:pointer; flex-shrink:0;">
-                  <span class="material-icons-round" style="font-size:26px;">check</span>
-                </button>
+          <!-- OCASIONAL -->
+          <div id="exp-panel-occasional">
+            <div style="background:var(--md-surface); border-radius:14px; border:1px solid var(--md-outline-variant); padding:18px; margin-bottom:20px;">
+              <div style="margin-bottom:12px;">
+                <input id="expense-date" type="date" style="width:100%; padding:12px; border:1.5px solid var(--md-outline-variant); border-radius:10px; font-size:15px; font-family:'Outfit',sans-serif; color:var(--md-primary); background:var(--md-surface-1); outline:none;"/>
               </div>
-            </div>
-          </div>
-
-          <button onclick="toggleExpensesHistory()" style="width:100%; background:none; border:none; padding:0; margin-bottom:10px; display:flex; align-items:center; justify-content:space-between; cursor:pointer;">
-            <span style="font-size:13px; font-weight:700; color:var(--md-primary); opacity:0.6; text-transform:uppercase; letter-spacing:1px;">Despesas registadas</span>
-            <span class="material-icons-round" id="expenses-history-chevron" style="font-size:20px; color:var(--md-primary); opacity:0.6; transition:transform 0.2s;">expand_more</span>
-          </button>
-          <div id="expenses-list" style="display:none; margin-bottom:20px;">
-            <div id="expenses-empty" style="text-align:center; padding:40px 20px; color:var(--md-primary); opacity:0.4;">
-              <div style="font-size:17px; font-weight:600;">Sem despesas ainda</div>
-              <div style="font-size:14px; margin-top:6px;">Regista combustível, refeições e outros gastos</div>
-            </div>
-          </div>
-        </div>
-
-        <!-- MENSAL -->
-        <div id="exp-panel-monthly" style="display:none;">
-          <div style="background:var(--md-surface); border-radius:14px; border:1px solid var(--md-outline-variant); padding:18px; margin-bottom:20px;">
-            <div style="font-size:13px; font-weight:700; color:var(--md-primary); opacity:0.6; text-transform:uppercase; letter-spacing:1px; margin-bottom:12px;">Nova despesa mensal</div>
-            <div style="margin-bottom:12px;">
-              <input id="rexp-monthly-name" type="text" placeholder="Nome da despesa (ex: Renda do armazém)" style="width:100%; padding:12px; border:1.5px solid var(--md-outline-variant); border-radius:10px; font-size:15px; font-family:'Outfit',sans-serif; color:var(--md-primary); background:var(--md-surface-1); outline:none;"/>
-            </div>
-            <div style="margin-bottom:12px;">
-              <select id="rexp-monthly-category" style="width:100%; padding:12px; border:1.5px solid var(--md-outline-variant); border-radius:10px; font-size:15px; font-family:'Outfit',sans-serif; color:var(--md-primary); background:var(--md-surface-1); outline:none;">
-                <option value="Renda">Renda</option>
-                <option value="Seguro">Seguro</option>
-                <option value="Conta de luz">Conta de luz</option>
-                <option value="Conta de água">Conta de água</option>
-                <option value="Impostos">Impostos</option>
-                <option value="Manutenção">Manutenção</option>
-                <option value="Salários">Salários</option>
-                <option value="Outro">Outro</option>
-              </select>
-            </div>
-            <div style="margin-bottom:12px;">
-              <label style="font-size:12px; color:var(--md-primary); opacity:0.6; display:block; margin-bottom:6px;">Dia do mês em que é pago</label>
-              <button type="button" id="rexp-monthly-day-btn" data-placeholder="Dia (1-31)" onclick="openNumKeypadFor('rexp-monthly-day', {decimal:false})" style="width:100%; padding:12px; border:1.5px solid var(--md-outline-variant); border-radius:10px; font-size:15px; font-family:'Outfit',sans-serif; color:var(--md-primary); background:var(--md-surface-1); cursor:pointer; text-align:left;">Dia (1-31)</button>
-              <input type="hidden" id="rexp-monthly-day" value=""/>
-            </div>
-            <div style="display:flex; flex-direction:column; gap:10px;">
-              <button type="button" id="rexp-monthly-amount-btn" data-placeholder="Valor (€)" onclick="openNumKeypadFor('rexp-monthly-amount', {decimal:true})" style="width:100%; padding:14px; border:1.5px solid var(--md-outline-variant); border-radius:10px; font-size:22px; font-weight:700; font-family:'Outfit',sans-serif; color:var(--md-primary); background:var(--md-surface-1); cursor:pointer; text-align:left;">Valor (€)</button>
-              <input type="hidden" id="rexp-monthly-amount" value=""/>
-              <div style="display:flex; justify-content:flex-end;">
-                <button onclick="saveRecurringExpense('monthly')" style="background:var(--md-primary); color:var(--md-white); border:none; border-radius:50%; width:52px; height:52px; display:flex; align-items:center; justify-content:center; cursor:pointer; flex-shrink:0;">
-                  <span class="material-icons-round" style="font-size:26px;">check</span>
-                </button>
+              <div style="margin-bottom:12px;">
+                <input id="expense-name" type="text" placeholder="Nome da despesa (ex: Almoço com fornecedor)" style="width:100%; padding:12px; border:1.5px solid var(--md-outline-variant); border-radius:10px; font-size:15px; font-family:'Outfit',sans-serif; color:var(--md-primary); background:var(--md-surface-1); outline:none;"/>
               </div>
-            </div>
-          </div>
-          <div id="rexp-monthly-list" style="margin-bottom:20px;">
-            <div id="rexp-monthly-empty" style="text-align:center; padding:40px 20px; color:var(--md-primary); opacity:0.4;">
-              <div style="font-size:17px; font-weight:600;">Sem despesas mensais</div>
-              <div style="font-size:14px; margin-top:6px;">Renda, seguros e contas fixas todos os meses</div>
-            </div>
-          </div>
-        </div>
-
-        <!-- ANUAL -->
-        <div id="exp-panel-yearly" style="display:none;">
-          <div style="background:var(--md-surface); border-radius:14px; border:1px solid var(--md-outline-variant); padding:18px; margin-bottom:20px;">
-            <div style="font-size:13px; font-weight:700; color:var(--md-primary); opacity:0.6; text-transform:uppercase; letter-spacing:1px; margin-bottom:12px;">Nova despesa anual</div>
-            <div style="margin-bottom:12px;">
-              <input id="rexp-yearly-name" type="text" placeholder="Nome da despesa (ex: Seguro do veículo)" style="width:100%; padding:12px; border:1.5px solid var(--md-outline-variant); border-radius:10px; font-size:15px; font-family:'Outfit',sans-serif; color:var(--md-primary); background:var(--md-surface-1); outline:none;"/>
-            </div>
-            <div style="margin-bottom:12px;">
-              <select id="rexp-yearly-category" style="width:100%; padding:12px; border:1.5px solid var(--md-outline-variant); border-radius:10px; font-size:15px; font-family:'Outfit',sans-serif; color:var(--md-primary); background:var(--md-surface-1); outline:none;">
-                <option value="Seguro">Seguro</option>
-                <option value="Licença">Licença</option>
-                <option value="Impostos">Impostos</option>
-                <option value="Manutenção">Manutenção</option>
-                <option value="Outro">Outro</option>
-              </select>
-            </div>
-            <div style="display:flex; gap:10px; margin-bottom:12px;">
-              <div style="flex:1;">
-                <label style="font-size:12px; color:var(--md-primary); opacity:0.6; display:block; margin-bottom:6px;">Mês</label>
-                <select id="rexp-yearly-month" style="width:100%; padding:12px; border:1.5px solid var(--md-outline-variant); border-radius:10px; font-size:15px; font-family:'Outfit',sans-serif; color:var(--md-primary); background:var(--md-surface-1); outline:none;">
-                  <option value="1">Janeiro</option><option value="2">Fevereiro</option><option value="3">Março</option>
-                  <option value="4">Abril</option><option value="5">Maio</option><option value="6">Junho</option>
-                  <option value="7">Julho</option><option value="8">Agosto</option><option value="9">Setembro</option>
-                  <option value="10">Outubro</option><option value="11">Novembro</option><option value="12">Dezembro</option>
+              <div style="margin-bottom:12px;">
+                <select id="expense-category" style="width:100%; padding:12px; border:1.5px solid var(--md-outline-variant); border-radius:10px; font-size:15px; font-family:'Outfit',sans-serif; color:var(--md-primary); background:var(--md-surface-1); outline:none;">
+                  <option value="Refeições">Refeições</option>
+                  <option value="Gasóleo">Gasóleo</option>
+                  <option value="Material">Material</option>
+                  <option value="Diversos">Diversos</option>
                 </select>
               </div>
-              <div style="flex:1;">
-                <label style="font-size:12px; color:var(--md-primary); opacity:0.6; display:block; margin-bottom:6px;">Dia</label>
-                <button type="button" id="rexp-yearly-day-btn" data-placeholder="Dia" onclick="openNumKeypadFor('rexp-yearly-day', {decimal:false})" style="width:100%; padding:12px; border:1.5px solid var(--md-outline-variant); border-radius:10px; font-size:15px; font-family:'Outfit',sans-serif; color:var(--md-primary); background:var(--md-surface-1); cursor:pointer; text-align:left;">Dia</button>
-                <input type="hidden" id="rexp-yearly-day" value=""/>
+              <div style="display:flex; flex-direction:column; gap:10px;">
+                <button type="button" id="expense-amount-btn" data-placeholder="Valor (€)" onclick="openNumKeypadFor('expense-amount', {decimal:true})" style="width:100%; padding:14px; border:1.5px solid var(--md-outline-variant); border-radius:10px; font-size:22px; font-weight:700; font-family:'Outfit',sans-serif; color:var(--md-primary); background:var(--md-surface-1); cursor:pointer; text-align:left;">Valor (€)</button>
+                <input type="hidden" id="expense-amount" value=""/>
+                <div style="display:flex; justify-content:flex-end;">
+                  <button onclick="saveExpense()" style="background:var(--md-primary); color:var(--md-white); border:none; border-radius:50%; width:52px; height:52px; display:flex; align-items:center; justify-content:center; cursor:pointer; flex-shrink:0;">
+                    <span class="material-icons-round" style="font-size:26px;">check</span>
+                  </button>
+                </div>
               </div>
             </div>
-            <div style="display:flex; flex-direction:column; gap:10px;">
-              <button type="button" id="rexp-yearly-amount-btn" data-placeholder="Valor (€)" onclick="openNumKeypadFor('rexp-yearly-amount', {decimal:true})" style="width:100%; padding:14px; border:1.5px solid var(--md-outline-variant); border-radius:10px; font-size:22px; font-weight:700; font-family:'Outfit',sans-serif; color:var(--md-primary); background:var(--md-surface-1); cursor:pointer; text-align:left;">Valor (€)</button>
-              <input type="hidden" id="rexp-yearly-amount" value=""/>
-              <div style="display:flex; justify-content:flex-end;">
-                <button onclick="saveRecurringExpense('yearly')" style="background:var(--md-primary); color:var(--md-white); border:none; border-radius:50%; width:52px; height:52px; display:flex; align-items:center; justify-content:center; cursor:pointer; flex-shrink:0;">
-                  <span class="material-icons-round" style="font-size:26px;">check</span>
-                </button>
+
+            <button onclick="toggleExpensesHistory()" style="width:100%; background:none; border:none; padding:0; margin-bottom:10px; display:flex; align-items:center; justify-content:space-between; cursor:pointer;">
+              <span style="font-size:13px; font-weight:700; color:var(--md-primary); opacity:0.6; text-transform:uppercase; letter-spacing:1px;">Despesas registadas</span>
+              <span class="material-icons-round" id="expenses-history-chevron" style="font-size:20px; color:var(--md-primary); opacity:0.6; transition:transform 0.2s;">expand_more</span>
+            </button>
+            <div id="expenses-list" style="display:none; margin-bottom:20px;">
+              <div id="expenses-empty" style="text-align:center; padding:40px 20px; color:var(--md-primary); opacity:0.4;">
+                <div style="font-size:17px; font-weight:600;">Sem despesas ainda</div>
+                <div style="font-size:14px; margin-top:6px;">Regista combustível, refeições e outros gastos</div>
               </div>
             </div>
           </div>
-          <div id="rexp-yearly-list" style="margin-bottom:20px;">
-            <div id="rexp-yearly-empty" style="text-align:center; padding:40px 20px; color:var(--md-primary); opacity:0.4;">
-              <div style="font-size:17px; font-weight:600;">Sem despesas anuais</div>
-              <div style="font-size:14px; margin-top:6px;">Seguros, licenças e outras despesas anuais</div>
+
+          <!-- MENSAL -->
+          <div id="exp-panel-monthly" style="display:none;">
+            <div style="background:var(--md-surface); border-radius:14px; border:1px solid var(--md-outline-variant); padding:18px; margin-bottom:20px;">
+              <div style="font-size:13px; font-weight:700; color:var(--md-primary); opacity:0.6; text-transform:uppercase; letter-spacing:1px; margin-bottom:12px;">Nova despesa mensal</div>
+              <div style="margin-bottom:12px;">
+                <input id="rexp-monthly-name" type="text" placeholder="Nome da despesa (ex: Renda do armazém)" style="width:100%; padding:12px; border:1.5px solid var(--md-outline-variant); border-radius:10px; font-size:15px; font-family:'Outfit',sans-serif; color:var(--md-primary); background:var(--md-surface-1); outline:none;"/>
+              </div>
+              <div style="margin-bottom:12px;">
+                <select id="rexp-monthly-category" style="width:100%; padding:12px; border:1.5px solid var(--md-outline-variant); border-radius:10px; font-size:15px; font-family:'Outfit',sans-serif; color:var(--md-primary); background:var(--md-surface-1); outline:none;">
+                  <option value="Renda">Renda</option>
+                  <option value="Seguro">Seguro</option>
+                  <option value="Conta de luz">Conta de luz</option>
+                  <option value="Conta de água">Conta de água</option>
+                  <option value="Impostos">Impostos</option>
+                  <option value="Manutenção">Manutenção</option>
+                  <option value="Salários">Salários</option>
+                  <option value="Outro">Outro</option>
+                </select>
+              </div>
+              <div style="margin-bottom:12px;">
+                <label style="font-size:12px; color:var(--md-primary); opacity:0.6; display:block; margin-bottom:6px;">Dia do mês em que é pago</label>
+                <button type="button" id="rexp-monthly-day-btn" data-placeholder="Dia (1-31)" onclick="openNumKeypadFor('rexp-monthly-day', {decimal:false})" style="width:100%; padding:12px; border:1.5px solid var(--md-outline-variant); border-radius:10px; font-size:15px; font-family:'Outfit',sans-serif; color:var(--md-primary); background:var(--md-surface-1); cursor:pointer; text-align:left;">Dia (1-31)</button>
+                <input type="hidden" id="rexp-monthly-day" value=""/>
+              </div>
+              <div style="display:flex; flex-direction:column; gap:10px;">
+                <button type="button" id="rexp-monthly-amount-btn" data-placeholder="Valor (€)" onclick="openNumKeypadFor('rexp-monthly-amount', {decimal:true})" style="width:100%; padding:14px; border:1.5px solid var(--md-outline-variant); border-radius:10px; font-size:22px; font-weight:700; font-family:'Outfit',sans-serif; color:var(--md-primary); background:var(--md-surface-1); cursor:pointer; text-align:left;">Valor (€)</button>
+                <input type="hidden" id="rexp-monthly-amount" value=""/>
+                <div style="display:flex; justify-content:flex-end;">
+                  <button onclick="saveRecurringExpense('monthly')" style="background:var(--md-primary); color:var(--md-white); border:none; border-radius:50%; width:52px; height:52px; display:flex; align-items:center; justify-content:center; cursor:pointer; flex-shrink:0;">
+                    <span class="material-icons-round" style="font-size:26px;">check</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+            <div id="rexp-monthly-list" style="margin-bottom:20px;">
+              <div id="rexp-monthly-empty" style="text-align:center; padding:40px 20px; color:var(--md-primary); opacity:0.4;">
+                <div style="font-size:17px; font-weight:600;">Sem despesas mensais</div>
+                <div style="font-size:14px; margin-top:6px;">Renda, seguros e contas fixas todos os meses</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ANUAL -->
+          <div id="exp-panel-yearly" style="display:none;">
+            <div style="background:var(--md-surface); border-radius:14px; border:1px solid var(--md-outline-variant); padding:18px; margin-bottom:20px;">
+              <div style="font-size:13px; font-weight:700; color:var(--md-primary); opacity:0.6; text-transform:uppercase; letter-spacing:1px; margin-bottom:12px;">Nova despesa anual</div>
+              <div style="margin-bottom:12px;">
+                <input id="rexp-yearly-name" type="text" placeholder="Nome da despesa (ex: Seguro do veículo)" style="width:100%; padding:12px; border:1.5px solid var(--md-outline-variant); border-radius:10px; font-size:15px; font-family:'Outfit',sans-serif; color:var(--md-primary); background:var(--md-surface-1); outline:none;"/>
+              </div>
+              <div style="margin-bottom:12px;">
+                <select id="rexp-yearly-category" style="width:100%; padding:12px; border:1.5px solid var(--md-outline-variant); border-radius:10px; font-size:15px; font-family:'Outfit',sans-serif; color:var(--md-primary); background:var(--md-surface-1); outline:none;">
+                  <option value="Seguro">Seguro</option>
+                  <option value="Licença">Licença</option>
+                  <option value="Impostos">Impostos</option>
+                  <option value="Manutenção">Manutenção</option>
+                  <option value="Outro">Outro</option>
+                </select>
+              </div>
+              <div style="display:flex; gap:10px; margin-bottom:12px;">
+                <div style="flex:1;">
+                  <label style="font-size:12px; color:var(--md-primary); opacity:0.6; display:block; margin-bottom:6px;">Mês</label>
+                  <select id="rexp-yearly-month" style="width:100%; padding:12px; border:1.5px solid var(--md-outline-variant); border-radius:10px; font-size:15px; font-family:'Outfit',sans-serif; color:var(--md-primary); background:var(--md-surface-1); outline:none;">
+                    <option value="1">Janeiro</option><option value="2">Fevereiro</option><option value="3">Março</option>
+                    <option value="4">Abril</option><option value="5">Maio</option><option value="6">Junho</option>
+                    <option value="7">Julho</option><option value="8">Agosto</option><option value="9">Setembro</option>
+                    <option value="10">Outubro</option><option value="11">Novembro</option><option value="12">Dezembro</option>
+                  </select>
+                </div>
+                <div style="flex:1;">
+                  <label style="font-size:12px; color:var(--md-primary); opacity:0.6; display:block; margin-bottom:6px;">Dia</label>
+                  <button type="button" id="rexp-yearly-day-btn" data-placeholder="Dia" onclick="openNumKeypadFor('rexp-yearly-day', {decimal:false})" style="width:100%; padding:12px; border:1.5px solid var(--md-outline-variant); border-radius:10px; font-size:15px; font-family:'Outfit',sans-serif; color:var(--md-primary); background:var(--md-surface-1); cursor:pointer; text-align:left;">Dia</button>
+                  <input type="hidden" id="rexp-yearly-day" value=""/>
+                </div>
+              </div>
+              <div style="display:flex; flex-direction:column; gap:10px;">
+                <button type="button" id="rexp-yearly-amount-btn" data-placeholder="Valor (€)" onclick="openNumKeypadFor('rexp-yearly-amount', {decimal:true})" style="width:100%; padding:14px; border:1.5px solid var(--md-outline-variant); border-radius:10px; font-size:22px; font-weight:700; font-family:'Outfit',sans-serif; color:var(--md-primary); background:var(--md-surface-1); cursor:pointer; text-align:left;">Valor (€)</button>
+                <input type="hidden" id="rexp-yearly-amount" value=""/>
+                <div style="display:flex; justify-content:flex-end;">
+                  <button onclick="saveRecurringExpense('yearly')" style="background:var(--md-primary); color:var(--md-white); border:none; border-radius:50%; width:52px; height:52px; display:flex; align-items:center; justify-content:center; cursor:pointer; flex-shrink:0;">
+                    <span class="material-icons-round" style="font-size:26px;">check</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+            <div id="rexp-yearly-list" style="margin-bottom:20px;">
+              <div id="rexp-yearly-empty" style="text-align:center; padding:40px 20px; color:var(--md-primary); opacity:0.4;">
+                <div style="font-size:17px; font-weight:600;">Sem despesas anuais</div>
+                <div style="font-size:14px; margin-top:6px;">Seguros, licenças e outras despesas anuais</div>
+              </div>
             </div>
           </div>
         </div>
+
       </div>
     </div>
 
@@ -3892,7 +3884,7 @@ function switchTo(v) {
   if (v==="dashboard") renderDashboard();
   if (v==="prices")    renderPrices();
   if (v==="tasks")     renderTasksAndProjects();
-  if (v==="sales")     renderSales();
+  if (v==="sales")     { renderSales(); generateRecurringExpenses(); renderExpenses(); }
   if (v==="expenses")  { generateRecurringExpenses(); renderExpenses(); }
   if (v==="resumo")    renderResumo();
   if (v==="vasilhame") renderVasilhame();
