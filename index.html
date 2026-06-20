@@ -263,14 +263,13 @@
     #snackbar.error  { background:var(--md-error); }
 
     /* TASK CARDS */
-    .task-card { display:flex; align-items:center; gap:14px; padding:16px; border-bottom:1px solid var(--md-outline-variant); background:var(--md-surface); }
-    .task-card:last-child { border-bottom:none; }
-    .task-check { width:28px; height:28px; border-radius:50%; border:1.5px solid var(--md-primary); display:flex; align-items:center; justify-content:center; cursor:pointer; flex-shrink:0; transition:all 0.2s; background:transparent; }
+    .task-card { display:flex; align-items:center; gap:14px; padding:8px 4px; }
+    .task-check { width:18px; height:18px; border-radius:50%; border:1.5px solid var(--md-primary); display:flex; align-items:center; justify-content:center; cursor:pointer; flex-shrink:0; transition:all 0.2s; background:transparent; }
     .task-check.done { background:var(--md-primary); border-color:var(--md-primary); }
-    .task-check.done .material-icons-round { font-size:18px; color:var(--md-white); }
-    .task-check .material-icons-round { font-size:18px; color:transparent; }
-    .task-text { flex:1; font-size:20px; font-weight:500; color:var(--md-primary); }
-    .task-text.done { text-decoration:line-through; color:var(--md-outline); font-weight:400; }
+    .task-check.done .material-icons-round { font-size:12px; color:var(--md-white); }
+    .task-check .material-icons-round { font-size:12px; color:transparent; }
+    .task-text { flex:1; font-size:26px; font-weight:700; color:var(--md-primary); text-transform:lowercase; }
+    .task-text.done { text-decoration:line-through; color:var(--md-outline); font-weight:500; opacity:0.6; }
     .task-del { border:none; background:transparent; color:var(--md-outline-variant); cursor:pointer; padding:4px; }
     .task-del .material-icons-round { font-size:20px; }
 
@@ -286,6 +285,8 @@
     .sup-btn { width:40px; height:40px; border-radius:50%; border:none; display:flex; align-items:center; justify-content:center; cursor:pointer; }
     .sup-btn-call { background:var(--md-primary-container); }
     .sup-btn-call .material-icons-round { font-size:20px; color:var(--md-on-primary-container); }
+    .sup-btn-edit { background:var(--md-surface-variant); }
+    .sup-btn-edit .material-icons-round { font-size:18px; color:var(--md-primary); }
     .sup-btn-del { background:var(--md-surface-variant); }
     .sup-btn-del .material-icons-round { font-size:18px; color:var(--md-primary); }
   </style>
@@ -405,7 +406,7 @@
       </div>
 
       <!-- Tudo junto: tarefas simples e projetos numa única lista -->
-      <div id="tasks-list" style="padding:8px 16px 32px; display:flex; flex-direction:column; gap:14px;">
+      <div id="tasks-list" style="padding:8px 16px 32px; display:flex; flex-direction:column; gap:0;">
         <div id="tasks-empty" style="text-align:center; padding:60px 20px; color:var(--md-primary); opacity:0.5;">
           <span class="material-icons-round" style="font-size:48px; display:block; margin-bottom:12px;">check_circle</span>
           <div style="font-size:17px; font-weight:600;">Nada para fazer</div>
@@ -474,6 +475,17 @@
           </div>
         </button>
         <input id="import-backup-file" type="file" accept=".json" style="display:none" onchange="importBackup(event)"/>
+      </div>
+
+      <!-- Correção pontual: vendas de quinta-feira eram rendas registadas por engano -->
+      <div style="margin:16px 16px 0; background:var(--md-surface); border-radius:14px; border:1px solid var(--md-outline-variant); overflow:hidden;">
+        <button onclick="if(confirm('Remover todos os registos de Vendas feitos à quinta-feira? Eram rendas registadas por engano.')) cleanThursdaySales();" style="background:none; border:none; padding:14px 16px; text-align:left; cursor:pointer; width:100%; font-size:17px; font-weight:500; color:var(--md-primary); font-family:'Outfit',sans-serif; display:flex; align-items:center; gap:12px;">
+          <span class="material-icons-round" style="font-size:20px; color:var(--md-error);">cleaning_services</span>
+          <div>
+            <div>Limpar vendas de quinta-feira</div>
+            <div style="font-size:12px; opacity:0.5; margin-top:1px;">Remove registos que eram rendas por engano</div>
+          </div>
+        </button>
       </div>
 
       <div style="padding:0 16px; display:flex; flex-direction:column; gap:0; margin-top:16px;">
@@ -705,11 +717,6 @@
                   <option value="Outro">Outro</option>
                 </select>
               </div>
-              <div style="margin-bottom:12px;">
-                <label style="font-size:12px; color:var(--md-primary); opacity:0.6; display:block; margin-bottom:6px;">Dia do mês em que é pago</label>
-                <button type="button" id="rexp-monthly-day-btn" data-placeholder="Dia (1-31)" onclick="openNumKeypadFor('rexp-monthly-day', {decimal:false})" style="width:100%; padding:12px; border:1.5px solid var(--md-outline-variant); border-radius:10px; font-size:15px; font-family:'Outfit',sans-serif; color:var(--md-primary); background:var(--md-surface-1); cursor:pointer; text-align:left;">Dia (1-31)</button>
-                <input type="hidden" id="rexp-monthly-day" value=""/>
-              </div>
               <div style="display:flex; flex-direction:column; gap:10px;">
                 <button type="button" id="rexp-monthly-amount-btn" data-placeholder="Valor (€)" onclick="openNumKeypadFor('rexp-monthly-amount', {decimal:true})" style="width:100%; padding:14px; border:1.5px solid var(--md-outline-variant); border-radius:10px; font-size:22px; font-weight:700; font-family:'Outfit',sans-serif; color:var(--md-primary); background:var(--md-surface-1); cursor:pointer; text-align:left;">Valor (€)</button>
                 <input type="hidden" id="rexp-monthly-amount" value=""/>
@@ -779,6 +786,34 @@
           </div>
         </div>
 
+        <!-- ── RENDAS — junto a Vendas/Despesas, mesmo título visual ─────────── -->
+        <div style="margin-top:36px; padding-top:24px; padding-bottom:40px; border-top:1px solid var(--md-outline-variant);">
+          <div style="font-size:52px; font-weight:700; letter-spacing:-1px; line-height:1; background:linear-gradient(90deg, var(--md-gold), var(--md-orange)); -webkit-background-clip:text; background-clip:text; color:transparent; margin-bottom:14px;">Rendas</div>
+
+          <div style="background:var(--md-surface); border-radius:14px; border:1px solid var(--md-outline-variant); padding:18px; margin-bottom:20px;">
+            <div style="font-size:13px; font-weight:700; color:var(--md-primary); opacity:0.6; text-transform:uppercase; letter-spacing:1px; margin-bottom:12px;">Nova renda mensal</div>
+            <div style="margin-bottom:12px;">
+              <input id="rent-name" type="text" placeholder="Nome do imóvel/inquilino (ex: Om Sintra)" style="width:100%; padding:12px; border:1.5px solid var(--md-outline-variant); border-radius:10px; font-size:15px; font-family:'Outfit',sans-serif; color:var(--md-primary); background:var(--md-surface-1); outline:none;"/>
+            </div>
+            <div style="display:flex; flex-direction:column; gap:10px;">
+              <button type="button" id="rent-amount-btn" data-placeholder="Valor (€)" onclick="openNumKeypadFor('rent-amount', {decimal:true})" style="width:100%; padding:14px; border:1.5px solid var(--md-outline-variant); border-radius:10px; font-size:22px; font-weight:700; font-family:'Outfit',sans-serif; color:var(--md-primary); background:var(--md-surface-1); cursor:pointer; text-align:left;">Valor (€)</button>
+              <input type="hidden" id="rent-amount" value=""/>
+              <div style="display:flex; justify-content:flex-end;">
+                <button onclick="saveRent()" style="background:var(--md-primary); color:var(--md-white); border:none; border-radius:50%; width:52px; height:52px; display:flex; align-items:center; justify-content:center; cursor:pointer; flex-shrink:0;">
+                  <span class="material-icons-round" style="font-size:26px;">check</span>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div id="rents-list" style="margin-bottom:0;">
+            <div id="rents-empty" style="text-align:center; padding:40px 20px; color:var(--md-primary); opacity:0.4;">
+              <div style="font-size:17px; font-weight:600;">Sem rendas registadas</div>
+              <div style="font-size:14px; margin-top:6px;">Rendas mensais dos imóveis da empresa</div>
+            </div>
+          </div>
+        </div>
+
       </div>
     </div>
 
@@ -799,7 +834,7 @@
     <div id="supplier-modal-overlay" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.5); z-index:299; backdrop-filter:blur(4px);" onclick="closeSupplierModal()"></div>
     <div id="supplier-modal-panel" style="display:none; position:fixed; bottom:0; left:50%; transform:translateX(-50%); width:100%; max-width:600px; background:var(--md-surface); border-radius:24px 24px 0 0; padding:24px 20px 40px; z-index:300; max-height:90vh; overflow-y:auto;">
       <div style="width:40px; height:4px; background:var(--md-outline-variant); border-radius:2px; margin:0 auto 20px;"></div>
-      <div style="font-size:20px; font-weight:800; color:var(--md-primary); margin-bottom:20px;">Novo fornecedor</div>
+      <div id="supplier-modal-title" style="font-size:20px; font-weight:800; color:var(--md-primary); margin-bottom:20px;">Novo fornecedor</div>
       <label style="font-size:11px; font-weight:700; color:var(--md-primary); text-transform:uppercase; letter-spacing:0.5px; display:block; margin-bottom:6px;">Nome</label>
       <input id="sup-name" type="text" placeholder="Nome do fornecedor" style="width:100%; padding:14px; border-radius:10px; border:1.5px solid var(--md-outline-variant); font-size:16px; font-family:'Outfit',sans-serif; outline:none; margin-bottom:14px; background:var(--md-surface-1); color:var(--md-primary);"/>
       <label style="font-size:11px; font-weight:700; color:var(--md-primary); text-transform:uppercase; letter-spacing:0.5px; display:block; margin-bottom:6px;">Especialidade</label>
@@ -1207,6 +1242,7 @@ let tasksTab = 'list';
 let sales = [];     // vendas diárias { date, total, label }
 let expenses = [];  // despesas ocasionais { id, date, category, amount }
 let recurringExpenses = []; // despesas fixas { id, type:'monthly'|'yearly', category, amount, day, month (só anual), lastGenerated }
+let rents = []; // rendas mensais fixas { id, name, amount }
 
 // ── HELPERS ───────────────────────────────────────────────────────────────────
 function gk(cat, item) { return `${cat}|||${item}`; }
@@ -1226,7 +1262,7 @@ function initOpen(prods) {
 }
 
 // ── LOCAL STORAGE ─────────────────────────────────────────────────────────────
-function payload() { return { products, subcats, list, picked, history: snapHistory, suppliers, tasks, sales, projects, expenses, recurringExpenses, vasilhameMovs }; }
+function payload() { return { products, subcats, list, picked, history: snapHistory, suppliers, tasks, sales, projects, expenses, recurringExpenses, vasilhameMovs, rents }; }
 
 function applyLocal(r) {
   if (r.products) products = r.products;
@@ -1239,6 +1275,7 @@ function applyLocal(r) {
   if (r.expenses) expenses = r.expenses;
   if (r.recurringExpenses) recurringExpenses = r.recurringExpenses;
   if (r.vasilhameMovs) vasilhameMovs = r.vasilhameMovs;
+  if (r.rents) rents = r.rents;
   if (r.subcats && Object.keys(r.subcats).length > 0) subcats = r.subcats;
   else subcats = JSON.parse(JSON.stringify(DEFAULT_SUBCATS));
   if (r.list) list = { ...buildEmpty(products), ...r.list };
@@ -1601,6 +1638,7 @@ function deleteTaskDash(id) { deleteTask(id); renderDashboard(); }
 function closeSupplierModal() {
   document.getElementById('supplier-modal-overlay').style.display = 'none';
   document.getElementById('supplier-modal-panel').style.display   = 'none';
+  editingSupplierId = null;
 }
 
 function closeTaskModal() {
@@ -1608,11 +1646,17 @@ function closeTaskModal() {
   document.getElementById('task-modal-panel').style.display   = 'none';
 }
 
-function openSupplierModal() {
-  document.getElementById('sup-name').value  = '';
-  document.getElementById('sup-type').value  = '';
-  document.getElementById('sup-phone').value = '';
-  document.getElementById('sup-notes').value = '';
+let editingSupplierId = null;
+
+function openSupplierModal(id) {
+  const sup = id ? suppliers.find(s => s.id === id) : null;
+  editingSupplierId = sup ? sup.id : null;
+  document.getElementById('sup-name').value  = sup ? sup.name  : '';
+  document.getElementById('sup-type').value  = sup ? sup.type  : '';
+  document.getElementById('sup-phone').value = sup ? sup.phone : '';
+  document.getElementById('sup-notes').value = sup ? sup.notes : '';
+  const titleEl = document.getElementById('supplier-modal-title');
+  if (titleEl) titleEl.textContent = sup ? 'Editar fornecedor' : 'Novo fornecedor';
   document.getElementById('supplier-modal-overlay').style.display = 'block';
   document.getElementById('supplier-modal-panel').style.display   = 'block';
   document.getElementById('sup-name').focus();
@@ -1640,6 +1684,19 @@ function updateSupplierCallBtn(supplierName) {
 function saveSupplier() {
   const name = document.getElementById('sup-name').value.trim();
   if (!name) { showSnack('Indica o nome do fornecedor', 'error'); return; }
+  if (editingSupplierId) {
+    const sup = suppliers.find(s => s.id === editingSupplierId);
+    if (sup) {
+      sup.name  = name;
+      sup.type  = document.getElementById('sup-type').value.trim();
+      sup.phone = document.getElementById('sup-phone').value.trim();
+      sup.notes = document.getElementById('sup-notes').value.trim();
+    }
+    editingSupplierId = null;
+    sched(); closeSupplierModal(); renderSuppliers();
+    showSnack('Fornecedor atualizado ✓', 'saved');
+    return;
+  }
   suppliers.push({
     id:    Date.now(),
     name,
@@ -1696,6 +1753,7 @@ function renderSuppliers() {
         </div>
         <div class="supplier-btns">
           ${s.phone ? `<a href="tel:${s.phone}" style="text-decoration:none"><button class="sup-btn sup-btn-call"><span class="material-icons-round">phone</span></button></a>` : ''}
+          <button class="sup-btn sup-btn-edit" onclick="openSupplierModal(${s.id})"><span class="material-icons-round">edit</span></button>
           <button class="sup-btn sup-btn-del" onclick="deleteSupplier(${s.id})"><span class="material-icons-round">delete_outline</span></button>
         </div>
       `;
@@ -2018,6 +2076,17 @@ function importSuppliersJSON(event) {
 }
 
 // ── BACKUP COMPLETO — exporta e importa todos os dados ───────────────────────
+// ── LIMPEZA: remove vendas registadas à quinta-feira (eram rendas por engano) ──
+function cleanThursdaySales() {
+  const before = sales.length;
+  const removed = sales.filter(s => new Date(s.date).getDay() === 4);
+  sales = sales.filter(s => new Date(s.date).getDay() !== 4);
+  sched();
+  renderDashboard();
+  showSnack(`${removed.length} registo(s) de quinta-feira removido(s) ✓`, 'saved');
+  return removed;
+}
+
 function exportBackup() {
   const data = payload();
   data._backupDate = new Date().toISOString();
@@ -2032,7 +2101,39 @@ function exportBackup() {
   a.click();
   document.body.removeChild(a);
   URL.revokeObjectURL(url);
+  localStorage.setItem('mf_last_backup', new Date().toISOString());
+  renderBackupNotice();
   showSnack('Backup exportado com sucesso ✓', 'saved');
+}
+
+// ── AVISO DE BACKUP ESQUECIDO ────────────────────────────────────────────────
+function getDaysSinceBackup() {
+  const last = localStorage.getItem('mf_last_backup');
+  if (!last) return null;
+  const diffMs = Date.now() - new Date(last).getTime();
+  return Math.floor(diffMs / 86400000);
+}
+
+function renderBackupNotice() {
+  const el = document.getElementById('backup-notice');
+  if (!el) return;
+  const days = getDaysSinceBackup();
+  if (days === null) {
+    el.textContent = 'Nunca fizeste backup — convém fazer um';
+    el.style.color = 'var(--md-error)';
+  } else if (days === 0) {
+    el.textContent = 'Último backup: hoje ✓';
+    el.style.color = 'var(--md-primary)';
+  } else if (days === 1) {
+    el.textContent = 'Último backup: ontem';
+    el.style.color = 'var(--md-primary)';
+  } else if (days < 14) {
+    el.textContent = `Último backup: há ${days} dias`;
+    el.style.color = 'var(--md-primary)';
+  } else {
+    el.textContent = `Último backup: há ${days} dias — convém atualizar`;
+    el.style.color = 'var(--md-error)';
+  }
 }
 
 function importBackup(event) {
@@ -2058,6 +2159,7 @@ function importBackup(event) {
       if (data.expenses)          expenses          = data.expenses;
       if (data.recurringExpenses) recurringExpenses = data.recurringExpenses;
       if (data.vasilhameMovs)     vasilhameMovs     = data.vasilhameMovs;
+      if (data.rents)             rents             = data.rents;
       // Guardar e re-renderizar
       sched();
       renderCats('');
@@ -2810,8 +2912,9 @@ function saveRecurringExpense(type) {
   const name = document.getElementById(`rexp-${type}-name`)?.value.trim() || '';
   const category = document.getElementById(`rexp-${type}-category`).value;
   const amountVal = document.getElementById(`rexp-${type}-amount`).value.trim();
-  const day = parseInt(document.getElementById(`rexp-${type}-day`).value, 10);
-  if (!amountVal || isNaN(day) || day < 1 || day > 31) { showSnack('Preenche dia e valor', 'error'); return; }
+  const dayEl = document.getElementById(`rexp-${type}-day`);
+  const day = dayEl ? (parseInt(dayEl.value, 10) || 1) : 1; // sem campo visível: assume dia 1
+  if (!amountVal) { showSnack('Indica o valor', 'error'); return; }
   const amount = parseFloat(amountVal);
   if (isNaN(amount) || amount <= 0) { showSnack('Valor inválido', 'error'); return; }
 
@@ -2822,7 +2925,7 @@ function saveRecurringExpense(type) {
   recurringExpenses.push(entry);
   sched();
   document.getElementById(`rexp-${type}-amount`).value = '';
-  document.getElementById(`rexp-${type}-day`).value = '';
+  if (dayEl) dayEl.value = '';
   const nameEl = document.getElementById(`rexp-${type}-name`); if (nameEl) nameEl.value = '';
   generateRecurringExpenses();
   renderRecurringExpenses(type);
@@ -2834,6 +2937,66 @@ function deleteRecurringExpense(id) {
   sched();
   renderRecurringExpenses('monthly');
   renderRecurringExpenses('yearly');
+}
+
+// ── RENDAS — receita mensal fixa dos imóveis da empresa ─────────────────────
+function saveRent() {
+  const name = document.getElementById('rent-name').value.trim();
+  const amountVal = document.getElementById('rent-amount').value.trim();
+  if (!name) { showSnack('Indica o nome do imóvel/inquilino', 'error'); return; }
+  const amount = parseFloat(amountVal);
+  if (isNaN(amount) || amount <= 0) { showSnack('Valor inválido', 'error'); return; }
+  rents.push({ id: Date.now(), name, amount });
+  sched();
+  document.getElementById('rent-name').value = '';
+  document.getElementById('rent-amount').value = '';
+  const btn = document.getElementById('rent-amount-btn'); if (btn) btn.textContent = btn.dataset.placeholder;
+  renderRents();
+  showSnack('Renda guardada ✓', 'saved');
+}
+
+function deleteRent(id) {
+  rents = rents.filter(r => r.id !== id);
+  sched();
+  renderRents();
+}
+
+function renderRents() {
+  const container = document.getElementById('rents-list');
+  if (!container) return;
+  const empty = document.getElementById('rents-empty');
+  container.querySelectorAll('.rent-row').forEach(r => r.remove());
+  empty.style.display = rents.length ? 'none' : 'block';
+
+  const total = rents.reduce((sum, r) => sum + r.amount, 0);
+  if (rents.length) {
+    const totalRow = document.createElement('div');
+    totalRow.className = 'rent-row';
+    totalRow.style.cssText = 'display:flex; justify-content:space-between; padding:10px 4px; margin-bottom:8px; border-bottom:1px solid var(--md-outline-variant);';
+    totalRow.innerHTML = `
+      <span style="font-size:13px; font-weight:700; color:var(--md-primary); opacity:0.6; text-transform:uppercase; letter-spacing:1px;">Total mensal</span>
+      <span style="font-size:16px; font-weight:800; color:var(--md-primary);">${total.toFixed(2)}€</span>
+    `;
+    container.insertBefore(totalRow, empty);
+  }
+
+  rents.forEach(r => {
+    const row = document.createElement('div');
+    row.className = 'rent-row';
+    row.style.cssText = 'display:flex; align-items:center; padding:14px; background:var(--md-surface); border-radius:12px; border:1px solid var(--md-outline-variant); gap:12px; margin-bottom:10px;';
+    row.innerHTML = `
+      <span class="material-icons-round" style="font-size:22px; color:var(--md-primary); opacity:0.5;">home</span>
+      <div style="flex:1;">
+        <div style="font-size:16px; font-weight:600; color:var(--md-primary);">${r.name}</div>
+        <div style="font-size:12px; color:var(--md-primary); opacity:0.5;">Renda mensal</div>
+      </div>
+      <div style="font-size:18px; font-weight:800; color:var(--md-primary);">${r.amount.toFixed(2)}€</div>
+      <button onclick="deleteRent(${r.id})" style="background:none; border:none; cursor:pointer; padding:4px;">
+        <span class="material-icons-round" style="font-size:18px; color:var(--md-outline-variant);">delete_outline</span>
+      </button>
+    `;
+    container.insertBefore(row, empty);
+  });
 }
 
 function renderRecurringExpenses(type) {
@@ -3336,6 +3499,23 @@ function boot() {
     catch { list = buildEmpty(products); initOpen(products); }
   } else {
     list = buildEmpty(products); initOpen(products);
+  }
+
+  // Migração única: adiciona as rendas iniciais dos imóveis, se ainda não existirem
+  if (!localStorage.getItem('mf_rents_seeded')) {
+    const initialRents = [
+      { name: 'Om Sintra',      amount: 670 },
+      { name: 'Almeida Pinto',  amount: 900 },
+      { name: 'Delfina',        amount: 511.20 },
+      { name: 'Yadney',         amount: 600 },
+    ];
+    initialRents.forEach(r => {
+      if (!rents.some(existing => existing.name === r.name)) {
+        rents.push({ id: Date.now() + Math.random(), name: r.name, amount: r.amount });
+      }
+    });
+    localStorage.setItem('mf_rents_seeded', '1');
+    sched();
   }
 
   document.getElementById("loading").style.display = "none";
@@ -3886,7 +4066,7 @@ function switchTo(v, fromPopState) {
   if (v==="dashboard") renderDashboard();
   if (v==="prices")    renderPrices();
   if (v==="tasks")     renderTasksAndProjects();
-  if (v==="sales")     { renderSales(); generateRecurringExpenses(); renderExpenses(); }
+  if (v==="sales")     { renderSales(); generateRecurringExpenses(); renderExpenses(); renderRents(); }
   if (v==="expenses")  { generateRecurringExpenses(); renderExpenses(); }
   if (v==="resumo")    renderResumo();
   if (v==="vasilhame") renderVasilhame();
