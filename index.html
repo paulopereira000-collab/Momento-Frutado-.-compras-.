@@ -605,13 +605,8 @@
 
     <!-- ── VENDAS ─────────────────────────────────────────────────────────── -->
     <div id="view-sales" class="view">
-      <div style="padding:20px 16px 8px; display:flex; align-items:center; justify-content:space-between;">
-        <div style="display:flex; align-items:center; gap:12px;">
-          <div style="font-size:52px; font-weight:700; letter-spacing:-1px; line-height:1; background:linear-gradient(90deg, var(--md-gold), var(--md-orange)); -webkit-background-clip:text; background-clip:text; color:transparent;">Vendas</div>
-        </div>
-        <button onclick="switchTo('resumo')" style="background:none; border:none; cursor:pointer; padding:8px; display:flex; align-items:center; opacity:0.5;">
-          <span class="material-icons-round" style="font-size:28px; color:var(--md-primary);">bar_chart</span>
-        </button>
+      <div style="padding:20px 16px 8px;">
+        <div style="font-size:52px; font-weight:700; letter-spacing:-1px; line-height:1; background:linear-gradient(90deg, var(--md-gold), var(--md-orange)); -webkit-background-clip:text; background-clip:text; color:transparent;">Vendas</div>
       </div>
       <div style="padding:4px 16px 0;">
         <div id="sales-summary" style="font-size:14px; color:var(--md-primary); opacity:0.6; margin-bottom:12px;"></div>
@@ -814,21 +809,18 @@
           </div>
         </div>
 
-      </div>
-    </div>
+        <!-- ── RESUMO — junto a Vendas/Despesas/Rendas, mesmo título visual ─── -->
+        <div style="margin-top:36px; padding-top:24px; padding-bottom:40px; border-top:1px solid var(--md-outline-variant);">
+          <div style="font-size:52px; font-weight:700; letter-spacing:-1px; line-height:1; background:linear-gradient(90deg, var(--md-gold), var(--md-orange)); -webkit-background-clip:text; background-clip:text; color:transparent; margin-bottom:14px;">Resumo</div>
+          <div id="resumo-content">
+            <div id="resumo-empty" style="text-align:center; padding:60px 20px; color:var(--md-primary); opacity:0.5;">
+              <span class="material-icons-round" style="font-size:48px; display:block; margin-bottom:12px;">bar_chart</span>
+              <div style="font-size:17px; font-weight:600;">Ainda sem dados suficientes</div>
+              <div style="font-size:14px; margin-top:6px;">Regista vendas para veres a evolução aqui</div>
+            </div>
+          </div>
+        </div>
 
-    <div id="view-resumo" class="view">
-      <div style="padding:20px 16px 8px; display:flex; align-items:center; justify-content:space-between;">
-        <div style="display:flex; align-items:center; gap:12px;">
-          <div style="font-size:52px; font-weight:700; letter-spacing:-1px; line-height:1; background:linear-gradient(90deg, var(--md-gold), var(--md-orange)); -webkit-background-clip:text; background-clip:text; color:transparent;">Resumo</div>
-        </div>
-      </div>
-      <div id="resumo-content" style="padding:8px 16px 32px;">
-        <div id="resumo-empty" style="text-align:center; padding:60px 20px; color:var(--md-primary); opacity:0.5;">
-          <span class="material-icons-round" style="font-size:48px; display:block; margin-bottom:12px;">bar_chart</span>
-          <div style="font-size:17px; font-weight:600;">Ainda sem dados suficientes</div>
-          <div style="font-size:14px; margin-top:6px;">Regista vendas para veres a evolução aqui</div>
-        </div>
       </div>
     </div>
     <div id="supplier-modal-overlay" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.5); z-index:299; backdrop-filter:blur(4px);" onclick="closeSupplierModal()"></div>
@@ -949,11 +941,11 @@
         <div style="padding:0px 20px 0; display:flex; flex-direction:column; gap:0;">
           <button onclick="switchTo('list')" style="background:none; border:none; padding:4px 0; text-align:left; cursor:pointer; width:100%; display:flex; align-items:center; gap:14px;">
             <span id="dash-dot-list" style="width:10px; height:10px; border-radius:50%; border:1.5px solid var(--md-white); opacity:0.68; flex-shrink:0"></span>
-            <span style="font-size:28px; font-weight:700; color:var(--md-white); opacity:0.76; text-transform:lowercase;">compras</span>
+            <span style="font-size:28px; font-weight:700; color:var(--md-white); opacity:0.76; text-transform:lowercase;">comprar</span>
           </button>
           <button onclick="switchTo('sales')" style="background:none; border:none; padding:4px 0; text-align:left; cursor:pointer; width:100%; display:flex; align-items:center; gap:14px;">
             <span id="dash-dot-sales" style="width:10px; height:10px; border-radius:50%; border:1.5px solid var(--md-white); opacity:0.68; flex-shrink:0"></span>
-            <span style="font-size:28px; font-weight:700; color:var(--md-white); opacity:0.76; text-transform:lowercase;">vendas</span>
+            <span style="font-size:28px; font-weight:700; color:var(--md-white); opacity:0.76; text-transform:lowercase;">vender</span>
           </button>
           <button onclick="switchTo('tasks')" style="background:none; border:none; padding:4px 0; text-align:left; cursor:pointer; width:100%; display:flex; align-items:center; gap:14px;">
             <span id="dash-dot-tasks" style="width:10px; height:10px; border-radius:50%; border:1.5px solid var(--md-white); opacity:0.68; flex-shrink:0"></span>
@@ -1602,7 +1594,7 @@ function renderDashSummary() {
   const cards = [
     { value: salesCardValue, label: salesCardLabel, view: 'sales', dotId: 'dash-dot-sales' },
     { value: topProductValue, label: topProductLabel, view: 'history', dotId: null },
-    { value: dayCompareValue, label: dayCompareLabel, view: 'resumo', dotId: null, alert: dayCompareAlert },
+    { value: dayCompareValue, label: dayCompareLabel, view: 'sales', dotId: null, alert: dayCompareAlert },
   ];
 
   cards.forEach(c => {
@@ -3133,7 +3125,11 @@ function renderResumo() {
   const empty = document.getElementById('resumo-empty');
   if (!content) return;
 
-  if (sales.length < 3) {
+  // Considera só vendas registadas em dias reais de mercado (Terça/Sexta/Sábado).
+  // Qualquer outro dia (ex: rendas registadas por engano em Vendas) é ignorado aqui.
+  const marketSales = sales.filter(s => [2, 5, 6].includes(new Date(s.date + 'T00:00:00').getDay()));
+
+  if (marketSales.length < 3) {
     empty.style.display = 'block';
     content.querySelectorAll('.resumo-block').forEach(b => b.remove());
     return;
@@ -3141,7 +3137,7 @@ function renderResumo() {
   empty.style.display = 'none';
   content.querySelectorAll('.resumo-block').forEach(b => b.remove());
 
-  const sorted = [...sales].sort((a, b) => a.date.localeCompare(b.date));
+  const sorted = [...marketSales].sort((a, b) => a.date.localeCompare(b.date));
 
   // ── Bloco 0: Contexto — esta semana vs semana passada ──
   const today = new Date();
@@ -3257,12 +3253,14 @@ function renderResumo() {
     content.appendChild(chartBlock);
   });
 
-  // ── Bloco 2: Médias por dia da semana ──
-  const weekdayNames = ['Domingo','Segunda','Terça','Quarta','Quinta','Sexta','Sábado'];
+  // ── Bloco 2: Médias por dia da semana — só os dias reais de mercado ──
+  const weekdayNamesAll = ['Domingo','Segunda','Terça','Quarta','Quinta','Sexta','Sábado'];
+  const weekdayNames = ['Terça','Sexta','Sábado'];
   const byWeekday = {};
   sorted.forEach(s => {
     const d = new Date(s.date + 'T00:00:00');
-    const wd = weekdayNames[d.getDay()];
+    const wd = weekdayNamesAll[d.getDay()];
+    if (!weekdayNames.includes(wd)) return; // ignora qualquer registo fora de Terça/Sexta/Sábado
     if (!byWeekday[wd]) byWeekday[wd] = [];
     byWeekday[wd].push(s.total);
   });
@@ -4066,7 +4064,7 @@ function switchTo(v, fromPopState) {
   if (v==="dashboard") renderDashboard();
   if (v==="prices")    renderPrices();
   if (v==="tasks")     renderTasksAndProjects();
-  if (v==="sales")     { renderSales(); generateRecurringExpenses(); renderExpenses(); renderRents(); }
+  if (v==="sales")     { renderSales(); generateRecurringExpenses(); renderExpenses(); renderRents(); renderResumo(); }
   if (v==="expenses")  { generateRecurringExpenses(); renderExpenses(); }
   if (v==="resumo")    renderResumo();
   if (v==="vasilhame") renderVasilhame();
