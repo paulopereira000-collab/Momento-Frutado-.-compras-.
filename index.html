@@ -308,7 +308,6 @@
         </div>
         <div style="display:flex; align-items:center; gap:0;">
           <button class="hnav-btn" id="list-nav-btn" data-view="list" style="font-size:11px; font-weight:700; letter-spacing:0.5px; padding:8px 10px;"><span class="material-icons-round">shopping_basket</span></button>
-          <button class="hnav-btn" data-view="prices" style="font-size:11px; font-weight:700; letter-spacing:0.5px; padding:8px 10px;"><span class="material-icons-round">sell</span></button>
           <button class="hnav-btn" data-view="sales" style="font-size:11px; font-weight:700; letter-spacing:0.5px; padding:8px 10px;"><span class="material-icons-round">point_of_sale</span></button>
           <button class="hnav-btn" data-view="tasks" style="font-size:11px; font-weight:700; letter-spacing:0.5px; padding:8px 10px;"><span class="material-icons-round">check_circle</span></button>
           <button class="hnav-btn" data-view="settings" onclick="openSettings()" id="settings-btn"><span class="material-icons-round">more_vert</span></button>
@@ -321,9 +320,12 @@
     <div id="view-list" class="view">
       <div style="padding:20px 16px 8px; display:flex; align-items:center; justify-content:space-between;">
         <div style="display:flex; align-items:center; gap:12px;">
-          <div style="font-size:52px; font-weight:700; letter-spacing:-1px; line-height:1; color:var(--md-amber); text-transform:lowercase;">Compras</div>
+          <div style="font-size:52px; font-weight:700; letter-spacing:-1px; line-height:1; color:var(--md-amber); text-transform:lowercase;">Comprar</div>
         </div>
         <div style="display:flex; align-items:center; gap:4px;">
+          <button onclick="switchTo('prices')" style="background:none; border:none; cursor:pointer; padding:8px; display:flex; align-items:center; opacity:0.5;">
+            <span class="material-icons-round" style="font-size:26px; color:var(--md-primary);">sell</span>
+          </button>
           <button onclick="toggleVasilQuickPanel()" style="background:none; border:none; cursor:pointer; padding:8px; display:flex; align-items:center; opacity:0.5; position:relative;">
             <span class="material-icons-round" style="font-size:26px; color:var(--md-primary);">inventory_2</span>
             <span id="vasil-quick-badge" style="display:none; position:absolute; top:2px; right:2px; width:8px; height:8px; border-radius:50%; background:var(--md-orange);"></span>
@@ -337,12 +339,14 @@
       <!-- Painel rápido de vasilhame -->
       <div id="vasil-quick-panel" style="display:none; padding:0 16px 12px;">
         <div style="background:var(--md-surface); border-radius:14px; border:1px solid var(--md-outline-variant); padding:14px;">
-          <div style="font-size:13px; font-weight:700; color:var(--md-primary); opacity:0.6; text-transform:uppercase; letter-spacing:1px; margin-bottom:10px;">Vasilhame desta compra</div>
+          <div style="font-size:32px; font-weight:700; letter-spacing:-1px; line-height:1; color:var(--md-amber); text-transform:lowercase; margin-bottom:12px;">Vasilhame</div>
           <div id="vasil-quick-steppers"></div>
           <div style="margin-top:10px;">
-            <select id="vasil-quick-supplier" style="width:100%; padding:11px; border:1.5px solid var(--md-outline-variant); border-radius:10px; font-size:14px; font-family:'Outfit',sans-serif; color:var(--md-primary); background:var(--md-surface-1); outline:none;">
-              <option value="">Fornecedor…</option>
-            </select>
+            <button type="button" id="vasil-quick-supplier-btn" onclick="openVasilQuickSupplierPicker()" style="width:100%; padding:11px; border:1.5px solid var(--md-outline-variant); border-radius:10px; font-size:14px; font-family:'Outfit',sans-serif; color:var(--md-primary); background:var(--md-surface-1); text-align:left; cursor:pointer; display:flex; align-items:center; justify-content:space-between;">
+              <span id="vasil-quick-supplier-label">Fornecedor…</span>
+              <span class="material-icons-round" style="font-size:18px; opacity:0.6;">expand_more</span>
+            </button>
+            <input type="hidden" id="vasil-quick-supplier" value=""/>
           </div>
           <button onclick="confirmVasilQuick()" style="width:100%; margin-top:10px; padding:12px; background:var(--md-primary); color:var(--md-white); border:none; border-radius:10px; font-size:14px; font-weight:700; font-family:'Outfit',sans-serif; cursor:pointer;">Registar entrada</button>
         </div>
@@ -466,7 +470,7 @@
       <div style="padding:8px 16px 0; display:flex; flex-direction:column; gap:0;">
         <button onclick="switchTo('vasilhame')" style="background:none; border:none; border-bottom:1px solid var(--md-outline-variant); padding:14px 0; text-align:left; cursor:pointer; width:100%; font-size:17px; font-weight:500; color:var(--md-primary); font-family:'Outfit',sans-serif; display:flex; align-items:center; gap:12px;"><span class="material-icons-round" style="font-size:20px;">inventory_2</span>Vasilhame</button>
         <button onclick="switchTo('suppliers')" style="background:none; border:none; border-bottom:1px solid var(--md-outline-variant); padding:14px 0; text-align:left; cursor:pointer; width:100%; font-size:17px; font-weight:500; color:var(--md-primary); font-family:'Outfit',sans-serif; display:flex; align-items:center; gap:12px;"><span class="material-icons-round" style="font-size:20px;">contacts</span>Fornecedores</button>
-        <button onclick="switchTo('add')" style="background:none; border:none; border-bottom:1px solid var(--md-outline-variant); padding:14px 0; text-align:left; cursor:pointer; width:100%; font-size:17px; font-weight:500; color:var(--md-primary); font-family:'Outfit',sans-serif; display:flex; align-items:center; gap:12px;"><span class="material-icons-round" style="font-size:20px;">category</span>Gestão de produtos</button>
+        <button onclick="switchTo('add')" style="background:none; border:none; border-bottom:1px solid var(--md-outline-variant); padding:14px 0; text-align:left; cursor:pointer; width:100%; font-size:17px; font-weight:500; color:var(--md-primary); font-family:'Outfit',sans-serif; display:flex; align-items:center; gap:12px;"><span class="material-icons-round" style="font-size:20px;">category</span>Gerir</button>
         <button onclick="switchTo('whatsapp')" style="background:none; border:none; border-bottom:1px solid var(--md-outline-variant); padding:14px 0; text-align:left; cursor:pointer; width:100%; font-size:17px; font-weight:500; color:var(--md-primary); font-family:'Outfit',sans-serif; display:flex; align-items:center; gap:12px;"><span class="material-icons-round" style="font-size:20px;">chat_bubble_outline</span>WhatsApp</button>
         <button onclick="switchTo('history')" style="background:none; border:none; border-bottom:1px solid var(--md-outline-variant); padding:14px 0; text-align:left; cursor:pointer; width:100%; font-size:17px; font-weight:500; color:var(--md-primary); font-family:'Outfit',sans-serif; display:flex; align-items:center; gap:12px;"><span class="material-icons-round" style="font-size:20px;">history</span>Histórico</button>
         <button onclick="switchTo('rents')" style="background:none; border:none; border-bottom:1px solid var(--md-outline-variant); padding:14px 0; text-align:left; cursor:pointer; width:100%; font-size:17px; font-weight:500; color:var(--md-primary); font-family:'Outfit',sans-serif; display:flex; align-items:center; gap:12px;"><span class="material-icons-round" style="font-size:20px;">home</span>Rendas</button>
@@ -532,9 +536,11 @@
           <div id="vasil-page-steppers"></div>
 
           <div style="margin-top:10px;">
-            <select id="vasil-page-supplier" style="width:100%; padding:11px; border:1.5px solid var(--md-outline-variant); border-radius:10px; font-size:14px; font-family:'Outfit',sans-serif; color:var(--md-primary); background:var(--md-surface-1); outline:none;">
-              <option value="">Fornecedor…</option>
-            </select>
+            <button type="button" id="vasil-page-supplier-btn" onclick="openVasilPageSupplierPicker()" style="width:100%; padding:11px; border:1.5px solid var(--md-outline-variant); border-radius:10px; font-size:14px; font-family:'Outfit',sans-serif; color:var(--md-primary); background:var(--md-surface-1); text-align:left; cursor:pointer; display:flex; align-items:center; justify-content:space-between;">
+              <span id="vasil-page-supplier-label">Fornecedor…</span>
+              <span class="material-icons-round" style="font-size:18px; opacity:0.6;">expand_more</span>
+            </button>
+            <input type="hidden" id="vasil-page-supplier" value=""/>
           </div>
           <button onclick="confirmVasilPage()" style="width:100%; margin-top:10px; padding:12px; background:var(--md-primary); color:var(--md-white); border:none; border-radius:10px; font-size:14px; font-weight:700; font-family:'Outfit',sans-serif; cursor:pointer;">Registar movimento</button>
         </div>
@@ -594,7 +600,7 @@
     <!-- ── VENDAS ─────────────────────────────────────────────────────────── -->
     <div id="view-sales" class="view">
       <div style="padding:20px 16px 8px; display:flex; align-items:center; justify-content:space-between;">
-        <div style="font-size:52px; font-weight:700; letter-spacing:-1px; line-height:1; color:var(--md-amber); text-transform:lowercase;">Vendas</div>
+        <div style="font-size:52px; font-weight:700; letter-spacing:-1px; line-height:1; color:var(--md-amber); text-transform:lowercase;">Vender</div>
         <button onclick="switchTo('resumo')" style="background:none; border:none; cursor:pointer; padding:8px; display:flex; align-items:center; opacity:0.5;">
           <span class="material-icons-round" style="font-size:28px; color:var(--md-primary);">bar_chart</span>
         </button>
@@ -848,7 +854,7 @@
     <!-- ── RESUMO (página própria) ───────────────────────────────────────── -->
     <div id="view-resumo" class="view">
       <div style="padding:20px 16px 8px;">
-        <div style="font-size:52px; font-weight:700; letter-spacing:-1px; line-height:1; color:var(--md-amber); text-transform:lowercase;">Resumo</div>
+        <div style="font-size:52px; font-weight:700; letter-spacing:-1px; line-height:1; color:var(--md-amber); text-transform:lowercase;">Resumir</div>
       </div>
       <div id="resumo-content" style="padding:4px 16px 32px;">
         <div id="resumo-empty" style="text-align:center; padding:60px 20px; color:var(--md-primary); opacity:0.5;">
@@ -891,6 +897,8 @@
 
     <!-- ── MODAL PESO POR CAIXA ────────────────────────────────────────────── -->
     <div id="weight-modal-overlay" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.5); z-index:299; backdrop-filter:blur(4px);" onclick="closeWeightModal()"></div>
+    <div id="supplier-picker" style="display:none;position:fixed;bottom:0;left:0;right:0;background:var(--md-neutral-70);border-radius:20px 20px 0 0;padding:16px;z-index:300;max-height:60vh;overflow-y:auto; transition:top 0.15s, max-height 0.15s;"></div>
+    <div id="supplier-overlay" onclick="closeSupplierPicker()" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:299;"></div>
     <div id="weight-modal-panel" style="display:none; position:fixed; bottom:0; left:50%; transform:translateX(-50%); width:100%; max-width:600px; background:var(--md-surface); border-radius:24px 24px 0 0; padding:24px 20px 40px; z-index:300; max-height:90vh; overflow-y:auto;">
       <div style="width:40px; height:4px; background:var(--md-outline-variant); border-radius:2px; margin:0 auto 20px;"></div>
       <div id="weight-modal-title" style="font-size:20px; font-weight:800; color:var(--md-primary); margin-bottom:6px;">Peso por caixa</div>
@@ -1070,8 +1078,6 @@
       </button>
       <select id="pick-supplier" style="display:none"></select>
     </div>
-    <div id="supplier-picker" style="display:none;position:fixed;bottom:0;left:0;right:0;background:var(--md-neutral-70);border-radius:20px 20px 0 0;padding:16px;z-index:300;max-height:60vh;overflow-y:auto; transition:top 0.15s, max-height 0.15s;"></div>
-    <div id="supplier-overlay" onclick="closeSupplierPicker()" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:299;"></div>
     <input id="pick-date" type="date" style="position:absolute;opacity:0;width:0;height:0;pointer-events:none;"/>
 
     <!-- Vasilhame deste produto -->
@@ -2982,16 +2988,152 @@ function toggleVasilQuickPanel() {
   if (!isOpen) renderVasilQuickPanel();
 }
 
+// ── PICKER GENÉRICO DE FORNECEDOR — mesma cascata por pavilhão, reutilizável ──
+// onSelect(name) é chamado quando o utilizador escolhe um fornecedor (ou "" para remover).
+let genericPickerOnSelect = null;
+let genericPickerCurrentValue = null;
+
+function openGenericSupplierPicker(onSelect, currentValue) {
+  genericPickerOnSelect = onSelect;
+  genericPickerCurrentValue = currentValue || '';
+  const picker = document.getElementById("supplier-picker");
+  const overlay = document.getElementById("supplier-overlay");
+  picker.innerHTML = "";
+
+  const title = document.createElement("div");
+  title.style.cssText = "font-size:20px;font-weight:700;color:var(--md-primary);margin-bottom:14px;";
+  title.textContent = "Escolher fornecedor";
+  picker.appendChild(title);
+
+  const searchBar = document.createElement("input");
+  searchBar.id = "supplier-picker-quicksearch";
+  searchBar.type = "search";
+  searchBar.name = "supplier-search-" + Date.now();
+  searchBar.placeholder = "Pesquisar fornecedor…";
+  searchBar.autocomplete = "off";
+  searchBar.setAttribute("autocorrect", "off");
+  searchBar.setAttribute("autocapitalize", "off");
+  searchBar.setAttribute("spellcheck", "false");
+  searchBar.setAttribute("data-lpignore", "true");
+  searchBar.setAttribute("data-form-type", "other");
+  searchBar.style.cssText = "width:100%; box-sizing:border-box; padding:14px 16px; border:none; border-radius:12px; font-size:18px; font-family:'Outfit',sans-serif; color:var(--md-white); background:var(--md-neutral-90); outline:none; margin-bottom:14px;";
+  searchBar.addEventListener("input", () => renderGenericSupplierPickerResults(searchBar.value));
+  picker.appendChild(searchBar);
+
+  const results = document.createElement("div");
+  results.id = "generic-supplier-picker-results";
+  picker.appendChild(results);
+
+  results.addEventListener("touchstart", () => {
+    if (document.activeElement === searchBar) searchBar.blur();
+  }, { passive: true });
+
+  renderGenericSupplierPickerResults('');
+  picker.style.display = "block";
+  overlay.style.display = "block";
+  overlay.setAttribute('onclick', 'closeGenericSupplierPicker()');
+
+  if (window.visualViewport) {
+    supplierPickerViewportHandler = () => {
+      const vv = window.visualViewport;
+      picker.style.bottom = 'auto';
+      picker.style.top = vv.offsetTop + 'px';
+      picker.style.maxHeight = (vv.height - 16) + 'px';
+    };
+    window.visualViewport.addEventListener('resize', supplierPickerViewportHandler);
+    window.visualViewport.addEventListener('scroll', supplierPickerViewportHandler);
+    supplierPickerViewportHandler();
+  }
+
+  setTimeout(() => searchBar.focus(), 50);
+}
+
+function renderGenericSupplierPickerResults(query) {
+  const results = document.getElementById("generic-supplier-picker-results");
+  if (!results) return;
+  results.innerHTML = "";
+
+  if (suppliers.length === 0) {
+    const empty = document.createElement("div");
+    empty.style.cssText = "font-size:16px;color:var(--md-neutral-15);text-align:center;padding:24px 0;";
+    empty.textContent = "Sem fornecedores. Adiciona na secção Fornecedores.";
+    results.appendChild(empty);
+    return;
+  }
+
+  const q = (query || '').trim().toLowerCase();
+  const filtered = suppliers.filter(s => s.name.toLowerCase().includes(q));
+
+  if (filtered.length === 0) {
+    const empty = document.createElement("div");
+    empty.style.cssText = "font-size:16px;color:var(--md-neutral-15);text-align:center;padding:24px 0;";
+    empty.textContent = "Sem resultados";
+    results.appendChild(empty);
+  } else {
+    const knownOrder = ['A5', 'A6', 'A8', 'A10'];
+    const groups = {};
+    filtered.forEach(s => {
+      const key = (s.type || '').trim() || '__none__';
+      if (!groups[key]) groups[key] = [];
+      groups[key].push(s);
+    });
+    const otherKeys = Object.keys(groups).filter(k => k !== '__none__' && !knownOrder.includes(k)).sort();
+    const orderedKeys = [...knownOrder.filter(k => groups[k]), ...otherKeys, ...(groups['__none__'] ? ['__none__'] : [])];
+
+    orderedKeys.forEach(groupKey => {
+      const hdr = document.createElement("div");
+      hdr.style.cssText = "font-size:13px;font-weight:700;color:var(--md-neutral-30);text-transform:uppercase;letter-spacing:1px;margin:18px 2px 8px;";
+      hdr.textContent = groupKey === '__none__' ? 'Sem pavilhão' : groupKey;
+      results.appendChild(hdr);
+
+      groups[groupKey].forEach(s => {
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.style.cssText = "display:block;width:100%;text-align:left;padding:14px 16px;border:none;border-radius:10px;font-size:21px;font-family:'Outfit',sans-serif;cursor:pointer;margin-bottom:6px;font-weight:500;";
+        const isSel = genericPickerCurrentValue === s.name;
+        btn.style.background = isSel ? "var(--md-primary)" : "var(--md-neutral-90)";
+        btn.style.color = "var(--md-white)";
+        btn.textContent = s.name;
+        btn.addEventListener("click", () => {
+          if (genericPickerOnSelect) genericPickerOnSelect(s.name);
+          closeGenericSupplierPicker();
+        });
+        results.appendChild(btn);
+      });
+    });
+  }
+
+  const clearBtn = document.createElement("button");
+  clearBtn.type = "button";
+  clearBtn.style.cssText = "display:block;width:100%;text-align:left;padding:14px 16px;border:1.5px dashed var(--md-neutral-35);border-radius:10px;font-size:18px;font-family:'Outfit',sans-serif;cursor:pointer;margin-top:10px;font-weight:500;background:transparent;color:var(--md-neutral-15);";
+  clearBtn.textContent = "✕ Remover fornecedor";
+  clearBtn.addEventListener("click", () => {
+    if (genericPickerOnSelect) genericPickerOnSelect('');
+    closeGenericSupplierPicker();
+  });
+  results.appendChild(clearBtn);
+}
+
+function closeGenericSupplierPicker() {
+  document.getElementById("supplier-picker").style.display = "none";
+  document.getElementById("supplier-overlay").style.display = "none";
+  document.getElementById("supplier-overlay").setAttribute('onclick', 'closeSupplierPicker()');
+  if (supplierPickerViewportHandler && window.visualViewport) {
+    window.visualViewport.removeEventListener('resize', supplierPickerViewportHandler);
+    window.visualViewport.removeEventListener('scroll', supplierPickerViewportHandler);
+    supplierPickerViewportHandler = null;
+  }
+}
+
 function renderVasilQuickPanel() {
   const stepperWrap = document.getElementById('vasil-quick-steppers');
-  const supplierSel = document.getElementById('vasil-quick-supplier');
-  if (!stepperWrap || !supplierSel) return;
+  const supplierInput = document.getElementById('vasil-quick-supplier');
+  if (!stepperWrap || !supplierInput) return;
 
-  // popular fornecedores
-  const currentSupplier = supplierSel.value;
-  supplierSel.innerHTML = '<option value="">Fornecedor…</option>' +
-    suppliers.map(s => `<option value="${s.name}">${s.name}</option>`).join('');
-  if (currentSupplier && suppliers.find(s => s.name === currentSupplier)) supplierSel.value = currentSupplier;
+  // refrescar label com o valor já escolhido (se houver)
+  const currentSupplier = supplierInput.value;
+  const label = document.getElementById('vasil-quick-supplier-label');
+  if (label) label.textContent = currentSupplier || 'Fornecedor…';
 
   stepperWrap.innerHTML = VASILHAME_TYPES.map(t => {
     const qty = vasilQuickQtys[t] || 0;
@@ -3006,6 +3148,15 @@ function renderVasilQuickPanel() {
       </div>
     `;
   }).join('');
+}
+
+function openVasilQuickSupplierPicker() {
+  const current = document.getElementById('vasil-quick-supplier').value;
+  openGenericSupplierPicker((name) => {
+    document.getElementById('vasil-quick-supplier').value = name;
+    const label = document.getElementById('vasil-quick-supplier-label');
+    if (label) label.textContent = name || 'Fornecedor…';
+  }, current);
 }
 
 function vasilQuickStep(boxType, delta) {
@@ -3056,13 +3207,12 @@ function setVasilDirection(dir) {
 
 function renderVasilPageSteppers() {
   const stepperWrap = document.getElementById('vasil-page-steppers');
-  const supplierSel = document.getElementById('vasil-page-supplier');
-  if (!stepperWrap || !supplierSel) return;
+  const supplierInput = document.getElementById('vasil-page-supplier');
+  if (!stepperWrap || !supplierInput) return;
 
-  const currentSupplier = supplierSel.value;
-  supplierSel.innerHTML = '<option value="">Fornecedor…</option>' +
-    suppliers.map(s => `<option value="${s.name}">${s.name}</option>`).join('');
-  if (currentSupplier && suppliers.find(s => s.name === currentSupplier)) supplierSel.value = currentSupplier;
+  const currentSupplier = supplierInput.value;
+  const label = document.getElementById('vasil-page-supplier-label');
+  if (label) label.textContent = currentSupplier || 'Fornecedor…';
 
   stepperWrap.innerHTML = VASILHAME_TYPES.map((t, idx) => {
     const qty = vasilPageQtys[t] || 0;
@@ -3079,6 +3229,15 @@ function renderVasilPageSteppers() {
       </div>
     `;
   }).join('');
+}
+
+function openVasilPageSupplierPicker() {
+  const current = document.getElementById('vasil-page-supplier').value;
+  openGenericSupplierPicker((name) => {
+    document.getElementById('vasil-page-supplier').value = name;
+    const label = document.getElementById('vasil-page-supplier-label');
+    if (label) label.textContent = name || 'Fornecedor…';
+  }, current);
 }
 
 function openVasilPageQtyKeypad(boxType, safeId) {
@@ -4711,7 +4870,7 @@ function switchTo(v, fromPopState) {
   closeSettingsMenu();
   if (v !== "list") { const s = document.getElementById("list-search"); if(s) s.value = ""; }
   // Header title
-  const titles = { dashboard:'', list:'Compras', prices:'Preços', tasks:'Tarefas', history:'Histórico', whatsapp:'WhatsApp', suppliers:'Fornecedores', add:'Gestão de produtos', sales:'Vendas', settings:'Definições' };
+  const titles = { dashboard:'', list:'Comprar', prices:'Preços', tasks:'Tarefas', history:'Histórico', whatsapp:'WhatsApp', suppliers:'Fornecedores', add:'Gerir', sales:'Vender', settings:'Definições' };
   const titleEl = document.getElementById('header-title');
   if (titleEl) titleEl.textContent = titles[v] || '';
 
