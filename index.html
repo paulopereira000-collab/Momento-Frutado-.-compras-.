@@ -105,7 +105,7 @@
     #header-icons { display:flex; gap:4px; }
     .hnav-btn { border:none; background:transparent; color:rgba(255,255,255,0.7); padding:8px; cursor:pointer; display:flex; align-items:center; justify-content:center; border-radius:50%; }
     .hnav-btn .material-icons-round { font-size:22px; }
-    .hnav-btn.active { color:var(--md-white); background:transparent; border:2px solid var(--md-amber); border-radius:50%; }
+    .hnav-btn.active { color:var(--md-amber); background:transparent; border:none; }
     .hnav-btn-brand { color:var(--md-white); }
     .hnav-btn-brand.active { color:var(--md-amber); background:transparent; border:none; }
     #brand-nav-btn { font-size:14px; font-weight:600; letter-spacing:0.5px; text-transform:uppercase; padding:8px; color:var(--md-primary); border-radius:8px; }
@@ -311,7 +311,7 @@
           <button class="hnav-btn" data-view="prices" style="font-size:11px; font-weight:700; letter-spacing:0.5px; padding:8px 10px;"><span class="material-icons-round">sell</span></button>
           <button class="hnav-btn" data-view="sales" style="font-size:11px; font-weight:700; letter-spacing:0.5px; padding:8px 10px;"><span class="material-icons-round">point_of_sale</span></button>
           <button class="hnav-btn" data-view="tasks" style="font-size:11px; font-weight:700; letter-spacing:0.5px; padding:8px 10px;"><span class="material-icons-round">check_circle</span></button>
-          <button class="hnav-btn" onclick="openSettings()" id="settings-btn"><span class="material-icons-round">more_vert</span></button>
+          <button class="hnav-btn" data-view="settings" onclick="openSettings()" id="settings-btn"><span class="material-icons-round">more_vert</span></button>
         </div>
       </div>
     </div>
