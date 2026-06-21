@@ -4,8 +4,8 @@
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
   <meta name="theme-color" content="#3D5640"/>
-  <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20viewBox%3D%270%200%20192%20192%27%3E%3Ctext%20x%3D%2796%27%20y%3D%27148%27%20font-family%3D%27Arial%2C%20sans-serif%27%20font-weight%3D%27900%27%20font-size%3D%27230%27%20fill%3D%27%235C7E60%27%20text-anchor%3D%27middle%27%3Em%3C%2Ftext%3E%3C%2Fsvg%3E"/>
-  <link rel="manifest" href="data:application/json,%7B%22name%22%3A%22Momento%20Frutado%22%2C%22short_name%22%3A%22Momento%20Frutado%22%2C%22display%22%3A%22standalone%22%2C%22background_color%22%3A%22%23F5F7F2%22%2C%22theme_color%22%3A%22%235C7E60%22%2C%22icons%22%3A%5B%7B%22src%22%3A%22data%3Aimage%2Fsvg%2Bxml%2C%253Csvg%2520xmlns%253D%2527http%253A%252F%252Fwww.w3.org%252F2000%252Fsvg%2527%2520viewBox%253D%25270%25200%2520192%2520192%2527%253E%253Ctext%2520x%253D%252796%2527%2520y%253D%2527148%2527%2520font-family%253D%2527Arial%252C%2520sans-serif%2527%2520font-weight%253D%2527900%2527%2520font-size%253D%2527230%2527%2520fill%253D%2527%25235C7E60%2527%2520text-anchor%253D%2527middle%2527%253Em%253C%252Ftext%253E%253C%252Fsvg%253E%22%2C%22sizes%22%3A%22192x192%22%2C%22type%22%3A%22image%2Fsvg%2Bxml%22%7D%5D%7D"/>
+  <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20viewBox%3D%270%200%20192%20192%27%3E%3Ctext%20x%3D%2796%27%20y%3D%27155%27%20font-family%3D%27Arial%2C%20sans-serif%27%20font-weight%3D%27900%27%20font-size%3D%27270%27%20fill%3D%27%23FFFFFF%27%20text-anchor%3D%27middle%27%3Em%3C%2Ftext%3E%3C%2Fsvg%3E"/>
+  <link rel="manifest" href="data:application/json,%7B%22name%22%3A%22Momento%20Frutado%22%2C%22short_name%22%3A%22Momento%20Frutado%22%2C%22display%22%3A%22standalone%22%2C%22background_color%22%3A%22%23F5F7F2%22%2C%22theme_color%22%3A%22%235C7E60%22%2C%22icons%22%3A%5B%7B%22src%22%3A%22data%3Aimage%2Fsvg%2Bxml%2C%253Csvg%2520xmlns%253D%2527http%253A%252F%252Fwww.w3.org%252F2000%252Fsvg%2527%2520viewBox%253D%25270%25200%2520192%2520192%2527%253E%253Ctext%2520x%253D%252796%2527%2520y%253D%2527155%2527%2520font-family%253D%2527Arial%252C%2520sans-serif%2527%2520font-weight%253D%2527900%2527%2520font-size%253D%2527270%2527%2520fill%253D%2527%2523FFFFFF%2527%2520text-anchor%253D%2527middle%2527%253Em%253C%252Ftext%253E%253C%252Fsvg%253E%22%2C%22sizes%22%3A%22192x192%22%2C%22type%22%3A%22image%2Fsvg%2Bxml%22%7D%5D%7D"/>
   <meta name="apple-mobile-web-app-capable" content="yes"/>
   <meta name="apple-mobile-web-app-title" content="Momento Frutado"/>
   <title>Momento Frutado – Compras</title>
@@ -1548,24 +1548,22 @@ function renderDashSummary() {
     }
   }
 
-  // Card 3: o projeto (em Fazer) com mais tarefas por fazer
+  // Card 3: um projeto pendente ao calhas (em Fazer) — muda a cada visita ao dashboard
   let topProjectValue = '—';
   let topProjectLabel = 'Sem projetos';
   {
-    const withPending = projects
-      .map(p => ({ title: p.title, pending: p.tasks.filter(t => !t.done).length }))
-      .filter(p => p.pending > 0)
-      .sort((a, b) => b.pending - a.pending);
+    const withPending = projects.filter(p => p.tasks.some(t => !t.done));
     if (withPending.length) {
-      topProjectValue = String(withPending[0].pending);
-      topProjectLabel = withPending[0].title;
+      const pick = withPending[Math.floor(Math.random() * withPending.length)];
+      topProjectValue = pick.title;
+      topProjectLabel = 'fazer';
     }
   }
 
   const cards = [
     { value: salesCardValue, label: salesCardLabel, view: 'sales', dotId: 'dash-dot-sales' },
     { value: dayCompareValue, label: dayCompareLabel, view: 'sales', dotId: null, alert: dayCompareAlert },
-    { value: topProjectValue, label: topProjectLabel, view: 'tasks', dotId: null },
+    { value: topProjectValue, label: topProjectLabel, view: 'tasks', dotId: null, small: true },
   ];
 
   cards.forEach(c => {
@@ -1573,15 +1571,17 @@ function renderDashSummary() {
     card.onclick = () => switchTo(c.view);
     const borderColor = c.alert ? 'var(--md-error)' : 'var(--md-amber)';
     card.style.cssText = `width:100px; height:100px; border-radius:50%; background:transparent; border:2px solid ${borderColor}; display:flex; flex-direction:column; align-items:center; justify-content:center; cursor:pointer; flex-shrink:0; gap:2px; position:relative;`;
+    const valueFontSize = c.small ? '13px' : '20px';
+    const valueLineClamp = c.small ? 'display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; line-height:1.15;' : 'line-height:1; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;';
     if (c.alert) {
       card.innerHTML = `
         <span style="position:absolute; top:-4px; right:-2px; width:18px; height:18px; border-radius:50%; background:var(--md-error); color:white; font-size:12px; font-weight:800; display:flex; align-items:center; justify-content:center;">!</span>
-        <div style="font-size:20px; font-weight:700; color:var(--md-white); line-height:1;">${c.value}</div>
+        <div style="font-size:${valueFontSize}; font-weight:700; color:var(--md-white); ${valueLineClamp} text-align:center; padding:0 8px; max-width:90px;">${c.value}</div>
         <div style="font-size:10px; color:var(--md-white); opacity:0.7; text-align:center; padding:0 6px; line-height:1.2; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; max-width:84px;">${c.label}</div>
       `;
     } else {
       card.innerHTML = `
-        <div style="font-size:20px; font-weight:700; color:var(--md-white); line-height:1;">${c.value}</div>
+        <div style="font-size:${valueFontSize}; font-weight:700; color:var(--md-white); ${valueLineClamp} text-align:center; padding:0 8px; max-width:90px;">${c.value}</div>
         <div style="font-size:10px; color:var(--md-white); opacity:0.7; text-align:center; padding:0 6px; line-height:1.2; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; max-width:84px;">${c.label}</div>
       `;
     }
@@ -3516,124 +3516,114 @@ function renderResumo() {
 
   const sorted = [...marketSales].sort((a, b) => a.date.localeCompare(b.date));
 
-  // ── Bloco 0: Contexto — esta semana vs semana passada ──
-  const today = new Date();
-  const dayOfWeek = today.getDay(); // 0=Dom, 1=Seg...
-  const startOfThisWeek = new Date(today); startOfThisWeek.setDate(today.getDate() - dayOfWeek);
-  const startOfLastWeek = new Date(startOfThisWeek); startOfLastWeek.setDate(startOfThisWeek.getDate() - 7);
-  const fmt = d => d.toISOString().split('T')[0];
-
-  const thisWeekSales = sorted.filter(s => s.date >= fmt(startOfThisWeek) && s.date <= fmt(today));
-  const lastWeekSales = sorted.filter(s => s.date >= fmt(startOfLastWeek) && s.date < fmt(startOfThisWeek));
-  const thisWeekTotal = thisWeekSales.reduce((a, s) => a + s.total, 0);
-  const lastWeekTotal = lastWeekSales.reduce((a, s) => a + s.total, 0);
-  const weekDiff = lastWeekTotal > 0 ? ((thisWeekTotal - lastWeekTotal) / lastWeekTotal * 100) : null;
-
-  // Média do mesmo dia da semana (Terça com Terça, Sexta com Sexta, Sábado com Sábado)
-  const lastSale = sorted[sorted.length - 1];
-  const lastSaleDow = new Date(lastSale.date + 'T00:00:00').getDay();
-  const sameDowSales = sorted.filter(s => new Date(s.date + 'T00:00:00').getDay() === lastSaleDow);
-  const sameDowHistory = sameDowSales.slice(0, -1); // exclui a própria última venda
-  const allAvg = sameDowHistory.length > 0 ? sameDowHistory.reduce((a,s) => a + s.total, 0) / sameDowHistory.length : 0;
-  const lastVsAvg = allAvg > 0 ? ((lastSale.total - allAvg) / allAvg * 100) : null;
-  const dowNames = ['domingo','segunda','terça','quarta','quinta','sexta','sábado'];
-  const lastSaleDowName = dowNames[lastSaleDow];
-
-  const ctxBlock = document.createElement('div');
-  ctxBlock.className = 'resumo-block';
-  ctxBlock.style.cssText = 'background:var(--md-surface); border-radius:14px; border:1px solid var(--md-outline-variant); padding:18px; margin-bottom:20px;';
-
-  let weekHtml = '';
-  if (weekDiff !== null) {
-    const arrow = weekDiff >= 0 ? '↑' : '↓';
-    const color = weekDiff >= 0 ? 'var(--md-success)' : 'var(--md-error)';
-    weekHtml = `
-      <div style="display:flex; justify-content:space-between; align-items:flex-end; margin-bottom:14px; padding-bottom:14px; border-bottom:1px solid var(--md-outline-variant);">
-        <div>
-          <div style="font-size:11px; font-weight:700; color:var(--md-primary); opacity:0.5; text-transform:uppercase; letter-spacing:1px; margin-bottom:4px;">esta semana</div>
-          <div style="font-size:30px; font-weight:800; color:var(--md-primary);">${thisWeekTotal.toFixed(0)}€</div>
-        </div>
-        <div style="text-align:right;">
-          <div style="font-size:11px; font-weight:700; color:var(--md-primary); opacity:0.5; text-transform:uppercase; letter-spacing:1px; margin-bottom:4px;">vs semana passada</div>
-          <div style="font-size:22px; font-weight:700; color:${color};">${arrow} ${Math.abs(weekDiff).toFixed(1)}%</div>
-        </div>
-      </div>`;
-  } else {
-    weekHtml = `<div style="font-size:28px; font-weight:800; color:var(--md-primary); margin-bottom:14px; padding-bottom:14px; border-bottom:1px solid var(--md-outline-variant);">${thisWeekTotal.toFixed(0)}€ <span style="font-size:13px; opacity:0.5; font-weight:500;">esta semana</span></div>`;
-  }
-
-  let lastSaleHtml = '';
-  if (lastVsAvg !== null) {
-    const arrow = lastVsAvg >= 0 ? '↑' : '↓';
-    const color = lastVsAvg >= 0 ? 'var(--md-success)' : 'var(--md-error)';
-    lastSaleHtml = `
-      <div style="display:flex; justify-content:space-between; align-items:center;">
-        <div>
-          <div style="font-size:11px; font-weight:700; color:var(--md-primary); opacity:0.5; text-transform:uppercase; letter-spacing:1px; margin-bottom:2px;">última venda</div>
-          <div style="font-size:18px; font-weight:700; color:var(--md-primary);">${lastSale.total.toFixed(0)}€</div>
-          <div style="font-size:11px; color:var(--md-primary); opacity:0.5;">${lastSale.label || lastSale.date}</div>
-        </div>
-        <div style="text-align:right;">
-          <div style="font-size:11px; font-weight:700; color:var(--md-primary); opacity:0.5; text-transform:uppercase; letter-spacing:1px; margin-bottom:2px;">vs média ${lastSaleDowName}</div>
-          <div style="font-size:18px; font-weight:700; color:${color};">${arrow} ${Math.abs(lastVsAvg).toFixed(1)}%</div>
-          <div style="font-size:11px; color:var(--md-primary); opacity:0.5;">média: ${allAvg.toFixed(0)}€</div>
-        </div>
-      </div>`;
-  }
-
-  ctxBlock.innerHTML = weekHtml + lastSaleHtml;
-  content.appendChild(ctxBlock);
-
-  // ── Bloco 0.5: Vendas semana a semana ──
+  // ── Bloco DECISÃO: agrupa por ciclo de compra — Terça (compra 2ª) vs Sexta+Sábado (compra 5ª) ──
   {
-    const weekKey = (dateStr) => {
-      const d = new Date(dateStr + 'T00:00:00');
-      const day = d.getDay();
-      const monday = new Date(d); monday.setDate(d.getDate() - ((day + 6) % 7));
-      return monday.toISOString().split('T')[0];
+    const dowNames = ['domingo','segunda','terça','quarta','quinta','sexta','sábado'];
+    const getDow = (s) => new Date(s.date + 'T00:00:00').getDay();
+
+    // Últimas 4 ocorrências de cada dia, mais recente primeiro
+    const lastN = (dow, n) => sorted.filter(s => getDow(s) === dow).slice(-n).reverse();
+
+    const tercaRecent = lastN(2, 4);
+    const sextaRecent = lastN(5, 4);
+    const sabadoRecent = lastN(6, 4);
+
+    // Tendência simples: média das últimas 2 vs média das 2 anteriores a essas
+    const trendOf = (arr) => {
+      if (arr.length < 2) return null;
+      const recent = arr.slice(0, Math.ceil(arr.length / 2));
+      const older = arr.slice(Math.ceil(arr.length / 2));
+      if (!older.length) return null;
+      const avgRecent = recent.reduce((a, s) => a + s.total, 0) / recent.length;
+      const avgOlder = older.reduce((a, s) => a + s.total, 0) / older.length;
+      if (avgOlder === 0) return null;
+      return ((avgRecent - avgOlder) / avgOlder) * 100;
     };
-    const totalsByWeek = {};
-    sorted.forEach(s => {
-      const wk = weekKey(s.date);
-      totalsByWeek[wk] = (totalsByWeek[wk] || 0) + s.total;
-    });
-    const weekKeys = Object.keys(totalsByWeek).sort().reverse(); // mais recente primeiro
 
-    if (weekKeys.length >= 1) {
-      const weeksBlock = document.createElement('div');
-      weeksBlock.className = 'resumo-block';
-      weeksBlock.style.cssText = 'background:var(--md-surface); border-radius:14px; border:1px solid var(--md-outline-variant); padding:18px; margin-bottom:20px;';
+    const trendLabel = (pct) => {
+      if (pct === null) return { text: 'dados insuficientes', color: 'var(--md-primary)', opacity: 0.4 };
+      if (pct >= 8) return { text: `↑ a subir (${pct.toFixed(0)}%)`, color: 'var(--md-success)', opacity: 1 };
+      if (pct <= -8) return { text: `↓ a cair (${Math.abs(pct).toFixed(0)}%)`, color: 'var(--md-error)', opacity: 1 };
+      return { text: '→ estável', color: 'var(--md-primary)', opacity: 0.7 };
+    };
 
-      const rowsHtml = weekKeys.slice(0, 12).map((wk, idx) => {
-        const total = totalsByWeek[wk];
-        const prevWk = weekKeys[idx + 1];
-        const prevTotal = prevWk ? totalsByWeek[prevWk] : null;
-        const d = new Date(wk + 'T00:00:00');
-        const dEnd = new Date(d); dEnd.setDate(d.getDate() + 6);
-        const fmtShort = (date) => `${date.getDate()}/${date.getMonth()+1}`;
-        const label = `${fmtShort(d)} – ${fmtShort(dEnd)}`;
+    const decisionBlock = document.createElement('div');
+    decisionBlock.className = 'resumo-block';
+    decisionBlock.style.cssText = 'background:var(--md-surface); border-radius:14px; border:1px solid var(--md-outline-variant); padding:18px; margin-bottom:20px;';
 
-        let diffHtml = '';
-        if (prevTotal !== null && prevTotal > 0) {
-          const diff = ((total - prevTotal) / prevTotal) * 100;
-          const arrow = diff >= 0 ? '↑' : '↓';
-          const color = diff >= 0 ? 'var(--md-success)' : 'var(--md-error)';
-          diffHtml = `<span style="font-size:12px; font-weight:700; color:${color}; margin-left:8px;">${arrow} ${Math.abs(diff).toFixed(0)}%</span>`;
-        }
-
-        return `
-          <div style="display:flex; justify-content:space-between; align-items:center; padding:9px 0; ${idx < weekKeys.slice(0,12).length - 1 ? 'border-bottom:1px solid var(--md-outline-variant);' : ''}">
-            <span style="font-size:13px; color:var(--md-primary); opacity:0.6;">${label}</span>
-            <span style="font-size:16px; font-weight:700; color:var(--md-primary);">${total.toFixed(0)}€${diffHtml}</span>
+    const renderDayRow = (label, arr) => {
+      if (!arr.length) return `<div style="padding:10px 0; font-size:13px; color:var(--md-primary); opacity:0.4;">${label}: sem vendas registadas</div>`;
+      const last = arr[0];
+      const trend = trendLabel(trendOf(arr));
+      return `
+        <div style="display:flex; justify-content:space-between; align-items:center; padding:10px 0;">
+          <div>
+            <div style="font-size:13px; font-weight:700; color:var(--md-primary);">${label}</div>
+            <div style="font-size:11px; color:var(--md-primary); opacity:0.5;">última: ${last.total.toFixed(0)}€ (${last.date.split('-').reverse().join('/')})</div>
           </div>
-        `;
-      }).join('');
-
-      weeksBlock.innerHTML = `
-        <div style="font-size:13px; font-weight:700; color:var(--md-primary); opacity:0.6; text-transform:uppercase; letter-spacing:1px; margin-bottom:10px;">Vendas semana a semana</div>
-        ${rowsHtml}
+          <div style="font-size:13px; font-weight:700; color:${trend.color}; opacity:${trend.opacity};">${trend.text}</div>
+        </div>
       `;
-      content.appendChild(weeksBlock);
+    };
+
+    const sextaSabadoCombined = [...sextaRecent, ...sabadoRecent].sort((a,b) => b.date.localeCompare(a.date));
+    const sextaSabadoTotal4 = sextaSabadoCombined.slice(0, 2).reduce((a,s) => a + s.total, 0);
+
+    decisionBlock.innerHTML = `
+      <div style="font-size:13px; font-weight:700; color:var(--md-primary); opacity:0.6; text-transform:uppercase; letter-spacing:1px; margin-bottom:4px;">Para a próxima compra</div>
+      <div style="font-size:11px; color:var(--md-primary); opacity:0.45; margin-bottom:10px;">Segunda compra para terça · Quinta compra para sexta + sábado</div>
+
+      <div style="border-bottom:1px solid var(--md-outline-variant); margin-bottom:4px;">
+        <div style="font-size:11px; font-weight:700; color:var(--md-accent); text-transform:uppercase; letter-spacing:0.5px; margin-top:8px;">Compra de segunda</div>
+        ${renderDayRow('Terça', tercaRecent)}
+      </div>
+
+      <div>
+        <div style="font-size:11px; font-weight:700; color:var(--md-accent); text-transform:uppercase; letter-spacing:0.5px; margin-top:8px;">Compra de quinta</div>
+        ${renderDayRow('Sexta', sextaRecent)}
+        ${renderDayRow('Sábado', sabadoRecent)}
+      </div>
+    `;
+    content.appendChild(decisionBlock);
+  }
+
+  // ── Bloco PADRÕES: frases automáticas sobre tendências e comparações entre dias ──
+  {
+    const getDow = (s) => new Date(s.date + 'T00:00:00').getDay();
+    const byDow = { terça: sorted.filter(s => getDow(s) === 2), sexta: sorted.filter(s => getDow(s) === 5), sábado: sorted.filter(s => getDow(s) === 6) };
+    const patterns = [];
+
+    // Padrão 1: qual dia tem a média mais alta / mais baixa
+    const avgs = Object.entries(byDow).filter(([,arr]) => arr.length >= 2).map(([name, arr]) => ({ name, avg: arr.reduce((a,s)=>a+s.total,0)/arr.length }));
+    if (avgs.length >= 2) {
+      avgs.sort((a,b) => b.avg - a.avg);
+      patterns.push(`${avgs[0].name.charAt(0).toUpperCase()+avgs[0].name.slice(1)} costuma ser o teu melhor dia (média ${avgs[0].avg.toFixed(0)}€)`);
+      if (avgs.length >= 2) {
+        const worst = avgs[avgs.length-1];
+        patterns.push(`${worst.name.charAt(0).toUpperCase()+worst.name.slice(1)} costuma ser o mais fraco (média ${worst.avg.toFixed(0)}€)`);
+      }
+    }
+
+    // Padrão 2: tendências de subida/queda consistentes por dia (3+ últimas, sempre a subir ou sempre a cair)
+    Object.entries(byDow).forEach(([name, arr]) => {
+      if (arr.length < 3) return;
+      const last3 = arr.slice(-3);
+      const isRising = last3[0].total < last3[1].total && last3[1].total < last3[2].total;
+      const isFalling = last3[0].total > last3[1].total && last3[1].total > last3[2].total;
+      const dayCap = name.charAt(0).toUpperCase()+name.slice(1);
+      if (isRising) patterns.push(`${dayCap} tem subido nas últimas 3 semanas seguidas`);
+      if (isFalling) patterns.push(`${dayCap} tem caído nas últimas 3 semanas seguidas`);
+    });
+
+    if (patterns.length) {
+      const patternsBlock = document.createElement('div');
+      patternsBlock.className = 'resumo-block';
+      patternsBlock.style.cssText = 'background:var(--md-surface); border-radius:14px; border:1px solid var(--md-outline-variant); padding:18px; margin-bottom:20px;';
+      patternsBlock.innerHTML = `
+        <div style="font-size:13px; font-weight:700; color:var(--md-primary); opacity:0.6; text-transform:uppercase; letter-spacing:1px; margin-bottom:12px;">Padrões identificados</div>
+        ${patterns.map(p => `<div style="display:flex; gap:8px; padding:7px 0; font-size:14px; color:var(--md-primary);"><span style="opacity:0.4;">•</span><span>${p}</span></div>`).join('')}
+      `;
+      content.appendChild(patternsBlock);
     }
   }
 
