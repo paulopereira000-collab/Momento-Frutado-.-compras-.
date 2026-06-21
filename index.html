@@ -114,7 +114,7 @@
     #scroll-area { flex:1; overflow-y:auto; padding-bottom:24px; position:relative; }
     .view { display:none; }
     .view.active { display:block; }
-    #view-dashboard.active { display:flex; flex-direction:column; min-height:calc(100vh - 60px); }
+    #view-dashboard.active { display:flex; flex-direction:column; min-height:calc(100vh - var(--header-height)); }
 
     /* FUNDO DO DASHBOARD — degradê verde seco → verde muito escuro */
     .dash-gradient-bg {
@@ -469,6 +469,7 @@
         <button onclick="switchTo('add')" style="background:none; border:none; border-bottom:1px solid var(--md-outline-variant); padding:14px 0; text-align:left; cursor:pointer; width:100%; font-size:17px; font-weight:500; color:var(--md-primary); font-family:'Outfit',sans-serif; display:flex; align-items:center; gap:12px;"><span class="material-icons-round" style="font-size:20px;">category</span>Gestão de produtos</button>
         <button onclick="switchTo('whatsapp')" style="background:none; border:none; border-bottom:1px solid var(--md-outline-variant); padding:14px 0; text-align:left; cursor:pointer; width:100%; font-size:17px; font-weight:500; color:var(--md-primary); font-family:'Outfit',sans-serif; display:flex; align-items:center; gap:12px;"><span class="material-icons-round" style="font-size:20px;">chat_bubble_outline</span>WhatsApp</button>
         <button onclick="switchTo('history')" style="background:none; border:none; border-bottom:1px solid var(--md-outline-variant); padding:14px 0; text-align:left; cursor:pointer; width:100%; font-size:17px; font-weight:500; color:var(--md-primary); font-family:'Outfit',sans-serif; display:flex; align-items:center; gap:12px;"><span class="material-icons-round" style="font-size:20px;">history</span>Histórico</button>
+        <button onclick="switchTo('rents')" style="background:none; border:none; border-bottom:1px solid var(--md-outline-variant); padding:14px 0; text-align:left; cursor:pointer; width:100%; font-size:17px; font-weight:500; color:var(--md-primary); font-family:'Outfit',sans-serif; display:flex; align-items:center; gap:12px;"><span class="material-icons-round" style="font-size:20px;">home</span>Rendas</button>
         <button onclick="switchTo('resumo')" style="background:none; border:none; padding:14px 0; text-align:left; cursor:pointer; width:100%; font-size:17px; font-weight:500; color:var(--md-primary); font-family:'Outfit',sans-serif; display:flex; align-items:center; gap:12px;"><span class="material-icons-round" style="font-size:20px;">bar_chart</span>Resumo</button>
       </div>
 
@@ -632,30 +633,40 @@
           </div>
         </div>
 
-        <!-- ── RENDAS — junto a Vendas/Despesas, mesmo título visual ─────────── -->
+        <!-- ── QUEBRAS — fruta que se estragou, calcula valor pelo preço de compra ── -->
         <div style="margin-top:36px; padding-top:24px; border-top:1px solid var(--md-outline-variant);">
-          <div style="font-size:52px; font-weight:700; letter-spacing:-1px; line-height:1; color:var(--md-amber); text-transform:lowercase; margin-bottom:14px;">Rendas</div>
+          <div style="font-size:52px; font-weight:700; letter-spacing:-1px; line-height:1; color:var(--md-amber); text-transform:lowercase; margin-bottom:14px;">Quebras</div>
 
           <div style="background:var(--md-surface); border-radius:14px; border:1px solid var(--md-outline-variant); padding:18px; margin-bottom:20px;">
-            <div style="font-size:13px; font-weight:700; color:var(--md-primary); opacity:0.6; text-transform:uppercase; letter-spacing:1px; margin-bottom:12px;">Nova renda mensal</div>
+            <div style="font-size:13px; font-weight:700; color:var(--md-primary); opacity:0.6; text-transform:uppercase; letter-spacing:1px; margin-bottom:12px;">Registar quebra</div>
             <div style="margin-bottom:12px;">
-              <input id="rent-name" type="text" placeholder="Nome do imóvel/inquilino (ex: Om Sintra)" style="width:100%; padding:12px; border:1.5px solid var(--md-outline-variant); border-radius:10px; font-size:15px; font-family:'Outfit',sans-serif; color:var(--md-primary); background:var(--md-surface-1); outline:none;"/>
+              <input id="break-date" type="date" style="width:100%; padding:12px; border:1.5px solid var(--md-outline-variant); border-radius:10px; font-size:15px; font-family:'Outfit',sans-serif; color:var(--md-primary); background:var(--md-surface-1); outline:none;"/>
             </div>
-            <div style="display:flex; flex-direction:column; gap:10px;">
-              <button type="button" id="rent-amount-btn" data-placeholder="Valor (€)" onclick="openNumKeypadFor('rent-amount', {decimal:true})" style="width:100%; padding:14px; border:1.5px solid var(--md-outline-variant); border-radius:10px; font-size:22px; font-weight:700; font-family:'Outfit',sans-serif; color:var(--md-primary); background:var(--md-surface-1); cursor:pointer; text-align:left;">Valor (€)</button>
-              <input type="hidden" id="rent-amount" value=""/>
-              <div style="display:flex; justify-content:flex-end;">
-                <button onclick="saveRent()" style="background:var(--md-primary); color:var(--md-white); border:none; border-radius:50%; width:52px; height:52px; display:flex; align-items:center; justify-content:center; cursor:pointer; flex-shrink:0;">
-                  <span class="material-icons-round" style="font-size:26px;">check</span>
-                </button>
-              </div>
+            <div style="margin-bottom:12px;">
+              <select id="break-product" onchange="onBreakProductChange()" style="width:100%; padding:12px; border:1.5px solid var(--md-outline-variant); border-radius:10px; font-size:15px; font-family:'Outfit',sans-serif; color:var(--md-primary); background:var(--md-surface-1); outline:none;">
+                <option value="">Produto…</option>
+              </select>
+            </div>
+            <div style="display:flex; gap:10px; margin-bottom:12px;">
+              <button type="button" id="break-qty-btn" data-placeholder="Quantidade (kg)" onclick="openNumKeypadFor('break-qty', {decimal:true})" style="flex:1; padding:14px; border:1.5px solid var(--md-outline-variant); border-radius:10px; font-size:18px; font-weight:700; font-family:'Outfit',sans-serif; color:var(--md-primary); background:var(--md-surface-1); cursor:pointer; text-align:left;">Quantidade (kg)</button>
+              <input type="hidden" id="break-qty" value="" oninput="updateBreakEstimate()"/>
+            </div>
+            <div id="break-estimate" style="font-size:13px; color:var(--md-primary); opacity:0.6; margin-bottom:12px;"></div>
+            <div style="display:flex; justify-content:flex-end;">
+              <button onclick="saveBreak()" style="background:var(--md-primary); color:var(--md-white); border:none; border-radius:50%; width:52px; height:52px; display:flex; align-items:center; justify-content:center; cursor:pointer; flex-shrink:0;">
+                <span class="material-icons-round" style="font-size:26px;">check</span>
+              </button>
             </div>
           </div>
 
-          <div id="rents-list" style="margin-bottom:0;">
-            <div id="rents-empty" style="text-align:center; padding:40px 20px; color:var(--md-primary); opacity:0.4;">
-              <div style="font-size:17px; font-weight:600;">Sem rendas registadas</div>
-              <div style="font-size:14px; margin-top:6px;">Rendas mensais dos imóveis da empresa</div>
+          <button onclick="toggleBreaksHistory()" style="width:100%; background:none; border:none; padding:0; margin-bottom:10px; display:flex; align-items:center; justify-content:space-between; cursor:pointer;">
+            <span style="font-size:13px; font-weight:700; color:var(--md-primary); opacity:0.6; text-transform:uppercase; letter-spacing:1px;">Quebras registadas</span>
+            <span class="material-icons-round" id="breaks-history-chevron" style="font-size:20px; color:var(--md-primary); opacity:0.6; transition:transform 0.2s;">expand_more</span>
+          </button>
+          <div id="breaks-list" style="display:none; margin-bottom:0;">
+            <div id="breaks-empty" style="text-align:center; padding:40px 20px; color:var(--md-primary); opacity:0.4;">
+              <div style="font-size:17px; font-weight:600;">Sem quebras registadas</div>
+              <div style="font-size:14px; margin-top:6px;">Regista a fruta que se estragou para a margem real</div>
             </div>
           </div>
         </div>
@@ -799,6 +810,38 @@
           </div>
         </div>
 
+      </div>
+    </div>
+
+    <!-- ── RENDAS (página própria) ───────────────────────────────────────── -->
+    <div id="view-rents" class="view">
+      <div style="padding:20px 16px 8px;">
+        <div style="font-size:52px; font-weight:700; letter-spacing:-1px; line-height:1; color:var(--md-amber); text-transform:lowercase;">Rendas</div>
+      </div>
+      <div style="padding:4px 16px 16px;">
+
+        <div style="background:var(--md-surface); border-radius:14px; border:1px solid var(--md-outline-variant); padding:18px; margin-bottom:20px;">
+          <div style="font-size:13px; font-weight:700; color:var(--md-primary); opacity:0.6; text-transform:uppercase; letter-spacing:1px; margin-bottom:12px;">Nova renda mensal</div>
+          <div style="margin-bottom:12px;">
+            <input id="rent-name" type="text" placeholder="Nome do imóvel/inquilino (ex: Om Sintra)" style="width:100%; padding:12px; border:1.5px solid var(--md-outline-variant); border-radius:10px; font-size:15px; font-family:'Outfit',sans-serif; color:var(--md-primary); background:var(--md-surface-1); outline:none;"/>
+          </div>
+          <div style="display:flex; flex-direction:column; gap:10px;">
+            <button type="button" id="rent-amount-btn" data-placeholder="Valor (€)" onclick="openNumKeypadFor('rent-amount', {decimal:true})" style="width:100%; padding:14px; border:1.5px solid var(--md-outline-variant); border-radius:10px; font-size:22px; font-weight:700; font-family:'Outfit',sans-serif; color:var(--md-primary); background:var(--md-surface-1); cursor:pointer; text-align:left;">Valor (€)</button>
+            <input type="hidden" id="rent-amount" value=""/>
+            <div style="display:flex; justify-content:flex-end;">
+              <button onclick="saveRent()" style="background:var(--md-primary); color:var(--md-white); border:none; border-radius:50%; width:52px; height:52px; display:flex; align-items:center; justify-content:center; cursor:pointer; flex-shrink:0;">
+                <span class="material-icons-round" style="font-size:26px;">check</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div id="rents-list" style="margin-bottom:0;">
+          <div id="rents-empty" style="text-align:center; padding:40px 20px; color:var(--md-primary); opacity:0.4;">
+            <div style="font-size:17px; font-weight:600;">Sem rendas registadas</div>
+            <div style="font-size:14px; margin-top:6px;">Rendas mensais dos imóveis da empresa</div>
+          </div>
+        </div>
       </div>
     </div>
 
@@ -1232,6 +1275,7 @@ let expenses = [];  // despesas ocasionais { id, date, category, amount }
 let recurringExpenses = []; // despesas fixas { id, type:'monthly'|'yearly', category, amount, day, month (só anual), lastGenerated }
 let rents = []; // rendas mensais fixas { id, name, amount }
 let boxWeights = {}; // { "Courgette|||Petit": 5, "Courgette|||Caixa 1kg": 1, ... } — peso médio (kg) por produto+caixa
+let breaks = []; // quebras { id, date, product, qty, unitPrice, total }
 
 // ── HELPERS ───────────────────────────────────────────────────────────────────
 function gk(cat, item) { return `${cat}|||${item}`; }
@@ -1251,7 +1295,7 @@ function initOpen(prods) {
 }
 
 // ── LOCAL STORAGE ─────────────────────────────────────────────────────────────
-function payload() { return { products, subcats, list, picked, history: snapHistory, suppliers, tasks, sales, projects, expenses, recurringExpenses, vasilhameMovs, rents, boxWeights }; }
+function payload() { return { products, subcats, list, picked, history: snapHistory, suppliers, tasks, sales, projects, expenses, recurringExpenses, vasilhameMovs, rents, boxWeights, breaks }; }
 
 function applyLocal(r) {
   if (r.products) products = r.products;
@@ -1266,6 +1310,7 @@ function applyLocal(r) {
   if (r.vasilhameMovs) vasilhameMovs = r.vasilhameMovs;
   if (r.rents) rents = r.rents;
   if (r.boxWeights) boxWeights = r.boxWeights;
+  if (r.breaks) breaks = r.breaks;
   if (r.subcats && Object.keys(r.subcats).length > 0) subcats = r.subcats;
   else subcats = JSON.parse(JSON.stringify(DEFAULT_SUBCATS));
   if (r.list) list = { ...buildEmpty(products), ...r.list };
@@ -2260,6 +2305,7 @@ function importBackup(event) {
       if (data.vasilhameMovs)     vasilhameMovs     = data.vasilhameMovs;
       if (data.rents)             rents             = data.rents;
       if (data.boxWeights)        boxWeights        = data.boxWeights;
+      if (data.breaks)            breaks            = data.breaks;
       // Guardar e re-renderizar
       sched();
       renderCats('');
@@ -2545,6 +2591,135 @@ function renderExpenses() {
       </div>
       <div style="font-size:20px; font-weight:800; color:var(--md-error);">-${e.amount.toFixed(2)}€</div>
       <button onclick="deleteExpense(${e.id})" style="background:none; border:none; cursor:pointer; padding:4px;">
+        <span class="material-icons-round" style="font-size:18px; color:var(--md-outline-variant);">delete_outline</span>
+      </button>
+    `;
+    container.insertBefore(row, empty);
+  });
+}
+
+// ── QUEBRAS — fruta que se estragou, valor calculado pelo preço de compra ──
+// Devolve o último preço de compra conhecido de um produto, procurando primeiro
+// na lista atual e depois no histórico (do mais recente para o mais antigo).
+function getLastBuyPrice(productName) {
+  for (const key in picked) {
+    const [, item] = key.split('|||');
+    if (item === productName && picked[key].price) {
+      const p = parseFloat(picked[key].price);
+      if (p > 0) return p;
+    }
+  }
+  for (const snap of snapHistory) {
+    for (const it of (snap.items || [])) {
+      if (it.item === productName && it.price) {
+        const p = parseFloat(it.price);
+        if (p > 0) return p;
+      }
+    }
+  }
+  return null;
+}
+
+function populateBreakProductSelect() {
+  const sel = document.getElementById('break-product');
+  if (!sel) return;
+  const current = sel.value;
+  const allProducts = [];
+  Object.values(products).forEach(catItems => {
+    if (Array.isArray(catItems)) {
+      catItems.forEach(it => allProducts.push(it));
+    } else if (catItems && typeof catItems === 'object') {
+      Object.values(catItems).forEach(arr => arr.forEach(it => allProducts.push(it)));
+    }
+  });
+  const unique = [...new Set(allProducts)].sort((a,b) => a.localeCompare(b));
+  sel.innerHTML = '<option value="">Produto…</option>' + unique.map(p => `<option value="${p}">${p}</option>`).join('');
+  if (current) sel.value = current;
+}
+
+function onBreakProductChange() {
+  updateBreakEstimate();
+}
+
+function updateBreakEstimate() {
+  const estimateEl = document.getElementById('break-estimate');
+  if (!estimateEl) return;
+  const product = document.getElementById('break-product').value;
+  const qty = parseFloat(document.getElementById('break-qty').value) || 0;
+  if (!product) { estimateEl.textContent = ''; return; }
+  const price = getLastBuyPrice(product);
+  if (price === null) {
+    estimateEl.textContent = 'Sem preço de compra registado para este produto';
+    return;
+  }
+  if (qty > 0) {
+    estimateEl.textContent = `${qty}kg × ${price.toFixed(2)}€/kg ≈ ${(qty * price).toFixed(2)}€ de perda`;
+  } else {
+    estimateEl.textContent = `Último preço de compra: ${price.toFixed(2)}€/kg`;
+  }
+}
+
+function saveBreak() {
+  const dateVal = document.getElementById('break-date').value;
+  const product = document.getElementById('break-product').value;
+  const qtyVal = document.getElementById('break-qty').value.trim();
+  if (!dateVal)  { showSnack('Indica a data', 'error'); return; }
+  if (!product)  { showSnack('Escolhe o produto', 'error'); return; }
+  if (!qtyVal)   { showSnack('Indica a quantidade', 'error'); return; }
+  const qty = parseFloat(qtyVal);
+  if (isNaN(qty) || qty <= 0) { showSnack('Quantidade inválida', 'error'); return; }
+
+  const unitPrice = getLastBuyPrice(product);
+  const total = unitPrice !== null ? qty * unitPrice : null;
+
+  breaks.push({ id: Date.now(), date: dateVal, product, qty, unitPrice, total });
+  breaks.sort((a, b) => b.date.localeCompare(a.date));
+
+  sched();
+  document.getElementById('break-qty').value = '';
+  const qtyBtn = document.getElementById('break-qty-btn'); if (qtyBtn) qtyBtn.textContent = qtyBtn.dataset.placeholder;
+  document.getElementById('break-estimate').textContent = '';
+  renderBreaks();
+  showSnack('Quebra registada ✓', 'saved');
+}
+
+function deleteBreak(id) {
+  breaks = breaks.filter(b => b.id !== id);
+  sched(); renderBreaks();
+  showSnack('Quebra removida', 'saved');
+}
+
+function toggleBreaksHistory() {
+  const list = document.getElementById('breaks-list');
+  const chevron = document.getElementById('breaks-history-chevron');
+  const isOpen = list.style.display !== 'none';
+  list.style.display = isOpen ? 'none' : 'block';
+  chevron.style.transform = isOpen ? 'rotate(0deg)' : 'rotate(180deg)';
+}
+
+function renderBreaks() {
+  const container = document.getElementById('breaks-list');
+  const empty = document.getElementById('breaks-empty');
+  if (!container) return;
+  const dateInput = document.getElementById('break-date');
+  if (dateInput && !dateInput.value) dateInput.value = new Date().toISOString().split('T')[0];
+  populateBreakProductSelect();
+
+  container.querySelectorAll('.break-row').forEach(r => r.remove());
+  empty.style.display = breaks.length ? 'none' : 'block';
+
+  breaks.forEach(b => {
+    const row = document.createElement('div');
+    row.className = 'break-row';
+    row.style.cssText = 'display:flex; align-items:center; padding:14px 0; border-bottom:1px solid var(--md-outline-variant); gap:12px;';
+    row.innerHTML = `
+      <span class="material-icons-round" style="font-size:22px; color:var(--md-error); opacity:0.6;">delete_outline</span>
+      <div style="flex:1;">
+        <div style="font-size:16px; font-weight:600; color:var(--md-primary);">${b.product}</div>
+        <div style="font-size:12px; color:var(--md-primary); opacity:0.5;">${b.qty}kg · ${b.date}</div>
+      </div>
+      <div style="font-size:20px; font-weight:800; color:var(--md-error);">${b.total !== null ? '-'+b.total.toFixed(2)+'€' : '—'}</div>
+      <button onclick="deleteBreak(${b.id})" style="background:none; border:none; cursor:pointer; padding:4px;">
         <span class="material-icons-round" style="font-size:18px; color:var(--md-outline-variant);">delete_outline</span>
       </button>
     `;
@@ -3819,11 +3994,28 @@ function renderResumo() {
     content.appendChild(monthBlock);
   }
 
-  // ── Bloco 3.5: Lucro líquido (vendas - despesas) ──
-  if (expenses.length > 0) {
+  // ── Bloco 3.5: Lucro líquido (vendas - custo de mercadoria - despesas - quebras) ──
+  if (expenses.length > 0 || breaks.length > 0 || snapHistory.length > 0) {
     const totalSales = sorted.reduce((a, s) => a + s.total, 0);
     const totalExp   = expenses.reduce((a, e) => a + e.amount, 0);
-    const net = totalSales - totalExp;
+    const totalBreaks = breaks.reduce((a, b) => a + (b.total || 0), 0);
+
+    // Custo de mercadoria: preço de compra (€/kg) × peso total (kg), só para itens com peso configurado
+    let totalCost = 0;
+    const missingWeight = new Set(); // produtos comprados sem peso por caixa configurado
+    snapHistory.forEach(snap => {
+      (snap.items || []).forEach(it => {
+        const price = parseFloat(it.price);
+        if (!price || price <= 0) return; // sem preço de compra registado, não entra no custo
+        if (it.weightKg && it.weightKg > 0) {
+          totalCost += price * it.weightKg;
+        } else {
+          missingWeight.add(it.item);
+        }
+      });
+    });
+
+    const net = totalSales - totalCost - totalExp - totalBreaks;
     const profitBlock = document.createElement('div');
     profitBlock.className = 'resumo-block';
     profitBlock.style.cssText = 'background:var(--md-surface); border-radius:14px; border:1px solid var(--md-outline-variant); padding:18px; margin-bottom:20px;';
@@ -3833,14 +4025,28 @@ function renderResumo() {
         <span style="font-size:14px; color:var(--md-primary); opacity:0.7;">Vendas</span>
         <span style="font-size:16px; font-weight:700; color:var(--md-primary);">+${totalSales.toFixed(2)}€</span>
       </div>
-      <div style="display:flex; justify-content:space-between; margin-bottom:12px;">
+      <div style="display:flex; justify-content:space-between; margin-bottom:8px;">
+        <span style="font-size:14px; color:var(--md-primary); opacity:0.7;">Custo de mercadoria</span>
+        <span style="font-size:16px; font-weight:700; color:var(--md-error);">-${totalCost.toFixed(2)}€</span>
+      </div>
+      <div style="display:flex; justify-content:space-between; margin-bottom:8px;">
         <span style="font-size:14px; color:var(--md-primary); opacity:0.7;">Despesas</span>
         <span style="font-size:16px; font-weight:700; color:var(--md-error);">-${totalExp.toFixed(2)}€</span>
+      </div>
+      <div style="display:flex; justify-content:space-between; margin-bottom:12px;">
+        <span style="font-size:14px; color:var(--md-primary); opacity:0.7;">Quebras</span>
+        <span style="font-size:16px; font-weight:700; color:var(--md-error);">-${totalBreaks.toFixed(2)}€</span>
       </div>
       <div style="border-top:1px solid var(--md-outline-variant); padding-top:12px; display:flex; justify-content:space-between;">
         <span style="font-size:15px; font-weight:700; color:var(--md-primary);">Líquido</span>
         <span style="font-size:22px; font-weight:800; color:${net >= 0 ? 'var(--md-success)' : 'var(--md-error)'};">${net.toFixed(2)}€</span>
       </div>
+      ${missingWeight.size > 0 ? `
+      <div style="margin-top:14px; padding-top:14px; border-top:1px solid var(--md-outline-variant);">
+        <div style="font-size:12px; font-weight:700; color:var(--md-error); margin-bottom:6px;">⚠ Custo incompleto — sem peso configurado:</div>
+        <div style="font-size:12px; color:var(--md-primary); opacity:0.7; line-height:1.6;">${[...missingWeight].sort().join(', ')}</div>
+        <div style="font-size:11px; color:var(--md-primary); opacity:0.5; margin-top:6px;">Configura o peso por caixa em Gestão de produtos para incluir estes no custo.</div>
+      </div>` : ''}
     `;
     content.appendChild(profitBlock);
   }
@@ -4512,14 +4718,18 @@ function switchTo(v, fromPopState) {
   // Cabeçalho sempre visível, igual em todos os separadores incluindo o dashboard.
 
   const scrollArea = document.getElementById('scroll-area');
-  if (scrollArea) scrollArea.style.paddingBottom = (v === 'dashboard') ? '0' : '24px';
+  if (scrollArea) {
+    scrollArea.style.paddingBottom = (v === 'dashboard') ? '0' : '24px';
+    scrollArea.style.overflowY = (v === 'dashboard') ? 'hidden' : 'auto';
+  }
   if (v==="whatsapp")  renderWA();
   if (v==="add")       renderAdd();
   if (v==="history")   renderHistory();
   if (v==="dashboard") renderDashboard();
   if (v==="prices")    renderPrices();
   if (v==="tasks")     renderTasksAndProjects();
-  if (v==="sales")     { renderSales(); generateRecurringExpenses(); renderExpenses(); renderRents(); }
+  if (v==="sales")     { renderSales(); generateRecurringExpenses(); renderExpenses(); renderBreaks(); }
+  if (v==="rents")     renderRents();
   if (v==="expenses")  { generateRecurringExpenses(); renderExpenses(); }
   if (v==="resumo")    renderResumo();
   if (v==="vasilhame") renderVasilhame();
