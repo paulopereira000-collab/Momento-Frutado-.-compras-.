@@ -4,8 +4,8 @@
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
   <meta name="theme-color" content="#3D5640"/>
-  <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20viewBox%3D%270%200%20192%20192%27%3E%3Cpath%20d%3D%27M%2036%20154%20L%2036%2038%20L%2096%20102%20L%20156%2038%20L%20156%20154%27%20fill%3D%27none%27%20stroke%3D%27%235C7E60%27%20stroke-width%3D%2732%27%20stroke-linecap%3D%27square%27%20stroke-linejoin%3D%27miter%27%2F%3E%3C%2Fsvg%3E"/>
-  <link rel="manifest" href="data:application/json,%7B%22name%22%3A%22Momento%20Frutado%22%2C%22short_name%22%3A%22Momento%20Frutado%22%2C%22display%22%3A%22standalone%22%2C%22background_color%22%3A%22%23F5F7F2%22%2C%22theme_color%22%3A%22%235C7E60%22%2C%22icons%22%3A%5B%7B%22src%22%3A%22data%3Aimage%2Fsvg%2Bxml%2C%253Csvg%2520xmlns%253D%2527http%253A%252F%252Fwww.w3.org%252F2000%252Fsvg%2527%2520viewBox%253D%25270%25200%2520192%2520192%2527%253E%253Cpath%2520d%253D%2527M%252036%2520154%2520L%252036%252038%2520L%252096%2520102%2520L%2520156%252038%2520L%2520156%2520154%2527%2520fill%253D%2527none%2527%2520stroke%253D%2527%25235C7E60%2527%2520stroke-width%253D%252732%2527%2520stroke-linecap%253D%2527square%2527%2520stroke-linejoin%253D%2527miter%2527%252F%253E%253C%252Fsvg%253E%22%2C%22sizes%22%3A%22192x192%22%2C%22type%22%3A%22image%2Fsvg%2Bxml%22%7D%5D%7D"/>
+  <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20viewBox%3D%270%200%20192%20192%27%3E%3Crect%20width%3D%27192%27%20height%3D%27192%27%20rx%3D%2744%27%20fill%3D%27%235C7E60%27%2F%3E%3Cpath%20d%3D%27M%2044%20148%20L%2044%2044%20L%2096%20106%20L%20148%2044%20L%20148%20148%27%20fill%3D%27none%27%20stroke%3D%27%23F2C94C%27%20stroke-width%3D%2718%27%20stroke-linecap%3D%27square%27%20stroke-linejoin%3D%27miter%27%2F%3E%3C%2Fsvg%3E"/>
+  <link rel="manifest" href="data:application/json,%7B%22name%22%3A%22Momento%20Frutado%22%2C%22short_name%22%3A%22Momento%20Frutado%22%2C%22display%22%3A%22standalone%22%2C%22background_color%22%3A%22%23F5F7F2%22%2C%22theme_color%22%3A%22%235C7E60%22%2C%22icons%22%3A%5B%7B%22src%22%3A%22data%3Aimage%2Fsvg%2Bxml%2C%253Csvg%2520xmlns%253D%2527http%253A%252F%252Fwww.w3.org%252F2000%252Fsvg%2527%2520viewBox%253D%25270%25200%2520192%2520192%2527%253E%253Crect%2520width%253D%2527192%2527%2520height%253D%2527192%2527%2520rx%253D%252744%2527%2520fill%253D%2527%25235C7E60%2527%252F%253E%253Cpath%2520d%253D%2527M%252044%2520148%2520L%252044%252044%2520L%252096%2520106%2520L%2520148%252044%2520L%2520148%2520148%2527%2520fill%253D%2527none%2527%2520stroke%253D%2527%2523F2C94C%2527%2520stroke-width%253D%252718%2527%2520stroke-linecap%253D%2527square%2527%2520stroke-linejoin%253D%2527miter%2527%252F%253E%253C%252Fsvg%253E%22%2C%22sizes%22%3A%22192x192%22%2C%22type%22%3A%22image%2Fsvg%2Bxml%22%7D%5D%7D"/>
   <meta name="apple-mobile-web-app-capable" content="yes"/>
   <meta name="apple-mobile-web-app-title" content="Momento Frutado"/>
   <title>Momento Frutado – Compras</title>
@@ -846,6 +846,18 @@
       </div>
     </div>
 
+    <!-- ── MODAL PESO POR CAIXA ────────────────────────────────────────────── -->
+    <div id="weight-modal-overlay" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.5); z-index:299; backdrop-filter:blur(4px);" onclick="closeWeightModal()"></div>
+    <div id="weight-modal-panel" style="display:none; position:fixed; bottom:0; left:50%; transform:translateX(-50%); width:100%; max-width:600px; background:var(--md-surface); border-radius:24px 24px 0 0; padding:24px 20px 40px; z-index:300; max-height:90vh; overflow-y:auto;">
+      <div style="width:40px; height:4px; background:var(--md-outline-variant); border-radius:2px; margin:0 auto 20px;"></div>
+      <div id="weight-modal-title" style="font-size:20px; font-weight:800; color:var(--md-primary); margin-bottom:6px;">Peso por caixa</div>
+      <div style="font-size:13px; color:var(--md-primary); opacity:0.6; margin-bottom:20px;">Quanto pesa em média cada caixa deste produto. Usado para calcular o peso total no histórico de compras — independente do vasilhame.</div>
+      <div id="weight-modal-fields"></div>
+      <div style="display:flex; gap:10px; margin-top:20px;">
+        <button onclick="closeWeightModal()" style="flex:1; padding:16px; background:var(--md-primary); color:var(--md-white); border:none; border-radius:12px; font-size:16px; font-weight:700; font-family:'Outfit',sans-serif; cursor:pointer;">Concluído</button>
+      </div>
+    </div>
+
     <div id="view-add" class="view">
       <div id="add-content">
         <div class="form-card">
@@ -1219,6 +1231,7 @@ let sales = [];     // vendas diárias { date, total, label }
 let expenses = [];  // despesas ocasionais { id, date, category, amount }
 let recurringExpenses = []; // despesas fixas { id, type:'monthly'|'yearly', category, amount, day, month (só anual), lastGenerated }
 let rents = []; // rendas mensais fixas { id, name, amount }
+let boxWeights = {}; // { "Courgette|||Petit": 5, "Courgette|||Caixa 1kg": 1, ... } — peso médio (kg) por produto+caixa
 
 // ── HELPERS ───────────────────────────────────────────────────────────────────
 function gk(cat, item) { return `${cat}|||${item}`; }
@@ -1238,7 +1251,7 @@ function initOpen(prods) {
 }
 
 // ── LOCAL STORAGE ─────────────────────────────────────────────────────────────
-function payload() { return { products, subcats, list, picked, history: snapHistory, suppliers, tasks, sales, projects, expenses, recurringExpenses, vasilhameMovs, rents }; }
+function payload() { return { products, subcats, list, picked, history: snapHistory, suppliers, tasks, sales, projects, expenses, recurringExpenses, vasilhameMovs, rents, boxWeights }; }
 
 function applyLocal(r) {
   if (r.products) products = r.products;
@@ -1252,6 +1265,7 @@ function applyLocal(r) {
   if (r.recurringExpenses) recurringExpenses = r.recurringExpenses;
   if (r.vasilhameMovs) vasilhameMovs = r.vasilhameMovs;
   if (r.rents) rents = r.rents;
+  if (r.boxWeights) boxWeights = r.boxWeights;
   if (r.subcats && Object.keys(r.subcats).length > 0) subcats = r.subcats;
   else subcats = JSON.parse(JSON.stringify(DEFAULT_SUBCATS));
   if (r.list) list = { ...buildEmpty(products), ...r.list };
@@ -2246,6 +2260,7 @@ function importBackup(event) {
       if (data.recurringExpenses) recurringExpenses = data.recurringExpenses;
       if (data.vasilhameMovs)     vasilhameMovs     = data.vasilhameMovs;
       if (data.rents)             rents             = data.rents;
+      if (data.boxWeights)        boxWeights        = data.boxWeights;
       // Guardar e re-renderizar
       sched();
       renderCats('');
@@ -3939,6 +3954,29 @@ function boot() {
     sched();
   }
 
+  // Migração única: pesos médios por caixa iniciais (kg), informados pelo Paulo
+  if (!localStorage.getItem('mf_boxweights_seeded')) {
+    const initialWeights = {
+      'Fruta|||Uva Red Globe':     8.2,
+      'Fruta|||Abacaxi':           12,
+      'Fruta|||Uva s/ grainha':    8.2,
+      'Fruta|||Mamão':             4.5,
+      'Fruta|||Manga':             4,
+      'Fruta|||Papaia':            3.5,
+      'Fruta|||Abacate':           5,
+      'Fruta|||Kiwi Gold':         6,
+      'Fruta|||Kiwi':              6,
+      'Fruta|||Meloa':             10,
+      'Fruta|||Melão branco':      10,
+      'Fruta|||Melão verde':       10,
+    };
+    Object.entries(initialWeights).forEach(([key, kg]) => {
+      if (!(key in boxWeights)) boxWeights[key] = kg;
+    });
+    localStorage.setItem('mf_boxweights_seeded', '1');
+    sched();
+  }
+
   document.getElementById("loading").style.display = "none";
   document.getElementById("app").style.cssText = "display:flex;flex-direction:column;";
   generateRecurringExpenses();
@@ -4294,6 +4332,9 @@ function renderManage() {
             inp.addEventListener("keydown", e => { if(e.key==="Enter") doSave(); if(e.key==="Escape") renderManage(); });
           });
 
+          const bW = document.createElement("button"); bW.className = "btn-icon btn-edit material-icons-round"; bW.textContent = "scale"; bW.title = "Peso por caixa";
+          bW.addEventListener("click", () => openWeightModal(cat, item));
+
           const bM = document.createElement("button"); bM.className = "btn-icon btn-move material-icons-round"; bM.textContent = "swap_vert";
           bM.addEventListener("click", () => {
             const others = subcats[cat].filter((_, i) => i !== gi);
@@ -4319,7 +4360,7 @@ function renderManage() {
             sched(); renderManage(); renderCats("");
           });
 
-          row.appendChild(nm); row.appendChild(bE); row.appendChild(bM); row.appendChild(bD);
+          row.appendChild(nm); row.appendChild(bE); row.appendChild(bW); row.appendChild(bM); row.appendChild(bD);
           gBlock.appendChild(row);
         });
 
@@ -4344,6 +4385,8 @@ function renderManage() {
         const row = document.createElement("div"); row.className = "manage-row";
         const nm = document.createElement("span"); nm.className = "manage-name"; nm.textContent = item;
         const bE = document.createElement("button"); bE.className = "btn-icon btn-edit material-icons-round"; bE.textContent = "edit";
+        const bW = document.createElement("button"); bW.className = "btn-icon btn-edit material-icons-round"; bW.textContent = "scale"; bW.title = "Peso por caixa";
+        bW.addEventListener("click", () => openWeightModal(cat, item));
         const bD = document.createElement("button"); bD.className = "btn-icon btn-delete material-icons-round"; bD.textContent = "delete_outline";
         bE.addEventListener("click", () => {
           const inp = document.createElement("input"); inp.className = "manage-edit-input"; inp.value = item;
@@ -4365,7 +4408,7 @@ function renderManage() {
           delete list[gk(cat, item)];
           sched(); renderManage(); renderCats("");
         });
-        row.appendChild(nm); row.appendChild(bE); row.appendChild(bD); bd.appendChild(row);
+        row.appendChild(nm); row.appendChild(bE); row.appendChild(bW); row.appendChild(bD); bd.appendChild(row);
       });
     }
 
@@ -4424,7 +4467,7 @@ function renderHistory() {
     const body = document.createElement("div"); body.className = "hist-week-body" + (si > 0 ? " collapsed" : "");
     snap.items.forEach(it => {
       const row = document.createElement("div"); row.className = "hist-item";
-      row.innerHTML = `<span class="hist-item-name">${it.item}${it.qty ? '<span style="font-size:13px;opacity:0.6;font-weight:400;"> · '+it.qty+' cx</span>' : ''}</span><div class="hist-item-detail">${it.price ? 'C: '+it.price+'€' : ''}${it.sellPrice ? ' V: '+it.sellPrice+'€' : ''}${(it.price||it.sellPrice) && it.supplier ? '<br>' : ''}${it.supplier || ''}</div>`;
+      row.innerHTML = `<span class="hist-item-name">${it.item}${it.qty ? '<span style="font-size:13px;opacity:0.6;font-weight:400;"> · '+it.qty+' cx'+(it.weightKg ? ' · ≈'+it.weightKg.toFixed(1)+'kg' : '')+'</span>' : ''}</span><div class="hist-item-detail">${it.price ? 'C: '+it.price+'€' : ''}${it.sellPrice ? ' V: '+it.sellPrice+'€' : ''}${(it.price||it.sellPrice) && it.supplier ? '<br>' : ''}${it.supplier || ''}</div>`;
       body.appendChild(row);
     });
     block.appendChild(hdr); block.appendChild(body); weekView.appendChild(block);
@@ -4512,7 +4555,8 @@ document.getElementById("clear-btn").addEventListener("click", () => {
     if (Number(e.qty) > 0) {
       const p = picked[key] || {};
       const [cat, item] = key.split('|||');
-      snapshot.items.push({ cat, item, qty: e.qty, price: p.price||'', sellPrice: p.sellPrice||'', supplier: p.supplier||'', date: p.date||'' });
+      const weightKg = getProductWeightKg(key);
+      snapshot.items.push({ cat, item, qty: e.qty, price: p.price||'', sellPrice: p.sellPrice||'', supplier: p.supplier||'', date: p.date||'', weightKg: weightKg || null });
       // Gera movimento de vasilhame (débito) se este produto tiver vasilhame marcado
       if (p.vasilhame && p.vasilhame.boxType && p.supplier) {
         vasilhameMovs.push({
@@ -4841,6 +4885,50 @@ function setPickVasilhame(hasIt, noSave) {
       sched();
     }
   }
+}
+
+// ── PESO MÉDIO POR CAIXA (configurado em Gestão de produtos) ────────────────
+function getProductWeightKg(key) {
+  // Devolve o peso total estimado (kg) para este produto na lista atual, ou null se não houver dados.
+  // Totalmente independente do vasilhame — é só peso médio por caixa, definido em Gestão de produtos.
+  const weightPerBox = boxWeights[key];
+  if (!weightPerBox) return null;
+  const qty = Number(list[key]?.qty || 0);
+  if (qty <= 0) return null;
+  return weightPerBox * qty;
+}
+
+// ── PESO POR CAIXA — configurado em Gestão de produtos, por produto ─────────
+function openWeightModal(cat, item) {
+  const key = gk(cat, item);
+  document.getElementById('weight-modal-title').textContent = `Peso por caixa — ${item}`;
+  const fields = document.getElementById('weight-modal-fields');
+  const saved = boxWeights[key] || '';
+  fields.innerHTML = `
+    <div style="display:flex; align-items:center; justify-content:space-between; padding:10px 0;">
+      <span style="font-size:15px; color:var(--md-primary); font-weight:600;">Peso médio de cada caixa</span>
+      <div style="display:flex; align-items:center; gap:6px;">
+        <input id="wmod-weight" type="number" step="0.1" min="0" placeholder="—" value="${saved}"
+          onchange="saveWeightField('${key.replace(/'/g, "\\'")}', this.value)"
+          style="width:70px; padding:8px; border:1.5px solid var(--md-outline-variant); border-radius:8px; font-size:14px; font-family:'Outfit',sans-serif; color:var(--md-primary); background:var(--md-surface-1); outline:none; text-align:center;"/>
+        <span style="font-size:13px; color:var(--md-primary); opacity:0.6;">kg</span>
+      </div>
+    </div>
+  `;
+  document.getElementById('weight-modal-overlay').style.display = 'block';
+  document.getElementById('weight-modal-panel').style.display = 'block';
+}
+
+function saveWeightField(key, value) {
+  const weight = parseFloat(value) || 0;
+  if (weight > 0) boxWeights[key] = weight;
+  else delete boxWeights[key];
+  sched();
+}
+
+function closeWeightModal() {
+  document.getElementById('weight-modal-overlay').style.display = 'none';
+  document.getElementById('weight-modal-panel').style.display = 'none';
 }
 
 function onPickVasilChange() {
