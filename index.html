@@ -104,10 +104,11 @@
     #header-nav { display:flex; align-items:center; justify-content:space-between; padding:12px 0; }
     #header-icons { display:flex; gap:4px; }
     .hnav-btn { border:none; background:transparent; color:rgba(255,255,255,0.7); padding:8px; cursor:pointer; display:flex; align-items:center; justify-content:center; border-radius:50%; }
-    .hnav-btn:active { background:rgba(255,255,255,0.15); }
-    #brand-nav-btn { font-size:14px; font-weight:600; letter-spacing:0.5px; text-transform:uppercase; padding:8px; color:var(--md-primary); border-radius:8px; }
     .hnav-btn .material-icons-round { font-size:22px; }
-    .hnav-btn.active { color:var(--md-white); background:rgba(255,255,255,0.15); border-radius:50%; }
+    .hnav-btn.active { color:var(--md-white); background:transparent; border:2px solid var(--md-amber); border-radius:50%; }
+    .hnav-btn-brand { color:var(--md-white); }
+    .hnav-btn-brand.active { color:var(--md-amber); background:transparent; border:none; }
+    #brand-nav-btn { font-size:14px; font-weight:600; letter-spacing:0.5px; text-transform:uppercase; padding:8px; color:var(--md-primary); border-radius:8px; }
 
     /* SCROLL */
     #scroll-area { flex:1; overflow-y:auto; padding-bottom:24px; position:relative; }
@@ -303,7 +304,7 @@
     <div id="header-nav">
       <div id="header-icons" style="display:flex; align-items:center; justify-content:space-between; width:100%;">
         <div id="header-title-wrap" style="display:flex; align-items:center; gap:8px;">
-          <button class="hnav-btn active" data-view="dashboard" style="font-size:13px; font-weight:400; letter-spacing:1px; color:var(--md-amber); padding:6px 8px; text-transform:uppercase; white-space:nowrap; background:transparent; border-radius:0;">Momento Frutado</button>
+          <button class="hnav-btn hnav-btn-brand active" data-view="dashboard" style="font-size:13px; font-weight:400; letter-spacing:1px; padding:6px 8px; text-transform:uppercase; white-space:nowrap; background:transparent; border-radius:0;">Momento Frutado</button>
         </div>
         <div style="display:flex; align-items:center; gap:0;">
           <button class="hnav-btn" id="list-nav-btn" data-view="list" style="font-size:11px; font-weight:700; letter-spacing:0.5px; padding:8px 10px;"><span class="material-icons-round">shopping_basket</span></button>
@@ -1202,6 +1203,7 @@ let subcats  = JSON.parse(JSON.stringify(DEFAULT_SUBCATS));
 let list     = {};
 let openCats = {};
 let openProjects = {}; // { projectId: true/false } — controla o acordeão de Fazer
+let seasonalityOffset = 0; // meses de deslocamento da janela de sazonalidade no Resumo (0 = hoje)
 let saveTimer = null;
 let picked = {}; // key -> { done, price, supplier, date }
 let snapHistory = []; // array of weekly snapshots
@@ -3290,6 +3292,196 @@ function renderSales() {
 }
 
 // ── RESUMO / ANÁLISE DE VENDAS ──────────────────────────────────────────────────
+// ── SAZONALIDADE NAVEGÁVEL — arrasta para a esquerda/direita para mudar de época ──
+function renderSeasonalityWindowBlock(content, sorted) {
+  // seasonalityOffset está agora em SEMANAS (não meses) — cada arrasto desloca 1 semana.
+  const weekKey = (dateStr) => {
+    const d = new Date(dateStr + 'T00:00:00');
+    const day = d.getDay();
+    const monday = new Date(d); monday.setDate(d.getDate() - ((day + 6) % 7));
+    return monday;
+  };
+
+  // Semana central de referência = a semana de hoje + offset semanas
+  const todayReal = new Date();
+  const centerMonday = weekKey(todayReal.toISOString().split('T')[0]);
+  centerMonday.setDate(centerMonday.getDate() + seasonalityOffset * 7);
+
+  const HALF_SPAN = 4; // mostra 4 semanas para cada lado do centro (9 pontos no total)
+  const weeksToShow = [];
+  for (let i = -HALF_SPAN; i <= HALF_SPAN; i++) {
+    const monday = new Date(centerMonday); monday.setDate(monday.getDate() + i * 7);
+    weeksToShow.push(monday);
+  }
+
+  // Totais por semana (chave = segunda-feira em ISO), já agregados de todas as vendas
+  const totalsByWeek = {};
+  sorted.forEach(s => {
+    const mondayStr = weekKey(s.date).toISOString().split('T')[0];
+    totalsByWeek[mondayStr] = (totalsByWeek[mondayStr] || 0) + s.total;
+  });
+
+  const sznBlock = document.createElement('div');
+  sznBlock.className = 'resumo-block';
+  sznBlock.id = 'seasonality-window-block';
+  sznBlock.style.cssText = 'background:var(--md-surface); border-radius:14px; border:1px solid var(--md-outline-variant); padding:18px; margin-bottom:20px; touch-action:pan-y; user-select:none;';
+
+  const sznLabel = document.createElement('div');
+  sznLabel.style.cssText = 'font-size:13px; font-weight:700; color:var(--md-primary); opacity:0.6; text-transform:uppercase; letter-spacing:1px; margin-bottom:4px;';
+  sznLabel.textContent = 'Evolução semanal — este ano vs ano passado';
+  sznBlock.appendChild(sznLabel);
+
+  // Label fixa e sempre visível: a semana central que estamos a ver, com destaque
+  const fmtShort = (d) => `${d.getDate()}/${d.getMonth()+1}`;
+  const fmtFull = (d) => `${d.getDate()}/${d.getMonth()+1}/${d.getFullYear()}`;
+  const centerSunday = new Date(centerMonday); centerSunday.setDate(centerSunday.getDate() + 6);
+  const sznSub = document.createElement('div');
+  sznSub.id = 'szn-center-label';
+  sznSub.style.cssText = 'font-size:15px; font-weight:700; color:var(--md-error); margin-bottom:2px;';
+  sznSub.textContent = seasonalityOffset === 0
+    ? `Semana atual · ${fmtFull(centerMonday)} – ${fmtFull(centerSunday)}`
+    : `Semana de ${fmtFull(centerMonday)} – ${fmtFull(centerSunday)}`;
+  sznBlock.appendChild(sznSub);
+
+  const sznSub2 = document.createElement('div');
+  sznSub2.style.cssText = 'font-size:11px; color:var(--md-primary); opacity:0.45; margin-bottom:14px;';
+  sznSub2.textContent = `A comparar com a mesma semana do ano passado`;
+  sznBlock.appendChild(sznSub2);
+
+  // Construir as 2 séries: ano atual (centerMonday) e ano passado (mesma semana, -1 ano)
+  const seriesCurrent = weeksToShow.map(monday => {
+    const key = monday.toISOString().split('T')[0];
+    return totalsByWeek[key] || null;
+  });
+  const seriesLastYear = weeksToShow.map(monday => {
+    const mondayLYraw = new Date(monday); mondayLYraw.setFullYear(mondayLYraw.getFullYear() - 1);
+    const mondayLY = weekKey(mondayLYraw.toISOString().split('T')[0]); // realinha à segunda-feira real dessa semana
+    const key = mondayLY.toISOString().split('T')[0];
+    return totalsByWeek[key] || null;
+  });
+
+  const hasAnyData = seriesCurrent.some(v => v !== null) || seriesLastYear.some(v => v !== null);
+
+  if (!hasAnyData) {
+    const noData = document.createElement('div');
+    noData.style.cssText = 'text-align:center; padding:30px 10px; color:var(--md-primary); opacity:0.4; font-size:14px;';
+    noData.textContent = 'Sem dados nesta janela';
+    sznBlock.appendChild(noData);
+  } else {
+    const allVals = [...seriesCurrent, ...seriesLastYear].filter(v => v !== null);
+    const maxVal = Math.max(...allVals, 1);
+    const minVal = Math.min(...allVals, 0);
+    const w = 100, h = 100, pad = 4;
+    const n = weeksToShow.length;
+    const xFor = (i) => pad + (i / (n - 1)) * (w - pad * 2);
+    const yFor = (v) => h - pad - ((v - minVal) / Math.max(1, maxVal - minVal)) * (h - pad * 2);
+
+    const buildPath = (series) => {
+      let path = '';
+      let started = false;
+      series.forEach((v, i) => {
+        if (v === null) { started = false; return; }
+        const x = xFor(i), y = yFor(v);
+        path += (started ? ' L ' : 'M ') + x + ' ' + y;
+        started = true;
+      });
+      return path;
+    };
+
+    const dotsFor = (series, color) => series.map((v, i) => {
+      if (v === null) return '';
+      const x = xFor(i), y = yFor(v);
+      const isCenter = i === HALF_SPAN;
+      const r = isCenter ? 2.4 : 1.4;
+      return `<circle cx="${x}" cy="${y}" r="${r}" fill="${color}" ${isCenter ? `stroke="white" stroke-width="0.6"` : ''}/>`;
+    }).join('');
+
+    // Linha vertical discreta a marcar a semana central
+    const centerX = xFor(HALF_SPAN);
+
+    const svgWrap = document.createElement('div');
+    svgWrap.innerHTML = `
+      <svg viewBox="0 0 ${w} ${h}" style="width:100%; height:130px; display:block;" preserveAspectRatio="none">
+        <line x1="${centerX}" y1="0" x2="${centerX}" y2="${h}" stroke="var(--md-outline-variant)" stroke-width="1" stroke-dasharray="2,2" vector-effect="non-scaling-stroke"/>
+        <path d="${buildPath(seriesLastYear)}" fill="none" stroke="var(--md-outline)" stroke-width="1.5" vector-effect="non-scaling-stroke"/>
+        <path d="${buildPath(seriesCurrent)}" fill="none" stroke="var(--md-primary)" stroke-width="2" vector-effect="non-scaling-stroke"/>
+        ${dotsFor(seriesLastYear, 'var(--md-outline)')}
+        ${dotsFor(seriesCurrent, 'var(--md-primary)')}
+      </svg>
+    `;
+    sznBlock.appendChild(svgWrap);
+
+    const rangeLabel = document.createElement('div');
+    rangeLabel.style.cssText = 'display:flex; justify-content:space-between; font-size:11px; color:var(--md-primary); opacity:0.5; margin-top:6px;';
+    rangeLabel.innerHTML = `<span>${fmtShort(weeksToShow[0])}</span><span>${fmtShort(weeksToShow[weeksToShow.length-1])}</span>`;
+    sznBlock.appendChild(rangeLabel);
+
+    // Valores da semana central, lado a lado, para leitura direta sem precisar de "ler" o gráfico
+    const curVal = seriesCurrent[HALF_SPAN];
+    const lyVal = seriesLastYear[HALF_SPAN];
+    const compareRow = document.createElement('div');
+    compareRow.style.cssText = 'display:flex; justify-content:space-between; margin-top:14px; padding-top:14px; border-top:1px solid var(--md-outline-variant);';
+    let diffHtml = '';
+    if (curVal !== null && lyVal !== null && lyVal > 0) {
+      const diff = ((curVal - lyVal) / lyVal) * 100;
+      const arrow = diff >= 0 ? '↑' : '↓';
+      const color = diff >= 0 ? 'var(--md-success)' : 'var(--md-error)';
+      diffHtml = `<div style="font-size:13px; font-weight:700; color:${color}; margin-top:2px;">${arrow} ${Math.abs(diff).toFixed(0)}%</div>`;
+    }
+    compareRow.innerHTML = `
+      <div>
+        <div style="font-size:11px; color:var(--md-primary); opacity:0.5; text-transform:uppercase; letter-spacing:0.5px;">esta semana</div>
+        <div style="font-size:20px; font-weight:800; color:var(--md-primary);">${curVal !== null ? curVal.toFixed(0)+'€' : '—'}</div>
+        ${diffHtml}
+      </div>
+      <div style="text-align:right;">
+        <div style="font-size:11px; color:var(--md-primary); opacity:0.5; text-transform:uppercase; letter-spacing:0.5px;">mesma semana, ano passado</div>
+        <div style="font-size:20px; font-weight:800; color:var(--md-primary); opacity:0.7;">${lyVal !== null ? lyVal.toFixed(0)+'€' : '—'}</div>
+      </div>
+    `;
+    sznBlock.appendChild(compareRow);
+
+    const legend = document.createElement('div');
+    legend.style.cssText = 'display:flex; gap:14px; margin-top:12px;';
+    legend.innerHTML = `
+      <span style="font-size:12px; color:var(--md-primary); display:flex; align-items:center; gap:5px;"><span style="width:14px; height:2px; background:var(--md-primary); display:inline-block;"></span>Este ano</span>
+      <span style="font-size:12px; color:var(--md-primary); display:flex; align-items:center; gap:5px;"><span style="width:14px; height:2px; background:var(--md-outline); display:inline-block;"></span>Ano passado</span>
+    `;
+    sznBlock.appendChild(legend);
+  }
+
+  const hint = document.createElement('div');
+  hint.style.cssText = 'text-align:center; font-size:11px; color:var(--md-primary); opacity:0.35; margin-top:12px;';
+  hint.textContent = '← arrasta para ver outras semanas →';
+  sznBlock.appendChild(hint);
+
+  content.appendChild(sznBlock);
+
+  // Arrastar (toque e rato): cada ~50px de deslocamento horizontal move 1 semana
+  let dragStartX = null;
+  let dragMoved = false;
+  const DRAG_THRESHOLD = 50;
+
+  const onDragStart = (x) => { dragStartX = x; dragMoved = false; };
+  const onDragMove = (x) => {
+    if (dragStartX === null || dragMoved) return;
+    const delta = x - dragStartX;
+    if (Math.abs(delta) >= DRAG_THRESHOLD) {
+      dragMoved = true;
+      seasonalityOffset += (delta > 0 ? -1 : 1); // arrastar para a direita = recuar no tempo
+      renderResumo();
+    }
+  };
+  const onDragEnd = () => { dragStartX = null; };
+
+  sznBlock.addEventListener('touchstart', (e) => onDragStart(e.touches[0].clientX), { passive: true });
+  sznBlock.addEventListener('touchmove',  (e) => onDragMove(e.touches[0].clientX),  { passive: true });
+  sznBlock.addEventListener('touchend', onDragEnd);
+  sznBlock.addEventListener('mousedown', (e) => onDragStart(e.clientX));
+  sznBlock.addEventListener('mousemove', (e) => { if (dragStartX !== null) onDragMove(e.clientX); });
+  window.addEventListener('mouseup', onDragEnd);
+}
+
 function renderResumo() {
   const content = document.getElementById('resumo-content');
   const empty = document.getElementById('resumo-empty');
@@ -3580,86 +3772,8 @@ function renderResumo() {
     content.appendChild(seasonBlock);
   }
 
-  // ── Bloco 2.6: Sazonalidade próxima — semanas de ±1 mês à volta de hoje, ano passado ──
-  {
-    const todayReal = new Date();
-    const windowStart = new Date(todayReal); windowStart.setFullYear(windowStart.getFullYear() - 1); windowStart.setMonth(windowStart.getMonth() - 1);
-    const windowEnd   = new Date(todayReal); windowEnd.setFullYear(windowEnd.getFullYear() - 1); windowEnd.setMonth(windowEnd.getMonth() + 1);
-    const todayLastYear = new Date(todayReal); todayLastYear.setFullYear(todayLastYear.getFullYear() - 1);
-
-    const weekKeyLY = (dateStr) => {
-      const d = new Date(dateStr + 'T00:00:00');
-      const day = d.getDay();
-      const monday = new Date(d); monday.setDate(d.getDate() - ((day + 6) % 7));
-      return monday.toISOString().split('T')[0];
-    };
-    const fmtRange = windowStart.toISOString().split('T')[0];
-    const fmtRangeEnd = windowEnd.toISOString().split('T')[0];
-    const windowSales = sorted.filter(s => s.date >= fmtRange && s.date <= fmtRangeEnd);
-
-    if (windowSales.length >= 2) {
-      const totalsByWeekLY = {};
-      windowSales.forEach(s => {
-        const wk = weekKeyLY(s.date);
-        totalsByWeekLY[wk] = (totalsByWeekLY[wk] || 0) + s.total;
-      });
-      const weekKeysLY = Object.keys(totalsByWeekLY).sort();
-      const todayWeekKey = weekKeyLY(todayLastYear.toISOString().split('T')[0]);
-
-      const sznBlock = document.createElement('div');
-      sznBlock.className = 'resumo-block';
-      sznBlock.style.cssText = 'background:var(--md-surface); border-radius:14px; border:1px solid var(--md-outline-variant); padding:18px; margin-bottom:20px;';
-
-      const sznLabel = document.createElement('div');
-      sznLabel.style.cssText = 'font-size:13px; font-weight:700; color:var(--md-primary); opacity:0.6; text-transform:uppercase; letter-spacing:1px; margin-bottom:4px;';
-      sznLabel.textContent = 'Sazonalidade — esta época, no ano passado';
-      sznBlock.appendChild(sznLabel);
-
-      const sznSub = document.createElement('div');
-      sznSub.style.cssText = 'font-size:11px; color:var(--md-primary); opacity:0.45; margin-bottom:14px;';
-      const fmtShortYear = (d) => `${d.getDate()}/${d.getMonth()+1}/${d.getFullYear()}`;
-      sznSub.textContent = `${fmtShortYear(windowStart)} — ${fmtShortYear(windowEnd)}`;
-      sznBlock.appendChild(sznSub);
-
-      // Gráfico de barras: cada semana é uma barra, a semana equivalente a "hoje" destacada
-      const maxWeekVal = Math.max(...weekKeysLY.map(k => totalsByWeekLY[k]));
-      const barW = 100 / weekKeysLY.length;
-      const barsHtml = weekKeysLY.map((wk, i) => {
-        const val = totalsByWeekLY[wk];
-        const heightPct = maxWeekVal > 0 ? (val / maxWeekVal) * 100 : 0;
-        const isToday = wk === todayWeekKey;
-        const x = i * barW + barW * 0.15;
-        const barWidth = barW * 0.7;
-        const y = 100 - heightPct;
-        const color = isToday ? 'var(--md-error)' : 'var(--md-accent)';
-        return `<rect x="${x}" y="${y}" width="${barWidth}" height="${heightPct}" fill="${color}" rx="1"/>`;
-      }).join('');
-
-      const svgWrap = document.createElement('div');
-      svgWrap.innerHTML = `
-        <svg viewBox="0 0 100 100" style="width:100%; height:120px; display:block;" preserveAspectRatio="none">
-          ${barsHtml}
-        </svg>
-      `;
-      sznBlock.appendChild(svgWrap);
-
-      const rangeLabel = document.createElement('div');
-      rangeLabel.style.cssText = 'display:flex; justify-content:space-between; font-size:11px; color:var(--md-primary); opacity:0.5; margin-top:6px;';
-      const fmtShort = (d) => `${d.getDate()}/${d.getMonth()+1}`;
-      rangeLabel.innerHTML = `<span>${fmtShort(new Date(weekKeysLY[0]+'T00:00:00'))}</span><span>${fmtShort(new Date(weekKeysLY[weekKeysLY.length-1]+'T00:00:00'))}</span>`;
-      sznBlock.appendChild(rangeLabel);
-
-      const legend = document.createElement('div');
-      legend.style.cssText = 'display:flex; gap:14px; margin-top:12px; padding-top:12px; border-top:1px solid var(--md-outline-variant);';
-      legend.innerHTML = `
-        <span style="font-size:12px; color:var(--md-primary); display:flex; align-items:center; gap:5px;"><span style="width:10px; height:10px; border-radius:2px; background:var(--md-accent); display:inline-block;"></span>Semanas desta janela</span>
-        <span style="font-size:12px; color:var(--md-primary); display:flex; align-items:center; gap:5px;"><span style="width:10px; height:10px; border-radius:2px; background:var(--md-error); display:inline-block;"></span>Semana equivalente a hoje</span>
-      `;
-      sznBlock.appendChild(legend);
-
-      content.appendChild(sznBlock);
-    }
-  }
+  // ── Bloco 2.6: Sazonalidade próxima — semanas de ±1 mês à volta de uma data de referência, ano passado ──
+  renderSeasonalityWindowBlock(content, sorted);
 
   // ── Bloco 3: Comparação mensal ──
   const byMonth = {};
