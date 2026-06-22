@@ -3797,117 +3797,6 @@ function renderResumo() {
 
   const sorted = [...marketSales].sort((a, b) => a.date.localeCompare(b.date));
 
-  // ── Bloco DECISÃO: agrupa por ciclo de compra — Terça (compra 2ª) vs Sexta+Sábado (compra 5ª) ──
-  {
-    const dowNames = ['domingo','segunda','terça','quarta','quinta','sexta','sábado'];
-    const getDow = (s) => new Date(s.date + 'T00:00:00').getDay();
-
-    // Últimas 4 ocorrências de cada dia, mais recente primeiro
-    const lastN = (dow, n) => sorted.filter(s => getDow(s) === dow).slice(-n).reverse();
-
-    const tercaRecent = lastN(2, 4);
-    const sextaRecent = lastN(5, 4);
-    const sabadoRecent = lastN(6, 4);
-
-    // Tendência simples: média das últimas 2 vs média das 2 anteriores a essas
-    const trendOf = (arr) => {
-      if (arr.length < 2) return null;
-      const recent = arr.slice(0, Math.ceil(arr.length / 2));
-      const older = arr.slice(Math.ceil(arr.length / 2));
-      if (!older.length) return null;
-      const avgRecent = recent.reduce((a, s) => a + s.total, 0) / recent.length;
-      const avgOlder = older.reduce((a, s) => a + s.total, 0) / older.length;
-      if (avgOlder === 0) return null;
-      return ((avgRecent - avgOlder) / avgOlder) * 100;
-    };
-
-    const trendLabel = (pct) => {
-      if (pct === null) return { text: 'dados insuficientes', color: 'var(--md-primary)', opacity: 0.4 };
-      if (pct >= 8) return { text: `↑ a subir (${pct.toFixed(0)}%)`, color: 'var(--md-success)', opacity: 1 };
-      if (pct <= -8) return { text: `↓ a cair (${Math.abs(pct).toFixed(0)}%)`, color: 'var(--md-error)', opacity: 1 };
-      return { text: '→ estável', color: 'var(--md-primary)', opacity: 0.7 };
-    };
-
-    const decisionBlock = document.createElement('div');
-    decisionBlock.className = 'resumo-block';
-    decisionBlock.style.cssText = 'background:var(--md-surface); border-radius:14px; border:1px solid var(--md-outline-variant); padding:18px; margin-bottom:20px;';
-
-    const renderDayRow = (label, arr) => {
-      if (!arr.length) return `<div style="padding:10px 0; font-size:13px; color:var(--md-primary); opacity:0.4;">${label}: sem vendas registadas</div>`;
-      const last = arr[0];
-      const trend = trendLabel(trendOf(arr));
-      return `
-        <div style="display:flex; justify-content:space-between; align-items:center; padding:10px 0;">
-          <div>
-            <div style="font-size:13px; font-weight:700; color:var(--md-primary);">${label}</div>
-            <div style="font-size:11px; color:var(--md-primary); opacity:0.5;">última: ${last.total.toFixed(0)}€ (${last.date.split('-').reverse().join('/')})</div>
-          </div>
-          <div style="font-size:13px; font-weight:700; color:${trend.color}; opacity:${trend.opacity};">${trend.text}</div>
-        </div>
-      `;
-    };
-
-    const sextaSabadoCombined = [...sextaRecent, ...sabadoRecent].sort((a,b) => b.date.localeCompare(a.date));
-    const sextaSabadoTotal4 = sextaSabadoCombined.slice(0, 2).reduce((a,s) => a + s.total, 0);
-
-    decisionBlock.innerHTML = `
-      <div style="font-size:13px; font-weight:700; color:var(--md-primary); opacity:0.6; text-transform:uppercase; letter-spacing:1px; margin-bottom:4px;">Para a próxima compra</div>
-      <div style="font-size:11px; color:var(--md-primary); opacity:0.45; margin-bottom:10px;">Segunda compra para terça · Quinta compra para sexta + sábado</div>
-
-      <div style="border-bottom:1px solid var(--md-outline-variant); margin-bottom:4px;">
-        <div style="font-size:11px; font-weight:700; color:var(--md-accent); text-transform:uppercase; letter-spacing:0.5px; margin-top:8px;">Compra de segunda</div>
-        ${renderDayRow('Terça', tercaRecent)}
-      </div>
-
-      <div>
-        <div style="font-size:11px; font-weight:700; color:var(--md-accent); text-transform:uppercase; letter-spacing:0.5px; margin-top:8px;">Compra de quinta</div>
-        ${renderDayRow('Sexta', sextaRecent)}
-        ${renderDayRow('Sábado', sabadoRecent)}
-      </div>
-    `;
-    content.appendChild(decisionBlock);
-  }
-
-  // ── Bloco PADRÕES: frases automáticas sobre tendências e comparações entre dias ──
-  {
-    const getDow = (s) => new Date(s.date + 'T00:00:00').getDay();
-    const byDow = { terça: sorted.filter(s => getDow(s) === 2), sexta: sorted.filter(s => getDow(s) === 5), sábado: sorted.filter(s => getDow(s) === 6) };
-    const patterns = [];
-
-    // Padrão 1: qual dia tem a média mais alta / mais baixa
-    const avgs = Object.entries(byDow).filter(([,arr]) => arr.length >= 2).map(([name, arr]) => ({ name, avg: arr.reduce((a,s)=>a+s.total,0)/arr.length }));
-    if (avgs.length >= 2) {
-      avgs.sort((a,b) => b.avg - a.avg);
-      patterns.push(`${avgs[0].name.charAt(0).toUpperCase()+avgs[0].name.slice(1)} costuma ser o teu melhor dia (média ${avgs[0].avg.toFixed(0)}€)`);
-      if (avgs.length >= 2) {
-        const worst = avgs[avgs.length-1];
-        patterns.push(`${worst.name.charAt(0).toUpperCase()+worst.name.slice(1)} costuma ser o mais fraco (média ${worst.avg.toFixed(0)}€)`);
-      }
-    }
-
-    // Padrão 2: tendências de subida/queda consistentes por dia (3+ últimas, sempre a subir ou sempre a cair)
-    Object.entries(byDow).forEach(([name, arr]) => {
-      if (arr.length < 3) return;
-      const last3 = arr.slice(-3);
-      const isRising = last3[0].total < last3[1].total && last3[1].total < last3[2].total;
-      const isFalling = last3[0].total > last3[1].total && last3[1].total > last3[2].total;
-      const dayCap = name.charAt(0).toUpperCase()+name.slice(1);
-      if (isRising) patterns.push(`${dayCap} tem subido nas últimas 3 semanas seguidas`);
-      if (isFalling) patterns.push(`${dayCap} tem caído nas últimas 3 semanas seguidas`);
-    });
-
-    if (patterns.length) {
-      const patternsBlock = document.createElement('div');
-      patternsBlock.className = 'resumo-block';
-      patternsBlock.style.cssText = 'background:var(--md-surface); border-radius:14px; border:1px solid var(--md-outline-variant); padding:18px; margin-bottom:20px;';
-      patternsBlock.innerHTML = `
-        <div style="font-size:13px; font-weight:700; color:var(--md-primary); opacity:0.6; text-transform:uppercase; letter-spacing:1px; margin-bottom:12px;">Padrões identificados</div>
-        ${patterns.map(p => `<div style="display:flex; gap:8px; padding:7px 0; font-size:14px; color:var(--md-primary);"><span style="opacity:0.4;">•</span><span>${p}</span></div>`).join('')}
-      `;
-      content.appendChild(patternsBlock);
-    }
-  }
-
   // ── Bloco 1: Gráficos de evolução, um por dia da semana ──
   const weekdayNamesFull = ['Domingo','Segunda','Terça','Quarta','Quinta','Sexta','Sábado'];
   const targetDays = ['Terça','Sexta','Sábado'];
@@ -3958,6 +3847,92 @@ function renderResumo() {
 
     content.appendChild(chartBlock);
   });
+
+  // ── Bloco: Sazonalidade por dia da semana — mapa de calor mês x dia ──
+  {
+    const monthNames = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
+    const getDow = (s) => new Date(s.date + 'T00:00:00').getDay();
+    const getMonth = (s) => new Date(s.date + 'T00:00:00').getMonth();
+    const dowKeys = [2, 5, 6]; // terça, sexta, sábado
+    const dowLabels = { 2: 'Terça', 5: 'Sexta', 6: 'Sábado' };
+
+    // Agrupar: totals[month][dow] = [valores]
+    const totals = {};
+    for (let m = 0; m < 12; m++) { totals[m] = {}; dowKeys.forEach(d => totals[m][d] = []); }
+    sorted.forEach(s => {
+      const m = getMonth(s);
+      const d = getDow(s);
+      if (dowKeys.includes(d)) totals[m][d].push(s.total);
+    });
+
+    // Médias por célula
+    const avgGrid = {};
+    let maxAvg = 0;
+    for (let m = 0; m < 12; m++) {
+      avgGrid[m] = {};
+      dowKeys.forEach(d => {
+        const arr = totals[m][d];
+        const avg = arr.length ? arr.reduce((a,b) => a+b, 0) / arr.length : null;
+        avgGrid[m][d] = avg;
+        if (avg !== null && avg > maxAvg) maxAvg = avg;
+      });
+    }
+
+    const hasAnyData = Object.values(avgGrid).some(row => Object.values(row).some(v => v !== null));
+
+    if (hasAnyData) {
+      const heatBlock = document.createElement('div');
+      heatBlock.className = 'resumo-block';
+      heatBlock.style.cssText = 'background:var(--md-surface); border-radius:14px; border:1px solid var(--md-outline-variant); padding:18px; margin-bottom:20px;';
+
+      const heatLabel = document.createElement('div');
+      heatLabel.style.cssText = 'font-size:13px; font-weight:700; color:var(--md-primary); opacity:0.6; text-transform:uppercase; letter-spacing:1px; margin-bottom:4px;';
+      heatLabel.textContent = 'Sazonalidade por dia da semana';
+      heatBlock.appendChild(heatLabel);
+
+      const heatSub = document.createElement('div');
+      heatSub.style.cssText = 'font-size:11px; color:var(--md-primary); opacity:0.45; margin-bottom:14px;';
+      heatSub.textContent = 'Média de vendas por mês, em cada dia de mercado';
+      heatBlock.appendChild(heatSub);
+
+      // Cabeçalho da grelha: vazio + Terça + Sexta + Sábado
+      const grid = document.createElement('div');
+      grid.style.cssText = 'display:grid; grid-template-columns: 44px 1fr 1fr 1fr; gap:4px; align-items:center;';
+
+      grid.innerHTML += `<div></div>` + dowKeys.map(d => `<div style="font-size:11px; font-weight:700; color:var(--md-primary); opacity:0.6; text-align:center;">${dowLabels[d]}</div>`).join('');
+
+      for (let m = 0; m < 12; m++) {
+        const rowHasData = dowKeys.some(d => avgGrid[m][d] !== null);
+        if (!rowHasData) continue;
+        grid.innerHTML += `<div style="font-size:11px; font-weight:700; color:var(--md-primary); opacity:0.7;">${monthNames[m]}</div>`;
+        dowKeys.forEach(d => {
+          const avg = avgGrid[m][d];
+          if (avg === null) {
+            grid.innerHTML += `<div style="height:38px; border-radius:8px; background:var(--md-surface-variant); opacity:0.3;"></div>`;
+          } else {
+            const intensity = maxAvg > 0 ? avg / maxAvg : 0; // 0 a 1
+            const bgOpacity = 0.15 + intensity * 0.85;
+            grid.innerHTML += `
+              <div title="${monthNames[m]} · ${dowLabels[d]}: ${avg.toFixed(0)}€" style="height:38px; border-radius:8px; background:var(--md-accent); opacity:${bgOpacity.toFixed(2)}; display:flex; align-items:center; justify-content:center;">
+                <span style="font-size:11px; font-weight:700; color:${intensity > 0.5 ? 'var(--md-white)' : 'var(--md-primary)'};">${avg.toFixed(0)}</span>
+              </div>`;
+          }
+        });
+      }
+      heatBlock.appendChild(grid);
+
+      const heatLegend = document.createElement('div');
+      heatLegend.style.cssText = 'display:flex; align-items:center; gap:8px; margin-top:14px; font-size:11px; color:var(--md-primary); opacity:0.5;';
+      heatLegend.innerHTML = `
+        <span>Fraco</span>
+        <div style="flex:1; height:8px; border-radius:4px; background:linear-gradient(90deg, var(--md-accent) 15%, var(--md-accent) 100%); opacity:0.6;"></div>
+        <span>Forte</span>
+      `;
+      heatBlock.appendChild(heatLegend);
+
+      content.appendChild(heatBlock);
+    }
+  }
 
   // ── Bloco 2: Médias por dia da semana — só os dias reais de mercado ──
   const weekdayNamesAll = ['Domingo','Segunda','Terça','Quarta','Quinta','Sexta','Sábado'];
