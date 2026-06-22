@@ -249,7 +249,7 @@
     .pick-row-label { font-size:18px; font-weight:500; color:var(--md-primary); flex:1; white-space:nowrap; }
     .pick-row-input { width:120px; max-width:120px; min-width:120px; height:48px; padding:0 14px; border:none !important; border-radius:24px !important; font-size:26px; font-weight:600; font-family:'Outfit',sans-serif; outline:none; background:var(--md-primary-container) !important; color:var(--md-on-primary-container) !important; text-align:center; -webkit-appearance:none; appearance:none; flex-shrink:0; box-sizing:border-box; }
     .pick-field-label { font-size:15px; font-weight:700; color:var(--md-primary); opacity:0.7; margin-bottom:8px; display:block; }
-    .vasil-key { height:60px; border:none; border-radius:14px; background:var(--md-neutral-90); color:var(--md-white); font-size:26px; font-weight:600; font-family:'Outfit',sans-serif; cursor:pointer; display:flex; align-items:center; justify-content:center; }
+    .vasil-key { height:60px; border:none; border-radius:14px; background:var(--md-surface-1); color:var(--md-primary); font-size:26px; font-weight:600; font-family:'Outfit',sans-serif; cursor:pointer; display:flex; align-items:center; justify-content:center; border:1.5px solid var(--md-outline-variant); }
     .vasil-key:active { background:var(--md-neutral-80); }
     #pick-sell-price { width:100%; padding:16px; border:2px solid var(--md-primary); border-radius:14px; font-size:32px; font-weight:600; font-family:'Outfit',sans-serif; outline:none; margin-bottom:12px; background:var(--md-primary-container); color:var(--md-on-primary-container); }
     #pick-sell-price:focus { border-color:var(--md-on-primary-container); }
@@ -897,7 +897,7 @@
 
     <!-- ── MODAL PESO POR CAIXA ────────────────────────────────────────────── -->
     <div id="weight-modal-overlay" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.5); z-index:299; backdrop-filter:blur(4px);" onclick="closeWeightModal()"></div>
-    <div id="supplier-picker" style="display:none;position:fixed;bottom:0;left:0;right:0;background:var(--md-neutral-70);border-radius:20px 20px 0 0;padding:16px;z-index:300;max-height:60vh;overflow-y:auto; transition:top 0.15s, max-height 0.15s;"></div>
+    <div id="supplier-picker" style="display:none;position:fixed;bottom:0;left:0;right:0;background:var(--md-surface);border-radius:20px 20px 0 0;padding:16px;z-index:300;max-height:60vh;overflow-y:auto; transition:top 0.15s, max-height 0.15s; box-shadow:0 -4px 24px rgba(0,0,0,0.15);"></div>
     <div id="supplier-overlay" onclick="closeSupplierPicker()" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:299;"></div>
     <div id="weight-modal-panel" style="display:none; position:fixed; bottom:0; left:50%; transform:translateX(-50%); width:100%; max-width:600px; background:var(--md-surface); border-radius:24px 24px 0 0; padding:24px 20px 40px; z-index:300; max-height:90vh; overflow-y:auto;">
       <div style="width:40px; height:4px; background:var(--md-outline-variant); border-radius:2px; margin:0 auto 20px;"></div>
@@ -1051,79 +1051,98 @@
         <button id="pick-next" title="Próximo artigo" style="border:none; background:var(--md-surface-variant); color:var(--md-primary); border-radius:50%; width:36px; height:36px; display:flex; align-items:center; justify-content:center; cursor:pointer; flex-shrink:0;" onclick="goNextItem()">
           <span class="material-icons-round" style="font-size:20px;">arrow_downward</span>
         </button>
-        <button id="pick-close" style="border:none; background:var(--md-gold); color:var(--md-white); border-radius:50%; width:36px; height:36px; display:flex; align-items:center; justify-content:center; cursor:pointer; flex-shrink:0;">
-          <span class="material-icons-round" style="font-size:20px;">close</span>
+        <button id="pick-close" title="Fechar" style="border:none; background:var(--md-gold); color:var(--md-white); border-radius:50%; width:42px; height:42px; display:flex; align-items:center; justify-content:center; cursor:pointer; flex-shrink:0; box-shadow:0 2px 6px rgba(0,0,0,0.15);">
+          <span class="material-icons-round" style="font-size:24px;">close</span>
         </button>
       </div>
     </div>
-    <div class="pick-row">
-      <span class="pick-row-label">Preço venda</span>
-      <input id="pick-sell-price" class="pick-row-input" type="number" inputmode="decimal" placeholder="0.00" step="0.01" min="0"
-        autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" data-lpignore="true" data-form-type="other"
-        onfocus="this.select()"
-        onkeydown="if(event.key==='Enter'){event.preventDefault();document.getElementById('pick-price').focus();}"/>
-    </div>
-    <div class="pick-row">
-      <span class="pick-row-label">Preço compra</span>
-      <input id="pick-price" class="pick-row-input" type="number" inputmode="decimal" placeholder="0.00" step="0.01" min="0"
-        autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" data-lpignore="true" data-form-type="other"
-        onfocus="this.select()"
-        onkeydown="if(event.key==='Enter'){event.preventDefault();document.getElementById('pick-notes').focus();}"/>
-    </div>
-    <div class="pick-row">
-      <span class="pick-row-label">Fornecedor</span>
-      <button id="pick-supplier-btn" onclick="openSupplierPicker()" style="background:transparent;border:none;color:var(--md-primary);font-size:21px;font-weight:600;font-family:'Outfit',sans-serif;text-align:right;flex:1;cursor:pointer;padding:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">—</button>
-      <button id="pick-supplier-call-btn" onclick="callCurrentSupplier()" style="display:none;background:var(--md-primary-container);border:none;border-radius:50%;width:38px;height:38px;display:none;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;margin-left:8px;">
-        <span class="material-icons-round" style="font-size:20px;color:var(--md-on-primary-container);">phone</span>
-      </button>
-      <select id="pick-supplier" style="display:none"></select>
-    </div>
-    <input id="pick-date" type="date" style="position:absolute;opacity:0;width:0;height:0;pointer-events:none;"/>
 
-    <!-- Vasilhame deste produto -->
-    <div style="padding:0 16px 8px;">
-      <span class="pick-field-label">Vasilhame</span>
-      <div style="display:flex; gap:6px; margin-bottom:8px;">
-        <button id="pick-vasil-no" onclick="setPickVasilhame(false)" style="flex:1; padding:11px; border:none; border-radius:9px; font-size:15px; font-weight:700; font-family:'Outfit',sans-serif; cursor:pointer; background:var(--md-primary); color:var(--md-white);">Sem vasilhame</button>
-        <button id="pick-vasil-yes" onclick="setPickVasilhame(true)" style="flex:1; padding:11px; border:none; border-radius:9px; font-size:15px; font-weight:700; font-family:'Outfit',sans-serif; cursor:pointer; background:var(--md-surface-variant); color:var(--md-primary);">Tem vasilhame</button>
+    <div style="padding:0 16px 16px;">
+      <div style="background:var(--md-surface); border-radius:14px; border:1px solid var(--md-outline-variant); padding:18px;">
+
+        <div style="font-size:13px; font-weight:700; color:var(--md-primary); opacity:0.6; text-transform:uppercase; letter-spacing:1px; margin-bottom:12px;">Preços</div>
+        <div style="display:flex; gap:10px; margin-bottom:12px;">
+          <div style="flex:1;">
+            <span style="font-size:12px; color:var(--md-primary); opacity:0.5; display:block; margin-bottom:4px;">Venda</span>
+            <input id="pick-sell-price" type="number" inputmode="decimal" placeholder="0.00" step="0.01" min="0"
+              autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" data-lpignore="true" data-form-type="other"
+              onfocus="this.select()"
+              onkeydown="if(event.key==='Enter'){event.preventDefault();document.getElementById('pick-price').focus();}"
+              style="width:100%; padding:12px; border:1.5px solid var(--md-outline-variant); border-radius:10px; font-size:18px; font-weight:700; font-family:'Outfit',sans-serif; color:var(--md-primary); background:var(--md-surface-1); outline:none; text-align:center; box-sizing:border-box;"/>
+          </div>
+          <div style="flex:1;">
+            <span style="font-size:12px; color:var(--md-primary); opacity:0.5; display:block; margin-bottom:4px;">Compra</span>
+            <input id="pick-price" type="number" inputmode="decimal" placeholder="0.00" step="0.01" min="0"
+              autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" data-lpignore="true" data-form-type="other"
+              onfocus="this.select()"
+              onkeydown="if(event.key==='Enter'){event.preventDefault();document.getElementById('pick-notes').focus();}"
+              style="width:100%; padding:12px; border:1.5px solid var(--md-outline-variant); border-radius:10px; font-size:18px; font-weight:700; font-family:'Outfit',sans-serif; color:var(--md-primary); background:var(--md-surface-1); outline:none; text-align:center; box-sizing:border-box;"/>
+          </div>
+        </div>
+
+        <div style="margin-bottom:12px;">
+          <span class="pick-field-label">Fornecedor</span>
+          <div style="display:flex; align-items:center; gap:8px;">
+            <button id="pick-supplier-btn" onclick="openSupplierPicker()" style="flex:1; background:var(--md-surface-1); border:1.5px solid var(--md-outline-variant); border-radius:10px; padding:12px; color:var(--md-primary); font-size:16px; font-weight:600; font-family:'Outfit',sans-serif; text-align:left; cursor:pointer; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">—</button>
+            <button id="pick-supplier-call-btn" onclick="callCurrentSupplier()" style="display:none; background:var(--md-primary-container); border:none; border-radius:50%; width:42px; height:42px; align-items:center; justify-content:center; cursor:pointer; flex-shrink:0;">
+              <span class="material-icons-round" style="font-size:20px; color:var(--md-on-primary-container);">phone</span>
+            </button>
+            <select id="pick-supplier" style="display:none"></select>
+          </div>
+        </div>
+        <input id="pick-date" type="date" style="position:absolute;opacity:0;width:0;height:0;pointer-events:none;"/>
+
+        <div style="margin-bottom:12px;">
+          <span class="pick-field-label">Vasilhame</span>
+          <div style="display:flex; gap:6px; margin-bottom:8px;">
+            <button id="pick-vasil-no" onclick="setPickVasilhame(false)" style="flex:1; padding:11px; border:none; border-radius:9px; font-size:15px; font-weight:700; font-family:'Outfit',sans-serif; cursor:pointer; background:var(--md-primary); color:var(--md-white);">Sem vasilhame</button>
+            <button id="pick-vasil-yes" onclick="setPickVasilhame(true)" style="flex:1; padding:11px; border:none; border-radius:9px; font-size:15px; font-weight:700; font-family:'Outfit',sans-serif; cursor:pointer; background:var(--md-surface-variant); color:var(--md-primary);">Tem vasilhame</button>
+          </div>
+          <div id="pick-vasil-detail" style="display:none; align-items:center; gap:10px;">
+            <select id="pick-vasil-type" onchange="onPickVasilChange()" style="flex:1; padding:11px; border:1.5px solid var(--md-outline-variant); border-radius:10px; font-size:14px; font-family:'Outfit',sans-serif; color:var(--md-primary); background:var(--md-surface-1); outline:none;"></select>
+            <div id="pick-vasil-qty-display" style="width:60px; padding:11px 0; font-size:16px; font-weight:700; font-family:'Outfit',sans-serif; color:var(--md-primary); text-align:center;">—</div>
+          </div>
+          <div id="pick-vasil-qty-hint" style="display:none; font-size:12px; color:var(--md-primary); opacity:0.5; margin-top:4px;">Quantidade = a que escolheste na lista</div>
+        </div>
+
+        <div style="margin-bottom:12px;">
+          <span class="pick-field-label">Peso por caixa</span>
+          <div style="display:flex; align-items:center; gap:8px;">
+            <input id="pick-weight" type="number" step="0.1" min="0" placeholder="—" onchange="onPickWeightChange()"
+              style="width:90px; padding:11px; border:1.5px solid var(--md-outline-variant); border-radius:10px; font-size:18px; font-weight:700; font-family:'Outfit',sans-serif; color:var(--md-primary); background:var(--md-surface-1); outline:none; text-align:center;"/>
+            <span style="font-size:14px; color:var(--md-primary); opacity:0.6;">kg por caixa</span>
+          </div>
+        </div>
+
+        <div style="margin-bottom:12px; display:flex; align-items:center; justify-content:space-between;">
+          <span class="pick-field-label" style="margin-bottom:0;">IVA</span>
+          <div style="display:flex; gap:0; background:var(--md-surface-variant); border-radius:8px; padding:2px;">
+            <button id="iva-btn-6" onclick="setPickIVA(6)" style="padding:8px 16px; border:none; border-radius:6px; font-size:15px; font-weight:700; font-family:inherit; cursor:pointer; background:var(--md-primary); color:var(--md-white);">6%</button>
+            <button id="iva-btn-23" onclick="setPickIVA(23)" style="padding:8px 16px; border:none; border-radius:6px; font-size:15px; font-weight:700; font-family:inherit; cursor:pointer; background:transparent; color:var(--md-primary);">23%</button>
+          </div>
+        </div>
+
+        <div style="margin-bottom:12px;">
+          <span class="pick-field-label">Stock mínimo</span>
+          <div style="display:flex; align-items:center; gap:10px;">
+            <input id="pick-min-stock" type="number" inputmode="numeric" placeholder="—" min="0"
+              autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" data-lpignore="true" data-form-type="other"
+              style="width:80px; padding:10px 14px; border:1.5px solid var(--md-outline-variant); border-radius:12px; font-size:18px; font-weight:700; font-family:'Outfit',sans-serif; outline:none; background:var(--md-surface-1); color:var(--md-primary); text-align:center;"
+              onfocus="this.select()"
+              onkeydown="if(event.key==='Enter'){event.preventDefault();this.blur();}"/>
+            <span style="font-size:14px; color:var(--md-primary); opacity:0.6;">caixas mínimo</span>
+          </div>
+        </div>
+
+        <div>
+          <input id="pick-notes" type="text" placeholder="+ Adicionar nota (ex: pedir ao João...)" style="width:100%; padding:10px 2px; border:none; border-bottom:1px solid var(--md-outline-variant); border-radius:0; font-size:14px; font-style:italic; font-family:'Outfit',sans-serif; outline:none; background:transparent; color:var(--md-primary); opacity:0.75; box-sizing:border-box;"
+            onkeydown="if(event.key==='Enter'){event.preventDefault();this.blur();}"/>
+        </div>
+
       </div>
-      <div id="pick-vasil-detail" style="display:none; align-items:center; gap:10px;">
-        <select id="pick-vasil-type" onchange="onPickVasilChange()" style="flex:1; padding:11px; border:1.5px solid var(--md-outline-variant); border-radius:10px; font-size:14px; font-family:'Outfit',sans-serif; color:var(--md-primary); background:var(--md-surface-1); outline:none;"></select>
-        <div id="pick-vasil-qty-display" style="width:60px; padding:11px 0; font-size:16px; font-weight:700; font-family:'Outfit',sans-serif; color:var(--md-primary); text-align:center;">—</div>
-      </div>
-      <div id="pick-vasil-qty-hint" style="display:none; font-size:12px; color:var(--md-primary); opacity:0.5; margin-top:4px;">Quantidade = a que escolheste na lista</div>
     </div>
-    <div style="padding:8px 16px 8px;">
-      <span class="pick-field-label">Peso por caixa</span>
-      <div style="display:flex; align-items:center; gap:8px;">
-        <input id="pick-weight" type="number" step="0.1" min="0" placeholder="—" onchange="onPickWeightChange()"
-          style="width:90px; padding:11px; border:1.5px solid var(--md-outline-variant); border-radius:10px; font-size:18px; font-weight:700; font-family:'Outfit',sans-serif; color:var(--md-primary); background:var(--md-surface-1); outline:none; text-align:center;"/>
-        <span style="font-size:14px; color:var(--md-primary); opacity:0.6;">kg por caixa</span>
-      </div>
-    </div>
-    <div style="padding:8px 16px 0;">
-      <input id="pick-notes" type="text" placeholder="+ Adicionar nota (ex: pedir ao João...)" style="width:100%; padding:10px 2px; border:none; border-bottom:1px solid var(--md-outline-variant); border-radius:0; font-size:14px; font-style:italic; font-family:'Outfit',sans-serif; outline:none; background:transparent; color:var(--md-primary); opacity:0.75; margin-bottom:8px;"
-        onkeydown="if(event.key==='Enter'){event.preventDefault();this.blur();}"/>
-    </div>
-    <div style="padding:0 16px 8px; display:flex; align-items:center; justify-content:space-between;">
-      <span class="pick-field-label" style="margin-bottom:0;">IVA</span>
-      <div style="display:flex; gap:0; background:var(--md-surface-variant); border-radius:8px; padding:2px;">
-        <button id="iva-btn-6" onclick="setPickIVA(6)" style="padding:8px 16px; border:none; border-radius:6px; font-size:15px; font-weight:700; font-family:inherit; cursor:pointer; background:var(--md-primary); color:var(--md-white);">6%</button>
-        <button id="iva-btn-23" onclick="setPickIVA(23)" style="padding:8px 16px; border:none; border-radius:6px; font-size:15px; font-weight:700; font-family:inherit; cursor:pointer; background:transparent; color:var(--md-primary);">23%</button>
-      </div>
-    </div>
-    <div style="padding:0 16px 8px;">
-      <span class="pick-field-label">Stock mínimo</span>
-      <div style="display:flex; align-items:center; gap:10px;">
-        <input id="pick-min-stock" type="number" inputmode="numeric" placeholder="—" min="0"
-          autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" data-lpignore="true" data-form-type="other"
-          style="width:80px; padding:10px 14px; border:1.5px solid var(--md-outline-variant); border-radius:12px; font-size:18px; font-weight:700; font-family:'Outfit',sans-serif; outline:none; background:var(--md-surface-1); color:var(--md-primary); text-align:center;"
-          onfocus="this.select()"
-          onkeydown="if(event.key==='Enter'){event.preventDefault();this.blur();}"/>
-        <span style="font-size:14px; color:var(--md-primary); opacity:0.6;">caixas mínimo</span>
-      </div>
-    </div>
-    <div id="pick-margin" style="display:none; margin:10px 16px; background:var(--md-primary-container); border-radius:14px; padding:14px 16px; border:1.5px solid var(--md-outline-variant);">
+
+    <div id="pick-margin" style="display:none; margin:0 16px 16px; background:var(--md-primary-container); border-radius:14px; padding:14px 16px; border:1.5px solid var(--md-outline-variant);">
       <div style="font-size:11px; font-weight:600; color:var(--md-primary); text-transform:uppercase; letter-spacing:0.8px; margin-bottom:10px;">Análise</div>
       <div style="display:flex; justify-content:space-between; margin-bottom:6px;">
         <span id="pick-iva-label" style="font-size:16px; color:var(--md-primary);">Custo c/ IVA</span>
@@ -1147,8 +1166,8 @@
 
 <!-- ── TECLADO NUMÉRICO GLOBAL (substitui o teclado nativo em todos os campos numéricos) ──
      Evita o teclado nativo do Android e a barra de autofill do Chrome em toda a app. -->
-<div id="numkeypad" style="display:none;position:fixed;bottom:0;left:0;right:0;background:var(--md-neutral-70);border-radius:20px 20px 0 0;padding:20px 16px;z-index:500;">
-  <div style="text-align:center; font-size:48px; font-weight:700; color:var(--md-white); font-family:'Outfit',sans-serif; margin-bottom:18px; min-height:58px;" id="numkeypad-display">0</div>
+<div id="numkeypad" style="display:none;position:fixed;bottom:0;left:0;right:0;background:var(--md-surface);border-radius:20px 20px 0 0;padding:20px 16px;z-index:500; box-shadow:0 -4px 24px rgba(0,0,0,0.15);">
+  <div style="text-align:center; font-size:48px; font-weight:700; color:var(--md-primary); font-family:'Outfit',sans-serif; margin-bottom:18px; min-height:58px;" id="numkeypad-display">0</div>
   <div style="display:grid; grid-template-columns:repeat(3, 1fr); gap:10px;">
     <button type="button" onclick="numKeypadPress('1')" class="vasil-key">1</button>
     <button type="button" onclick="numKeypadPress('2')" class="vasil-key">2</button>
@@ -1161,7 +1180,7 @@
     <button type="button" onclick="numKeypadPress('9')" class="vasil-key">9</button>
     <button type="button" id="numkeypad-decimal" onclick="numKeypadPress('.')" class="vasil-key">,</button>
     <button type="button" onclick="numKeypadPress('0')" class="vasil-key">0</button>
-    <button type="button" onclick="numKeypadBackspace()" class="vasil-key" style="background:var(--md-neutral-80);"><span class="material-icons-round" style="font-size:22px;">backspace</span></button>
+    <button type="button" onclick="numKeypadBackspace()" class="vasil-key" style="background:var(--md-surface-variant);"><span class="material-icons-round" style="font-size:22px;">backspace</span></button>
   </div>
   <button type="button" onclick="closeNumKeypad(true)" style="width:100%; margin-top:14px; padding:14px; background:var(--md-gold); border:none; border-radius:14px; color:var(--md-white); font-size:18px; font-weight:700; font-family:'Outfit',sans-serif; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:8px;">
     <span class="material-icons-round" style="font-size:22px;">check</span> Confirmar
@@ -2888,7 +2907,7 @@ function openVasilSupplierPicker() {
   searchBar.setAttribute("spellcheck", "false");
   searchBar.setAttribute("data-lpignore", "true"); // ignora LastPass e gestores semelhantes
   searchBar.setAttribute("data-form-type", "other"); // sinaliza ao Chrome que não é um campo de login/pagamento
-  searchBar.style.cssText = "width:100%; box-sizing:border-box; padding:14px 16px; border:none; border-radius:12px; font-size:18px; font-family:'Outfit',sans-serif; color:var(--md-white); background:var(--md-neutral-90); outline:none; margin-bottom:14px;";
+  searchBar.style.cssText = "width:100%; box-sizing:border-box; padding:14px 16px; border:1.5px solid var(--md-outline-variant); border-radius:12px; font-size:18px; font-family:'Outfit',sans-serif; color:var(--md-primary); background:var(--md-surface-1); outline:none; margin-bottom:14px;";
   searchBar.addEventListener("input", () => renderVasilSupplierResults(searchBar.value));
   picker.appendChild(searchBar);
 
@@ -2933,7 +2952,7 @@ function renderVasilSupplierResults(query) {
 
   if (filtered.length === 0) {
     const empty = document.createElement("div");
-    empty.style.cssText = "font-size:16px;color:var(--md-neutral-15);text-align:center;padding:24px 0;";
+    empty.style.cssText = "font-size:16px;color:var(--md-primary);opacity:0.5;text-align:center;padding:24px 0;";
     empty.textContent = "Sem resultados";
     results.appendChild(empty);
   } else {
@@ -2949,14 +2968,14 @@ function renderVasilSupplierResults(query) {
 
     orderedKeys.forEach(groupKey => {
       const hdr = document.createElement("div");
-      hdr.style.cssText = "font-size:13px;font-weight:700;color:var(--md-neutral-30);text-transform:uppercase;letter-spacing:1px;margin:18px 2px 8px;";
+      hdr.style.cssText = "font-size:13px;font-weight:700;color:var(--md-primary);opacity:0.55;text-transform:uppercase;letter-spacing:1px;margin:18px 2px 8px;";
 
       groups[groupKey].forEach(s => {
         const btn = document.createElement("button");
         btn.type = "button";
         btn.style.cssText = "display:block;width:100%;text-align:left;padding:14px 16px;border:none;border-radius:10px;font-size:21px;font-family:'Outfit',sans-serif;cursor:pointer;margin-bottom:6px;font-weight:500;";
         const isSel = document.getElementById('vasil-supplier').value === s.name;
-        btn.style.background = isSel ? "var(--md-primary)" : "var(--md-neutral-90)";
+        btn.style.background = isSel ? "var(--md-primary)" : "var(--md-surface-1)";
         btn.style.color = isSel ? "var(--md-white)" : "var(--md-white)";
         btn.textContent = s.name;
         btn.addEventListener("click", () => {
@@ -3016,7 +3035,7 @@ function openGenericSupplierPicker(onSelect, currentValue) {
   titleRow.appendChild(title);
   const closeBtn = document.createElement("button");
   closeBtn.type = "button";
-  closeBtn.style.cssText = "border:none; background:var(--md-neutral-90); color:var(--md-white); border-radius:50%; width:34px; height:34px; display:flex; align-items:center; justify-content:center; cursor:pointer; flex-shrink:0;";
+  closeBtn.style.cssText = "border:none; background:var(--md-surface-variant); color:var(--md-primary); border-radius:50%; width:34px; height:34px; display:flex; align-items:center; justify-content:center; cursor:pointer; flex-shrink:0;";
   closeBtn.innerHTML = '<span class="material-icons-round" style="font-size:18px;">close</span>';
   closeBtn.addEventListener("click", () => closeGenericSupplierPicker());
   titleRow.appendChild(closeBtn);
@@ -3033,7 +3052,7 @@ function openGenericSupplierPicker(onSelect, currentValue) {
   searchBar.setAttribute("spellcheck", "false");
   searchBar.setAttribute("data-lpignore", "true");
   searchBar.setAttribute("data-form-type", "other");
-  searchBar.style.cssText = "width:100%; box-sizing:border-box; padding:14px 16px; border:none; border-radius:12px; font-size:18px; font-family:'Outfit',sans-serif; color:var(--md-white); background:var(--md-neutral-90); outline:none; margin-bottom:14px;";
+  searchBar.style.cssText = "width:100%; box-sizing:border-box; padding:14px 16px; border:1.5px solid var(--md-outline-variant); border-radius:12px; font-size:18px; font-family:'Outfit',sans-serif; color:var(--md-primary); background:var(--md-surface-1); outline:none; margin-bottom:14px;";
   searchBar.addEventListener("input", () => renderGenericSupplierPickerResults(searchBar.value));
   picker.appendChild(searchBar);
 
@@ -3072,7 +3091,7 @@ function renderGenericSupplierPickerResults(query) {
 
   if (suppliers.length === 0) {
     const empty = document.createElement("div");
-    empty.style.cssText = "font-size:16px;color:var(--md-neutral-15);text-align:center;padding:24px 0;";
+    empty.style.cssText = "font-size:16px;color:var(--md-primary);opacity:0.5;text-align:center;padding:24px 0;";
     empty.textContent = "Sem fornecedores. Adiciona na secção Fornecedores.";
     results.appendChild(empty);
     return;
@@ -3083,7 +3102,7 @@ function renderGenericSupplierPickerResults(query) {
 
   if (filtered.length === 0) {
     const empty = document.createElement("div");
-    empty.style.cssText = "font-size:16px;color:var(--md-neutral-15);text-align:center;padding:24px 0;";
+    empty.style.cssText = "font-size:16px;color:var(--md-primary);opacity:0.5;text-align:center;padding:24px 0;";
     empty.textContent = "Sem resultados";
     results.appendChild(empty);
   } else {
@@ -3099,7 +3118,7 @@ function renderGenericSupplierPickerResults(query) {
 
     orderedKeys.forEach(groupKey => {
       const hdr = document.createElement("div");
-      hdr.style.cssText = "font-size:13px;font-weight:700;color:var(--md-neutral-30);text-transform:uppercase;letter-spacing:1px;margin:18px 2px 8px;";
+      hdr.style.cssText = "font-size:13px;font-weight:700;color:var(--md-primary);opacity:0.55;text-transform:uppercase;letter-spacing:1px;margin:18px 2px 8px;";
       hdr.textContent = groupKey === '__none__' ? 'Sem pavilhão' : groupKey;
       results.appendChild(hdr);
 
@@ -3108,8 +3127,8 @@ function renderGenericSupplierPickerResults(query) {
         btn.type = "button";
         btn.style.cssText = "display:block;width:100%;text-align:left;padding:14px 16px;border:none;border-radius:10px;font-size:21px;font-family:'Outfit',sans-serif;cursor:pointer;margin-bottom:6px;font-weight:500;";
         const isSel = genericPickerCurrentValue === s.name;
-        btn.style.background = isSel ? "var(--md-primary)" : "var(--md-neutral-90)";
-        btn.style.color = "var(--md-white)";
+        btn.style.background = isSel ? "var(--md-primary)" : "var(--md-surface-1)";
+        btn.style.color = isSel ? "var(--md-white)" : "var(--md-primary)";
         btn.textContent = s.name;
         btn.addEventListener("click", () => {
           if (genericPickerOnSelect) genericPickerOnSelect(s.name);
@@ -3122,7 +3141,7 @@ function renderGenericSupplierPickerResults(query) {
 
   const clearBtn = document.createElement("button");
   clearBtn.type = "button";
-  clearBtn.style.cssText = "display:block;width:100%;text-align:left;padding:14px 16px;border:1.5px dashed var(--md-neutral-35);border-radius:10px;font-size:18px;font-family:'Outfit',sans-serif;cursor:pointer;margin-top:10px;font-weight:500;background:transparent;color:var(--md-neutral-15);";
+  clearBtn.style.cssText = "display:block;width:100%;text-align:left;padding:14px 16px;border:1.5px dashed var(--md-outline-variant);border-radius:10px;font-size:18px;font-family:'Outfit',sans-serif;cursor:pointer;margin-top:10px;font-weight:500;background:transparent;color:var(--md-primary);opacity:0.6;"
   clearBtn.textContent = "✕ Remover fornecedor";
   clearBtn.addEventListener("click", () => {
     if (genericPickerOnSelect) genericPickerOnSelect('');
@@ -5022,7 +5041,7 @@ function openSupplierPicker() {
   titleRow.appendChild(title);
   const closeBtn = document.createElement("button");
   closeBtn.type = "button";
-  closeBtn.style.cssText = "border:none; background:var(--md-neutral-90); color:var(--md-white); border-radius:50%; width:34px; height:34px; display:flex; align-items:center; justify-content:center; cursor:pointer; flex-shrink:0;";
+  closeBtn.style.cssText = "border:none; background:var(--md-surface-variant); color:var(--md-primary); border-radius:50%; width:34px; height:34px; display:flex; align-items:center; justify-content:center; cursor:pointer; flex-shrink:0;";
   closeBtn.innerHTML = '<span class="material-icons-round" style="font-size:18px;">close</span>';
   closeBtn.addEventListener("click", () => closeSupplierPicker());
   titleRow.appendChild(closeBtn);
@@ -5040,7 +5059,7 @@ function openSupplierPicker() {
   searchBar.setAttribute("spellcheck", "false");
   searchBar.setAttribute("data-lpignore", "true");
   searchBar.setAttribute("data-form-type", "other");
-  searchBar.style.cssText = "width:100%; box-sizing:border-box; padding:14px 16px; border:none; border-radius:12px; font-size:18px; font-family:'Outfit',sans-serif; color:var(--md-white); background:var(--md-neutral-90); outline:none; margin-bottom:14px;";
+  searchBar.style.cssText = "width:100%; box-sizing:border-box; padding:14px 16px; border:1.5px solid var(--md-outline-variant); border-radius:12px; font-size:18px; font-family:'Outfit',sans-serif; color:var(--md-primary); background:var(--md-surface-1); outline:none; margin-bottom:14px;";
   searchBar.addEventListener("input", () => renderSupplierPickerResults(searchBar.value));
   picker.appendChild(searchBar);
 
@@ -5082,7 +5101,7 @@ function renderSupplierPickerResults(query) {
 
   if (suppliers.length === 0) {
     const empty = document.createElement("div");
-    empty.style.cssText = "font-size:16px;color:var(--md-neutral-15);text-align:center;padding:24px 0;";
+    empty.style.cssText = "font-size:16px;color:var(--md-primary);opacity:0.5;text-align:center;padding:24px 0;";
     empty.textContent = "Sem fornecedores. Adiciona na secção Fornecedores.";
     results.appendChild(empty);
     return;
@@ -5093,7 +5112,7 @@ function renderSupplierPickerResults(query) {
 
   if (filtered.length === 0) {
     const empty = document.createElement("div");
-    empty.style.cssText = "font-size:16px;color:var(--md-neutral-15);text-align:center;padding:24px 0;";
+    empty.style.cssText = "font-size:16px;color:var(--md-primary);opacity:0.5;text-align:center;padding:24px 0;";
     empty.textContent = "Sem resultados";
     results.appendChild(empty);
   } else {
@@ -5109,7 +5128,7 @@ function renderSupplierPickerResults(query) {
 
     orderedKeys.forEach(groupKey => {
       const hdr = document.createElement("div");
-      hdr.style.cssText = "font-size:13px;font-weight:700;color:var(--md-neutral-30);text-transform:uppercase;letter-spacing:1px;margin:18px 2px 8px;";
+      hdr.style.cssText = "font-size:13px;font-weight:700;color:var(--md-primary);opacity:0.55;text-transform:uppercase;letter-spacing:1px;margin:18px 2px 8px;";
       hdr.textContent = groupKey === '__none__' ? 'Sem pavilhão' : groupKey;
       results.appendChild(hdr);
 
@@ -5118,8 +5137,8 @@ function renderSupplierPickerResults(query) {
         btn.type = "button";
         btn.style.cssText = "display:block;width:100%;text-align:left;padding:14px 16px;border:none;border-radius:10px;font-size:21px;font-family:'Outfit',sans-serif;cursor:pointer;margin-bottom:6px;font-weight:500;";
         const isSel = picked[currentPickKey]?.supplier === s.name;
-        btn.style.background = isSel ? "var(--md-primary)" : "var(--md-neutral-90)";
-        btn.style.color = "var(--md-white)";
+        btn.style.background = isSel ? "var(--md-primary)" : "var(--md-surface-1)";
+        btn.style.color = isSel ? "var(--md-white)" : "var(--md-primary)";
         btn.textContent = s.name;
         btn.addEventListener("click", () => {
           picked[currentPickKey] = { ...picked[currentPickKey], supplier: s.name };
@@ -5137,7 +5156,7 @@ function renderSupplierPickerResults(query) {
   // Limpar fornecedor
   const clearBtn = document.createElement("button");
   clearBtn.type = "button";
-  clearBtn.style.cssText = "display:block;width:100%;text-align:left;padding:14px 16px;border:1.5px dashed var(--md-neutral-35);border-radius:10px;font-size:18px;font-family:'Outfit',sans-serif;cursor:pointer;margin-top:10px;font-weight:500;background:transparent;color:var(--md-neutral-15);";
+  clearBtn.style.cssText = "display:block;width:100%;text-align:left;padding:14px 16px;border:1.5px dashed var(--md-outline-variant);border-radius:10px;font-size:18px;font-family:'Outfit',sans-serif;cursor:pointer;margin-top:10px;font-weight:500;background:transparent;color:var(--md-primary);opacity:0.6;"
   clearBtn.textContent = "✕ Remover fornecedor";
   clearBtn.addEventListener("click", () => {
     picked[currentPickKey] = { ...picked[currentPickKey], supplier: "" };
