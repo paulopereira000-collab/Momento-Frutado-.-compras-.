@@ -240,7 +240,7 @@
     #voice-cancel-btn { padding:14px 20px; background:var(--md-surface-variant); color:var(--md-primary); border:none; border-radius:14px; font-size:16px; font-weight:600; font-family:'Outfit',sans-serif; cursor:pointer; }
 
     /* PICK PANEL */
-    #pick-panel { position:fixed; bottom:0; left:50%; transform:translateX(-50%); width:100%; max-width:600px; background:var(--md-surface); border-radius:28px 28px 0 0; padding:0 0 32px; box-shadow:0 -4px 32px rgba(0,0,0,0.3); z-index:200; display:none; }
+    #pick-panel { position:fixed; bottom:0; left:50%; transform:translateX(-50%); width:100%; max-width:600px; background:var(--md-surface); border-radius:28px 28px 0 0; padding:0 0 32px; box-shadow:0 -4px 32px rgba(0,0,0,0.3); z-index:200; display:none; max-height:88vh; overflow-y:auto; box-sizing:border-box; }
     #pick-panel.open { display:block; }
     #pick-overlay { position:fixed; inset:0; background:rgba(26,28,25,0.5); z-index:199; display:none; backdrop-filter:blur(4px); -webkit-backdrop-filter:blur(4px); }
     #pick-overlay.open { display:block; }
@@ -1105,32 +1105,21 @@
           <div id="pick-vasil-qty-hint" style="display:none; font-size:12px; color:var(--md-primary); opacity:0.5; margin-top:4px;">Quantidade = a que escolheste na lista</div>
         </div>
 
-        <div style="margin-bottom:12px;">
-          <span class="pick-field-label">Peso por caixa</span>
-          <div style="display:flex; align-items:center; gap:8px;">
-            <input id="pick-weight" type="number" step="0.1" min="0" placeholder="—" onchange="onPickWeightChange()"
-              style="width:90px; padding:11px; border:1.5px solid var(--md-outline-variant); border-radius:10px; font-size:18px; font-weight:700; font-family:'Outfit',sans-serif; color:var(--md-primary); background:var(--md-surface-1); outline:none; text-align:center;"/>
-            <span style="font-size:14px; color:var(--md-primary); opacity:0.6;">kg por caixa</span>
+        <div style="margin-bottom:12px; display:flex; align-items:center; justify-content:space-between; gap:12px;">
+          <div>
+            <span class="pick-field-label">Peso por caixa</span>
+            <div style="display:flex; align-items:center; gap:8px;">
+              <input id="pick-weight" type="number" step="0.1" min="0" placeholder="—" onchange="onPickWeightChange()"
+                style="width:80px; padding:11px; border:1.5px solid var(--md-outline-variant); border-radius:10px; font-size:18px; font-weight:700; font-family:'Outfit',sans-serif; color:var(--md-primary); background:var(--md-surface-1); outline:none; text-align:center;"/>
+              <span style="font-size:13px; color:var(--md-primary); opacity:0.6;">kg</span>
+            </div>
           </div>
-        </div>
-
-        <div style="margin-bottom:12px; display:flex; align-items:center; justify-content:space-between;">
-          <span class="pick-field-label" style="margin-bottom:0;">IVA</span>
-          <div style="display:flex; gap:0; background:var(--md-surface-variant); border-radius:8px; padding:2px;">
-            <button id="iva-btn-6" onclick="setPickIVA(6)" style="padding:8px 16px; border:none; border-radius:6px; font-size:15px; font-weight:700; font-family:inherit; cursor:pointer; background:var(--md-primary); color:var(--md-white);">6%</button>
-            <button id="iva-btn-23" onclick="setPickIVA(23)" style="padding:8px 16px; border:none; border-radius:6px; font-size:15px; font-weight:700; font-family:inherit; cursor:pointer; background:transparent; color:var(--md-primary);">23%</button>
-          </div>
-        </div>
-
-        <div style="margin-bottom:12px;">
-          <span class="pick-field-label">Stock mínimo</span>
-          <div style="display:flex; align-items:center; gap:10px;">
-            <input id="pick-min-stock" type="number" inputmode="numeric" placeholder="—" min="0"
-              autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" data-lpignore="true" data-form-type="other"
-              style="width:80px; padding:10px 14px; border:1.5px solid var(--md-outline-variant); border-radius:12px; font-size:18px; font-weight:700; font-family:'Outfit',sans-serif; outline:none; background:var(--md-surface-1); color:var(--md-primary); text-align:center;"
-              onfocus="this.select()"
-              onkeydown="if(event.key==='Enter'){event.preventDefault();this.blur();}"/>
-            <span style="font-size:14px; color:var(--md-primary); opacity:0.6;">caixas mínimo</span>
+          <div>
+            <span class="pick-field-label" style="text-align:right; display:block;">IVA</span>
+            <div style="display:flex; gap:0; background:var(--md-surface-variant); border-radius:8px; padding:2px;">
+              <button id="iva-btn-6" onclick="setPickIVA(6)" style="padding:8px 16px; border:none; border-radius:6px; font-size:15px; font-weight:700; font-family:inherit; cursor:pointer; background:var(--md-primary); color:var(--md-white);">6%</button>
+              <button id="iva-btn-23" onclick="setPickIVA(23)" style="padding:8px 16px; border:none; border-radius:6px; font-size:15px; font-weight:700; font-family:inherit; cursor:pointer; background:transparent; color:var(--md-primary);">23%</button>
+            </div>
           </div>
         </div>
 
@@ -2491,8 +2480,28 @@ function renderPrices() {
       sellInput.addEventListener('change', () => updatePickedPrice(sellInput));
       sellRow.appendChild(sellLabel); sellRow.appendChild(sellInput);
 
+      // Fornecedor — abre a mesma cascata por pavilhão usada no resto da app
+      const supplierRow = document.createElement('div');
+      supplierRow.style.cssText = 'display:flex; align-items:center; gap:8px;';
+      const supplierLabel = document.createElement('span');
+      supplierLabel.style.cssText = 'font-size:11px; color:var(--md-primary); opacity:0.6; font-weight:600;';
+      supplierLabel.textContent = 'FORN.';
+      const supplierBtn = document.createElement('button');
+      supplierBtn.type = 'button';
+      const currentSupplierName = picked[r.key]?.supplier || '';
+      supplierBtn.textContent = currentSupplierName || '—';
+      supplierBtn.style.cssText = 'width:80px; padding:8px 10px; border:1.5px solid var(--md-outline-variant); border-radius:10px; font-size:13px; font-weight:600; font-family:inherit; color:var(--md-primary); background:var(--md-surface); text-align:right; outline:none; cursor:pointer; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;';
+      supplierBtn.addEventListener('click', () => {
+        openGenericSupplierPicker((name) => {
+          picked[r.key] = { ...picked[r.key], supplier: name };
+          supplierBtn.textContent = name || '—';
+          sched();
+        }, picked[r.key]?.supplier || '');
+      });
+      supplierRow.appendChild(supplierLabel); supplierRow.appendChild(supplierBtn);
+
       inputs.appendChild(buyRow);
-      if (r.cat !== 'Consumíveis') inputs.appendChild(sellRow);
+      if (r.cat !== 'Consumíveis') { inputs.appendChild(sellRow); inputs.appendChild(supplierRow); }
       row.appendChild(inputs);
       catBody.appendChild(row);
     });
@@ -4475,11 +4484,6 @@ function renderCats(search) {
           nm.textContent = item;
           const qtyEl = makeQty(key, Number(e.qty));
           if (isPicked) { const qd = qtyEl.querySelector(".qty-display"); if(qd) qd.classList.add("picked"); }
-          const p_min = picked[key]?.minStock;
-          if (p_min && Number(e.qty) > 0 && Number(e.qty) < Number(p_min)) {
-            const warn = document.createElement('span'); warn.textContent = '⚠️'; warn.title = 'Abaixo do stock mínimo (' + p_min + ')';
-            warn.style.cssText = 'font-size:14px; margin-left:2px;'; nm.appendChild(warn);
-          }
           if (isLowMargin(key, item)) {
             row.style.color = 'var(--md-error)';
             nm.style.color = 'var(--md-error)';
@@ -4519,11 +4523,6 @@ function renderCats(search) {
         nm.textContent = item;
         const qtyEl2 = makeQty(key, Number(e.qty));
         if (isPicked2) { const qd = qtyEl2.querySelector(".qty-display"); if(qd) qd.classList.add("picked"); }
-        const p_min2 = picked[key]?.minStock;
-        if (p_min2 && Number(e.qty) > 0 && Number(e.qty) < Number(p_min2)) {
-          const warn2 = document.createElement('span'); warn2.textContent = '⚠️'; warn2.title = 'Abaixo do stock mínimo (' + p_min2 + ')';
-          warn2.style.cssText = 'font-size:14px; margin-left:2px;'; nm.appendChild(warn2);
-        }
         if (isLowMargin(key, item)) {
           row.style.color = 'var(--md-error)';
           nm.style.color = 'var(--md-error)';
@@ -5226,7 +5225,6 @@ function openPickPanel(cat, item) {
   // Set IVA toggle
   const itemIVA = p.iva || (getIVA(item) === 0.23 ? 23 : 6);
   setPickIVA(itemIVA, true);
-  const minEl   = document.getElementById("pick-min-stock"); if(minEl) minEl.value = p.minStock || "";
   // Peso por caixa — independente do vasilhame, mesma tabela usada em Gestão de produtos
   const weightEl = document.getElementById("pick-weight"); if(weightEl) weightEl.value = boxWeights[key] || "";
   // Vasilhame — a quantidade é sempre a mesma que foi escolhida na lista para este produto
@@ -5422,13 +5420,6 @@ document.getElementById("pick-sell-price").addEventListener("input", e => {
 document.getElementById("pick-notes")?.addEventListener("input", e => {
   if (!currentPickKey) return;
   picked[currentPickKey] = { ...picked[currentPickKey], notes: e.target.value };
-  sched();
-});
-
-// Min stock
-document.getElementById("pick-min-stock")?.addEventListener("change", e => {
-  if (!currentPickKey) return;
-  picked[currentPickKey] = { ...picked[currentPickKey], minStock: e.target.value };
   sched();
 });
 
