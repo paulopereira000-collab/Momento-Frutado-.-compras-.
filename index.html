@@ -248,7 +248,7 @@
     .pick-row { display:flex; align-items:center; gap:12px; padding:12px 16px; overflow:hidden; }
     .pick-row-label { font-size:18px; font-weight:500; color:var(--md-primary); flex:1; white-space:nowrap; }
     .pick-row-input { width:120px; max-width:120px; min-width:120px; height:48px; padding:0 14px; border:none !important; border-radius:24px !important; font-size:26px; font-weight:600; font-family:'Outfit',sans-serif; outline:none; background:var(--md-primary-container) !important; color:var(--md-on-primary-container) !important; text-align:center; -webkit-appearance:none; appearance:none; flex-shrink:0; box-sizing:border-box; }
-    .pick-field-label { font-size:11px; font-weight:600; color:var(--md-primary); text-transform:uppercase; letter-spacing:0.5px; margin-bottom:6px; display:block; }
+    .pick-field-label { font-size:15px; font-weight:700; color:var(--md-primary); opacity:0.7; margin-bottom:8px; display:block; }
     .vasil-key { height:60px; border:none; border-radius:14px; background:var(--md-neutral-90); color:var(--md-white); font-size:26px; font-weight:600; font-family:'Outfit',sans-serif; cursor:pointer; display:flex; align-items:center; justify-content:center; }
     .vasil-key:active { background:var(--md-neutral-80); }
     #pick-sell-price { width:100%; padding:16px; border:2px solid var(--md-primary); border-radius:14px; font-size:32px; font-weight:600; font-family:'Outfit',sans-serif; outline:none; margin-bottom:12px; background:var(--md-primary-container); color:var(--md-on-primary-container); }
@@ -978,10 +978,10 @@
       <div id="dash-bg-style" class="dash-gradient-bg" style="position:absolute; inset:0; overflow:hidden;"></div>
 
       <!-- Conteúdo por cima -->
-      <div style="position:relative; z-index:2; min-height:100%; display:flex; flex-direction:column;">
+      <div style="position:relative; z-index:2; min-height:100%; display:flex; flex-direction:column; justify-content:center;">
 
         <!-- Saudação -->
-        <div style="padding:36px 20px 0 44px;">
+        <div style="padding:0 20px 0 44px;">
           <div id="dash-greeting" style="font-size:40px; font-weight:200; line-height:1.1; color:var(--md-white); opacity:0.95; text-transform:lowercase;"></div>
         </div>
 
@@ -1084,14 +1084,22 @@
     <div style="padding:0 16px 8px;">
       <span class="pick-field-label">Vasilhame</span>
       <div style="display:flex; gap:6px; margin-bottom:8px;">
-        <button id="pick-vasil-no" onclick="setPickVasilhame(false)" style="flex:1; padding:9px; border:none; border-radius:9px; font-size:13px; font-weight:700; font-family:'Outfit',sans-serif; cursor:pointer; background:var(--md-primary); color:var(--md-white);">Sem vasilhame</button>
-        <button id="pick-vasil-yes" onclick="setPickVasilhame(true)" style="flex:1; padding:9px; border:none; border-radius:9px; font-size:13px; font-weight:700; font-family:'Outfit',sans-serif; cursor:pointer; background:var(--md-surface-variant); color:var(--md-primary);">Tem vasilhame</button>
+        <button id="pick-vasil-no" onclick="setPickVasilhame(false)" style="flex:1; padding:11px; border:none; border-radius:9px; font-size:15px; font-weight:700; font-family:'Outfit',sans-serif; cursor:pointer; background:var(--md-primary); color:var(--md-white);">Sem vasilhame</button>
+        <button id="pick-vasil-yes" onclick="setPickVasilhame(true)" style="flex:1; padding:11px; border:none; border-radius:9px; font-size:15px; font-weight:700; font-family:'Outfit',sans-serif; cursor:pointer; background:var(--md-surface-variant); color:var(--md-primary);">Tem vasilhame</button>
       </div>
       <div id="pick-vasil-detail" style="display:none; align-items:center; gap:10px;">
         <select id="pick-vasil-type" onchange="onPickVasilChange()" style="flex:1; padding:11px; border:1.5px solid var(--md-outline-variant); border-radius:10px; font-size:14px; font-family:'Outfit',sans-serif; color:var(--md-primary); background:var(--md-surface-1); outline:none;"></select>
         <div id="pick-vasil-qty-display" style="width:60px; padding:11px 0; font-size:16px; font-weight:700; font-family:'Outfit',sans-serif; color:var(--md-primary); text-align:center;">—</div>
       </div>
       <div id="pick-vasil-qty-hint" style="display:none; font-size:12px; color:var(--md-primary); opacity:0.5; margin-top:4px;">Quantidade = a que escolheste na lista</div>
+    </div>
+    <div style="padding:8px 16px 8px;">
+      <span class="pick-field-label">Peso por caixa</span>
+      <div style="display:flex; align-items:center; gap:8px;">
+        <input id="pick-weight" type="number" step="0.1" min="0" placeholder="—" onchange="onPickWeightChange()"
+          style="width:90px; padding:11px; border:1.5px solid var(--md-outline-variant); border-radius:10px; font-size:18px; font-weight:700; font-family:'Outfit',sans-serif; color:var(--md-primary); background:var(--md-surface-1); outline:none; text-align:center;"/>
+        <span style="font-size:14px; color:var(--md-primary); opacity:0.6;">kg por caixa</span>
+      </div>
     </div>
     <div style="padding:8px 16px 0;">
       <input id="pick-notes" type="text" placeholder="+ Adicionar nota (ex: pedir ao João...)" style="width:100%; padding:10px 2px; border:none; border-bottom:1px solid var(--md-outline-variant); border-radius:0; font-size:14px; font-style:italic; font-family:'Outfit',sans-serif; outline:none; background:transparent; color:var(--md-primary); opacity:0.75; margin-bottom:8px;"
@@ -1100,8 +1108,8 @@
     <div style="padding:0 16px 8px; display:flex; align-items:center; justify-content:space-between;">
       <span class="pick-field-label" style="margin-bottom:0;">IVA</span>
       <div style="display:flex; gap:0; background:var(--md-surface-variant); border-radius:8px; padding:2px;">
-        <button id="iva-btn-6" onclick="setPickIVA(6)" style="padding:6px 14px; border:none; border-radius:6px; font-size:13px; font-weight:700; font-family:inherit; cursor:pointer; background:var(--md-primary); color:var(--md-white);">6%</button>
-        <button id="iva-btn-23" onclick="setPickIVA(23)" style="padding:6px 14px; border:none; border-radius:6px; font-size:13px; font-weight:700; font-family:inherit; cursor:pointer; background:transparent; color:var(--md-primary);">23%</button>
+        <button id="iva-btn-6" onclick="setPickIVA(6)" style="padding:8px 16px; border:none; border-radius:6px; font-size:15px; font-weight:700; font-family:inherit; cursor:pointer; background:var(--md-primary); color:var(--md-white);">6%</button>
+        <button id="iva-btn-23" onclick="setPickIVA(23)" style="padding:8px 16px; border:none; border-radius:6px; font-size:15px; font-weight:700; font-family:inherit; cursor:pointer; background:transparent; color:var(--md-primary);">23%</button>
       </div>
     </div>
     <div style="padding:0 16px 8px;">
@@ -3000,10 +3008,19 @@ function openGenericSupplierPicker(onSelect, currentValue) {
   const overlay = document.getElementById("supplier-overlay");
   picker.innerHTML = "";
 
+  const titleRow = document.createElement("div");
+  titleRow.style.cssText = "display:flex; align-items:center; justify-content:space-between; margin-bottom:14px;";
   const title = document.createElement("div");
-  title.style.cssText = "font-size:20px;font-weight:700;color:var(--md-primary);margin-bottom:14px;";
+  title.style.cssText = "font-size:20px;font-weight:700;color:var(--md-primary);";
   title.textContent = "Escolher fornecedor";
-  picker.appendChild(title);
+  titleRow.appendChild(title);
+  const closeBtn = document.createElement("button");
+  closeBtn.type = "button";
+  closeBtn.style.cssText = "border:none; background:var(--md-neutral-90); color:var(--md-white); border-radius:50%; width:34px; height:34px; display:flex; align-items:center; justify-content:center; cursor:pointer; flex-shrink:0;";
+  closeBtn.innerHTML = '<span class="material-icons-round" style="font-size:18px;">close</span>';
+  closeBtn.addEventListener("click", () => closeGenericSupplierPicker());
+  titleRow.appendChild(closeBtn);
+  picker.appendChild(titleRow);
 
   const searchBar = document.createElement("input");
   searchBar.id = "supplier-picker-quicksearch";
@@ -4997,10 +5014,19 @@ function openSupplierPicker() {
   const overlay = document.getElementById("supplier-overlay");
   picker.innerHTML = "";
 
+  const titleRow = document.createElement("div");
+  titleRow.style.cssText = "display:flex; align-items:center; justify-content:space-between; margin-bottom:14px;";
   const title = document.createElement("div");
-  title.style.cssText = "font-size:20px;font-weight:700;color:var(--md-primary);margin-bottom:14px;";
+  title.style.cssText = "font-size:20px;font-weight:700;color:var(--md-primary);";
   title.textContent = "Escolher fornecedor";
-  picker.appendChild(title);
+  titleRow.appendChild(title);
+  const closeBtn = document.createElement("button");
+  closeBtn.type = "button";
+  closeBtn.style.cssText = "border:none; background:var(--md-neutral-90); color:var(--md-white); border-radius:50%; width:34px; height:34px; display:flex; align-items:center; justify-content:center; cursor:pointer; flex-shrink:0;";
+  closeBtn.innerHTML = '<span class="material-icons-round" style="font-size:18px;">close</span>';
+  closeBtn.addEventListener("click", () => closeSupplierPicker());
+  titleRow.appendChild(closeBtn);
+  picker.appendChild(titleRow);
 
   // Barra de pesquisa — criada apenas UMA vez para nunca perder o foco ao digitar
   const searchBar = document.createElement("input");
@@ -5182,6 +5208,8 @@ function openPickPanel(cat, item) {
   const itemIVA = p.iva || (getIVA(item) === 0.23 ? 23 : 6);
   setPickIVA(itemIVA, true);
   const minEl   = document.getElementById("pick-min-stock"); if(minEl) minEl.value = p.minStock || "";
+  // Peso por caixa — independente do vasilhame, mesma tabela usada em Gestão de produtos
+  const weightEl = document.getElementById("pick-weight"); if(weightEl) weightEl.value = boxWeights[key] || "";
   // Vasilhame — a quantidade é sempre a mesma que foi escolhida na lista para este produto
   populateVasilTypeSelect();
   setPickVasilhame(!!p.vasilhame, true);
@@ -5194,6 +5222,12 @@ function openPickPanel(cat, item) {
   document.getElementById("pick-panel").classList.add("open");
   document.getElementById("pick-overlay").classList.add("open");
   updateMargin();
+}
+
+function onPickWeightChange() {
+  if (!currentPickKey) return;
+  const value = document.getElementById('pick-weight').value;
+  saveWeightField(currentPickKey, value);
 }
 
 function setPickIVA(rate, noSave) {
