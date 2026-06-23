@@ -893,6 +893,18 @@
       </div>
     </div>
 
+    <!-- ── MODAL CRONOLOGIA — comparação ano a ano de um dia específico ────── -->
+    <div id="day-history-overlay" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.55); z-index:299; backdrop-filter:blur(8px);" onclick="closeDayHistoryModal()"></div>
+    <div id="day-history-panel" style="display:none; position:fixed; bottom:0; left:50%; transform:translateX(-50%); width:100%; max-width:600px; background:var(--md-surface); border-radius:28px 28px 0 0; padding:0 0 32px; z-index:300; max-height:88vh; overflow-y:auto; box-sizing:border-box; box-shadow:0 -4px 32px rgba(0,0,0,0.3);">
+      <div style="display:flex; align-items:center; justify-content:space-between; padding:18px 20px 6px;">
+        <div id="day-history-title" style="font-size:29px; font-weight:600; color:var(--md-primary); font-family:'Outfit',sans-serif; text-transform:lowercase;">Dia</div>
+        <button onclick="closeDayHistoryModal()" title="Fechar" style="border:none; background:var(--md-gold); color:var(--md-white); border-radius:50%; width:42px; height:42px; display:flex; align-items:center; justify-content:center; cursor:pointer; flex-shrink:0; box-shadow:0 2px 6px rgba(0,0,0,0.15);">
+          <span class="material-icons-round" style="font-size:24px;">close</span>
+        </button>
+      </div>
+      <div id="day-history-content" style="padding:0 16px 16px;"></div>
+    </div>
+
     <!-- ── MODAL PESO POR CAIXA ────────────────────────────────────────────── -->
     <div id="weight-modal-overlay" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.5); z-index:299; backdrop-filter:blur(4px);" onclick="closeWeightModal()"></div>
     <div id="supplier-picker" style="display:none;position:fixed;bottom:0;left:0;right:0;background:var(--md-surface);border-radius:20px 20px 0 0;padding:16px;z-index:300;max-height:60vh;overflow-y:auto; transition:top 0.15s, max-height 0.15s; box-shadow:0 -4px 24px rgba(0,0,0,0.15);"></div>
@@ -3878,13 +3890,16 @@ function renderResumo() {
             else if (r.diffPct <= -10) tag = { text: `↓ Fraco (${r.diffPct.toFixed(0)}%)`, color: 'var(--md-error)', opacity: 1 };
           }
           return `
-            <div style="display:flex; justify-content:space-between; align-items:center; padding:10px 0; border-bottom:1px solid var(--md-outline-variant);">
+            <button onclick="openDayHistoryModal(${r.dow}, '${r.name}')" style="display:flex; justify-content:space-between; align-items:center; padding:10px 0; border-bottom:1px solid var(--md-outline-variant); width:100%; background:none; border-left:none; border-right:none; border-top:none; cursor:pointer; text-align:left; font-family:inherit;">
               <div>
                 <div style="font-size:14px; font-weight:700; color:var(--md-primary);">${r.name} <span style="opacity:0.5; font-weight:500;">${fmtDate(r.date)}</span></div>
                 <div style="font-size:11px; color:var(--md-primary); opacity:0.5;">média nesta época: ${r.histAvg.toFixed(0)}€</div>
               </div>
-              <div style="font-size:13px; font-weight:700; color:${tag.color}; opacity:${tag.opacity}; text-align:right;">${tag.text}</div>
-            </div>
+              <div style="display:flex; align-items:center; gap:6px;">
+                <span style="font-size:13px; font-weight:700; color:${tag.color}; opacity:${tag.opacity}; text-align:right;">${tag.text}</span>
+                <span class="material-icons-round" style="font-size:18px; color:var(--md-primary); opacity:0.35;">chevron_right</span>
+              </div>
+            </button>
           `;
         }).join('')}
       `;
@@ -5332,6 +5347,110 @@ function saveWeightField(key, value) {
 function closeWeightModal() {
   document.getElementById('weight-modal-overlay').style.display = 'none';
   document.getElementById('weight-modal-panel').style.display = 'none';
+}
+
+// ── CRONOLOGIA POR DIA — comparação ano a ano (gráfico de barras) ───────────
+function openDayHistoryModal(dow, dayName) {
+  const todayReal = new Date();
+
+  // Próxima ocorrência deste dia da semana
+  const nextOccurrence = (targetDow) => {
+    const d = new Date(todayReal);
+    const diff = (targetDow - d.getDay() + 7) % 7;
+    d.setDate(d.getDate() + diff);
+    return d;
+  };
+  const targetDate = nextOccurrence(dow);
+
+  // Considera só vendas em dias de mercado reais
+  const marketSales = sales.filter(s => [2, 5, 6].includes(new Date(s.date + 'T00:00:00').getDay()));
+  const sameDay = marketSales.filter(s => new Date(s.date + 'T00:00:00').getDay() === dow);
+
+  // Para cada ano (incluindo o atual), encontra a venda mais próxima da mesma época (±5 dias)
+  const years = [...new Set(sameDay.map(s => new Date(s.date + 'T00:00:00').getFullYear()))].sort();
+  const dataByYear = {};
+  years.forEach(year => {
+    const yearMatches = sameDay.filter(s => {
+      const d = new Date(s.date + 'T00:00:00');
+      if (d.getFullYear() !== year) return false;
+      const thisYearEquivalent = new Date(d); thisYearEquivalent.setFullYear(targetDate.getFullYear());
+      const diffDays = Math.abs((thisYearEquivalent - targetDate) / 86400000);
+      return diffDays <= 5;
+    });
+    if (yearMatches.length) {
+      // Usa a venda mais próxima da data equivalente, não a média (para comparar dia-a-dia real)
+      yearMatches.sort((a, b) => {
+        const da = new Date(a.date + 'T00:00:00'); da.setFullYear(targetDate.getFullYear());
+        const db = new Date(b.date + 'T00:00:00'); db.setFullYear(targetDate.getFullYear());
+        return Math.abs(da - targetDate) - Math.abs(db - targetDate);
+      });
+      dataByYear[year] = yearMatches[0];
+    }
+  });
+
+  const title = document.getElementById('day-history-title');
+  title.textContent = dayName;
+
+  const content = document.getElementById('day-history-content');
+  const fmtFull = (d) => `${d.getDate()}/${d.getMonth()+1}/${d.getFullYear()}`;
+
+  const yearsWithData = years.filter(y => dataByYear[y]);
+
+  if (yearsWithData.length === 0) {
+    content.innerHTML = `
+      <div style="text-align:center; padding:40px 20px; color:var(--md-primary); opacity:0.5;">
+        <div style="font-size:17px; font-weight:600;">Sem histórico para esta época</div>
+      </div>`;
+  } else {
+    const maxVal = Math.max(...yearsWithData.map(y => dataByYear[y].total));
+    const barW = 100 / yearsWithData.length;
+    const colors = ['var(--md-outline)', 'var(--md-accent)', 'var(--md-gold)', 'var(--md-orange)', 'var(--md-error)'];
+
+    const bars = yearsWithData.map((y, i) => {
+      const rec = dataByYear[y];
+      const heightPct = maxVal > 0 ? (rec.total / maxVal) * 100 : 0;
+      const x = i * barW + barW * 0.15;
+      const barWidth = barW * 0.7;
+      const yPos = 100 - heightPct;
+      const color = colors[i % colors.length];
+      return `<rect x="${x}" y="${yPos}" width="${barWidth}" height="${heightPct}" fill="${color}" rx="2"/>`;
+    }).join('');
+
+    const labels = yearsWithData.map(y => `<div style="flex:1; text-align:center; font-size:13px; font-weight:700; color:var(--md-primary);">${y}</div>`).join('');
+    const values = yearsWithData.map(y => `<div style="flex:1; text-align:center; font-size:15px; font-weight:800; color:var(--md-primary);">${dataByYear[y].total.toFixed(0)}€</div>`).join('');
+    const dates = yearsWithData.map(y => `<div style="flex:1; text-align:center; font-size:11px; color:var(--md-primary); opacity:0.5;">${fmtFull(new Date(dataByYear[y].date + 'T00:00:00'))}</div>`).join('');
+
+    const avgVal = yearsWithData.reduce((a, y) => a + dataByYear[y].total, 0) / yearsWithData.length;
+    let trendHtml = '';
+    if (yearsWithData.length >= 2) {
+      const first = dataByYear[yearsWithData[0]].total;
+      const last = dataByYear[yearsWithData[yearsWithData.length - 1]].total;
+      const diffPct = first > 0 ? ((last - first) / first) * 100 : 0;
+      const arrow = diffPct >= 0 ? '↑' : '↓';
+      const color = diffPct >= 0 ? 'var(--md-success)' : 'var(--md-error)';
+      trendHtml = `<div style="font-size:13px; font-weight:700; color:${color}; margin-top:4px;">${arrow} ${Math.abs(diffPct).toFixed(0)}% de ${yearsWithData[0]} para ${yearsWithData[yearsWithData.length-1]}</div>`;
+    }
+
+    content.innerHTML = `
+      <div style="background:var(--md-surface-1); border-radius:14px; border:1px solid var(--md-outline-variant); padding:18px;">
+        <div style="font-size:12px; font-weight:700; color:var(--md-primary); opacity:0.6; text-transform:uppercase; letter-spacing:1px; margin-bottom:2px;">Mesma época, ano a ano</div>
+        <div style="font-size:11px; color:var(--md-primary); opacity:0.45; margin-bottom:14px;">Próximo ${dayName.toLowerCase()}: ${fmtFull(targetDate)} · média histórica: ${avgVal.toFixed(0)}€</div>
+        <svg viewBox="0 0 100 100" style="width:100%; height:140px; display:block;" preserveAspectRatio="none">${bars}</svg>
+        <div style="display:flex; margin-top:8px;">${labels}</div>
+        <div style="display:flex; margin-top:2px;">${values}</div>
+        <div style="display:flex; margin-top:2px;">${dates}</div>
+        ${trendHtml}
+      </div>
+    `;
+  }
+
+  document.getElementById('day-history-overlay').style.display = 'block';
+  document.getElementById('day-history-panel').style.display = 'block';
+}
+
+function closeDayHistoryModal() {
+  document.getElementById('day-history-overlay').style.display = 'none';
+  document.getElementById('day-history-panel').style.display = 'none';
 }
 
 function onPickVasilChange() {
