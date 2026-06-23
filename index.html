@@ -456,11 +456,24 @@
               autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" data-lpignore="true" data-form-type="other"
               style="width:100%; padding:14px; border:1.5px solid var(--md-outline-variant); border-radius:12px; font-size:17px; font-family:'Outfit',sans-serif; outline:none; background:var(--md-surface); color:var(--md-primary); box-sizing:border-box; -webkit-appearance:none; appearance:none;"/>
           </div>
-          <div>
+          <div style="margin-bottom:14px;">
             <span class="pick-field-label">Notas</span>
             <textarea id="ptask-notes" placeholder="Detalhes, opcional"
               autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" data-lpignore="true" data-form-type="other"
               style="width:100%; min-height:90px; padding:14px; border:1.5px solid var(--md-outline-variant); border-radius:12px; font-size:15px; font-family:'Outfit',sans-serif; outline:none; background:var(--md-surface); color:var(--md-primary); resize:vertical; box-sizing:border-box;"></textarea>
+          </div>
+          <div style="display:flex; gap:10px;">
+            <div style="flex:1;">
+              <span class="pick-field-label">Prazo</span>
+              <input id="ptask-due" type="date"
+                style="width:100%; padding:14px; border:1.5px solid var(--md-outline-variant); border-radius:12px; font-size:15px; font-family:'Outfit',sans-serif; outline:none; background:var(--md-surface); color:var(--md-primary); box-sizing:border-box;"/>
+            </div>
+            <div style="flex:1;">
+              <span class="pick-field-label">Responsável</span>
+              <input id="ptask-owner" type="search" placeholder="Ex: Paulo"
+                autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" data-lpignore="true" data-form-type="other"
+                style="width:100%; padding:14px; border:1.5px solid var(--md-outline-variant); border-radius:12px; font-size:15px; font-family:'Outfit',sans-serif; outline:none; background:var(--md-surface); color:var(--md-primary); box-sizing:border-box; -webkit-appearance:none; appearance:none;"/>
+            </div>
           </div>
         </div>
       </div>
@@ -1870,6 +1883,8 @@ function openPTaskModal(projectId) {
   currentProjectId = projectId;
   document.getElementById('ptask-title').value = '';
   document.getElementById('ptask-notes').value = '';
+  document.getElementById('ptask-due').value = '';
+  document.getElementById('ptask-owner').value = '';
   document.getElementById('ptask-modal-overlay').style.display = 'block';
   document.getElementById('ptask-modal-panel').style.display   = 'block';
   document.getElementById('ptask-title').focus();
@@ -1883,10 +1898,12 @@ function closePTaskModal() {
 function savePTask() {
   const text  = document.getElementById('ptask-title').value.trim();
   const notes = document.getElementById('ptask-notes').value.trim();
+  const due   = document.getElementById('ptask-due').value;
+  const owner = document.getElementById('ptask-owner').value.trim();
   if (!text || !currentProjectId) return;
   const proj = projects.find(p => p.id === currentProjectId);
   if (!proj) return;
-  proj.tasks.push({ id: Date.now(), text, notes, done: false });
+  proj.tasks.push({ id: Date.now(), text, notes, done: false, due: due || null, owner: owner || '' });
   sched(); closePTaskModal(); renderProjects();
   showSnack('Tarefa adicionada ✓', 'saved');
 }
@@ -1910,6 +1927,65 @@ function editPTaskNotes(projectId, taskId, notes) {
   if (!proj) return;
   const t = proj.tasks.find(t => t.id === taskId);
   if (t) { t.notes = notes; sched(); }
+}
+
+function editPTaskDue(projectId, taskId, due) {
+  const proj = projects.find(p => p.id === projectId);
+  if (!proj) return;
+  const t = proj.tasks.find(t => t.id === taskId);
+  if (t) { t.due = due || null; sched(); }
+}
+
+function editPTaskOwner(projectId, taskId, owner) {
+  const proj = projects.find(p => p.id === projectId);
+  if (!proj) return;
+  const t = proj.tasks.find(t => t.id === taskId);
+  if (t) { t.owner = owner; sched(); }
+}
+
+function startEditPTaskDue(projectId, taskId, el) {
+  const proj = projects.find(p => p.id === projectId);
+  if (!proj) return;
+  const t = proj.tasks.find(t => t.id === taskId);
+  if (!t) return;
+  const input = document.createElement('input');
+  input.type = 'date';
+  input.value = t.due || '';
+  input.style.cssText = 'font-size:14px; color:var(--md-primary); border:none; border-bottom:1.5px solid var(--md-outline-variant); background:transparent; outline:none; font-family:Outfit,sans-serif; padding:0;';
+  el.replaceWith(input);
+  input.focus();
+
+  const commit = () => {
+    editPTaskDue(proj.id, t.id, input.value);
+    renderProjects();
+  };
+  input.addEventListener('change', commit);
+  input.addEventListener('blur', commit);
+}
+
+function startEditPTaskOwner(projectId, taskId, el) {
+  const proj = projects.find(p => p.id === projectId);
+  if (!proj) return;
+  const t = proj.tasks.find(t => t.id === taskId);
+  if (!t) return;
+  const input = document.createElement('input');
+  input.type = 'search';
+  input.placeholder = 'Responsável...';
+  input.value = t.owner || '';
+  input.setAttribute('autocomplete', 'off'); input.setAttribute('autocorrect', 'off');
+  input.setAttribute('autocapitalize', 'off'); input.setAttribute('spellcheck', 'false');
+  input.setAttribute('data-lpignore', 'true'); input.setAttribute('data-form-type', 'other');
+  input.style.cssText = 'font-size:14px; color:var(--md-primary); border:none; border-bottom:1.5px solid var(--md-outline-variant); background:transparent; outline:none; font-family:Outfit,sans-serif; padding:0; -webkit-appearance:none; appearance:none; width:120px;';
+  el.replaceWith(input);
+  input.focus();
+  input.setSelectionRange(input.value.length, input.value.length);
+
+  const commit = () => {
+    editPTaskOwner(proj.id, t.id, input.value.trim());
+    renderProjects();
+  };
+  input.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); commit(); } });
+  input.addEventListener('blur', commit);
 }
 
 // ── EDIÇÃO INLINE: título de projeto e texto de sub-tarefa ──────────────────
@@ -2050,6 +2126,38 @@ function appendProjectCard(container, empty, proj) {
     notesSpan.textContent = t.notes ? t.notes : '+ adicionar nota';
     notesSpan.addEventListener('click', () => startEditPTaskNotes(proj.id, t.id, notesSpan));
     textWrap.appendChild(notesSpan);
+
+    // Prazo e responsável — discreto, sem alarme; só fica vermelho se realmente atrasado e não feito.
+    const metaRow = document.createElement('div');
+    metaRow.style.cssText = 'display:flex; gap:10px; margin-top:5px; flex-wrap:wrap;';
+
+    const dueSpan = document.createElement('span');
+    dueSpan.style.cssText = 'font-size:14px; cursor:pointer; display:flex; align-items:center; gap:3px;';
+    let dueColor = 'var(--md-primary)', dueOpacity = '0.5';
+    let dueText = '+ prazo';
+    if (t.due) {
+      const dueDate = new Date(t.due + 'T00:00:00');
+      const todayMid = new Date(); todayMid.setHours(0,0,0,0);
+      const isOverdue = dueDate < todayMid && !t.done;
+      const isToday = dueDate.getTime() === todayMid.getTime();
+      dueText = dueDate.toLocaleDateString('pt-PT', { day:'2-digit', month:'short' });
+      if (isOverdue) { dueColor = 'var(--md-error)'; dueOpacity = '0.85'; }
+      else if (isToday) { dueColor = 'var(--md-gold)'; dueOpacity = '0.9'; }
+      else { dueOpacity = '0.6'; }
+    }
+    dueSpan.innerHTML = `<span class="material-icons-round" style="font-size:14px;">event</span><span>${dueText}</span>`;
+    dueSpan.style.color = dueColor;
+    dueSpan.style.opacity = dueOpacity;
+    dueSpan.addEventListener('click', () => startEditPTaskDue(proj.id, t.id, dueSpan));
+    metaRow.appendChild(dueSpan);
+
+    const ownerSpan = document.createElement('span');
+    ownerSpan.style.cssText = 'font-size:14px; color:var(--md-primary); opacity:0.5; cursor:pointer; display:flex; align-items:center; gap:3px;';
+    ownerSpan.innerHTML = `<span class="material-icons-round" style="font-size:14px;">person_outline</span><span>${t.owner ? t.owner : '+ responsável'}</span>`;
+    ownerSpan.addEventListener('click', () => startEditPTaskOwner(proj.id, t.id, ownerSpan));
+    metaRow.appendChild(ownerSpan);
+
+    textWrap.appendChild(metaRow);
 
     topRow.appendChild(textWrap);
 
