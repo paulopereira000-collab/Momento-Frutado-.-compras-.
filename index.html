@@ -877,7 +877,7 @@
       <label style="font-size:11px; font-weight:700; color:var(--md-primary); text-transform:uppercase; letter-spacing:0.5px; display:block; margin-bottom:6px;">Especialidade</label>
       <input id="sup-type" type="text" placeholder="Ex: Fruta, Lacticínios, Carnes..." style="width:100%; padding:14px; border-radius:10px; border:1.5px solid var(--md-outline-variant); font-size:16px; font-family:'Outfit',sans-serif; outline:none; margin-bottom:14px; background:var(--md-surface-1); color:var(--md-primary);" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" data-lpignore="true" data-form-type="other"/>
       <label style="font-size:11px; font-weight:700; color:var(--md-primary); text-transform:uppercase; letter-spacing:0.5px; display:block; margin-bottom:6px;">Telefone</label>
-      <input id="sup-phone" type="tel" placeholder="+351 9xx xxx xxx" style="width:100%; padding:14px; border-radius:10px; border:1.5px solid var(--md-outline-variant); font-size:16px; font-family:'Outfit',sans-serif; outline:none; margin-bottom:14px; background:var(--md-surface-1); color:var(--md-primary);"/>
+      <input id="sup-phone" type="tel" placeholder="+351 9xx xxx xxx" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" data-lpignore="true" data-form-type="other" style="width:100%; padding:14px; border-radius:10px; border:1.5px solid var(--md-outline-variant); font-size:16px; font-family:'Outfit',sans-serif; outline:none; margin-bottom:14px; background:var(--md-surface-1); color:var(--md-primary);"/>
       <label style="font-size:11px; font-weight:700; color:var(--md-primary); text-transform:uppercase; letter-spacing:0.5px; display:block; margin-bottom:6px;">Notas</label>
       <input id="sup-notes" type="text" placeholder="Corredor MARL, dias de entrega..." style="width:100%; padding:14px; border-radius:10px; border:1.5px solid var(--md-outline-variant); font-size:16px; font-family:'Outfit',sans-serif; outline:none; margin-bottom:20px; background:var(--md-surface-1); color:var(--md-primary);" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" data-lpignore="true" data-form-type="other"/>
       <div style="display:flex; gap:10px;">
@@ -912,10 +912,10 @@
           </div>
           <div id="new-cat-wrap" style="display:none">
             <label class="form-label">Nova categoria</label>
-            <input id="new-cat-input" class="md-input" placeholder="Ex: 🌿 Ervas aromáticas"/>
+            <input id="new-cat-input" class="md-input" placeholder="Ex: 🌿 Ervas aromáticas" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" data-lpignore="true" data-form-type="other"/>
           </div>
           <label class="form-label">Nome do produto</label>
-          <input id="new-item-input" class="md-input" placeholder="Ex: Manga Tommy"/>
+          <input id="new-item-input" class="md-input" placeholder="Ex: Manga Tommy" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" data-lpignore="true" data-form-type="other"/>
           <button id="add-btn" class="btn-primary">Adicionar produto</button>
           <button id="cancel-btn" class="btn-secondary">Cancelar</button>
         </div>
@@ -4173,7 +4173,7 @@ function toggleFilter() {
 // uma quantidade de caixas. Esta função neutraliza isso em toda a app.
 function disableAutofillEverywhere() {
   const skip = ['date', 'hidden', 'checkbox', 'file', 'radio'];
-  document.querySelectorAll('input').forEach(el => {
+  document.querySelectorAll('input, textarea').forEach(el => {
     if (skip.includes(el.type)) return;
     el.setAttribute('autocomplete', 'off');
     el.setAttribute('autocorrect', 'off');
@@ -4181,7 +4181,12 @@ function disableAutofillEverywhere() {
     el.setAttribute('spellcheck', 'false');
     el.setAttribute('data-lpignore', 'true');
     el.setAttribute('data-form-type', 'other');
-    if (!el.name) el.name = 'field-' + (el.id || Math.random().toString(36).slice(2));
+    // Nome sempre novo e aleatório a cada carregamento — um nome fixo memorizado
+    // pelo navegador em sessões anteriores continuaria a disparar sugestões antigas.
+    if (!el.dataset.autofillNamed) {
+      el.name = (el.id || 'field') + '-' + Date.now() + '-' + Math.floor(Math.random()*100000);
+      el.dataset.autofillNamed = '1';
+    }
   });
 }
 // Observa o DOM e aplica automaticamente a novos inputs criados por modais (tarefas,
