@@ -3810,6 +3810,88 @@ function renderResumo() {
 
   const sorted = [...marketSales].sort((a, b) => a.date.localeCompare(b.date));
 
+  // ── Bloco 0: Próximos dias de mercado — como costumam correr nesta época, nos anos anteriores ──
+  {
+    const todayReal = new Date();
+    const dowNum = { 2: 'Terça', 5: 'Sexta', 6: 'Sábado' };
+
+    // Encontrar a próxima ocorrência de cada dia (incluindo hoje, se for esse dia)
+    const nextOccurrence = (targetDow) => {
+      const d = new Date(todayReal);
+      const diff = (targetDow - d.getDay() + 7) % 7;
+      d.setDate(d.getDate() + diff);
+      return d;
+    };
+
+    // Média histórica desse dia, em anos anteriores, dentro de ±5 dias da mesma data (mesma época do ano)
+    const historicalAvgForDate = (targetDate, dow) => {
+      const sameDay = sorted.filter(s => new Date(s.date + 'T00:00:00').getDay() === dow);
+      const matches = sameDay.filter(s => {
+        const d = new Date(s.date + 'T00:00:00');
+        if (d.getFullYear() >= targetDate.getFullYear() && d >= todayReal) return false; // ignora o próprio futuro
+        // mesma janela de ±5 dias, em qualquer ano anterior
+        const thisYearEquivalent = new Date(d); thisYearEquivalent.setFullYear(targetDate.getFullYear());
+        const diffDays = Math.abs((thisYearEquivalent - targetDate) / 86400000);
+        return diffDays <= 5;
+      });
+      if (!matches.length) return null;
+      return matches.reduce((a, s) => a + s.total, 0) / matches.length;
+    };
+
+    // Média geral desse dia da semana (todo o histórico), para comparação de referência
+    const overallAvgForDow = (dow) => {
+      const arr = sorted.filter(s => new Date(s.date + 'T00:00:00').getDay() === dow);
+      if (!arr.length) return null;
+      return arr.reduce((a, s) => a + s.total, 0) / arr.length;
+    };
+
+    const rows = [2, 5, 6].map(dow => {
+      const nextDate = nextOccurrence(dow);
+      const histAvg = historicalAvgForDate(nextDate, dow);
+      const overallAvg = overallAvgForDow(dow);
+      let diffPct = null;
+      if (histAvg !== null && overallAvg !== null && overallAvg > 0) {
+        diffPct = ((histAvg - overallAvg) / overallAvg) * 100;
+      }
+      return { dow, name: dowNum[dow], date: nextDate, histAvg, overallAvg, diffPct };
+    });
+
+    const hasData = rows.some(r => r.histAvg !== null);
+
+    if (hasData) {
+      const nextBlock = document.createElement('div');
+      nextBlock.className = 'resumo-block';
+      nextBlock.style.cssText = 'background:var(--md-surface); border-radius:14px; border:1px solid var(--md-outline-variant); padding:18px; margin-bottom:20px;';
+
+      const fmtDate = (d) => `${d.getDate()}/${d.getMonth()+1}`;
+
+      nextBlock.innerHTML = `
+        <div style="font-size:13px; font-weight:700; color:var(--md-primary); opacity:0.6; text-transform:uppercase; letter-spacing:1px; margin-bottom:4px;">Próximos dias de mercado</div>
+        <div style="font-size:11px; color:var(--md-primary); opacity:0.45; margin-bottom:14px;">Com base nos anos anteriores, nesta época</div>
+        ${rows.map(r => {
+          if (r.histAvg === null) {
+            return `<div style="padding:10px 0; border-bottom:1px solid var(--md-outline-variant); font-size:13px; color:var(--md-primary); opacity:0.4;">${r.name} (${fmtDate(r.date)}): sem dados suficientes nesta época</div>`;
+          }
+          let tag = { text: 'Normal', color: 'var(--md-primary)', opacity: 0.7 };
+          if (r.diffPct !== null) {
+            if (r.diffPct >= 10) tag = { text: `↑ Bom dia (+${r.diffPct.toFixed(0)}%)`, color: 'var(--md-success)', opacity: 1 };
+            else if (r.diffPct <= -10) tag = { text: `↓ Fraco (${r.diffPct.toFixed(0)}%)`, color: 'var(--md-error)', opacity: 1 };
+          }
+          return `
+            <div style="display:flex; justify-content:space-between; align-items:center; padding:10px 0; border-bottom:1px solid var(--md-outline-variant);">
+              <div>
+                <div style="font-size:14px; font-weight:700; color:var(--md-primary);">${r.name} <span style="opacity:0.5; font-weight:500;">${fmtDate(r.date)}</span></div>
+                <div style="font-size:11px; color:var(--md-primary); opacity:0.5;">média nesta época: ${r.histAvg.toFixed(0)}€</div>
+              </div>
+              <div style="font-size:13px; font-weight:700; color:${tag.color}; opacity:${tag.opacity}; text-align:right;">${tag.text}</div>
+            </div>
+          `;
+        }).join('')}
+      `;
+      content.appendChild(nextBlock);
+    }
+  }
+
   // ── Bloco 1: Gráficos de evolução, um por dia da semana ──
   const weekdayNamesFull = ['Domingo','Segunda','Terça','Quarta','Quinta','Sexta','Sábado'];
   const targetDays = ['Terça','Sexta','Sábado'];
