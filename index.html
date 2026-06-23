@@ -14,6 +14,13 @@
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet"/>
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet"/>
   <style>
+    /* Remove o "x" nativo de limpar que o Chrome/WebKit adiciona a inputs type=search */
+    input[type="search"]::-webkit-search-cancel-button,
+    input[type="search"]::-webkit-search-decoration {
+      -webkit-appearance: none;
+      appearance: none;
+      display: none;
+    }
     /* ── MD3 COLOR TOKENS ─────────────────────────────────────────────────────── */
     :root {
       /* Verde seco pastel — seed #7A9E7E */
@@ -343,8 +350,8 @@
 
       <div style="padding:8px 16px 12px; position:relative;">
         <span class="material-icons-round" style="position:absolute; left:28px; top:50%; transform:translateY(-50%); font-size:20px; color:var(--md-primary); opacity:0.4; pointer-events:none;">search</span>
-        <input id="list-search" type="text" placeholder="Pesquisar"
-          style="width:100%; padding:12px 12px 12px 40px; border:1.5px solid var(--md-outline-variant); border-radius:12px; font-size:16px; font-family:'Outfit',sans-serif; color:var(--md-primary); background:rgba(92,126,96,0.08); outline:none;"
+        <input id="list-search" type="search" placeholder="Pesquisar"
+          style="width:100%; padding:12px 12px 12px 40px; border:1.5px solid var(--md-outline-variant); border-radius:12px; font-size:16px; font-family:'Outfit',sans-serif; color:var(--md-primary); background:rgba(92,126,96,0.08); outline:none; -webkit-appearance:none; appearance:none;"
           oninput="renderCats(this.value)" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" data-lpignore="true" data-form-type="other"/>
       </div>
       <div id="cat-list" style="padding-top:4px"></div>
@@ -421,9 +428,9 @@
       <div style="padding:0 16px 16px;">
         <div style="background:var(--md-surface-1); border-radius:14px; border:1px solid var(--md-outline-variant); padding:18px;">
           <span class="pick-field-label">Título da tarefa</span>
-          <input id="project-title" type="text" placeholder="Ex: Renovação do toldo"
+          <input id="project-title" type="search" placeholder="Ex: Renovação do toldo"
             autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" data-lpignore="true" data-form-type="other"
-            style="width:100%; padding:14px; border:1.5px solid var(--md-outline-variant); border-radius:12px; font-size:17px; font-family:'Outfit',sans-serif; outline:none; background:var(--md-surface); color:var(--md-primary); box-sizing:border-box;"/>
+            style="width:100%; padding:14px; border:1.5px solid var(--md-outline-variant); border-radius:12px; font-size:17px; font-family:'Outfit',sans-serif; outline:none; background:var(--md-surface); color:var(--md-primary); box-sizing:border-box; -webkit-appearance:none; appearance:none;"/>
         </div>
       </div>
       <div style="display:flex; gap:10px; padding:0 16px;">
@@ -445,9 +452,9 @@
         <div style="background:var(--md-surface-1); border-radius:14px; border:1px solid var(--md-outline-variant); padding:18px;">
           <div style="margin-bottom:14px;">
             <span class="pick-field-label">O que precisa de ser feito</span>
-            <input id="ptask-title" type="text" placeholder="Ex: Pedir orçamento ao Carlos"
+            <input id="ptask-title" type="search" placeholder="Ex: Pedir orçamento ao Carlos"
               autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" data-lpignore="true" data-form-type="other"
-              style="width:100%; padding:14px; border:1.5px solid var(--md-outline-variant); border-radius:12px; font-size:17px; font-family:'Outfit',sans-serif; outline:none; background:var(--md-surface); color:var(--md-primary); box-sizing:border-box;"/>
+              style="width:100%; padding:14px; border:1.5px solid var(--md-outline-variant); border-radius:12px; font-size:17px; font-family:'Outfit',sans-serif; outline:none; background:var(--md-surface); color:var(--md-primary); box-sizing:border-box; -webkit-appearance:none; appearance:none;"/>
           </div>
           <div>
             <span class="pick-field-label">Notas</span>
@@ -586,8 +593,8 @@
       </div>
       <div style="padding:8px 16px 0; position:relative;">
         <span class="material-icons-round" style="position:absolute; left:28px; top:50%; transform:translateY(-50%); font-size:20px; color:var(--md-primary); opacity:0.4; pointer-events:none;">search</span>
-        <input id="suppliers-search" type="text" placeholder="Pesquisar fornecedor"
-          style="width:100%; padding:12px 12px 12px 40px; border:1.5px solid var(--md-outline-variant); border-radius:12px; font-size:16px; font-family:'Outfit',sans-serif; color:var(--md-primary); background:rgba(92,126,96,0.08); outline:none;"
+        <input id="suppliers-search" type="search" placeholder="Pesquisar fornecedor"
+          style="width:100%; padding:12px 12px 12px 40px; border:1.5px solid var(--md-outline-variant); border-radius:12px; font-size:16px; font-family:'Outfit',sans-serif; color:var(--md-primary); background:rgba(92,126,96,0.08); outline:none; -webkit-appearance:none; appearance:none;"
           oninput="renderSuppliers(this.value)" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" data-lpignore="true" data-form-type="other"/>
       </div>
       <div style="padding:8px 16px 16px; display:flex; flex-direction:column; gap:10px;">
@@ -699,7 +706,7 @@
                 <input id="expense-date" type="date" style="width:100%; padding:12px; border:1.5px solid var(--md-outline-variant); border-radius:10px; font-size:15px; font-family:'Outfit',sans-serif; color:var(--md-primary); background:var(--md-surface-1); outline:none;"/>
               </div>
               <div style="margin-bottom:12px;">
-                <input id="expense-name" type="text" placeholder="Nome da despesa (ex: Almoço com fornecedor)" style="width:100%; padding:12px; border:1.5px solid var(--md-outline-variant); border-radius:10px; font-size:15px; font-family:'Outfit',sans-serif; color:var(--md-primary); background:var(--md-surface-1); outline:none;" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" data-lpignore="true" data-form-type="other"/>
+                <input id="expense-name" type="search" placeholder="Nome da despesa (ex: Almoço com fornecedor)" style="width:100%; padding:12px; border:1.5px solid var(--md-outline-variant); border-radius:10px; font-size:15px; font-family:'Outfit',sans-serif; color:var(--md-primary); background:var(--md-surface-1); outline:none; -webkit-appearance:none; appearance:none;" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" data-lpignore="true" data-form-type="other"/>
               </div>
               <div style="margin-bottom:12px;">
                 <select id="expense-category" style="width:100%; padding:12px; border:1.5px solid var(--md-outline-variant); border-radius:10px; font-size:15px; font-family:'Outfit',sans-serif; color:var(--md-primary); background:var(--md-surface-1); outline:none;">
@@ -737,7 +744,7 @@
             <div style="background:var(--md-surface); border-radius:14px; border:1px solid var(--md-outline-variant); padding:18px; margin-bottom:20px;">
               <div style="font-size:13px; font-weight:700; color:var(--md-primary); opacity:0.6; text-transform:uppercase; letter-spacing:1px; margin-bottom:12px;">Nova despesa mensal</div>
               <div style="margin-bottom:12px;">
-                <input id="rexp-monthly-name" type="text" placeholder="Nome da despesa (ex: Renda do armazém)" style="width:100%; padding:12px; border:1.5px solid var(--md-outline-variant); border-radius:10px; font-size:15px; font-family:'Outfit',sans-serif; color:var(--md-primary); background:var(--md-surface-1); outline:none;" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" data-lpignore="true" data-form-type="other"/>
+                <input id="rexp-monthly-name" type="search" placeholder="Nome da despesa (ex: Renda do armazém)" style="width:100%; padding:12px; border:1.5px solid var(--md-outline-variant); border-radius:10px; font-size:15px; font-family:'Outfit',sans-serif; color:var(--md-primary); background:var(--md-surface-1); outline:none; -webkit-appearance:none; appearance:none;" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" data-lpignore="true" data-form-type="other"/>
               </div>
               <div style="margin-bottom:12px;">
                 <select id="rexp-monthly-category" style="width:100%; padding:12px; border:1.5px solid var(--md-outline-variant); border-radius:10px; font-size:15px; font-family:'Outfit',sans-serif; color:var(--md-primary); background:var(--md-surface-1); outline:none;">
@@ -774,7 +781,7 @@
             <div style="background:var(--md-surface); border-radius:14px; border:1px solid var(--md-outline-variant); padding:18px; margin-bottom:20px;">
               <div style="font-size:13px; font-weight:700; color:var(--md-primary); opacity:0.6; text-transform:uppercase; letter-spacing:1px; margin-bottom:12px;">Nova despesa anual</div>
               <div style="margin-bottom:12px;">
-                <input id="rexp-yearly-name" type="text" placeholder="Nome da despesa (ex: Seguro do veículo)" style="width:100%; padding:12px; border:1.5px solid var(--md-outline-variant); border-radius:10px; font-size:15px; font-family:'Outfit',sans-serif; color:var(--md-primary); background:var(--md-surface-1); outline:none;" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" data-lpignore="true" data-form-type="other"/>
+                <input id="rexp-yearly-name" type="search" placeholder="Nome da despesa (ex: Seguro do veículo)" style="width:100%; padding:12px; border:1.5px solid var(--md-outline-variant); border-radius:10px; font-size:15px; font-family:'Outfit',sans-serif; color:var(--md-primary); background:var(--md-surface-1); outline:none; -webkit-appearance:none; appearance:none;" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" data-lpignore="true" data-form-type="other"/>
               </div>
               <div style="margin-bottom:12px;">
                 <select id="rexp-yearly-category" style="width:100%; padding:12px; border:1.5px solid var(--md-outline-variant); border-radius:10px; font-size:15px; font-family:'Outfit',sans-serif; color:var(--md-primary); background:var(--md-surface-1); outline:none;">
@@ -833,7 +840,7 @@
         <div style="background:var(--md-surface); border-radius:14px; border:1px solid var(--md-outline-variant); padding:18px; margin-bottom:20px;">
           <div style="font-size:13px; font-weight:700; color:var(--md-primary); opacity:0.6; text-transform:uppercase; letter-spacing:1px; margin-bottom:12px;">Nova renda mensal</div>
           <div style="margin-bottom:12px;">
-            <input id="rent-name" type="text" placeholder="Nome do imóvel/inquilino (ex: Om Sintra)" style="width:100%; padding:12px; border:1.5px solid var(--md-outline-variant); border-radius:10px; font-size:15px; font-family:'Outfit',sans-serif; color:var(--md-primary); background:var(--md-surface-1); outline:none;" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" data-lpignore="true" data-form-type="other"/>
+            <input id="rent-name" type="search" placeholder="Nome do imóvel/inquilino (ex: Om Sintra)" style="width:100%; padding:12px; border:1.5px solid var(--md-outline-variant); border-radius:10px; font-size:15px; font-family:'Outfit',sans-serif; color:var(--md-primary); background:var(--md-surface-1); outline:none; -webkit-appearance:none; appearance:none;" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" data-lpignore="true" data-form-type="other"/>
           </div>
           <div style="display:flex; flex-direction:column; gap:10px;">
             <button type="button" id="rent-amount-btn" data-placeholder="Valor (€)" onclick="openNumKeypadFor('rent-amount', {decimal:true})" style="width:100%; padding:14px; border:1.5px solid var(--md-outline-variant); border-radius:10px; font-size:22px; font-weight:700; font-family:'Outfit',sans-serif; color:var(--md-primary); background:var(--md-surface-1); cursor:pointer; text-align:left;">Valor (€)</button>
@@ -873,13 +880,13 @@
       <div style="width:40px; height:4px; background:var(--md-outline-variant); border-radius:2px; margin:0 auto 20px;"></div>
       <div id="supplier-modal-title" style="font-size:20px; font-weight:800; color:var(--md-primary); margin-bottom:20px;">Novo fornecedor</div>
       <label style="font-size:11px; font-weight:700; color:var(--md-primary); text-transform:uppercase; letter-spacing:0.5px; display:block; margin-bottom:6px;">Nome</label>
-      <input id="sup-name" type="text" placeholder="Nome do fornecedor" style="width:100%; padding:14px; border-radius:10px; border:1.5px solid var(--md-outline-variant); font-size:16px; font-family:'Outfit',sans-serif; outline:none; margin-bottom:14px; background:var(--md-surface-1); color:var(--md-primary);" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" data-lpignore="true" data-form-type="other"/>
+      <input id="sup-name" type="search" placeholder="Nome do fornecedor" style="width:100%; padding:14px; border-radius:10px; border:1.5px solid var(--md-outline-variant); font-size:16px; font-family:'Outfit',sans-serif; outline:none; margin-bottom:14px; background:var(--md-surface-1); color:var(--md-primary); -webkit-appearance:none; appearance:none;" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" data-lpignore="true" data-form-type="other"/>
       <label style="font-size:11px; font-weight:700; color:var(--md-primary); text-transform:uppercase; letter-spacing:0.5px; display:block; margin-bottom:6px;">Especialidade</label>
-      <input id="sup-type" type="text" placeholder="Ex: Fruta, Lacticínios, Carnes..." style="width:100%; padding:14px; border-radius:10px; border:1.5px solid var(--md-outline-variant); font-size:16px; font-family:'Outfit',sans-serif; outline:none; margin-bottom:14px; background:var(--md-surface-1); color:var(--md-primary);" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" data-lpignore="true" data-form-type="other"/>
+      <input id="sup-type" type="search" placeholder="Ex: Fruta, Lacticínios, Carnes..." style="width:100%; padding:14px; border-radius:10px; border:1.5px solid var(--md-outline-variant); font-size:16px; font-family:'Outfit',sans-serif; outline:none; margin-bottom:14px; background:var(--md-surface-1); color:var(--md-primary); -webkit-appearance:none; appearance:none;" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" data-lpignore="true" data-form-type="other"/>
       <label style="font-size:11px; font-weight:700; color:var(--md-primary); text-transform:uppercase; letter-spacing:0.5px; display:block; margin-bottom:6px;">Telefone</label>
       <input id="sup-phone" type="tel" placeholder="+351 9xx xxx xxx" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" data-lpignore="true" data-form-type="other" style="width:100%; padding:14px; border-radius:10px; border:1.5px solid var(--md-outline-variant); font-size:16px; font-family:'Outfit',sans-serif; outline:none; margin-bottom:14px; background:var(--md-surface-1); color:var(--md-primary);"/>
       <label style="font-size:11px; font-weight:700; color:var(--md-primary); text-transform:uppercase; letter-spacing:0.5px; display:block; margin-bottom:6px;">Notas</label>
-      <input id="sup-notes" type="text" placeholder="Corredor MARL, dias de entrega..." style="width:100%; padding:14px; border-radius:10px; border:1.5px solid var(--md-outline-variant); font-size:16px; font-family:'Outfit',sans-serif; outline:none; margin-bottom:20px; background:var(--md-surface-1); color:var(--md-primary);" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" data-lpignore="true" data-form-type="other"/>
+      <input id="sup-notes" type="search" placeholder="Corredor MARL, dias de entrega..." style="width:100%; padding:14px; border-radius:10px; border:1.5px solid var(--md-outline-variant); font-size:16px; font-family:'Outfit',sans-serif; outline:none; margin-bottom:20px; background:var(--md-surface-1); color:var(--md-primary); -webkit-appearance:none; appearance:none;" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" data-lpignore="true" data-form-type="other"/>
       <div style="display:flex; gap:10px;">
         <button onclick="closeSupplierModal()" style="padding:16px 20px; background:var(--md-surface-variant); color:var(--md-primary); border:none; border-radius:12px; font-size:16px; font-weight:600; font-family:'Outfit',sans-serif; cursor:pointer;">Cancelar</button>
         <button onclick="saveSupplier()" style="flex:1; padding:16px; background:var(--md-primary); color:var(--md-white); border:none; border-radius:12px; font-size:16px; font-weight:700; font-family:'Outfit',sans-serif; cursor:pointer;">Guardar</button>
@@ -912,10 +919,10 @@
           </div>
           <div id="new-cat-wrap" style="display:none">
             <label class="form-label">Nova categoria</label>
-            <input id="new-cat-input" class="md-input" placeholder="Ex: 🌿 Ervas aromáticas" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" data-lpignore="true" data-form-type="other"/>
+            <input id="new-cat-input" type="search" class="md-input" placeholder="Ex: 🌿 Ervas aromáticas" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" data-lpignore="true" data-form-type="other" style="-webkit-appearance:none; appearance:none;"/>
           </div>
           <label class="form-label">Nome do produto</label>
-          <input id="new-item-input" class="md-input" placeholder="Ex: Manga Tommy" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" data-lpignore="true" data-form-type="other"/>
+          <input id="new-item-input" type="search" class="md-input" placeholder="Ex: Manga Tommy" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" data-lpignore="true" data-form-type="other" style="-webkit-appearance:none; appearance:none;"/>
           <button id="add-btn" class="btn-primary">Adicionar produto</button>
           <button id="cancel-btn" class="btn-secondary">Cancelar</button>
         </div>
@@ -949,8 +956,8 @@
       </div>
       <div style="padding:8px 16px 12px; position:relative;">
         <span class="material-icons-round" style="position:absolute; left:28px; top:50%; transform:translateY(-50%); font-size:20px; color:var(--md-primary); opacity:0.4; pointer-events:none;">search</span>
-        <input id="prices-search" type="text" placeholder="Pesquisar"
-          style="width:100%; padding:12px 12px 12px 40px; border:1.5px solid var(--md-outline-variant); border-radius:12px; font-size:16px; font-family:'Outfit',sans-serif; color:var(--md-primary); background:rgba(92,126,96,0.08); outline:none;"
+        <input id="prices-search" type="search" placeholder="Pesquisar"
+          style="width:100%; padding:12px 12px 12px 40px; border:1.5px solid var(--md-outline-variant); border-radius:12px; font-size:16px; font-family:'Outfit',sans-serif; color:var(--md-primary); background:rgba(92,126,96,0.08); outline:none; -webkit-appearance:none; appearance:none;"
           oninput="renderPrices()" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" data-lpignore="true" data-form-type="other"/>
       </div>
       <div id="prices-list" style="padding:0 16px 32px; display:flex; flex-direction:column; gap:0;">
@@ -1115,7 +1122,7 @@
         </div>
 
         <div>
-          <input id="pick-notes" type="text" placeholder="+ Adicionar nota (ex: pedir ao João...)" style="width:100%; padding:10px 2px; border:none; border-bottom:1px solid var(--md-outline-variant); border-radius:0; font-size:14px; font-style:italic; font-family:'Outfit',sans-serif; outline:none; background:transparent; color:var(--md-primary); opacity:0.75; box-sizing:border-box;"
+          <input id="pick-notes" type="search" placeholder="+ Adicionar nota (ex: pedir ao João...)" style="width:100%; padding:10px 2px; border:none; border-bottom:1px solid var(--md-outline-variant); border-radius:0; font-size:14px; font-style:italic; font-family:'Outfit',sans-serif; outline:none; background:transparent; color:var(--md-primary); opacity:0.75; box-sizing:border-box; -webkit-appearance:none; appearance:none;"
             onkeydown="if(event.key==='Enter'){event.preventDefault();this.blur();}" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" data-lpignore="true" data-form-type="other"/>
         </div>
 
