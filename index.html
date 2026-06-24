@@ -408,9 +408,9 @@
 
       <div id="tasks-overdue-summary" style="display:none; padding:0 16px 12px;"></div>
 
-      <!-- Tarefas em grelha de cartões, estilo Google Keep — tudo visível, sem abrir/fechar -->
-      <div id="tasks-list" style="padding:8px 16px 32px; display:grid; grid-template-columns:1fr 1fr; gap:12px; align-items:start;">
-        <div id="tasks-empty" style="grid-column:1/-1; text-align:center; padding:60px 20px; color:var(--md-primary); opacity:0.5;">
+      <!-- Tarefas (antigos "projetos"), cada uma pode ter vários sub-itens dentro -->
+      <div id="tasks-list" style="padding:8px 16px 32px; display:flex; flex-direction:column; gap:0;">
+        <div id="tasks-empty" style="text-align:center; padding:60px 20px; color:var(--md-primary); opacity:0.5;">
           <span class="material-icons-round" style="font-size:48px; display:block; margin-bottom:12px;">check_circle</span>
           <div style="font-size:17px; font-weight:600;">Nada para fazer</div>
           <div style="font-size:14px; margin-top:6px;">Toca em + para criar uma tarefa</div>
@@ -1302,15 +1302,6 @@ let dayHistoryDow = null;      // dia da semana atualmente aberto no modal de cr
 let dayHistoryName = '';       // nome do dia (ex: 'Sexta')
 let dayHistoryWeekOffset = 0;  // semanas de deslocamento a partir da próxima ocorrência (0 = próxima)
 
-// Paleta de cores pastel para os cartões de Fazer, estilo Google Keep
-const TASK_CARD_COLORS = [
-  { bg: '#FFF8DC', border: '#F2C94C' }, // amarelo
-  { bg: '#E3F2E1', border: '#7CA65B' }, // verde
-  { bg: '#FDE8E0', border: '#E8762C' }, // laranja
-  { bg: '#E6F0F7', border: '#6FA3C7' }, // azul
-  { bg: '#F3E5F5', border: '#B083C9' }, // lilás
-  { bg: '#F5F5F0', border: '#A0A090' }, // neutro
-];
 let saveTimer = null;
 let picked = {}; // key -> { done, price, supplier, date }
 let snapHistory = []; // array of weekly snapshots
@@ -1882,11 +1873,16 @@ function renderOverdueSummary() {
   box.style.display = 'block';
   const label = overdueCount === 1 ? '1 item atrasado' : `${overdueCount} itens atrasados`;
   box.innerHTML = `
-    <div style="width:100%; display:flex; align-items:center; gap:10px; background:rgba(196,69,54,0.08); border:1.5px solid var(--md-error); border-radius:12px; padding:12px 14px;">
+    <button id="overdue-summary-btn" style="width:100%; display:flex; align-items:center; gap:10px; background:rgba(196,69,54,0.08); border:1.5px solid var(--md-error); border-radius:12px; padding:12px 14px; cursor:pointer; text-align:left;">
       <span class="material-icons-round" style="font-size:20px; color:var(--md-error);">schedule</span>
       <span style="font-size:15px; font-weight:700; color:var(--md-error); flex:1;">${label}</span>
-    </div>
+      <span class="material-icons-round" style="font-size:18px; color:var(--md-error); opacity:0.6;">chevron_right</span>
+    </button>
   `;
+  document.getElementById('overdue-summary-btn').addEventListener('click', () => {
+    affectedProjects.forEach(id => { openProjects[id] = true; });
+    renderTasksAndProjects();
+  });
 }
 
 // ── PROJETOS ──────────────────────────────────────────────────────────────────
@@ -1905,8 +1901,7 @@ function closeProjectModal() {
 function saveProject() {
   const title = document.getElementById('project-title').value.trim();
   if (!title) return;
-  const colorIdx = projects.length % TASK_CARD_COLORS.length;
-  projects.push({ id: Date.now(), title, tasks: [], colorIdx });
+  projects.push({ id: Date.now(), title, tasks: [] });
   sched(); closeProjectModal(); renderProjects();
   showSnack('Tarefa criada ✓', 'saved');
 }
@@ -2074,65 +2069,74 @@ function renderProjects() {
 }
 
 function appendProjectCard(container, empty, proj) {
+  const open = openProjects[proj.id] === true; // por defeito, fechado
   const total = proj.tasks.length;
-  const colorIdx = (proj.colorIdx ?? 0) % TASK_CARD_COLORS.length;
-  const color = TASK_CARD_COLORS[colorIdx];
 
   const wrap = document.createElement('div');
   wrap.className = 'project-card';
-  wrap.style.cssText = `background:${color.bg}; border:1.5px solid ${color.border}; border-radius:14px; padding:14px; display:flex; flex-direction:column; gap:0; break-inside:avoid;`;
+  wrap.style.cssText = 'margin-bottom:10px;';
 
-  // Título — sempre visível, clicável para editar; sem acordeão.
-  const hdrRow = document.createElement('div');
-  hdrRow.style.cssText = 'display:flex; align-items:flex-start; gap:6px; margin-bottom:10px;';
-  const titleSpan = document.createElement('div');
-  titleSpan.className = 'proj-title-text';
-  titleSpan.style.cssText = 'font-size:21px; font-weight:700; color:var(--md-primary); letter-spacing:0.2px; cursor:pointer; line-height:1.2; flex:1; min-width:0; word-break:break-word;';
-  titleSpan.textContent = proj.title;
-  titleSpan.addEventListener('click', () => startEditProjectTitle(proj.id, titleSpan));
-  hdrRow.appendChild(titleSpan);
+  // Cabeçalho — caixa clara, distinta das categorias de Compras (que usam .cat-header escuro)
+  const hdr = document.createElement('div');
+  hdr.className = 'cat-header';
+  hdr.style.cssText = 'cursor:pointer; background:var(--md-surface); border:1.5px solid var(--md-outline-variant);';
+  hdr.innerHTML = `
+    <span style="display:flex; align-items:center; gap:6px; min-width:0; overflow:hidden; flex:1;">
+      <span class="proj-title-text" style="font-size:28px; font-weight:700; color:var(--md-primary); letter-spacing:0.3px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${proj.title}</span>
+      <span style="font-size:17px; opacity:0.6; font-weight:500; flex-shrink:0; color:var(--md-primary);">· ${total}</span>
+    </span>
+    <span class="cat-chevron ${open?'':'closed'}" style="color:var(--md-primary); opacity:0.7; flex-shrink:0; margin-left:8px;">▾</span>
+  `;
+  hdr.addEventListener('click', (e) => {
+    openProjects[proj.id] = !open;
+    renderTasksAndProjects();
+  });
+  wrap.appendChild(hdr);
 
-  const delProjBtn = document.createElement('button');
-  delProjBtn.style.cssText = 'background:none; border:none; cursor:pointer; padding:2px; margin:-2px -2px 0 0; flex-shrink:0; width:24px; height:24px; display:flex; align-items:center; justify-content:center; overflow:hidden;';
-  delProjBtn.innerHTML = `<span class="material-icons-round" style="color:${color.border}; opacity:0.6; font-size:19px;">delete_outline</span>`;
-  delProjBtn.addEventListener('click', () => deleteProject(proj.id));
-  hdrRow.appendChild(delProjBtn);
-  wrap.appendChild(hdrRow);
-
-  // Itens — sempre visíveis, sem expandir/colapsar.
+  // Corpo — colapsável, igual ao cat-body de Compras
   const body = document.createElement('div');
-  body.style.cssText = 'display:flex; flex-direction:column; gap:0;';
+  body.className = 'cat-body' + (open ? '' : ' collapsed');
 
   proj.tasks.forEach((t, idx) => {
     const row = document.createElement('div');
-    row.style.cssText = `padding:9px 0; ${idx < proj.tasks.length - 1 ? `border-bottom:1px solid ${color.border}40;` : ''}`;
+    row.style.cssText = `padding:15px 14px; ${idx < proj.tasks.length - 1 ? 'border-bottom:1px solid var(--md-outline-variant);' : ''}`;
 
     const topRow = document.createElement('div');
-    topRow.style.cssText = 'display:flex; align-items:flex-start; gap:8px;';
+    topRow.style.cssText = 'display:flex; align-items:flex-start; gap:16px;';
 
     const textWrap = document.createElement('div');
     textWrap.style.cssText = 'flex:1; min-width:0;';
 
     const textSpan = document.createElement('div');
     textSpan.className = 'ptask-text';
-    textSpan.style.cssText = `font-size:15px; font-weight:600; color:var(--md-primary); cursor:pointer; display:flex; align-items:flex-start; gap:5px; line-height:1.3;`;
+    textSpan.style.cssText = `font-size:22px; font-weight:600; color:var(--md-primary); cursor:pointer; display:flex; align-items:center; gap:6px;`;
     const noteIcon = t.notes
-      ? '<span class="material-icons-round" style="font-size:13px; opacity:0.45; flex-shrink:0; margin-top:2px;" title="' + t.notes.replace(/"/g,'&quot;') + '">sticky_note_2</span>'
-      : '<span class="material-icons-round ptask-note-icon" style="font-size:13px; opacity:0.25; flex-shrink:0; margin-top:2px;" title="Adicionar nota">note_add</span>';
-    textSpan.innerHTML = `<span class="ptask-text-label" style="word-break:break-word;">${t.text}</span>${noteIcon}`;
+      ? '<span class="material-icons-round" style="font-size:15px; opacity:0.45; flex-shrink:0;" title="' + t.notes.replace(/"/g,'&quot;') + '">sticky_note_2</span>'
+      : '<span class="material-icons-round ptask-note-icon" style="font-size:15px; opacity:0.3; flex-shrink:0;" title="Adicionar nota">note_add</span>';
+    textSpan.innerHTML = `<span class="ptask-text-label">${t.text}</span>${noteIcon}`;
     textSpan.querySelector('.ptask-text-label').addEventListener('click', () => startEditPTaskText(proj.id, t.id, textSpan));
     textSpan.querySelector('.material-icons-round').addEventListener('click', (e) => {
       e.stopPropagation();
       startEditPTaskNotesIcon(proj.id, t.id, textWrap, textSpan);
     });
     textWrap.appendChild(textSpan);
+
     topRow.appendChild(textWrap);
 
-    // Coluna direita compacta: X (apagar) e calendário (prazo), um ao lado do outro
+    // Coluna direita: X (apagar) em cima, ícone de calendário (prazo, sem texto) em baixo
     const actionsCol = document.createElement('div');
-    actionsCol.style.cssText = 'display:flex; align-items:center; gap:2px; flex-shrink:0;';
+    actionsCol.style.cssText = 'display:flex; flex-direction:column; align-items:center; gap:6px; flex-shrink:0;';
 
-    let dueColor = 'var(--md-primary)', dueOpacity = '0.3';
+    const delTaskBtn = document.createElement('button');
+    delTaskBtn.style.cssText = 'background:none; border:none; cursor:pointer; padding:6px; flex-shrink:0; width:35px; height:35px; display:flex; align-items:center; justify-content:center; overflow:hidden;';
+    delTaskBtn.innerHTML = '<span class="material-icons-round" style="font-size:23px; color:var(--md-outline-variant);">close</span>';
+    delTaskBtn.addEventListener('click', () => deletePTask(proj.id, t.id));
+    actionsCol.appendChild(delTaskBtn);
+
+    // Prazo — só o ícone, sem data visível; muda de cor se atrasado.
+    const dueBtn = document.createElement('button');
+    dueBtn.style.cssText = 'background:none; border:none; cursor:pointer; padding:6px; flex-shrink:0; display:flex; align-items:center; justify-content:center; width:33px; height:33px; overflow:hidden;';
+    let dueColor = 'var(--md-primary)', dueOpacity = '0.35';
     if (t.due) {
       const dueDate = new Date(t.due + 'T00:00:00');
       const todayMid = new Date(); todayMid.setHours(0,0,0,0);
@@ -2140,39 +2144,44 @@ function appendProjectCard(container, empty, proj) {
       const isToday = dueDate.getTime() === todayMid.getTime();
       if (isOverdue) { dueColor = 'var(--md-error)'; dueOpacity = '0.85'; }
       else if (isToday) { dueColor = 'var(--md-gold)'; dueOpacity = '0.9'; }
-      else { dueOpacity = '0.55'; }
+      else { dueOpacity = '0.6'; }
     }
-    const dueBtn = document.createElement('button');
-    dueBtn.style.cssText = 'background:none; border:none; cursor:pointer; padding:3px; flex-shrink:0; display:flex; align-items:center; justify-content:center; width:22px; height:22px; overflow:hidden;';
-    dueBtn.innerHTML = `<span class="material-icons-round" style="font-size:16px; color:${dueColor}; opacity:${dueOpacity};">event</span>`;
+    dueBtn.innerHTML = `<span class="material-icons-round" style="font-size:21px; color:${dueColor}; opacity:${dueOpacity};">event</span>`;
     dueBtn.title = t.due ? new Date(t.due + 'T00:00:00').toLocaleDateString('pt-PT', { day:'2-digit', month:'short' }) : 'Definir prazo';
     dueBtn.addEventListener('click', () => startEditPTaskDue(proj.id, t.id, dueBtn));
     actionsCol.appendChild(dueBtn);
 
-    const delTaskBtn = document.createElement('button');
-    delTaskBtn.style.cssText = 'background:none; border:none; cursor:pointer; padding:3px; flex-shrink:0; width:22px; height:22px; display:flex; align-items:center; justify-content:center; overflow:hidden;';
-    delTaskBtn.innerHTML = `<span class="material-icons-round" style="font-size:17px; color:${color.border};">close</span>`;
-    delTaskBtn.addEventListener('click', () => deletePTask(proj.id, t.id));
-    actionsCol.appendChild(delTaskBtn);
-
     topRow.appendChild(actionsCol);
+
     row.appendChild(topRow);
     body.appendChild(row);
   });
 
-  wrap.appendChild(body);
-
-  // Adicionar item — botão + redondo discreto, no fundo do cartão
+  // Adicionar tarefa (botão + redondo) + apagar projeto, no fundo do corpo expandido
   const footer = document.createElement('div');
-  footer.style.cssText = 'margin-top:8px;';
+  footer.style.cssText = 'display:flex; align-items:center; justify-content:space-between; padding:6px 8px;';
   const addTaskBtn = document.createElement('button');
-  addTaskBtn.style.cssText = `background:none; border:1.5px solid ${color.border}; color:var(--md-primary); border-radius:50%; width:28px; height:28px; display:flex; align-items:center; justify-content:center; cursor:pointer; flex-shrink:0; padding:0; opacity:0.7;`;
-  addTaskBtn.innerHTML = '<span class="material-icons-round" style="font-size:16px;">add</span>';
-  addTaskBtn.title = 'Adicionar item';
+  addTaskBtn.style.cssText = 'background:var(--md-primary); color:var(--md-white); border:none; border-radius:50%; width:36px; height:36px; display:flex; align-items:center; justify-content:center; cursor:pointer; flex-shrink:0; padding:0;';
+  addTaskBtn.innerHTML = '<span class="material-icons-round" style="font-size:20px;">add</span>';
+  addTaskBtn.title = 'Adicionar tarefa';
   addTaskBtn.addEventListener('click', () => openPTaskModal(proj.id));
   footer.appendChild(addTaskBtn);
-  wrap.appendChild(footer);
 
+  const editProjBtn = document.createElement('button');
+  editProjBtn.style.cssText = 'background:none; border:none; cursor:pointer; padding:6px;';
+  editProjBtn.innerHTML = '<span class="material-icons-round" style="color:var(--md-primary); opacity:0.5; font-size:21px;">edit</span>';
+  editProjBtn.title = 'Editar título';
+  editProjBtn.addEventListener('click', () => startEditProjectTitle(proj.id, hdr.querySelector('.proj-title-text')));
+  footer.appendChild(editProjBtn);
+
+  const delProjBtn = document.createElement('button');
+  delProjBtn.style.cssText = 'background:none; border:none; cursor:pointer; padding:6px;';
+  delProjBtn.innerHTML = '<span class="material-icons-round" style="color:var(--md-outline-variant); font-size:23px;">delete_outline</span>';
+  delProjBtn.addEventListener('click', () => deleteProject(proj.id));
+  footer.appendChild(delProjBtn);
+
+  body.appendChild(footer);
+  wrap.appendChild(body);
   container.insertBefore(wrap, empty);
 }
 
