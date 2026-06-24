@@ -2068,18 +2068,18 @@ function appendProjectCard(container, empty, proj) {
   wrap.className = 'project-card';
   wrap.style.cssText = 'margin-bottom:10px;';
 
-  // Cabeçalho — mesmo estilo visual dos separadores de categoria em Compras
+  // Cabeçalho — caixa clara, distinta das categorias de Compras (que usam .cat-header escuro)
   const hdr = document.createElement('div');
   hdr.className = 'cat-header';
-  hdr.style.cssText = 'cursor:pointer;';
+  hdr.style.cssText = 'cursor:pointer; background:var(--md-surface); border:1.5px solid var(--md-outline-variant);';
   hdr.innerHTML = `
-    <span style="display:flex; align-items:center; gap:8px; min-width:0; overflow:hidden; font-size:23px; font-weight:700; color:var(--md-white); letter-spacing:0.3px;">
+    <span style="display:flex; align-items:center; gap:8px; min-width:0; overflow:hidden; font-size:23px; font-weight:700; color:var(--md-primary); letter-spacing:0.3px;">
       <span class="proj-title-text" style="overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${proj.title}</span>
-      <span style="font-size:16px; opacity:0.75; font-weight:500; flex-shrink:0;">· ${pending}/${total}</span>
+      <span style="font-size:16px; opacity:0.6; font-weight:500; flex-shrink:0;">· ${pending}/${total}</span>
     </span>
     <span style="display:flex; align-items:center; gap:12px; flex-shrink:0;">
-      <span class="material-icons-round proj-edit-icon" style="font-size:22px; opacity:0.75;">edit</span>
-      <span class="cat-chevron ${open?'':'closed'}">▾</span>
+      <span class="material-icons-round proj-edit-icon" style="font-size:22px; opacity:0.6; color:var(--md-primary);">edit</span>
+      <span class="cat-chevron ${open?'':'closed'}" style="color:var(--md-primary); opacity:0.7;">▾</span>
     </span>
   `;
   hdr.querySelector('.proj-edit-icon').addEventListener('click', (e) => {
