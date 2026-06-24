@@ -299,7 +299,8 @@
   <div id="header">
     <div id="header-nav">
       <div id="header-icons" style="display:flex; align-items:center; justify-content:space-between; width:100%;">
-        <div id="header-title-wrap" style="display:flex; align-items:center; gap:8px;">
+        <div id="header-title-wrap" style="display:flex; align-items:center; gap:6px;">
+          <span id="header-home-icon" class="material-icons-round" style="display:none; font-size:18px; color:var(--md-amber); cursor:pointer;" onclick="switchTo('dashboard')">home</span>
           <button class="hnav-btn hnav-btn-brand active" data-view="dashboard" style="font-size:15px; font-weight:700; letter-spacing:1px; padding:6px 8px; text-transform:uppercase; white-space:nowrap; background:transparent; border-radius:0;">Momento Frutado</button>
         </div>
         <div style="display:flex; align-items:center; gap:0;">
@@ -390,7 +391,6 @@
         </button>
       </div>
 
-      <div id="tasks-overdue-summary" style="display:none; padding:0 16px 12px;"></div>
 
       <!-- Tarefas (antigos "projetos"), cada uma pode ter vários sub-itens dentro -->
       <div id="tasks-list" style="padding:8px 16px 32px; display:flex; flex-direction:column; gap:0;">
@@ -404,60 +404,34 @@
 
     <!-- MODAL: NOVA TAREFA -->
     <div id="project-modal-overlay" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.55); z-index:299; backdrop-filter:blur(8px);" onclick="closeProjectModal()"></div>
-    <div id="project-modal-panel" style="display:none; position:fixed; bottom:0; left:50%; transform:translateX(-50%); width:100%; max-width:600px; background:var(--md-surface); border-radius:28px 28px 0 0; padding:0 0 32px; z-index:300; max-height:88vh; overflow-y:auto; box-sizing:border-box; box-shadow:0 -4px 32px rgba(0,0,0,0.3);">
-      <div style="display:flex; align-items:center; justify-content:space-between; padding:18px 20px 6px;">
-        <div style="font-size:29px; font-weight:600; color:var(--md-primary); font-family:'Outfit',sans-serif;">Nova tarefa</div>
-        <button onclick="closeProjectModal()" title="Fechar" style="border:none; background:var(--md-gold); color:var(--md-white); border-radius:50%; width:42px; height:42px; display:flex; align-items:center; justify-content:center; cursor:pointer; flex-shrink:0; box-shadow:0 2px 6px rgba(0,0,0,0.15);">
-          <span class="material-icons-round" style="font-size:24px;">close</span>
-        </button>
-      </div>
+    <div id="project-modal-panel" style="display:none; position:fixed; bottom:0; left:50%; transform:translateX(-50%); width:100%; max-width:600px; background:var(--md-surface); border-radius:28px 28px 0 0; padding:20px 0 32px; z-index:300; max-height:88vh; overflow-y:auto; box-sizing:border-box; box-shadow:0 -4px 32px rgba(0,0,0,0.3);">
       <div style="padding:0 16px 16px;">
-        <div style="background:var(--md-surface-1); border-radius:14px; border:1px solid var(--md-outline-variant); padding:18px;">
-          <span class="pick-field-label">Título da tarefa</span>
-          <input id="project-title" type="search" placeholder="Ex: Renovação do toldo"
-            autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" data-lpignore="true" data-form-type="other"
-            style="width:100%; padding:14px; border:1.5px solid var(--md-outline-variant); border-radius:12px; font-size:17px; font-family:'Outfit',sans-serif; outline:none; background:var(--md-surface); color:var(--md-primary); box-sizing:border-box; -webkit-appearance:none; appearance:none;"/>
-        </div>
+        <input id="project-title" type="search" placeholder="Nome da tarefa"
+          autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" data-lpignore="true" data-form-type="other"
+          style="width:100%; padding:14px 12px; border:none; border-bottom:1.5px solid var(--md-outline-variant); font-size:29px; font-weight:400; font-family:'Outfit',sans-serif; outline:none; background:transparent; color:var(--md-primary); box-sizing:border-box; -webkit-appearance:none; appearance:none;"/>
       </div>
-      <div style="display:flex; gap:10px; padding:0 16px;">
-        <button onclick="closeProjectModal()" style="padding:16px 20px; background:var(--md-surface-variant); color:var(--md-primary); border:none; border-radius:12px; font-size:16px; font-weight:600; font-family:'Outfit',sans-serif; cursor:pointer;">Cancelar</button>
-        <button onclick="saveProject()" style="flex:1; padding:16px; background:var(--md-amber); color:var(--md-white); border:none; border-radius:12px; font-size:16px; font-weight:700; font-family:'Outfit',sans-serif; cursor:pointer;">Criar</button>
+      <div style="display:flex; justify-content:flex-end; padding:0 16px;">
+        <button onclick="saveProject()" title="Criar" style="border:none; background:var(--md-amber); color:var(--md-white); border-radius:50%; width:50px; height:50px; display:flex; align-items:center; justify-content:center; cursor:pointer; flex-shrink:0; box-shadow:0 2px 6px rgba(0,0,0,0.15);">
+          <span class="material-icons-round" style="font-size:26px;">check</span>
+        </button>
       </div>
     </div>
 
     <!-- MODAL: NOVO SUB-ITEM DE TAREFA -->
-    <div id="ptask-modal-overlay" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.55); z-index:299; backdrop-filter:blur(8px);" onclick="closePTaskModal()"></div>
-    <div id="ptask-modal-panel" style="display:none; position:fixed; bottom:0; left:50%; transform:translateX(-50%); width:100%; max-width:600px; background:var(--md-surface); border-radius:28px 28px 0 0; padding:0 0 32px; z-index:300; max-height:88vh; overflow-y:auto; box-sizing:border-box; box-shadow:0 -4px 32px rgba(0,0,0,0.3);">
-      <div style="display:flex; align-items:center; justify-content:space-between; padding:18px 20px 6px;">
-        <div style="font-size:29px; font-weight:600; color:var(--md-primary); font-family:'Outfit',sans-serif;">Novo item</div>
-        <button onclick="closePTaskModal()" title="Fechar" style="border:none; background:var(--md-gold); color:var(--md-white); border-radius:50%; width:42px; height:42px; display:flex; align-items:center; justify-content:center; cursor:pointer; flex-shrink:0; box-shadow:0 2px 6px rgba(0,0,0,0.15);">
-          <span class="material-icons-round" style="font-size:24px;">close</span>
-        </button>
-      </div>
+    <div id="ptask-modal-overlay" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.55); z-index:399; backdrop-filter:blur(8px);" onclick="closePTaskModal()"></div>
+    <div id="ptask-modal-panel" style="display:none; position:fixed; bottom:0; left:50%; transform:translateX(-50%); width:100%; max-width:600px; background:var(--md-surface); border-radius:28px 28px 0 0; padding:20px 0 32px; z-index:400; max-height:88vh; overflow-y:auto; box-sizing:border-box; box-shadow:0 -4px 32px rgba(0,0,0,0.3);">
       <div style="padding:0 16px 16px;">
-        <div style="background:var(--md-surface-1); border-radius:14px; border:1px solid var(--md-outline-variant); padding:18px;">
-          <div style="margin-bottom:14px;">
-            <span class="pick-field-label">O que precisa de ser feito</span>
-            <input id="ptask-title" type="search" placeholder="Ex: Pedir orçamento ao Carlos"
-              autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" data-lpignore="true" data-form-type="other"
-              style="width:100%; padding:14px; border:1.5px solid var(--md-outline-variant); border-radius:12px; font-size:17px; font-family:'Outfit',sans-serif; outline:none; background:var(--md-surface); color:var(--md-primary); box-sizing:border-box; -webkit-appearance:none; appearance:none;"/>
-          </div>
-          <div style="margin-bottom:14px;">
-            <span class="pick-field-label">Notas</span>
-            <textarea id="ptask-notes" placeholder="Detalhes, opcional"
-              autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" data-lpignore="true" data-form-type="other"
-              style="width:100%; min-height:90px; padding:14px; border:1.5px solid var(--md-outline-variant); border-radius:12px; font-size:15px; font-family:'Outfit',sans-serif; outline:none; background:var(--md-surface); color:var(--md-primary); resize:vertical; box-sizing:border-box;"></textarea>
-          </div>
-          <div>
-            <span class="pick-field-label">Prazo</span>
-            <input id="ptask-due" type="date"
-              style="width:100%; padding:14px; border:1.5px solid var(--md-outline-variant); border-radius:12px; font-size:15px; font-family:'Outfit',sans-serif; outline:none; background:var(--md-surface); color:var(--md-primary); box-sizing:border-box;"/>
-          </div>
-        </div>
+        <input id="ptask-title" type="search" placeholder="O que precisa de ser feito"
+          autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" data-lpignore="true" data-form-type="other"
+          style="width:100%; padding:14px 12px; border:none; border-bottom:1.5px solid var(--md-outline-variant); font-size:22px; font-weight:600; font-family:'Outfit',sans-serif; outline:none; background:transparent; color:var(--md-primary); box-sizing:border-box; -webkit-appearance:none; appearance:none; margin-bottom:8px;"/>
+        <textarea id="ptask-notes" placeholder="+ adicionar nota"
+          autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" data-lpignore="true" data-form-type="other"
+          style="width:100%; min-height:70px; padding:8px 12px; border:none; font-size:17px; font-family:'Outfit',sans-serif; outline:none; background:transparent; color:var(--md-primary); resize:vertical; box-sizing:border-box;"></textarea>
       </div>
-      <div style="display:flex; gap:10px; padding:0 16px;">
-        <button onclick="closePTaskModal()" style="padding:16px 20px; background:var(--md-surface-variant); color:var(--md-primary); border:none; border-radius:12px; font-size:16px; font-weight:600; font-family:'Outfit',sans-serif; cursor:pointer;">Cancelar</button>
-        <button onclick="savePTask()" style="flex:1; padding:16px; background:var(--md-amber); color:var(--md-white); border:none; border-radius:12px; font-size:16px; font-weight:700; font-family:'Outfit',sans-serif; cursor:pointer;">Guardar</button>
+      <div style="display:flex; justify-content:flex-end; padding:0 16px;">
+        <button onclick="savePTask()" title="Guardar" style="border:none; background:var(--md-amber); color:var(--md-white); border-radius:50%; width:50px; height:50px; display:flex; align-items:center; justify-content:center; cursor:pointer; flex-shrink:0; box-shadow:0 2px 6px rgba(0,0,0,0.15);">
+          <span class="material-icons-round" style="font-size:26px;">check</span>
+        </button>
       </div>
     </div>
 
@@ -1146,7 +1120,7 @@
 <div id="task-panel-overlay" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.55); z-index:299; backdrop-filter:blur(8px);" onclick="closeTaskPanel()"></div>
 <div id="task-panel" style="display:none; position:fixed; bottom:0; left:50%; transform:translateX(-50%); width:100%; max-width:600px; background:var(--md-surface); border-radius:28px 28px 0 0; padding:0 0 32px; z-index:300; max-height:88vh; overflow-y:auto; box-sizing:border-box; box-shadow:0 -4px 32px rgba(0,0,0,0.3);">
   <div style="display:flex; align-items:center; justify-content:space-between; padding:18px 16px 6px;">
-    <div id="task-panel-title" style="font-size:29px; font-weight:600; color:var(--md-primary); font-family:'Outfit',sans-serif; cursor:pointer; flex:1; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">Tarefa</div>
+    <div id="task-panel-title" style="font-size:33px; font-weight:600; color:var(--md-primary); font-family:'Outfit',sans-serif; cursor:pointer; flex:1; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">Tarefa</div>
     <button id="task-panel-close" title="Fechar" onclick="closeTaskPanel()" style="border:none; background:var(--md-gold); color:var(--md-white); border-radius:50%; width:42px; height:42px; display:flex; align-items:center; justify-content:center; cursor:pointer; flex-shrink:0; box-shadow:0 2px 6px rgba(0,0,0,0.15); margin-left:10px;">
       <span class="material-icons-round" style="font-size:24px;">close</span>
     </button>
@@ -1156,14 +1130,14 @@
     <div style="background:var(--md-surface-1); border-radius:14px; border:1px solid var(--md-outline-variant); padding:10px 14px;">
       <div id="task-panel-items"></div>
       <button id="task-panel-add-btn" style="width:100%; display:flex; align-items:center; gap:10px; padding:13px 4px; background:none; border:none; cursor:pointer; color:var(--md-amber); font-size:17px; font-weight:700; font-family:'Outfit',sans-serif;">
-        <span class="material-icons-round" style="font-size:22px;">add_circle</span> Adicionar item
+        Adicionar item
       </button>
     </div>
   </div>
 
   <div style="padding:0 16px; display:flex; justify-content:flex-end;">
     <button id="task-panel-delete-btn" style="background:none; border:none; cursor:pointer; padding:8px; display:flex; align-items:center; gap:6px; color:var(--md-outline-variant); font-size:14px; font-family:'Outfit',sans-serif;">
-      <span class="material-icons-round" style="font-size:19px;">delete_outline</span> Apagar tarefa
+      Apagar tarefa
     </button>
   </div>
 </div>
@@ -1841,46 +1815,7 @@ function renderTasksAndProjects() {
   const hasContent = projects.length > 0;
   empty.style.display = hasContent ? 'none' : 'block';
 
-  renderOverdueSummary();
   projects.forEach(proj => appendProjectCard(list_el, empty, proj));
-}
-
-// ── RESUMO DE ITENS ATRASADOS — visível no topo, antes de abrir cada Tarefa ──
-function renderOverdueSummary() {
-  const box = document.getElementById('tasks-overdue-summary');
-  if (!box) return;
-
-  const todayMid = new Date(); todayMid.setHours(0,0,0,0);
-  let overdueCount = 0;
-  const affectedProjects = new Set();
-
-  projects.forEach(proj => {
-    proj.tasks.forEach(t => {
-      if (!t.due) return;
-      const dueDate = new Date(t.due + 'T00:00:00');
-      if (dueDate < todayMid) { overdueCount++; affectedProjects.add(proj.id); }
-    });
-  });
-
-  if (overdueCount === 0) {
-    box.style.display = 'none';
-    box.innerHTML = '';
-    return;
-  }
-
-  box.style.display = 'block';
-  const label = overdueCount === 1 ? '1 item atrasado' : `${overdueCount} itens atrasados`;
-  box.innerHTML = `
-    <button id="overdue-summary-btn" style="width:100%; display:flex; align-items:center; gap:10px; background:rgba(196,69,54,0.08); border:1.5px solid var(--md-error); border-radius:12px; padding:12px 14px; cursor:pointer; text-align:left;">
-      <span class="material-icons-round" style="font-size:20px; color:var(--md-error);">schedule</span>
-      <span style="font-size:15px; font-weight:700; color:var(--md-error); flex:1;">${label}</span>
-      <span class="material-icons-round" style="font-size:18px; color:var(--md-error); opacity:0.6;">chevron_right</span>
-    </button>
-  `;
-  document.getElementById('overdue-summary-btn').addEventListener('click', () => {
-    affectedProjects.forEach(id => { openProjects[id] = true; });
-    renderTasksAndProjects();
-  });
 }
 
 // ── PROJETOS ──────────────────────────────────────────────────────────────────
@@ -1948,62 +1883,68 @@ function renderTaskPanelItems() {
 
   proj.tasks.forEach((t, idx) => {
     const row = document.createElement('div');
-    row.style.cssText = `padding:13px 0; ${idx < proj.tasks.length - 1 ? 'border-bottom:1px solid var(--md-outline-variant);' : ''} display:flex; align-items:flex-start; gap:10px;`;
+    row.style.cssText = 'padding:13px 0; display:flex; align-items:flex-start; gap:10px;';
 
     const textWrap = document.createElement('div');
     textWrap.style.cssText = 'flex:1; min-width:0;';
 
     const textSpan = document.createElement('div');
     textSpan.className = 'ptask-text';
-    textSpan.style.cssText = 'font-size:19px; font-weight:600; color:var(--md-primary); cursor:pointer; display:flex; align-items:center; gap:6px;';
-    const noteIcon = t.notes
-      ? '<span class="material-icons-round" style="font-size:15px; opacity:0.45; flex-shrink:0;" title="' + t.notes.replace(/"/g,'&quot;') + '">sticky_note_2</span>'
-      : '<span class="material-icons-round ptask-note-icon" style="font-size:15px; opacity:0.3; flex-shrink:0;" title="Adicionar nota">note_add</span>';
-    textSpan.innerHTML = `<span class="ptask-text-label">${t.text}</span>${noteIcon}`;
-    textSpan.querySelector('.ptask-text-label').addEventListener('click', () => startEditPTaskText(proj.id, t.id, textSpan, true));
-    textSpan.querySelector('.material-icons-round').addEventListener('click', (e) => {
-      e.stopPropagation();
-      startEditPTaskNotesIcon(proj.id, t.id, textWrap, textSpan, true);
-    });
+    textSpan.style.cssText = 'font-size:19px; font-weight:600; color:var(--md-primary); cursor:pointer;';
+    textSpan.textContent = t.text;
+    textSpan.addEventListener('click', () => startEditPTaskText(proj.id, t.id, textSpan, true));
     textWrap.appendChild(textSpan);
+
+    // Nota — sempre visível e legível, sem precisar de tocar para ver.
+    const notesSpan = document.createElement('div');
+    notesSpan.className = 'ptask-notes-display';
+    notesSpan.style.cssText = `font-size:15px; color:var(--md-primary); opacity:${t.notes ? '0.7' : '0.35'}; margin-top:4px; cursor:pointer; ${t.notes ? '' : 'font-style:italic;'}`;
+    notesSpan.textContent = t.notes ? t.notes : '+ adicionar nota';
+    notesSpan.addEventListener('click', () => startEditPTaskNotesInline(proj.id, t.id, notesSpan));
+    textWrap.appendChild(notesSpan);
+
     row.appendChild(textWrap);
-
-    const actionsCol = document.createElement('div');
-    actionsCol.style.cssText = 'display:flex; align-items:center; gap:4px; flex-shrink:0;';
-
-    let dueColor = 'var(--md-primary)', dueOpacity = '0.35';
-    if (t.due) {
-      const dueDate = new Date(t.due + 'T00:00:00');
-      const todayMid = new Date(); todayMid.setHours(0,0,0,0);
-      const isOverdue = dueDate < todayMid;
-      const isToday = dueDate.getTime() === todayMid.getTime();
-      if (isOverdue) { dueColor = 'var(--md-error)'; dueOpacity = '0.85'; }
-      else if (isToday) { dueColor = 'var(--md-gold)'; dueOpacity = '0.9'; }
-      else { dueOpacity = '0.6'; }
-    }
-    const dueBtn = document.createElement('button');
-    dueBtn.style.cssText = 'background:none; border:none; cursor:pointer; padding:4px; flex-shrink:0; width:30px; height:30px; display:flex; align-items:center; justify-content:center; overflow:hidden;';
-    dueBtn.innerHTML = `<span class="material-icons-round" style="font-size:20px; color:${dueColor}; opacity:${dueOpacity};">event</span>`;
-    dueBtn.title = t.due ? new Date(t.due + 'T00:00:00').toLocaleDateString('pt-PT', { day:'2-digit', month:'short' }) : 'Definir prazo';
-    dueBtn.addEventListener('click', () => startEditPTaskDue(proj.id, t.id, dueBtn, true));
-    actionsCol.appendChild(dueBtn);
 
     const delTaskBtn = document.createElement('button');
     delTaskBtn.style.cssText = 'background:none; border:none; cursor:pointer; padding:4px; flex-shrink:0; width:30px; height:30px; display:flex; align-items:center; justify-content:center; overflow:hidden;';
     delTaskBtn.innerHTML = '<span class="material-icons-round" style="font-size:21px; color:var(--md-outline-variant);">close</span>';
     delTaskBtn.addEventListener('click', () => { deletePTask(proj.id, t.id, true); });
-    actionsCol.appendChild(delTaskBtn);
+    row.appendChild(delTaskBtn);
 
-    row.appendChild(actionsCol);
     itemsBox.appendChild(row);
   });
+}
+
+function startEditPTaskNotesInline(projectId, taskId, el) {
+  const proj = projects.find(p => p.id === projectId);
+  if (!proj) return;
+  const t = proj.tasks.find(t => t.id === taskId);
+  if (!t) return;
+  const input = document.createElement('input');
+  input.type = 'text';
+  input.placeholder = 'Adicionar nota...';
+  input.value = t.notes || '';
+  input.style.cssText = 'width:100%; font-size:15px; color:var(--md-primary); border:none; border-bottom:1.5px solid var(--md-outline-variant); background:transparent; outline:none; font-family:Outfit,sans-serif; padding:0; margin-top:4px; box-sizing:border-box;';
+  el.replaceWith(input);
+  input.focus();
+  input.setSelectionRange(input.value.length, input.value.length);
+
+  let committed = false;
+  const commit = () => {
+    if (committed) return;
+    committed = true;
+    editPTaskNotes(proj.id, t.id, input.value.trim());
+    const body = document.getElementById('task-body-' + projectId);
+    if (body) renderTaskBodyItems(body, projectId);
+  };
+  input.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); commit(); } });
+  input.addEventListener('blur', commit);
 }
 
 function openPTaskModal(projectId) {
   currentProjectId = projectId;
   document.getElementById('ptask-title').value = '';
   document.getElementById('ptask-notes').value = '';
-  document.getElementById('ptask-due').value = '';
   document.getElementById('ptask-modal-overlay').style.display = 'block';
   document.getElementById('ptask-modal-panel').style.display   = 'block';
   document.getElementById('ptask-title').focus();
@@ -2017,11 +1958,10 @@ function closePTaskModal() {
 function savePTask() {
   const text  = document.getElementById('ptask-title').value.trim();
   const notes = document.getElementById('ptask-notes').value.trim();
-  const due   = document.getElementById('ptask-due').value;
   if (!text || !currentProjectId) return;
   const proj = projects.find(p => p.id === currentProjectId);
   if (!proj) return;
-  proj.tasks.push({ id: Date.now(), text, notes, done: false, due: due || null });
+  proj.tasks.push({ id: Date.now(), text, notes, done: false });
   sched(); closePTaskModal();
   if (currentTaskPanelId === currentProjectId) renderTaskPanelItems(); else renderProjects();
   showSnack('Tarefa adicionada ✓', 'saved');
@@ -2042,35 +1982,6 @@ function editPTaskNotes(projectId, taskId, notes) {
   if (t) { t.notes = notes; sched(); }
 }
 
-function editPTaskDue(projectId, taskId, due) {
-  const proj = projects.find(p => p.id === projectId);
-  if (!proj) return;
-  const t = proj.tasks.find(t => t.id === taskId);
-  if (t) { t.due = due || null; sched(); }
-}
-
-function startEditPTaskDue(projectId, taskId, el, fromPanel) {
-  const proj = projects.find(p => p.id === projectId);
-  if (!proj) return;
-  const t = proj.tasks.find(t => t.id === taskId);
-  if (!t) return;
-  const input = document.createElement('input');
-  input.type = 'date';
-  input.value = t.due || '';
-  input.style.cssText = 'font-size:14px; color:var(--md-primary); border:1.5px solid var(--md-outline-variant); border-radius:8px; background:var(--md-surface); outline:none; font-family:Outfit,sans-serif; padding:4px 6px; width:118px;';
-  el.replaceWith(input);
-  input.focus();
-
-  let dueCommitted = false;
-  const commit = () => {
-    if (dueCommitted) return;
-    dueCommitted = true;
-    editPTaskDue(proj.id, t.id, input.value);
-    if (fromPanel) renderTaskPanelItems(); else renderProjects();
-  };
-  input.addEventListener('change', commit);
-  input.addEventListener('blur', commit);
-}
 
 // ── EDIÇÃO INLINE: título de projeto e texto de sub-tarefa ──────────────────
 function startEditProjectTitle(projectId, el, fromPanel) {
@@ -2134,81 +2045,133 @@ function startEditPTaskText(projectId, taskId, el, fromPanel) {
   input.addEventListener('blur', commit);
 }
 
-function startEditPTaskNotesIcon(projectId, taskId, textWrapEl, textSpanEl, fromPanel) {
-  const proj = projects.find(p => p.id === projectId);
-  if (!proj) return;
-  const t = proj.tasks.find(t => t.id === taskId);
-  if (!t) return;
-  // Evita duplicar o campo se já estiver aberto
-  if (textWrapEl.querySelector('.ptask-notes-input')) return;
-
-  const input = document.createElement('input');
-  input.type = 'text';
-  input.className = 'ptask-notes-input';
-  input.placeholder = 'Adicionar nota...';
-  input.value = t.notes || '';
-  input.style.cssText = 'width:100%; font-size:15px; color:var(--md-primary); opacity:0.8; border:none; border-bottom:1.5px solid var(--md-outline-variant); background:transparent; outline:none; font-family:Outfit,sans-serif; padding:0; margin-top:4px; box-sizing:border-box;';
-  textSpanEl.insertAdjacentElement('afterend', input);
-  input.focus();
-  input.setSelectionRange(input.value.length, input.value.length);
-
-  let committed = false;
-  const commit = () => {
-    if (committed) return;
-    committed = true;
-    editPTaskNotes(proj.id, t.id, input.value.trim());
-    if (fromPanel) renderTaskPanelItems(); else renderProjects();
-  };
-  input.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); commit(); } });
-  input.addEventListener('blur', commit);
-}
-
 function renderProjects() {
   renderTasksAndProjects();
 }
 
 function appendProjectCard(container, empty, proj) {
-  const total = proj.tasks.length;
-  const overdueCount = proj.tasks.filter(t => {
-    if (!t.due) return false;
-    const dueDate = new Date(t.due + 'T00:00:00');
-    const todayMid = new Date(); todayMid.setHours(0,0,0,0);
-    return dueDate < todayMid;
-  }).length;
+  const open = openProjects[proj.id] === true;
+  const wrap = document.createElement('div');
+  wrap.className = 'task-row';
 
   const row = document.createElement('div');
-  row.className = 'item-row task-row';
+  row.className = 'item-row';
+  row.style.borderBottom = open ? 'none' : '';
 
   const nm = document.createElement('span');
   nm.className = 'item-name';
   nm.style.cursor = 'pointer';
+  if (open) { nm.style.fontWeight = '700'; }
   nm.innerHTML = `${proj.title}`;
-  nm.addEventListener('click', () => openTaskPanel(proj.id));
+  nm.addEventListener('click', () => {
+    openProjects[proj.id] = !open;
+    renderTasksAndProjects();
+  });
   row.appendChild(nm);
-
-  if (overdueCount > 0) {
-    const warn = document.createElement('span');
-    warn.className = 'material-icons-round';
-    warn.textContent = 'schedule';
-    warn.title = overdueCount === 1 ? '1 item atrasado' : `${overdueCount} itens atrasados`;
-    warn.style.cssText = 'font-size:22px; color:var(--md-error); flex-shrink:0; margin-right:8px;';
-    row.appendChild(warn);
-  }
-
-  const countSpan = document.createElement('span');
-  countSpan.style.cssText = 'font-size:16px; color:var(--md-primary); opacity:0.45; flex-shrink:0; margin-right:4px;';
-  countSpan.textContent = total;
-  row.appendChild(countSpan);
 
   const chevron = document.createElement('span');
   chevron.className = 'material-icons-round';
-  chevron.textContent = 'chevron_right';
-  chevron.style.cssText = 'font-size:22px; color:var(--md-primary); opacity:0.35; flex-shrink:0;';
+  chevron.textContent = open ? 'expand_less' : 'chevron_right';
+  chevron.style.cssText = 'font-size:22px; color:var(--md-primary); opacity:0.35; flex-shrink:0; cursor:pointer;';
+  chevron.addEventListener('click', () => {
+    openProjects[proj.id] = !open;
+    renderTasksAndProjects();
+  });
   row.appendChild(chevron);
 
-  container.insertBefore(row, empty);
+  wrap.appendChild(row);
+
+  if (open) {
+    const body = document.createElement('div');
+    body.id = 'task-body-' + proj.id;
+    body.style.cssText = 'padding:6px 12px 16px; border-bottom:1px solid var(--md-outline-variant);';
+    renderTaskBodyItems(body, proj.id);
+    wrap.appendChild(body);
+  }
+
+  container.insertBefore(wrap, empty);
 }
 
+function renderTaskBodyItems(body, projectId) {
+  const proj = projects.find(p => p.id === projectId);
+  if (!proj || !body) return;
+  body.innerHTML = '';
+
+  if (proj.tasks.length === 0) {
+    const empty = document.createElement('div');
+    empty.style.cssText = 'text-align:center; padding:16px 0; color:var(--md-primary); opacity:0.4; font-size:15px;';
+    empty.textContent = 'Ainda sem itens';
+    body.appendChild(empty);
+  }
+
+  proj.tasks.forEach((t) => {
+    const row = document.createElement('div');
+    row.style.cssText = 'padding:11px 0; display:flex; align-items:flex-start; gap:10px;';
+
+    const textWrap = document.createElement('div');
+    textWrap.style.cssText = 'flex:1; min-width:0;';
+
+    const titleRow = document.createElement('div');
+    titleRow.style.cssText = 'display:flex; align-items:center; justify-content:space-between; gap:8px;';
+
+    const textSpan = document.createElement('div');
+    textSpan.className = 'ptask-text';
+    textSpan.style.cssText = 'font-size:23px; font-weight:700; color:var(--md-primary); cursor:pointer;';
+    textSpan.textContent = t.text;
+    textSpan.addEventListener('click', () => startEditPTaskText(proj.id, t.id, textSpan, false));
+    titleRow.appendChild(textSpan);
+
+    // Bolinha "+" para adicionar/editar nota — só aparece quando ainda não há nota
+    if (!t.notes) {
+      const noteBtn = document.createElement('button');
+      noteBtn.title = 'Adicionar nota';
+      noteBtn.style.cssText = 'width:26px; height:26px; border-radius:50%; background:none; border:1.5px solid var(--md-primary); cursor:pointer; display:flex; align-items:center; justify-content:center; opacity:0.5; flex-shrink:0;';
+      noteBtn.innerHTML = '<span class="material-icons-round" style="font-size:16px; color:var(--md-primary);">add</span>';
+      noteBtn.addEventListener('click', (e) => { e.stopPropagation(); startEditPTaskNotesInline(proj.id, t.id, notesSpanRef); });
+      titleRow.appendChild(noteBtn);
+    }
+
+    textWrap.appendChild(titleRow);
+
+    const notesSpan = document.createElement('div');
+    notesSpan.className = 'ptask-notes-display';
+    notesSpan.style.cssText = `font-size:23px; font-weight:400; color:var(--md-primary); opacity:${t.notes ? '0.7' : '0'}; margin-top:4px; cursor:pointer; height:${t.notes ? 'auto' : '0'}; overflow:hidden;`;
+    notesSpan.textContent = t.notes ? t.notes : '';
+    notesSpan.addEventListener('click', () => startEditPTaskNotesInline(proj.id, t.id, notesSpan));
+    var notesSpanRef = notesSpan;
+    textWrap.appendChild(notesSpan);
+
+    row.appendChild(textWrap);
+
+    const delTaskBtn = document.createElement('button');
+    delTaskBtn.title = 'Apagar item';
+    delTaskBtn.style.cssText = 'width:30px; height:30px; border-radius:50%; background:none; border:1.5px solid var(--md-outline-variant); cursor:pointer; flex-shrink:0; display:flex; align-items:center; justify-content:center; overflow:hidden;';
+    delTaskBtn.innerHTML = '<span class="material-icons-round" style="font-size:18px; color:var(--md-outline-variant);">close</span>';
+    delTaskBtn.addEventListener('click', () => deletePTask(proj.id, t.id, false));
+    row.appendChild(delTaskBtn);
+
+    body.appendChild(row);
+  });
+
+  const actionsRow = document.createElement('div');
+  actionsRow.style.cssText = 'display:flex; align-items:center; gap:10px; margin:8px 0;';
+
+  const addBtn = document.createElement('button');
+  addBtn.title = 'Adicionar item';
+  addBtn.style.cssText = 'width:40px; height:40px; border-radius:50%; background:none; border:1.5px solid var(--md-primary); cursor:pointer; display:flex; align-items:center; justify-content:center;';
+  addBtn.innerHTML = '<span class="material-icons-round" style="font-size:22px; color:var(--md-primary);">add</span>';
+  addBtn.addEventListener('click', () => openPTaskModal(proj.id));
+  actionsRow.appendChild(addBtn);
+
+  const delProjBtn = document.createElement('button');
+  delProjBtn.title = 'Apagar tarefa';
+  delProjBtn.style.cssText = 'width:34px; height:34px; border-radius:50%; background:none; border:1.5px solid var(--md-outline-variant); cursor:pointer; display:flex; align-items:center; justify-content:center; opacity:0.7;';
+  delProjBtn.innerHTML = '<span class="material-icons-round" style="font-size:18px; color:var(--md-outline-variant);">close</span>';
+  delProjBtn.addEventListener('click', () => deleteProject(proj.id));
+  actionsRow.appendChild(delProjBtn);
+
+  body.appendChild(actionsRow);
+}
 
 function showSnack(msg, type='saved') {
   const s = document.getElementById('snackbar');
@@ -5043,9 +5006,11 @@ function switchTo(v, fromPopState) {
   closeSettingsMenu();
   if (v !== "list") { const s = document.getElementById("list-search"); if(s) s.value = ""; }
   // Header title — substitui "Momento Frutado" pelo nome da página atual; no dashboard, mostra a marca.
-  const titles = { dashboard:'Momento Frutado', list:'Comprar', prices:'Preços', tasks:'Tarefas', history:'Histórico', whatsapp:'WhatsApp', suppliers:'Fornecedores', add:'Gerir', sales:'Vender', settings:'Definições', rents:'Rendas', resumo:'Resumir', vasilhame:'Vasilhame' };
+  const titles = { dashboard:'Momento Frutado', list:'Comprar', prices:'Preços', tasks:'Fazer', history:'Histórico', whatsapp:'WhatsApp', suppliers:'Fornecedores', add:'Gerir', sales:'Vender', settings:'Definições', rents:'Rendas', resumo:'Resumir', vasilhame:'Vasilhame' };
   const brandBtn = document.querySelector('.hnav-btn-brand');
   if (brandBtn) brandBtn.textContent = titles[v] || 'Momento Frutado';
+  const homeIcon = document.getElementById('header-home-icon');
+  if (homeIcon) homeIcon.style.display = (v === 'dashboard') ? 'none' : 'inline-block';
 
   // Cabeçalho sempre visível, igual em todos os separadores incluindo o dashboard.
 
