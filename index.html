@@ -1816,6 +1816,21 @@ function renderTasksAndProjects() {
   empty.style.display = hasContent ? 'none' : 'block';
 
   projects.forEach(proj => appendProjectCard(list_el, empty, proj));
+
+  // Se alguma Tarefa estiver aberta, desfoca tudo o resto (cabeçalho + outras Tarefas)
+  // para destacar a que está aberta, sem usar um painel flutuante por cima.
+  const anyOpen = Object.values(openProjects).some(v => v === true);
+  const header = document.getElementById('header');
+  Array.from(list_el.querySelectorAll('.task-row')).forEach(row => {
+    const isOpenRow = row.querySelector('[id^="task-body-"]') !== null;
+    row.style.filter = (anyOpen && !isOpenRow) ? 'blur(4px)' : 'none';
+    row.style.transition = 'filter 0.2s';
+    row.style.pointerEvents = (anyOpen && !isOpenRow) ? 'none' : 'auto';
+  });
+  if (header) {
+    header.style.filter = anyOpen ? 'blur(4px)' : 'none';
+    header.style.transition = 'filter 0.2s';
+  }
 }
 
 // ── PROJETOS ──────────────────────────────────────────────────────────────────
