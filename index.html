@@ -1935,11 +1935,11 @@ function startEditPTaskNotesInline(projectId, taskId, el) {
   if (!proj) return;
   const t = proj.tasks.find(t => t.id === taskId);
   if (!t) return;
-  const input = document.createElement('input');
-  input.type = 'text';
+  const input = document.createElement('textarea');
   input.placeholder = 'Adicionar nota...';
   input.value = t.notes || '';
-  input.style.cssText = 'width:100%; font-size:15px; color:var(--md-primary); border:none; border-bottom:1.5px solid var(--md-outline-variant); background:transparent; outline:none; font-family:Outfit,sans-serif; padding:0; margin-top:4px; box-sizing:border-box;';
+  input.rows = 3;
+  input.style.cssText = 'width:100%; font-size:23px; font-weight:400; color:var(--md-primary); border:none; border-bottom:1.5px solid var(--md-outline-variant); background:transparent; outline:none; font-family:Outfit,sans-serif; padding:0; margin-top:4px; box-sizing:border-box; resize:vertical; line-height:1.3;';
   el.replaceWith(input);
   input.focus();
   input.setSelectionRange(input.value.length, input.value.length);
@@ -1952,7 +1952,6 @@ function startEditPTaskNotesInline(projectId, taskId, el) {
     const body = document.getElementById('task-body-' + projectId);
     if (body) renderTaskBodyItems(body, projectId);
   };
-  input.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); commit(); } });
   input.addEventListener('blur', commit);
 }
 
@@ -2007,7 +2006,7 @@ function startEditProjectTitle(projectId, el, fromPanel) {
   input.value = proj.title;
   input.style.cssText = fromPanel
     ? 'font-size:22px; font-weight:600; color:var(--md-primary); border:none; border-bottom:1.5px solid var(--md-outline-variant); background:transparent; outline:none; font-family:Outfit,sans-serif; padding:0; flex:1; min-width:0; width:100%;'
-    : 'font-size:15px; font-weight:700; color:var(--md-white); border:none; border-bottom:1.5px solid var(--md-white); background:transparent; outline:none; font-family:Outfit,sans-serif; padding:0; flex:1; min-width:0;';
+    : 'font-size:29px; font-weight:700; color:var(--md-primary); border:none; border-bottom:1.5px solid var(--md-primary); background:transparent; outline:none; font-family:Outfit,sans-serif; padding:0; flex:1; min-width:0;';
   el.replaceWith(input);
   input.focus();
   input.setSelectionRange(input.value.length, input.value.length);
@@ -2042,7 +2041,7 @@ function startEditPTaskText(projectId, taskId, el, fromPanel) {
   const input = document.createElement('input');
   input.type = 'text';
   input.value = t.text;
-  input.style.cssText = 'width:100%; font-size:16px; font-weight:600; color:var(--md-primary); border:none; border-bottom:1.5px solid var(--md-primary); background:transparent; outline:none; font-family:Outfit,sans-serif; padding:0;';
+  input.style.cssText = 'width:100%; font-size:23px; font-weight:700; color:var(--md-primary); border:none; border-bottom:1.5px solid var(--md-primary); background:transparent; outline:none; font-family:Outfit,sans-serif; padding:0;';
   el.replaceWith(input);
   input.focus();
   input.setSelectionRange(input.value.length, input.value.length);
@@ -2123,6 +2122,14 @@ function renderTaskBodyItems(body, projectId) {
     const row = document.createElement('div');
     row.style.cssText = 'padding:11px 0; display:flex; align-items:flex-start; gap:10px;';
 
+    // Bolinha-marcador à esquerda — toca para apagar o item (X dentro da bolinha)
+    const bullet = document.createElement('button');
+    bullet.title = 'Apagar item';
+    bullet.style.cssText = 'width:24px; height:24px; border-radius:50%; background:none; border:1.5px solid var(--md-outline-variant); cursor:pointer; flex-shrink:0; margin-top:2px; padding:0; display:flex; align-items:center; justify-content:center; overflow:hidden;';
+    bullet.innerHTML = '<span class="material-icons-round" style="font-size:15px; color:var(--md-outline-variant);">close</span>';
+    bullet.addEventListener('click', () => deletePTask(proj.id, t.id, false));
+    row.appendChild(bullet);
+
     const textWrap = document.createElement('div');
     textWrap.style.cssText = 'flex:1; min-width:0;';
 
@@ -2157,13 +2164,6 @@ function renderTaskBodyItems(body, projectId) {
     textWrap.appendChild(notesSpan);
 
     row.appendChild(textWrap);
-
-    const delTaskBtn = document.createElement('button');
-    delTaskBtn.title = 'Apagar item';
-    delTaskBtn.style.cssText = 'width:30px; height:30px; border-radius:50%; background:none; border:1.5px solid var(--md-outline-variant); cursor:pointer; flex-shrink:0; display:flex; align-items:center; justify-content:center; overflow:hidden;';
-    delTaskBtn.innerHTML = '<span class="material-icons-round" style="font-size:18px; color:var(--md-outline-variant);">close</span>';
-    delTaskBtn.addEventListener('click', () => deletePTask(proj.id, t.id, false));
-    row.appendChild(delTaskBtn);
 
     body.appendChild(row);
   });
@@ -5785,6 +5785,19 @@ document.getElementById('task-panel-delete-btn').addEventListener('click', () =>
   currentTaskPanelId = null;
   deleteProject(idToDelete);
 });
+
+// Clicar fora de uma Tarefa aberta em Fazer fecha-a e remove o desfoque.
+// Ignora cliques dentro de modais (criar tarefa/item) e dentro da própria Tarefa aberta.
+document.addEventListener('click', (e) => {
+  const anyOpen = Object.values(openProjects).some(v => v === true);
+  if (!anyOpen) return;
+  if (document.getElementById('view-tasks')?.classList.contains('active') !== true) return;
+  if (e.target.closest('[id^="task-body-"]')) return; // clique dentro dos itens da Tarefa aberta
+  if (e.target.closest('.task-row')?.querySelector('[id^="task-body-"]')) return; // clique no cabeçalho da própria Tarefa aberta (para o toggle normal funcionar)
+  if (e.target.closest('#project-modal-panel, #ptask-modal-panel, #task-panel, #numkeypad, #supplier-picker, #tasks-add-btn')) return;
+  Object.keys(openProjects).forEach(id => { openProjects[id] = false; });
+  renderTasksAndProjects();
+}, true);
 
 // ── START ─────────────────────────────────────────────────────────────────────
 boot();
