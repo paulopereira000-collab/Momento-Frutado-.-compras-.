@@ -406,6 +406,8 @@
         </button>
       </div>
 
+      <div id="tasks-overdue-summary" style="display:none; padding:0 16px 12px;"></div>
+
       <!-- Tarefas (antigos "projetos"), cada uma pode ter vários sub-itens dentro -->
       <div id="tasks-list" style="padding:8px 16px 32px; display:flex; flex-direction:column; gap:0;">
         <div id="tasks-empty" style="text-align:center; padding:60px 20px; color:var(--md-primary); opacity:0.5;">
@@ -462,18 +464,10 @@
               autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" data-lpignore="true" data-form-type="other"
               style="width:100%; min-height:90px; padding:14px; border:1.5px solid var(--md-outline-variant); border-radius:12px; font-size:15px; font-family:'Outfit',sans-serif; outline:none; background:var(--md-surface); color:var(--md-primary); resize:vertical; box-sizing:border-box;"></textarea>
           </div>
-          <div style="display:flex; gap:10px;">
-            <div style="flex:1;">
-              <span class="pick-field-label">Prazo</span>
-              <input id="ptask-due" type="date"
-                style="width:100%; padding:14px; border:1.5px solid var(--md-outline-variant); border-radius:12px; font-size:15px; font-family:'Outfit',sans-serif; outline:none; background:var(--md-surface); color:var(--md-primary); box-sizing:border-box;"/>
-            </div>
-            <div style="flex:1;">
-              <span class="pick-field-label">Responsável</span>
-              <input id="ptask-owner" type="search" placeholder="Ex: Paulo"
-                autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" data-lpignore="true" data-form-type="other"
-                style="width:100%; padding:14px; border:1.5px solid var(--md-outline-variant); border-radius:12px; font-size:15px; font-family:'Outfit',sans-serif; outline:none; background:var(--md-surface); color:var(--md-primary); box-sizing:border-box; -webkit-appearance:none; appearance:none;"/>
-            </div>
+          <div>
+            <span class="pick-field-label">Prazo</span>
+            <input id="ptask-due" type="date"
+              style="width:100%; padding:14px; border:1.5px solid var(--md-outline-variant); border-radius:12px; font-size:15px; font-family:'Outfit',sans-serif; outline:none; background:var(--md-surface); color:var(--md-primary); box-sizing:border-box;"/>
           </div>
         </div>
       </div>
@@ -1848,7 +1842,46 @@ function renderTasksAndProjects() {
   const hasContent = projects.length > 0;
   empty.style.display = hasContent ? 'none' : 'block';
 
+  renderOverdueSummary();
   projects.forEach(proj => appendProjectCard(list_el, empty, proj));
+}
+
+// ── RESUMO DE ITENS ATRASADOS — visível no topo, antes de abrir cada Tarefa ──
+function renderOverdueSummary() {
+  const box = document.getElementById('tasks-overdue-summary');
+  if (!box) return;
+
+  const todayMid = new Date(); todayMid.setHours(0,0,0,0);
+  let overdueCount = 0;
+  const affectedProjects = new Set();
+
+  projects.forEach(proj => {
+    proj.tasks.forEach(t => {
+      if (t.done || !t.due) return;
+      const dueDate = new Date(t.due + 'T00:00:00');
+      if (dueDate < todayMid) { overdueCount++; affectedProjects.add(proj.id); }
+    });
+  });
+
+  if (overdueCount === 0) {
+    box.style.display = 'none';
+    box.innerHTML = '';
+    return;
+  }
+
+  box.style.display = 'block';
+  const label = overdueCount === 1 ? '1 item atrasado' : `${overdueCount} itens atrasados`;
+  box.innerHTML = `
+    <button id="overdue-summary-btn" style="width:100%; display:flex; align-items:center; gap:10px; background:rgba(196,69,54,0.08); border:1.5px solid var(--md-error); border-radius:12px; padding:12px 14px; cursor:pointer; text-align:left;">
+      <span class="material-icons-round" style="font-size:20px; color:var(--md-error);">schedule</span>
+      <span style="font-size:15px; font-weight:700; color:var(--md-error); flex:1;">${label}</span>
+      <span class="material-icons-round" style="font-size:18px; color:var(--md-error); opacity:0.6;">chevron_right</span>
+    </button>
+  `;
+  document.getElementById('overdue-summary-btn').addEventListener('click', () => {
+    affectedProjects.forEach(id => { openProjects[id] = true; });
+    renderTasksAndProjects();
+  });
 }
 
 // ── PROJETOS ──────────────────────────────────────────────────────────────────
@@ -1884,7 +1917,6 @@ function openPTaskModal(projectId) {
   document.getElementById('ptask-title').value = '';
   document.getElementById('ptask-notes').value = '';
   document.getElementById('ptask-due').value = '';
-  document.getElementById('ptask-owner').value = '';
   document.getElementById('ptask-modal-overlay').style.display = 'block';
   document.getElementById('ptask-modal-panel').style.display   = 'block';
   document.getElementById('ptask-title').focus();
@@ -1899,11 +1931,10 @@ function savePTask() {
   const text  = document.getElementById('ptask-title').value.trim();
   const notes = document.getElementById('ptask-notes').value.trim();
   const due   = document.getElementById('ptask-due').value;
-  const owner = document.getElementById('ptask-owner').value.trim();
   if (!text || !currentProjectId) return;
   const proj = projects.find(p => p.id === currentProjectId);
   if (!proj) return;
-  proj.tasks.push({ id: Date.now(), text, notes, done: false, due: due || null, owner: owner || '' });
+  proj.tasks.push({ id: Date.now(), text, notes, done: false, due: due || null });
   sched(); closePTaskModal(); renderProjects();
   showSnack('Tarefa adicionada ✓', 'saved');
 }
@@ -1936,13 +1967,6 @@ function editPTaskDue(projectId, taskId, due) {
   if (t) { t.due = due || null; sched(); }
 }
 
-function editPTaskOwner(projectId, taskId, owner) {
-  const proj = projects.find(p => p.id === projectId);
-  if (!proj) return;
-  const t = proj.tasks.find(t => t.id === taskId);
-  if (t) { t.owner = owner; sched(); }
-}
-
 function startEditPTaskDue(projectId, taskId, el) {
   const proj = projects.find(p => p.id === projectId);
   if (!proj) return;
@@ -1955,36 +1979,14 @@ function startEditPTaskDue(projectId, taskId, el) {
   el.replaceWith(input);
   input.focus();
 
+  let dueCommitted = false;
   const commit = () => {
+    if (dueCommitted) return;
+    dueCommitted = true;
     editPTaskDue(proj.id, t.id, input.value);
     renderProjects();
   };
   input.addEventListener('change', commit);
-  input.addEventListener('blur', commit);
-}
-
-function startEditPTaskOwner(projectId, taskId, el) {
-  const proj = projects.find(p => p.id === projectId);
-  if (!proj) return;
-  const t = proj.tasks.find(t => t.id === taskId);
-  if (!t) return;
-  const input = document.createElement('input');
-  input.type = 'search';
-  input.placeholder = 'Responsável...';
-  input.value = t.owner || '';
-  input.setAttribute('autocomplete', 'off'); input.setAttribute('autocorrect', 'off');
-  input.setAttribute('autocapitalize', 'off'); input.setAttribute('spellcheck', 'false');
-  input.setAttribute('data-lpignore', 'true'); input.setAttribute('data-form-type', 'other');
-  input.style.cssText = 'font-size:14px; color:var(--md-primary); border:none; border-bottom:1.5px solid var(--md-outline-variant); background:transparent; outline:none; font-family:Outfit,sans-serif; padding:0; -webkit-appearance:none; appearance:none; width:120px;';
-  el.replaceWith(input);
-  input.focus();
-  input.setSelectionRange(input.value.length, input.value.length);
-
-  const commit = () => {
-    editPTaskOwner(proj.id, t.id, input.value.trim());
-    renderProjects();
-  };
-  input.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); commit(); } });
   input.addEventListener('blur', commit);
 }
 
@@ -2000,7 +2002,10 @@ function startEditProjectTitle(projectId, el) {
   input.focus();
   input.setSelectionRange(input.value.length, input.value.length);
 
+  let titleCommitted = false;
   const commit = () => {
+    if (titleCommitted) return;
+    titleCommitted = true;
     const newTitle = input.value.trim();
     if (newTitle) proj.title = newTitle;
     sched();
@@ -2023,7 +2028,10 @@ function startEditPTaskText(projectId, taskId, el) {
   input.focus();
   input.setSelectionRange(input.value.length, input.value.length);
 
+  let textCommitted = false;
   const commit = () => {
+    if (textCommitted) return;
+    textCommitted = true;
     const newText = input.value.trim();
     if (newText) t.text = newText;
     sched();
@@ -2033,21 +2041,28 @@ function startEditPTaskText(projectId, taskId, el) {
   input.addEventListener('blur', commit);
 }
 
-function startEditPTaskNotes(projectId, taskId, el) {
+function startEditPTaskNotesIcon(projectId, taskId, textWrapEl, textSpanEl) {
   const proj = projects.find(p => p.id === projectId);
   if (!proj) return;
   const t = proj.tasks.find(t => t.id === taskId);
   if (!t) return;
+  // Evita duplicar o campo se já estiver aberto
+  if (textWrapEl.querySelector('.ptask-notes-input')) return;
+
   const input = document.createElement('input');
   input.type = 'text';
+  input.className = 'ptask-notes-input';
   input.placeholder = 'Adicionar nota...';
   input.value = t.notes || '';
-  input.style.cssText = 'width:100%; font-size:13px; color:var(--md-primary); opacity:0.8; border:none; border-bottom:1.5px solid var(--md-outline-variant); background:transparent; outline:none; font-family:Outfit,sans-serif; padding:0; margin-top:2px;';
-  el.replaceWith(input);
+  input.style.cssText = 'width:100%; font-size:15px; color:var(--md-primary); opacity:0.8; border:none; border-bottom:1.5px solid var(--md-outline-variant); background:transparent; outline:none; font-family:Outfit,sans-serif; padding:0; margin-top:4px; box-sizing:border-box;';
+  textSpanEl.insertAdjacentElement('afterend', input);
   input.focus();
   input.setSelectionRange(input.value.length, input.value.length);
 
+  let committed = false;
   const commit = () => {
+    if (committed) return;
+    committed = true;
     editPTaskNotes(proj.id, t.id, input.value.trim());
     renderProjects();
   };
@@ -2098,14 +2113,14 @@ function appendProjectCard(container, empty, proj) {
 
   proj.tasks.forEach((t, idx) => {
     const row = document.createElement('div');
-    row.style.cssText = `padding:12px 14px; ${idx < proj.tasks.length - 1 ? 'border-bottom:1px solid var(--md-outline-variant);' : ''}`;
+    row.style.cssText = `padding:15px 14px; ${idx < proj.tasks.length - 1 ? 'border-bottom:1px solid var(--md-outline-variant);' : ''}`;
 
     const topRow = document.createElement('div');
-    topRow.style.cssText = 'display:flex; align-items:center; gap:12px;';
+    topRow.style.cssText = 'display:flex; align-items:flex-start; gap:16px;';
 
     const checkBtn = document.createElement('button');
-    checkBtn.style.cssText = `width:30px; height:30px; border-radius:50%; border:1.5px solid var(--md-primary); background:${t.done ? 'var(--md-primary)' : 'transparent'}; display:flex; align-items:center; justify-content:center; cursor:pointer; flex-shrink:0; padding:0;`;
-    checkBtn.innerHTML = t.done ? '<span class="material-icons-round" style="font-size:18px;color:var(--md-white);">check</span>' : '';
+    checkBtn.style.cssText = `width:36px; height:36px; border-radius:50%; border:1.5px solid var(--md-primary); background:${t.done ? 'var(--md-primary)' : 'transparent'}; display:flex; align-items:center; justify-content:center; cursor:pointer; flex-shrink:0; padding:0; margin-top:2px;`;
+    checkBtn.innerHTML = t.done ? '<span class="material-icons-round" style="font-size:20px;color:var(--md-white);">check</span>' : '';
     checkBtn.addEventListener('click', () => togglePTask(proj.id, t.id));
     topRow.appendChild(checkBtn);
 
@@ -2114,22 +2129,21 @@ function appendProjectCard(container, empty, proj) {
 
     const textSpan = document.createElement('div');
     textSpan.className = 'ptask-text';
-    textSpan.style.cssText = `font-size:22px; font-weight:600; color:var(--md-primary); cursor:pointer; ${t.done ? 'text-decoration:line-through; opacity:0.5;' : ''}`;
-    textSpan.textContent = t.text;
-    textSpan.addEventListener('click', () => startEditPTaskText(proj.id, t.id, textSpan));
+    textSpan.style.cssText = `font-size:22px; font-weight:600; color:var(--md-primary); cursor:pointer; display:flex; align-items:center; gap:6px; ${t.done ? 'text-decoration:line-through; opacity:0.5;' : ''}`;
+    const noteIcon = t.notes
+      ? '<span class="material-icons-round" style="font-size:15px; opacity:0.45; flex-shrink:0;" title="' + t.notes.replace(/"/g,'&quot;') + '">sticky_note_2</span>'
+      : '<span class="material-icons-round ptask-note-icon" style="font-size:15px; opacity:0.3; flex-shrink:0;" title="Adicionar nota">note_add</span>';
+    textSpan.innerHTML = `<span class="ptask-text-label">${t.text}</span>${noteIcon}`;
+    textSpan.querySelector('.ptask-text-label').addEventListener('click', () => startEditPTaskText(proj.id, t.id, textSpan));
+    textSpan.querySelector('.material-icons-round').addEventListener('click', (e) => {
+      e.stopPropagation();
+      startEditPTaskNotesIcon(proj.id, t.id, textWrap, textSpan);
+    });
     textWrap.appendChild(textSpan);
-
-    // Notas: só aparece como texto discreto se já existir conteúdo; toca para editar.
-    const notesSpan = document.createElement('div');
-    notesSpan.className = 'ptask-notes';
-    notesSpan.style.cssText = `font-size:17px; color:var(--md-primary); opacity:0.55; margin-top:3px; cursor:pointer; ${t.notes ? '' : 'font-style:italic;'}`;
-    notesSpan.textContent = t.notes ? t.notes : '+ adicionar nota';
-    notesSpan.addEventListener('click', () => startEditPTaskNotes(proj.id, t.id, notesSpan));
-    textWrap.appendChild(notesSpan);
 
     // Prazo e responsável — discreto, sem alarme; só fica vermelho se realmente atrasado e não feito.
     const metaRow = document.createElement('div');
-    metaRow.style.cssText = 'display:flex; gap:10px; margin-top:5px; flex-wrap:wrap;';
+    metaRow.style.cssText = 'display:flex; gap:10px; margin-top:8px; flex-wrap:wrap;';
 
     const dueSpan = document.createElement('span');
     dueSpan.style.cssText = 'font-size:14px; cursor:pointer; display:flex; align-items:center; gap:3px;';
@@ -2151,18 +2165,12 @@ function appendProjectCard(container, empty, proj) {
     dueSpan.addEventListener('click', () => startEditPTaskDue(proj.id, t.id, dueSpan));
     metaRow.appendChild(dueSpan);
 
-    const ownerSpan = document.createElement('span');
-    ownerSpan.style.cssText = 'font-size:14px; color:var(--md-primary); opacity:0.5; cursor:pointer; display:flex; align-items:center; gap:3px;';
-    ownerSpan.innerHTML = `<span class="material-icons-round" style="font-size:14px;">person_outline</span><span>${t.owner ? t.owner : '+ responsável'}</span>`;
-    ownerSpan.addEventListener('click', () => startEditPTaskOwner(proj.id, t.id, ownerSpan));
-    metaRow.appendChild(ownerSpan);
-
     textWrap.appendChild(metaRow);
 
     topRow.appendChild(textWrap);
 
     const delTaskBtn = document.createElement('button');
-    delTaskBtn.style.cssText = 'background:none; border:none; cursor:pointer; padding:4px; flex-shrink:0;';
+    delTaskBtn.style.cssText = 'background:none; border:none; cursor:pointer; padding:8px; margin:-8px -8px 0 0; flex-shrink:0;';
     delTaskBtn.innerHTML = '<span class="material-icons-round" style="font-size:23px; color:var(--md-outline-variant);">close</span>';
     delTaskBtn.addEventListener('click', () => deletePTask(proj.id, t.id));
     topRow.appendChild(delTaskBtn);
