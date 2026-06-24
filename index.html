@@ -1857,7 +1857,7 @@ function renderOverdueSummary() {
 
   projects.forEach(proj => {
     proj.tasks.forEach(t => {
-      if (t.done || !t.due) return;
+      if (!t.due) return;
       const dueDate = new Date(t.due + 'T00:00:00');
       if (dueDate < todayMid) { overdueCount++; affectedProjects.add(proj.id); }
     });
@@ -1939,13 +1939,6 @@ function savePTask() {
   showSnack('Tarefa adicionada ✓', 'saved');
 }
 
-function togglePTask(projectId, taskId) {
-  const proj = projects.find(p => p.id === projectId);
-  if (!proj) return;
-  const t = proj.tasks.find(t => t.id === taskId);
-  if (t) { t.done = !t.done; sched(); renderProjects(); }
-}
-
 function deletePTask(projectId, taskId) {
   const proj = projects.find(p => p.id === projectId);
   if (!proj) return;
@@ -1975,7 +1968,7 @@ function startEditPTaskDue(projectId, taskId, el) {
   const input = document.createElement('input');
   input.type = 'date';
   input.value = t.due || '';
-  input.style.cssText = 'font-size:14px; color:var(--md-primary); border:none; border-bottom:1.5px solid var(--md-outline-variant); background:transparent; outline:none; font-family:Outfit,sans-serif; padding:0;';
+  input.style.cssText = 'font-size:14px; color:var(--md-primary); border:1.5px solid var(--md-outline-variant); border-radius:8px; background:var(--md-surface); outline:none; font-family:Outfit,sans-serif; padding:4px 6px; width:118px;';
   el.replaceWith(input);
   input.focus();
 
@@ -2076,8 +2069,7 @@ function renderProjects() {
 
 function appendProjectCard(container, empty, proj) {
   const open = openProjects[proj.id] === true; // por defeito, fechado
-  const pending = proj.tasks.filter(t => !t.done).length;
-  const total   = proj.tasks.length;
+  const total = proj.tasks.length;
 
   const wrap = document.createElement('div');
   wrap.className = 'project-card';
@@ -2088,19 +2080,12 @@ function appendProjectCard(container, empty, proj) {
   hdr.className = 'cat-header';
   hdr.style.cssText = 'cursor:pointer; background:var(--md-surface); border:1.5px solid var(--md-outline-variant);';
   hdr.innerHTML = `
-    <span style="display:flex; align-items:center; gap:8px; min-width:0; overflow:hidden; font-size:23px; font-weight:700; color:var(--md-primary); letter-spacing:0.3px;">
-      <span class="proj-title-text" style="overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${proj.title}</span>
-      <span style="font-size:16px; opacity:0.6; font-weight:500; flex-shrink:0;">· ${pending}/${total}</span>
+    <span style="display:flex; align-items:center; gap:6px; min-width:0; overflow:hidden; flex:1;">
+      <span class="proj-title-text" style="font-size:28px; font-weight:700; color:var(--md-primary); letter-spacing:0.3px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${proj.title}</span>
+      <span style="font-size:17px; opacity:0.6; font-weight:500; flex-shrink:0; color:var(--md-primary);">· ${total}</span>
     </span>
-    <span style="display:flex; align-items:center; gap:12px; flex-shrink:0;">
-      <span class="material-icons-round proj-edit-icon" style="font-size:22px; opacity:0.6; color:var(--md-primary);">edit</span>
-      <span class="cat-chevron ${open?'':'closed'}" style="color:var(--md-primary); opacity:0.7;">▾</span>
-    </span>
+    <span class="cat-chevron ${open?'':'closed'}" style="color:var(--md-primary); opacity:0.7; flex-shrink:0; margin-left:8px;">▾</span>
   `;
-  hdr.querySelector('.proj-edit-icon').addEventListener('click', (e) => {
-    e.stopPropagation();
-    startEditProjectTitle(proj.id, hdr.querySelector('.proj-title-text'));
-  });
   hdr.addEventListener('click', (e) => {
     openProjects[proj.id] = !open;
     renderTasksAndProjects();
@@ -2118,18 +2103,12 @@ function appendProjectCard(container, empty, proj) {
     const topRow = document.createElement('div');
     topRow.style.cssText = 'display:flex; align-items:flex-start; gap:16px;';
 
-    const checkBtn = document.createElement('button');
-    checkBtn.style.cssText = `width:36px; height:36px; border-radius:50%; border:1.5px solid var(--md-primary); background:${t.done ? 'var(--md-primary)' : 'transparent'}; display:flex; align-items:center; justify-content:center; cursor:pointer; flex-shrink:0; padding:0; margin-top:2px;`;
-    checkBtn.innerHTML = t.done ? '<span class="material-icons-round" style="font-size:20px;color:var(--md-white);">check</span>' : '';
-    checkBtn.addEventListener('click', () => togglePTask(proj.id, t.id));
-    topRow.appendChild(checkBtn);
-
     const textWrap = document.createElement('div');
     textWrap.style.cssText = 'flex:1; min-width:0;';
 
     const textSpan = document.createElement('div');
     textSpan.className = 'ptask-text';
-    textSpan.style.cssText = `font-size:22px; font-weight:600; color:var(--md-primary); cursor:pointer; display:flex; align-items:center; gap:6px; ${t.done ? 'text-decoration:line-through; opacity:0.5;' : ''}`;
+    textSpan.style.cssText = `font-size:22px; font-weight:600; color:var(--md-primary); cursor:pointer; display:flex; align-items:center; gap:6px;`;
     const noteIcon = t.notes
       ? '<span class="material-icons-round" style="font-size:15px; opacity:0.45; flex-shrink:0;" title="' + t.notes.replace(/"/g,'&quot;') + '">sticky_note_2</span>'
       : '<span class="material-icons-round ptask-note-icon" style="font-size:15px; opacity:0.3; flex-shrink:0;" title="Adicionar nota">note_add</span>';
@@ -2141,52 +2120,58 @@ function appendProjectCard(container, empty, proj) {
     });
     textWrap.appendChild(textSpan);
 
-    // Prazo e responsável — discreto, sem alarme; só fica vermelho se realmente atrasado e não feito.
-    const metaRow = document.createElement('div');
-    metaRow.style.cssText = 'display:flex; gap:10px; margin-top:8px; flex-wrap:wrap;';
+    topRow.appendChild(textWrap);
 
-    const dueSpan = document.createElement('span');
-    dueSpan.style.cssText = 'font-size:14px; cursor:pointer; display:flex; align-items:center; gap:3px;';
-    let dueColor = 'var(--md-primary)', dueOpacity = '0.5';
-    let dueText = '+ prazo';
+    // Coluna direita: X (apagar) em cima, ícone de calendário (prazo, sem texto) em baixo
+    const actionsCol = document.createElement('div');
+    actionsCol.style.cssText = 'display:flex; flex-direction:column; align-items:center; gap:6px; flex-shrink:0;';
+
+    const delTaskBtn = document.createElement('button');
+    delTaskBtn.style.cssText = 'background:none; border:none; cursor:pointer; padding:6px; flex-shrink:0;';
+    delTaskBtn.innerHTML = '<span class="material-icons-round" style="font-size:23px; color:var(--md-outline-variant);">close</span>';
+    delTaskBtn.addEventListener('click', () => deletePTask(proj.id, t.id));
+    actionsCol.appendChild(delTaskBtn);
+
+    // Prazo — só o ícone, sem data visível; muda de cor se atrasado.
+    const dueBtn = document.createElement('button');
+    dueBtn.style.cssText = 'background:none; border:none; cursor:pointer; padding:6px; flex-shrink:0; display:flex; align-items:center; justify-content:center;';
+    let dueColor = 'var(--md-primary)', dueOpacity = '0.35';
     if (t.due) {
       const dueDate = new Date(t.due + 'T00:00:00');
       const todayMid = new Date(); todayMid.setHours(0,0,0,0);
-      const isOverdue = dueDate < todayMid && !t.done;
+      const isOverdue = dueDate < todayMid;
       const isToday = dueDate.getTime() === todayMid.getTime();
-      dueText = dueDate.toLocaleDateString('pt-PT', { day:'2-digit', month:'short' });
       if (isOverdue) { dueColor = 'var(--md-error)'; dueOpacity = '0.85'; }
       else if (isToday) { dueColor = 'var(--md-gold)'; dueOpacity = '0.9'; }
       else { dueOpacity = '0.6'; }
     }
-    dueSpan.innerHTML = `<span class="material-icons-round" style="font-size:14px;">event</span><span>${dueText}</span>`;
-    dueSpan.style.color = dueColor;
-    dueSpan.style.opacity = dueOpacity;
-    dueSpan.addEventListener('click', () => startEditPTaskDue(proj.id, t.id, dueSpan));
-    metaRow.appendChild(dueSpan);
+    dueBtn.innerHTML = `<span class="material-icons-round" style="font-size:21px; color:${dueColor}; opacity:${dueOpacity};">event</span>`;
+    dueBtn.title = t.due ? new Date(t.due + 'T00:00:00').toLocaleDateString('pt-PT', { day:'2-digit', month:'short' }) : 'Definir prazo';
+    dueBtn.addEventListener('click', () => startEditPTaskDue(proj.id, t.id, dueBtn));
+    actionsCol.appendChild(dueBtn);
 
-    textWrap.appendChild(metaRow);
-
-    topRow.appendChild(textWrap);
-
-    const delTaskBtn = document.createElement('button');
-    delTaskBtn.style.cssText = 'background:none; border:none; cursor:pointer; padding:8px; margin:-8px -8px 0 0; flex-shrink:0;';
-    delTaskBtn.innerHTML = '<span class="material-icons-round" style="font-size:23px; color:var(--md-outline-variant);">close</span>';
-    delTaskBtn.addEventListener('click', () => deletePTask(proj.id, t.id));
-    topRow.appendChild(delTaskBtn);
+    topRow.appendChild(actionsCol);
 
     row.appendChild(topRow);
     body.appendChild(row);
   });
 
-  // Adicionar tarefa + apagar projeto, no fundo do corpo expandido
+  // Adicionar tarefa (botão + redondo) + apagar projeto, no fundo do corpo expandido
   const footer = document.createElement('div');
   footer.style.cssText = 'display:flex; align-items:center; justify-content:space-between; padding:6px 8px;';
   const addTaskBtn = document.createElement('button');
-  addTaskBtn.style.cssText = 'padding:10px 6px; background:none; border:none; color:var(--md-amber); font-size:18px; font-weight:700; font-family:\'Outfit\',sans-serif; cursor:pointer; display:flex; align-items:center; gap:6px;';
-  addTaskBtn.innerHTML = '<span class="material-icons-round" style="font-size:21px;">add</span> Adicionar tarefa';
+  addTaskBtn.style.cssText = 'background:var(--md-primary); color:var(--md-white); border:none; border-radius:50%; width:36px; height:36px; display:flex; align-items:center; justify-content:center; cursor:pointer; flex-shrink:0; padding:0;';
+  addTaskBtn.innerHTML = '<span class="material-icons-round" style="font-size:20px;">add</span>';
+  addTaskBtn.title = 'Adicionar tarefa';
   addTaskBtn.addEventListener('click', () => openPTaskModal(proj.id));
   footer.appendChild(addTaskBtn);
+
+  const editProjBtn = document.createElement('button');
+  editProjBtn.style.cssText = 'background:none; border:none; cursor:pointer; padding:6px;';
+  editProjBtn.innerHTML = '<span class="material-icons-round" style="color:var(--md-primary); opacity:0.5; font-size:21px;">edit</span>';
+  editProjBtn.title = 'Editar título';
+  editProjBtn.addEventListener('click', () => startEditProjectTitle(proj.id, hdr.querySelector('.proj-title-text')));
+  footer.appendChild(editProjBtn);
 
   const delProjBtn = document.createElement('button');
   delProjBtn.style.cssText = 'background:none; border:none; cursor:pointer; padding:6px;';
