@@ -1142,6 +1142,32 @@
   </div>
 </div>
 
+<!-- ── PAINEL DE TAREFA — mesmo padrão do painel de produto ────────────────── -->
+<div id="task-panel-overlay" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.55); z-index:299; backdrop-filter:blur(8px);" onclick="closeTaskPanel()"></div>
+<div id="task-panel" style="display:none; position:fixed; bottom:0; left:50%; transform:translateX(-50%); width:100%; max-width:600px; background:var(--md-surface); border-radius:28px 28px 0 0; padding:0 0 32px; z-index:300; max-height:88vh; overflow-y:auto; box-sizing:border-box; box-shadow:0 -4px 32px rgba(0,0,0,0.3);">
+  <div style="display:flex; align-items:center; justify-content:space-between; padding:18px 16px 6px;">
+    <div id="task-panel-title" style="font-size:29px; font-weight:600; color:var(--md-primary); font-family:'Outfit',sans-serif; cursor:pointer; flex:1; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">Tarefa</div>
+    <button id="task-panel-close" title="Fechar" onclick="closeTaskPanel()" style="border:none; background:var(--md-gold); color:var(--md-white); border-radius:50%; width:42px; height:42px; display:flex; align-items:center; justify-content:center; cursor:pointer; flex-shrink:0; box-shadow:0 2px 6px rgba(0,0,0,0.15); margin-left:10px;">
+      <span class="material-icons-round" style="font-size:24px;">close</span>
+    </button>
+  </div>
+
+  <div style="padding:0 16px 16px;">
+    <div style="background:var(--md-surface-1); border-radius:14px; border:1px solid var(--md-outline-variant); padding:10px 14px;">
+      <div id="task-panel-items"></div>
+      <button id="task-panel-add-btn" style="width:100%; display:flex; align-items:center; gap:10px; padding:13px 4px; background:none; border:none; cursor:pointer; color:var(--md-amber); font-size:17px; font-weight:700; font-family:'Outfit',sans-serif;">
+        <span class="material-icons-round" style="font-size:22px;">add_circle</span> Adicionar item
+      </button>
+    </div>
+  </div>
+
+  <div style="padding:0 16px; display:flex; justify-content:flex-end;">
+    <button id="task-panel-delete-btn" style="background:none; border:none; cursor:pointer; padding:8px; display:flex; align-items:center; gap:6px; color:var(--md-outline-variant); font-size:14px; font-family:'Outfit',sans-serif;">
+      <span class="material-icons-round" style="font-size:19px;">delete_outline</span> Apagar tarefa
+    </button>
+  </div>
+</div>
+
 <!-- ── TECLADO NUMÉRICO GLOBAL (substitui o teclado nativo em todos os campos numéricos) ──
      Evita o teclado nativo do Android e a barra de autofill do Chrome em toda a app. -->
 <div id="numkeypad" style="display:none;position:fixed;bottom:0;left:0;right:0;background:var(--md-surface);border-radius:20px 20px 0 0;padding:20px 16px;z-index:500; box-shadow:0 -4px 24px rgba(0,0,0,0.15);">
@@ -1810,7 +1836,7 @@ function renderTasks() {
 function renderTasksAndProjects() {
   const list_el = document.getElementById('tasks-list');
   const empty = document.getElementById('tasks-empty');
-  Array.from(list_el.querySelectorAll('.task-card, .project-card')).forEach(c => { try { c.remove(); } catch(e) {} });
+  Array.from(list_el.querySelectorAll('.task-row')).forEach(c => { try { c.remove(); } catch(e) {} });
 
   const hasContent = projects.length > 0;
   empty.style.display = hasContent ? 'none' : 'block';
@@ -1885,6 +1911,94 @@ function deleteProject(id) {
   showSnack('Tarefa removida', 'saved');
 }
 
+// ── PAINEL DE TAREFA — mesmo padrão do painel de produto em Compras ─────────
+let currentTaskPanelId = null;
+
+function openTaskPanel(projectId) {
+  currentTaskPanelId = projectId;
+  const proj = projects.find(p => p.id === projectId);
+  if (!proj) return;
+  const titleEl = document.getElementById('task-panel-title');
+  titleEl.textContent = proj.title;
+  titleEl.onclick = () => startEditProjectTitle(proj.id, titleEl, true);
+  renderTaskPanelItems();
+  document.getElementById('task-panel-overlay').style.display = 'block';
+  document.getElementById('task-panel').style.display = 'block';
+}
+
+function closeTaskPanel() {
+  document.getElementById('task-panel-overlay').style.display = 'none';
+  document.getElementById('task-panel').style.display = 'none';
+  currentTaskPanelId = null;
+  renderTasksAndProjects();
+}
+
+function renderTaskPanelItems() {
+  const proj = projects.find(p => p.id === currentTaskPanelId);
+  const itemsBox = document.getElementById('task-panel-items');
+  if (!proj || !itemsBox) return;
+  itemsBox.innerHTML = '';
+
+  if (proj.tasks.length === 0) {
+    const empty = document.createElement('div');
+    empty.style.cssText = 'text-align:center; padding:24px 0; color:var(--md-primary); opacity:0.4; font-size:15px;';
+    empty.textContent = 'Ainda sem itens';
+    itemsBox.appendChild(empty);
+  }
+
+  proj.tasks.forEach((t, idx) => {
+    const row = document.createElement('div');
+    row.style.cssText = `padding:13px 0; ${idx < proj.tasks.length - 1 ? 'border-bottom:1px solid var(--md-outline-variant);' : ''} display:flex; align-items:flex-start; gap:10px;`;
+
+    const textWrap = document.createElement('div');
+    textWrap.style.cssText = 'flex:1; min-width:0;';
+
+    const textSpan = document.createElement('div');
+    textSpan.className = 'ptask-text';
+    textSpan.style.cssText = 'font-size:19px; font-weight:600; color:var(--md-primary); cursor:pointer; display:flex; align-items:center; gap:6px;';
+    const noteIcon = t.notes
+      ? '<span class="material-icons-round" style="font-size:15px; opacity:0.45; flex-shrink:0;" title="' + t.notes.replace(/"/g,'&quot;') + '">sticky_note_2</span>'
+      : '<span class="material-icons-round ptask-note-icon" style="font-size:15px; opacity:0.3; flex-shrink:0;" title="Adicionar nota">note_add</span>';
+    textSpan.innerHTML = `<span class="ptask-text-label">${t.text}</span>${noteIcon}`;
+    textSpan.querySelector('.ptask-text-label').addEventListener('click', () => startEditPTaskText(proj.id, t.id, textSpan, true));
+    textSpan.querySelector('.material-icons-round').addEventListener('click', (e) => {
+      e.stopPropagation();
+      startEditPTaskNotesIcon(proj.id, t.id, textWrap, textSpan, true);
+    });
+    textWrap.appendChild(textSpan);
+    row.appendChild(textWrap);
+
+    const actionsCol = document.createElement('div');
+    actionsCol.style.cssText = 'display:flex; align-items:center; gap:4px; flex-shrink:0;';
+
+    let dueColor = 'var(--md-primary)', dueOpacity = '0.35';
+    if (t.due) {
+      const dueDate = new Date(t.due + 'T00:00:00');
+      const todayMid = new Date(); todayMid.setHours(0,0,0,0);
+      const isOverdue = dueDate < todayMid;
+      const isToday = dueDate.getTime() === todayMid.getTime();
+      if (isOverdue) { dueColor = 'var(--md-error)'; dueOpacity = '0.85'; }
+      else if (isToday) { dueColor = 'var(--md-gold)'; dueOpacity = '0.9'; }
+      else { dueOpacity = '0.6'; }
+    }
+    const dueBtn = document.createElement('button');
+    dueBtn.style.cssText = 'background:none; border:none; cursor:pointer; padding:4px; flex-shrink:0; width:30px; height:30px; display:flex; align-items:center; justify-content:center; overflow:hidden;';
+    dueBtn.innerHTML = `<span class="material-icons-round" style="font-size:20px; color:${dueColor}; opacity:${dueOpacity};">event</span>`;
+    dueBtn.title = t.due ? new Date(t.due + 'T00:00:00').toLocaleDateString('pt-PT', { day:'2-digit', month:'short' }) : 'Definir prazo';
+    dueBtn.addEventListener('click', () => startEditPTaskDue(proj.id, t.id, dueBtn, true));
+    actionsCol.appendChild(dueBtn);
+
+    const delTaskBtn = document.createElement('button');
+    delTaskBtn.style.cssText = 'background:none; border:none; cursor:pointer; padding:4px; flex-shrink:0; width:30px; height:30px; display:flex; align-items:center; justify-content:center; overflow:hidden;';
+    delTaskBtn.innerHTML = '<span class="material-icons-round" style="font-size:21px; color:var(--md-outline-variant);">close</span>';
+    delTaskBtn.addEventListener('click', () => { deletePTask(proj.id, t.id, true); });
+    actionsCol.appendChild(delTaskBtn);
+
+    row.appendChild(actionsCol);
+    itemsBox.appendChild(row);
+  });
+}
+
 function openPTaskModal(projectId) {
   currentProjectId = projectId;
   document.getElementById('ptask-title').value = '';
@@ -1908,15 +2022,17 @@ function savePTask() {
   const proj = projects.find(p => p.id === currentProjectId);
   if (!proj) return;
   proj.tasks.push({ id: Date.now(), text, notes, done: false, due: due || null });
-  sched(); closePTaskModal(); renderProjects();
+  sched(); closePTaskModal();
+  if (currentTaskPanelId === currentProjectId) renderTaskPanelItems(); else renderProjects();
   showSnack('Tarefa adicionada ✓', 'saved');
 }
 
-function deletePTask(projectId, taskId) {
+function deletePTask(projectId, taskId, fromPanel) {
   const proj = projects.find(p => p.id === projectId);
   if (!proj) return;
   proj.tasks = proj.tasks.filter(t => t.id !== taskId);
-  sched(); renderProjects();
+  sched();
+  if (fromPanel) renderTaskPanelItems(); else renderProjects();
 }
 
 function editPTaskNotes(projectId, taskId, notes) {
@@ -1933,7 +2049,7 @@ function editPTaskDue(projectId, taskId, due) {
   if (t) { t.due = due || null; sched(); }
 }
 
-function startEditPTaskDue(projectId, taskId, el) {
+function startEditPTaskDue(projectId, taskId, el, fromPanel) {
   const proj = projects.find(p => p.id === projectId);
   if (!proj) return;
   const t = proj.tasks.find(t => t.id === taskId);
@@ -1950,20 +2066,22 @@ function startEditPTaskDue(projectId, taskId, el) {
     if (dueCommitted) return;
     dueCommitted = true;
     editPTaskDue(proj.id, t.id, input.value);
-    renderProjects();
+    if (fromPanel) renderTaskPanelItems(); else renderProjects();
   };
   input.addEventListener('change', commit);
   input.addEventListener('blur', commit);
 }
 
 // ── EDIÇÃO INLINE: título de projeto e texto de sub-tarefa ──────────────────
-function startEditProjectTitle(projectId, el) {
+function startEditProjectTitle(projectId, el, fromPanel) {
   const proj = projects.find(p => p.id === projectId);
   if (!proj) return;
   const input = document.createElement('input');
   input.type = 'text';
   input.value = proj.title;
-  input.style.cssText = 'font-size:15px; font-weight:700; color:var(--md-white); border:none; border-bottom:1.5px solid var(--md-white); background:transparent; outline:none; font-family:Outfit,sans-serif; padding:0; flex:1; min-width:0;';
+  input.style.cssText = fromPanel
+    ? 'font-size:22px; font-weight:600; color:var(--md-primary); border:none; border-bottom:1.5px solid var(--md-outline-variant); background:transparent; outline:none; font-family:Outfit,sans-serif; padding:0; flex:1; min-width:0; width:100%;'
+    : 'font-size:15px; font-weight:700; color:var(--md-white); border:none; border-bottom:1.5px solid var(--md-white); background:transparent; outline:none; font-family:Outfit,sans-serif; padding:0; flex:1; min-width:0;';
   el.replaceWith(input);
   input.focus();
   input.setSelectionRange(input.value.length, input.value.length);
@@ -1975,13 +2093,22 @@ function startEditProjectTitle(projectId, el) {
     const newTitle = input.value.trim();
     if (newTitle) proj.title = newTitle;
     sched();
-    renderProjects();
+    if (fromPanel) {
+      // Repõe o elemento de título original (o input não tem o id necessário para reabrir o painel)
+      const restored = document.createElement('div');
+      restored.id = 'task-panel-title';
+      restored.style.cssText = input.style.cssText.replace('width:100%;', '') + ' overflow:hidden; text-overflow:ellipsis; white-space:nowrap;';
+      input.replaceWith(restored);
+      openTaskPanel(proj.id);
+    } else {
+      renderProjects();
+    }
   };
   input.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); commit(); } });
   input.addEventListener('blur', commit);
 }
 
-function startEditPTaskText(projectId, taskId, el) {
+function startEditPTaskText(projectId, taskId, el, fromPanel) {
   const proj = projects.find(p => p.id === projectId);
   if (!proj) return;
   const t = proj.tasks.find(t => t.id === taskId);
@@ -2001,13 +2128,13 @@ function startEditPTaskText(projectId, taskId, el) {
     const newText = input.value.trim();
     if (newText) t.text = newText;
     sched();
-    renderProjects();
+    if (fromPanel) renderTaskPanelItems(); else renderProjects();
   };
   input.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); commit(); } });
   input.addEventListener('blur', commit);
 }
 
-function startEditPTaskNotesIcon(projectId, taskId, textWrapEl, textSpanEl) {
+function startEditPTaskNotesIcon(projectId, taskId, textWrapEl, textSpanEl, fromPanel) {
   const proj = projects.find(p => p.id === projectId);
   if (!proj) return;
   const t = proj.tasks.find(t => t.id === taskId);
@@ -2030,7 +2157,7 @@ function startEditPTaskNotesIcon(projectId, taskId, textWrapEl, textSpanEl) {
     if (committed) return;
     committed = true;
     editPTaskNotes(proj.id, t.id, input.value.trim());
-    renderProjects();
+    if (fromPanel) renderTaskPanelItems(); else renderProjects();
   };
   input.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); commit(); } });
   input.addEventListener('blur', commit);
@@ -2041,120 +2168,45 @@ function renderProjects() {
 }
 
 function appendProjectCard(container, empty, proj) {
-  const open = openProjects[proj.id] === true; // por defeito, fechado
   const total = proj.tasks.length;
+  const overdueCount = proj.tasks.filter(t => {
+    if (!t.due) return false;
+    const dueDate = new Date(t.due + 'T00:00:00');
+    const todayMid = new Date(); todayMid.setHours(0,0,0,0);
+    return dueDate < todayMid;
+  }).length;
 
-  const wrap = document.createElement('div');
-  wrap.className = 'project-card';
-  wrap.style.cssText = 'margin-bottom:10px;';
+  const row = document.createElement('div');
+  row.className = 'item-row task-row';
 
-  // Cabeçalho — caixa clara, distinta das categorias de Compras (que usam .cat-header escuro)
-  const hdr = document.createElement('div');
-  hdr.className = 'cat-header';
-  hdr.style.cssText = 'cursor:pointer; background:var(--md-surface); border:1.5px solid var(--md-outline-variant);';
-  hdr.innerHTML = `
-    <span style="display:flex; align-items:center; gap:6px; min-width:0; overflow:hidden; flex:1;">
-      <span class="proj-title-text" style="font-size:28px; font-weight:700; color:var(--md-primary); letter-spacing:0.3px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${proj.title}</span>
-      <span style="font-size:17px; opacity:0.6; font-weight:500; flex-shrink:0; color:var(--md-primary);">· ${total}</span>
-    </span>
-    <span class="cat-chevron ${open?'':'closed'}" style="color:var(--md-primary); opacity:0.7; flex-shrink:0; margin-left:8px;">▾</span>
-  `;
-  hdr.addEventListener('click', (e) => {
-    openProjects[proj.id] = !open;
-    renderTasksAndProjects();
-  });
-  wrap.appendChild(hdr);
+  const nm = document.createElement('span');
+  nm.className = 'item-name';
+  nm.style.cursor = 'pointer';
+  nm.innerHTML = `${proj.title}`;
+  nm.addEventListener('click', () => openTaskPanel(proj.id));
+  row.appendChild(nm);
 
-  // Corpo — colapsável, igual ao cat-body de Compras
-  const body = document.createElement('div');
-  body.className = 'cat-body' + (open ? '' : ' collapsed');
+  if (overdueCount > 0) {
+    const warn = document.createElement('span');
+    warn.className = 'material-icons-round';
+    warn.textContent = 'schedule';
+    warn.title = overdueCount === 1 ? '1 item atrasado' : `${overdueCount} itens atrasados`;
+    warn.style.cssText = 'font-size:22px; color:var(--md-error); flex-shrink:0; margin-right:8px;';
+    row.appendChild(warn);
+  }
 
-  proj.tasks.forEach((t, idx) => {
-    const row = document.createElement('div');
-    row.style.cssText = `padding:15px 14px; ${idx < proj.tasks.length - 1 ? 'border-bottom:1px solid var(--md-outline-variant);' : ''}`;
+  const countSpan = document.createElement('span');
+  countSpan.style.cssText = 'font-size:16px; color:var(--md-primary); opacity:0.45; flex-shrink:0; margin-right:4px;';
+  countSpan.textContent = total;
+  row.appendChild(countSpan);
 
-    const topRow = document.createElement('div');
-    topRow.style.cssText = 'display:flex; align-items:flex-start; gap:16px;';
+  const chevron = document.createElement('span');
+  chevron.className = 'material-icons-round';
+  chevron.textContent = 'chevron_right';
+  chevron.style.cssText = 'font-size:22px; color:var(--md-primary); opacity:0.35; flex-shrink:0;';
+  row.appendChild(chevron);
 
-    const textWrap = document.createElement('div');
-    textWrap.style.cssText = 'flex:1; min-width:0;';
-
-    const textSpan = document.createElement('div');
-    textSpan.className = 'ptask-text';
-    textSpan.style.cssText = `font-size:22px; font-weight:600; color:var(--md-primary); cursor:pointer; display:flex; align-items:center; gap:6px;`;
-    const noteIcon = t.notes
-      ? '<span class="material-icons-round" style="font-size:15px; opacity:0.45; flex-shrink:0;" title="' + t.notes.replace(/"/g,'&quot;') + '">sticky_note_2</span>'
-      : '<span class="material-icons-round ptask-note-icon" style="font-size:15px; opacity:0.3; flex-shrink:0;" title="Adicionar nota">note_add</span>';
-    textSpan.innerHTML = `<span class="ptask-text-label">${t.text}</span>${noteIcon}`;
-    textSpan.querySelector('.ptask-text-label').addEventListener('click', () => startEditPTaskText(proj.id, t.id, textSpan));
-    textSpan.querySelector('.material-icons-round').addEventListener('click', (e) => {
-      e.stopPropagation();
-      startEditPTaskNotesIcon(proj.id, t.id, textWrap, textSpan);
-    });
-    textWrap.appendChild(textSpan);
-
-    topRow.appendChild(textWrap);
-
-    // Coluna direita: X (apagar) em cima, ícone de calendário (prazo, sem texto) em baixo
-    const actionsCol = document.createElement('div');
-    actionsCol.style.cssText = 'display:flex; flex-direction:column; align-items:center; gap:6px; flex-shrink:0;';
-
-    const delTaskBtn = document.createElement('button');
-    delTaskBtn.style.cssText = 'background:none; border:none; cursor:pointer; padding:6px; flex-shrink:0; width:35px; height:35px; display:flex; align-items:center; justify-content:center; overflow:hidden;';
-    delTaskBtn.innerHTML = '<span class="material-icons-round" style="font-size:23px; color:var(--md-outline-variant);">close</span>';
-    delTaskBtn.addEventListener('click', () => deletePTask(proj.id, t.id));
-    actionsCol.appendChild(delTaskBtn);
-
-    // Prazo — só o ícone, sem data visível; muda de cor se atrasado.
-    const dueBtn = document.createElement('button');
-    dueBtn.style.cssText = 'background:none; border:none; cursor:pointer; padding:6px; flex-shrink:0; display:flex; align-items:center; justify-content:center; width:33px; height:33px; overflow:hidden;';
-    let dueColor = 'var(--md-primary)', dueOpacity = '0.35';
-    if (t.due) {
-      const dueDate = new Date(t.due + 'T00:00:00');
-      const todayMid = new Date(); todayMid.setHours(0,0,0,0);
-      const isOverdue = dueDate < todayMid;
-      const isToday = dueDate.getTime() === todayMid.getTime();
-      if (isOverdue) { dueColor = 'var(--md-error)'; dueOpacity = '0.85'; }
-      else if (isToday) { dueColor = 'var(--md-gold)'; dueOpacity = '0.9'; }
-      else { dueOpacity = '0.6'; }
-    }
-    dueBtn.innerHTML = `<span class="material-icons-round" style="font-size:21px; color:${dueColor}; opacity:${dueOpacity};">event</span>`;
-    dueBtn.title = t.due ? new Date(t.due + 'T00:00:00').toLocaleDateString('pt-PT', { day:'2-digit', month:'short' }) : 'Definir prazo';
-    dueBtn.addEventListener('click', () => startEditPTaskDue(proj.id, t.id, dueBtn));
-    actionsCol.appendChild(dueBtn);
-
-    topRow.appendChild(actionsCol);
-
-    row.appendChild(topRow);
-    body.appendChild(row);
-  });
-
-  // Adicionar tarefa (botão + redondo) + apagar projeto, no fundo do corpo expandido
-  const footer = document.createElement('div');
-  footer.style.cssText = 'display:flex; align-items:center; justify-content:space-between; padding:6px 8px;';
-  const addTaskBtn = document.createElement('button');
-  addTaskBtn.style.cssText = 'background:var(--md-primary); color:var(--md-white); border:none; border-radius:50%; width:36px; height:36px; display:flex; align-items:center; justify-content:center; cursor:pointer; flex-shrink:0; padding:0;';
-  addTaskBtn.innerHTML = '<span class="material-icons-round" style="font-size:20px;">add</span>';
-  addTaskBtn.title = 'Adicionar tarefa';
-  addTaskBtn.addEventListener('click', () => openPTaskModal(proj.id));
-  footer.appendChild(addTaskBtn);
-
-  const editProjBtn = document.createElement('button');
-  editProjBtn.style.cssText = 'background:none; border:none; cursor:pointer; padding:6px;';
-  editProjBtn.innerHTML = '<span class="material-icons-round" style="color:var(--md-primary); opacity:0.5; font-size:21px;">edit</span>';
-  editProjBtn.title = 'Editar título';
-  editProjBtn.addEventListener('click', () => startEditProjectTitle(proj.id, hdr.querySelector('.proj-title-text')));
-  footer.appendChild(editProjBtn);
-
-  const delProjBtn = document.createElement('button');
-  delProjBtn.style.cssText = 'background:none; border:none; cursor:pointer; padding:6px;';
-  delProjBtn.innerHTML = '<span class="material-icons-round" style="color:var(--md-outline-variant); font-size:23px;">delete_outline</span>';
-  delProjBtn.addEventListener('click', () => deleteProject(proj.id));
-  footer.appendChild(delProjBtn);
-
-  body.appendChild(footer);
-  wrap.appendChild(body);
-  container.insertBefore(wrap, empty);
+  container.insertBefore(row, empty);
 }
 
 
@@ -5740,6 +5792,18 @@ function formatDate(val) {
 // ── BOTÃO/GESTO DE RETROCEDER — volta sempre ao dashboard ───────────────────
 window.addEventListener('popstate', () => {
   switchTo('dashboard', true);
+});
+
+document.getElementById('task-panel-add-btn').addEventListener('click', () => {
+  if (currentTaskPanelId) openPTaskModal(currentTaskPanelId);
+});
+document.getElementById('task-panel-delete-btn').addEventListener('click', () => {
+  if (!currentTaskPanelId) return;
+  const idToDelete = currentTaskPanelId;
+  document.getElementById('task-panel-overlay').style.display = 'none';
+  document.getElementById('task-panel').style.display = 'none';
+  currentTaskPanelId = null;
+  deleteProject(idToDelete);
 });
 
 // ── START ─────────────────────────────────────────────────────────────────────
