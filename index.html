@@ -113,7 +113,7 @@
     .hnav-btn { border:none; background:transparent; color:rgba(255,255,255,0.7); padding:8px; cursor:pointer; display:flex; align-items:center; justify-content:center; border-radius:50%; }
     .hnav-btn .material-icons-round { font-size:22px; }
     .hnav-btn.active { color:var(--md-amber); background:transparent; border:none; }
-    .hnav-btn-brand { color:var(--md-white); }
+    .hnav-btn-brand { color:var(--md-amber); }
     .hnav-btn-brand.active { color:var(--md-amber); background:transparent; border:none; }
     #brand-nav-btn { font-size:14px; font-weight:600; letter-spacing:0.5px; text-transform:uppercase; padding:8px; color:var(--md-primary); border-radius:8px; }
 
@@ -300,7 +300,7 @@
     <div id="header-nav">
       <div id="header-icons" style="display:flex; align-items:center; justify-content:space-between; width:100%;">
         <div id="header-title-wrap" style="display:flex; align-items:center; gap:8px;">
-          <button class="hnav-btn hnav-btn-brand active" data-view="dashboard" style="font-size:13px; font-weight:400; letter-spacing:1px; padding:6px 8px; text-transform:uppercase; white-space:nowrap; background:transparent; border-radius:0;">Momento Frutado</button>
+          <button class="hnav-btn hnav-btn-brand active" data-view="dashboard" style="font-size:15px; font-weight:700; letter-spacing:1px; padding:6px 8px; text-transform:uppercase; white-space:nowrap; background:transparent; border-radius:0;">Momento Frutado</button>
         </div>
         <div style="display:flex; align-items:center; gap:0;">
           <button class="hnav-btn" id="list-nav-btn" data-view="list" style="font-size:11px; font-weight:700; letter-spacing:0.5px; padding:8px 10px;"><span class="material-icons-round">shopping_basket</span></button>
@@ -314,22 +314,23 @@
 
   <div id="scroll-area">
     <div id="view-list" class="view">
-      <div style="padding:20px 16px 8px; display:flex; align-items:center; justify-content:space-between;">
-        <div style="display:flex; align-items:center; gap:12px;">
-          <div style="font-size:52px; font-weight:700; letter-spacing:-1px; line-height:1; color:var(--md-amber); text-transform:lowercase;">Comprar</div>
+      <div style="padding:14px 16px 8px; display:flex; align-items:center; gap:8px;">
+        <div style="position:relative; flex:1; min-width:0;">
+          <span class="material-icons-round" style="position:absolute; left:12px; top:50%; transform:translateY(-50%); font-size:18px; color:var(--md-primary); opacity:0.4; pointer-events:none;">search</span>
+          <input id="list-search" type="search" placeholder="Pesquisar"
+            style="width:100%; padding:9px 9px 9px 36px; border:1.5px solid var(--md-outline-variant); border-radius:10px; font-size:14px; font-family:'Outfit',sans-serif; color:var(--md-primary); background:rgba(92,126,96,0.08); outline:none; -webkit-appearance:none; appearance:none; box-sizing:border-box;"
+            oninput="renderCats(this.value)" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" data-lpignore="true" data-form-type="other"/>
         </div>
-        <div style="display:flex; align-items:center; gap:4px;">
-          <button onclick="switchTo('prices')" style="background:none; border:none; cursor:pointer; padding:8px; display:flex; align-items:center; opacity:0.5;">
-            <span class="material-icons-round" style="font-size:26px; color:var(--md-primary);">sell</span>
-          </button>
-          <button onclick="toggleVasilQuickPanel()" style="background:none; border:none; cursor:pointer; padding:8px; display:flex; align-items:center; opacity:0.5; position:relative;">
-            <span class="material-icons-round" style="font-size:26px; color:var(--md-primary);">inventory_2</span>
-            <span id="vasil-quick-badge" style="display:none; position:absolute; top:2px; right:2px; width:8px; height:8px; border-radius:50%; background:var(--md-orange);"></span>
-          </button>
-          <button onclick="toggleFilter()" style="background:none; border:none; cursor:pointer; padding:8px; display:flex; align-items:center; opacity:0.5;">
-            <span class="material-icons-round" id="list-filter-icon" style="font-size:28px; color:var(--md-primary);">visibility</span>
-          </button>
-        </div>
+        <button onclick="switchTo('prices')" style="background:none; border:none; cursor:pointer; padding:6px; display:flex; align-items:center; opacity:0.5; flex-shrink:0;">
+          <span class="material-icons-round" style="font-size:24px; color:var(--md-primary);">sell</span>
+        </button>
+        <button onclick="toggleVasilQuickPanel()" style="background:none; border:none; cursor:pointer; padding:6px; display:flex; align-items:center; opacity:0.5; position:relative; flex-shrink:0;">
+          <span class="material-icons-round" style="font-size:24px; color:var(--md-primary);">inventory_2</span>
+          <span id="vasil-quick-badge" style="display:none; position:absolute; top:0px; right:0px; width:8px; height:8px; border-radius:50%; background:var(--md-orange);"></span>
+        </button>
+        <button onclick="toggleFilter()" style="background:none; border:none; cursor:pointer; padding:6px; display:flex; align-items:center; opacity:0.5; flex-shrink:0;">
+          <span class="material-icons-round" id="list-filter-icon" style="font-size:26px; color:var(--md-primary);">visibility</span>
+        </button>
       </div>
 
       <!-- Painel rápido de vasilhame -->
@@ -348,12 +349,6 @@
         </div>
       </div>
 
-      <div style="padding:8px 16px 12px; position:relative;">
-        <span class="material-icons-round" style="position:absolute; left:28px; top:50%; transform:translateY(-50%); font-size:20px; color:var(--md-primary); opacity:0.4; pointer-events:none;">search</span>
-        <input id="list-search" type="search" placeholder="Pesquisar"
-          style="width:100%; padding:12px 12px 12px 40px; border:1.5px solid var(--md-outline-variant); border-radius:12px; font-size:16px; font-family:'Outfit',sans-serif; color:var(--md-primary); background:rgba(92,126,96,0.08); outline:none; -webkit-appearance:none; appearance:none;"
-          oninput="renderCats(this.value)" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" data-lpignore="true" data-form-type="other"/>
-      </div>
       <div id="cat-list" style="padding-top:4px"></div>
       <div id="clear-wrap">
         <button id="clear-btn"><span class="material-icons-round" style="font-size:18px;">save</span>Gravar</button>
@@ -362,11 +357,7 @@
     </div>
 
     <div id="view-whatsapp" class="view">
-      <div style="padding:20px 16px 8px;">
-        <div style="display:flex; align-items:center; gap:12px;">
-          <div style="font-size:52px; font-weight:700; letter-spacing:-1px; line-height:1; color:var(--md-amber); text-transform:lowercase;">WhatsApp</div>
-        </div>
-      </div>
+      <div style="padding-top:14px;"></div>
       <div id="wa-content">
         <div id="wa-empty">
           <div class="wa-icon">📋</div>
@@ -387,20 +378,13 @@
     </div>
 
     <div id="view-history" class="view">
-      <div style="padding:20px 16px 8px;">
-        <div style="display:flex; align-items:center; gap:12px;">
-          <div style="font-size:52px; font-weight:700; letter-spacing:-1px; line-height:1; color:var(--md-amber); text-transform:lowercase;">Histórico</div>
-        </div>
-      </div>
+      <div style="padding-top:14px;"></div>
       <div id="history-content" style="padding:14px"></div>
     </div>
 
     <!-- ── FAZER (TAREFAS) ────────────────────────────────────────────────── -->
     <div id="view-tasks" class="view">
-      <div style="padding:20px 16px 8px; display:flex; align-items:center; justify-content:space-between;">
-        <div style="display:flex; align-items:center; gap:12px;">
-          <div style="font-size:52px; font-weight:700; letter-spacing:-1px; line-height:1; color:var(--md-amber); text-transform:lowercase;">Fazer</div>
-        </div>
+      <div style="padding:14px 16px 8px; display:flex; align-items:center; justify-content:flex-end;">
         <button id="tasks-add-btn" onclick="openProjectModal()" style="background:var(--md-primary); color:var(--md-white); border:none; border-radius:50%; width:44px; height:44px; display:flex; align-items:center; justify-content:center; cursor:pointer; flex-shrink:0;">
           <span class="material-icons-round" style="font-size:26px;">add</span>
         </button>
@@ -480,9 +464,7 @@
 
     <!-- ── DEFINIÇÕES ─────────────────────────────────────────────────────── -->
     <div id="view-settings" class="view">
-      <div style="padding:20px 16px 8px;">
-        <div style="font-size:52px; font-weight:700; letter-spacing:-1px; line-height:1; color:var(--md-amber); text-transform:lowercase;">Definições</div>
-      </div>
+      <div style="padding-top:14px;"></div>
 
       <!-- Navegação principal -->
       <div style="padding:8px 16px 0; display:flex; flex-direction:column; gap:0;">
@@ -535,9 +517,7 @@
 
     <!-- ── VASILHAME ───────────────────────────────────────────────────────── -->
     <div id="view-vasilhame" class="view">
-      <div style="padding:20px 16px 8px;">
-        <div style="font-size:52px; font-weight:700; letter-spacing:-1px; line-height:1; color:var(--md-amber); text-transform:lowercase;">Vasilhame</div>
-      </div>
+      <div style="padding-top:14px;"></div>
 
       <div style="padding:0 16px 16px;">
 
@@ -617,8 +597,7 @@
 
     <!-- ── VENDAS ─────────────────────────────────────────────────────────── -->
     <div id="view-sales" class="view">
-      <div style="padding:20px 16px 8px; display:flex; align-items:center; justify-content:space-between;">
-        <div style="font-size:52px; font-weight:700; letter-spacing:-1px; line-height:1; color:var(--md-amber); text-transform:lowercase;">Vender</div>
+      <div style="padding:14px 16px 8px; display:flex; align-items:center; justify-content:flex-end;">
         <button onclick="switchTo('resumo')" style="background:none; border:none; cursor:pointer; padding:8px; display:flex; align-items:center; opacity:0.5;">
           <span class="material-icons-round" style="font-size:28px; color:var(--md-primary);">bar_chart</span>
         </button>
@@ -839,9 +818,7 @@
 
     <!-- ── RENDAS (página própria) ───────────────────────────────────────── -->
     <div id="view-rents" class="view">
-      <div style="padding:20px 16px 8px;">
-        <div style="font-size:52px; font-weight:700; letter-spacing:-1px; line-height:1; color:var(--md-amber); text-transform:lowercase;">Rendas</div>
-      </div>
+      <div style="padding-top:14px;"></div>
       <div style="padding:4px 16px 16px;">
 
         <div style="background:var(--md-surface); border-radius:14px; border:1px solid var(--md-outline-variant); padding:18px; margin-bottom:20px;">
@@ -871,9 +848,7 @@
 
     <!-- ── RESUMO (página própria) ───────────────────────────────────────── -->
     <div id="view-resumo" class="view">
-      <div style="padding:20px 16px 8px;">
-        <div style="font-size:52px; font-weight:700; letter-spacing:-1px; line-height:1; color:var(--md-amber); text-transform:lowercase;">Resumir</div>
-      </div>
+      <div style="padding-top:14px;"></div>
       <div id="resumo-content" style="padding:4px 16px 32px;">
         <div id="resumo-empty" style="text-align:center; padding:60px 20px; color:var(--md-primary); opacity:0.5;">
           <span class="material-icons-round" style="font-size:48px; display:block; margin-bottom:12px;">bar_chart</span>
@@ -967,10 +942,7 @@
 
     <!-- ── PREÇOS DE VENDA ─────────────────────────────────────────────────── -->
     <div id="view-prices" class="view">
-      <div style="padding:20px 16px 8px;">
-        <div style="display:flex; align-items:center; gap:12px;">
-          <div style="font-size:52px; font-weight:700; letter-spacing:-1px; line-height:1; color:var(--md-amber); text-transform:lowercase;">Preços</div>
-        </div>
+      <div style="padding:14px 16px 4px;">
         <div id="prices-completude" style="font-size:13px; color:var(--md-primary); margin-top:4px; opacity:0.6;"></div>
       </div>
       <div style="padding:8px 16px 12px; position:relative;">
@@ -5018,10 +4990,10 @@ function switchTo(v, fromPopState) {
   }
   closeSettingsMenu();
   if (v !== "list") { const s = document.getElementById("list-search"); if(s) s.value = ""; }
-  // Header title
-  const titles = { dashboard:'', list:'Comprar', prices:'Preços', tasks:'Tarefas', history:'Histórico', whatsapp:'WhatsApp', suppliers:'Fornecedores', add:'Gerir', sales:'Vender', settings:'Definições' };
-  const titleEl = document.getElementById('header-title');
-  if (titleEl) titleEl.textContent = titles[v] || '';
+  // Header title — substitui "Momento Frutado" pelo nome da página atual; no dashboard, mostra a marca.
+  const titles = { dashboard:'Momento Frutado', list:'Comprar', prices:'Preços', tasks:'Tarefas', history:'Histórico', whatsapp:'WhatsApp', suppliers:'Fornecedores', add:'Gerir', sales:'Vender', settings:'Definições', rents:'Rendas', resumo:'Resumir', vasilhame:'Vasilhame' };
+  const brandBtn = document.querySelector('.hnav-btn-brand');
+  if (brandBtn) brandBtn.textContent = titles[v] || 'Momento Frutado';
 
   // Cabeçalho sempre visível, igual em todos os separadores incluindo o dashboard.
 
