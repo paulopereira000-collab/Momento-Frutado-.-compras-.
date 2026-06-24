@@ -1111,8 +1111,8 @@
 
         <div style="margin-bottom:12px;">
           <span class="pick-field-label">Vasilhame</span>
-          <div style="display:flex; gap:6px; margin-bottom:8px;">
-            <button id="pick-vasil-no" onclick="setPickVasilhame(false)" style="flex:1; padding:11px; border:none; border-radius:9px; font-size:15px; font-weight:700; font-family:'Outfit',sans-serif; cursor:pointer; background:var(--md-primary); color:var(--md-white);">Sem vasilhame</button>
+          <div style="display:flex; gap:6px; margin-bottom:8px; align-items:center;">
+            <button id="pick-vasil-no" onclick="setPickVasilhame(false)" style="padding:11px 14px; border:1.5px solid var(--md-outline-variant); border-radius:9px; font-size:13px; font-weight:600; font-family:'Outfit',sans-serif; cursor:pointer; background:transparent; color:var(--md-primary); opacity:0.55;">Sem vasilhame</button>
             <button id="pick-vasil-yes" onclick="setPickVasilhame(true)" style="flex:1; padding:11px; border:none; border-radius:9px; font-size:15px; font-weight:700; font-family:'Outfit',sans-serif; cursor:pointer; background:var(--md-surface-variant); color:var(--md-primary);">Tem vasilhame</button>
           </div>
           <div id="pick-vasil-detail" style="display:none; align-items:center; gap:10px;">
@@ -5405,12 +5405,12 @@ function setPickVasilhame(hasIt, noSave) {
   const hint = document.getElementById('pick-vasil-qty-hint');
   if (hasIt) {
     yesBtn.style.background = 'var(--md-primary)'; yesBtn.style.color = 'var(--md-white)';
-    noBtn.style.background = 'var(--md-surface-variant)'; noBtn.style.color = 'var(--md-primary)';
+    noBtn.style.opacity = '0.4'; noBtn.style.borderColor = 'var(--md-outline-variant)';
     detail.style.display = 'flex';
     if (hint) hint.style.display = 'block';
   } else {
-    noBtn.style.background = 'var(--md-primary)'; noBtn.style.color = 'var(--md-white)';
     yesBtn.style.background = 'var(--md-surface-variant)'; yesBtn.style.color = 'var(--md-primary)';
+    noBtn.style.opacity = '0.85'; noBtn.style.borderColor = 'var(--md-primary)';
     detail.style.display = 'none';
     if (hint) hint.style.display = 'none';
   }
