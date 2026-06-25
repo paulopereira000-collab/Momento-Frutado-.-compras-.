@@ -2158,24 +2158,26 @@ function appendProjectCard(container, empty, proj) {
 
   const row = document.createElement('div');
   row.className = 'item-row task-item-row';
+  row.style.alignItems = 'flex-start';
+  row.style.gap = '2px';
 
   // Alça de arrastar — toca e arrasta para reordenar por prioridade
   const dragHandle = document.createElement('span');
   dragHandle.className = 'material-icons-round task-drag-handle';
   dragHandle.textContent = 'drag_indicator';
-  dragHandle.style.cssText = 'font-size:22px; color:var(--md-primary); opacity:0.4; flex-shrink:0; cursor:grab; touch-action:none; width:32px; height:32px; border-radius:50%; display:flex; align-items:center; justify-content:center;';
+  dragHandle.style.cssText = 'font-size:22px; color:var(--md-primary); opacity:0.4; flex-shrink:0; cursor:grab; touch-action:none; width:32px; height:32px; border-radius:50%; display:flex; align-items:center; justify-content:center; margin-top:4px;';
   row.appendChild(dragHandle);
 
   const nm = document.createElement('span');
   nm.className = 'item-name';
   nm.style.cursor = 'pointer';
-  nm.style.fontSize = '32px';
+  nm.style.fontSize = '30px';
   nm.style.fontWeight = '400';
   nm.style.filter = open ? 'blur(1px)' : 'none';
   nm.style.color = open ? 'var(--md-outline)' : 'var(--md-primary)';
-  nm.style.overflow = 'hidden';
-  nm.style.textOverflow = 'ellipsis';
-  nm.style.whiteSpace = 'nowrap';
+  nm.style.whiteSpace = 'normal';
+  nm.style.wordBreak = 'break-word';
+  nm.style.lineHeight = '1.15';
   nm.style.minWidth = '0';
   nm.innerHTML = `${proj.title}`;
   nm.addEventListener('click', () => {
@@ -2184,20 +2186,10 @@ function appendProjectCard(container, empty, proj) {
   });
   row.appendChild(nm);
 
-  const editBtn = document.createElement('button');
-  editBtn.title = 'Mudar nome';
-  editBtn.style.cssText = 'background:none; border:none; cursor:pointer; padding:4px; flex-shrink:0; width:30px; height:30px; display:flex; align-items:center; justify-content:center;';
-  editBtn.innerHTML = '<span class="material-icons-round" style="font-size:19px; color:var(--md-primary); opacity:0.35;">edit</span>';
-  editBtn.addEventListener('click', (e) => {
-    e.stopPropagation();
-    startEditProjectTitleInline(proj.id, nm);
-  });
-  row.appendChild(editBtn);
-
   const chevron = document.createElement('span');
   chevron.className = 'material-icons-round';
   chevron.textContent = open ? 'expand_less' : 'chevron_right';
-  chevron.style.cssText = 'font-size:22px; color:var(--md-primary); opacity:0.35; flex-shrink:0; cursor:pointer;';
+  chevron.style.cssText = 'font-size:22px; color:var(--md-primary); opacity:0.35; flex-shrink:0; cursor:pointer; margin-top:4px;';
   chevron.addEventListener('click', () => {
     openProjects[proj.id] = !open;
     renderTasksAndProjects();
@@ -2219,30 +2211,7 @@ function appendProjectCard(container, empty, proj) {
 }
 
 // ── EDIÇÃO INLINE DO NOME DA TAREFA, diretamente na linha da lista ──────────
-function startEditProjectTitleInline(projectId, el) {
-  const proj = projects.find(p => p.id === projectId);
-  if (!proj) return;
-  const input = document.createElement('input');
-  input.type = 'text';
-  input.value = proj.title;
-  const wasOpen = openProjects[projectId] === true;
-  input.style.cssText = `font-size:32px; font-weight:400; color:${wasOpen ? 'var(--md-outline)' : 'var(--md-primary)'}; border:none; border-bottom:2px solid var(--md-outline-variant); background:transparent; outline:none; font-family:Outfit,sans-serif; padding:0; flex:1; min-width:0; width:100%;`;
-  el.replaceWith(input);
-  input.focus();
-  input.setSelectionRange(input.value.length, input.value.length);
 
-  let committed = false;
-  const commit = () => {
-    if (committed) return;
-    committed = true;
-    const newTitle = input.value.trim();
-    if (newTitle) proj.title = newTitle;
-    sched();
-    renderTasksAndProjects();
-  };
-  input.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); commit(); } });
-  input.addEventListener('blur', commit);
-}
 
 // ── REORDENAR TAREFAS POR ARRASTO — toca e arrasta a alça para mudar a prioridade ──
 let dragState = null;
