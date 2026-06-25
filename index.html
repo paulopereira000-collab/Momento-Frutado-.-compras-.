@@ -2171,10 +2171,10 @@ function appendProjectCard(container, empty, proj) {
   const nm = document.createElement('span');
   nm.className = 'item-name';
   nm.style.cursor = 'pointer';
-  nm.style.fontSize = '30px';
+  nm.style.fontSize = '35px';
   nm.style.fontWeight = '400';
-  nm.style.filter = open ? 'blur(1px)' : 'none';
-  nm.style.color = open ? 'var(--md-outline)' : 'var(--md-primary)';
+  nm.style.filter = 'none';
+  nm.style.color = open ? 'var(--md-accent)' : 'var(--md-primary)';
   nm.style.whiteSpace = 'normal';
   nm.style.wordBreak = 'break-word';
   nm.style.lineHeight = '1.15';
