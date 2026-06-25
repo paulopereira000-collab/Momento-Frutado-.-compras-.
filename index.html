@@ -2253,10 +2253,39 @@ function appendProjectCard(container, empty, proj, isFirst) {
       body.style.filter = 'blur(0)';
       body.style.opacity = '1';
     });
+    attachTaskSwipeNav(wrap, proj.id);
   }
 
   container.insertBefore(wrap, empty);
   attachDragHandlers(wrap, dragHandle);
+}
+
+// ── DESLIZAR PARA NAVEGAR ENTRE TAREFAS — sem fechar e voltar à lista ───────
+function attachTaskSwipeNav(wrapEl, projectId) {
+  let touchStartY = null;
+  wrapEl.addEventListener('touchstart', (e) => {
+    // Ignora se o toque começa num campo de edição, botão, ou na alça de arrastar.
+    if (e.target.closest('input, textarea, button, .task-drag-handle')) { touchStartY = null; return; }
+    touchStartY = e.touches[0].clientY;
+  }, { passive: true });
+
+  wrapEl.addEventListener('touchend', (e) => {
+    if (touchStartY === null) return;
+    const touchEndY = e.changedTouches[0].clientY;
+    const deltaY = touchEndY - touchStartY;
+    touchStartY = null;
+    if (Math.abs(deltaY) < 60) return; // gesto curto de mais, ignora
+
+    const idx = projects.findIndex(p => p.id === projectId);
+    if (idx === -1) return;
+    // Deslizar para cima → próxima Tarefa da lista; para baixo → anterior.
+    const nextIdx = deltaY < 0 ? idx + 1 : idx - 1;
+    if (nextIdx < 0 || nextIdx >= projects.length) return;
+
+    openProjects[projectId] = false;
+    openProjects[projects[nextIdx].id] = true;
+    renderTasksAndProjects();
+  }, { passive: true });
 }
 
 // ── EDIÇÃO INLINE DO NOME DA TAREFA, diretamente na linha da lista ──────────
@@ -6017,6 +6046,24 @@ document.getElementById('task-panel-delete-btn').addEventListener('click', () =>
   currentTaskPanelId = null;
   deleteProject(idToDelete);
 });
+
+// Deslizar para cima/baixo no painel de produto (Comprar) navega para o próximo/anterior
+// artigo com quantidade marcada — o mesmo que as setas já fazem, mas por gesto.
+{
+  let pickTouchStartY = null;
+  const pickPanelEl = document.getElementById('pick-panel');
+  pickPanelEl.addEventListener('touchstart', (e) => {
+    if (e.target.closest('input, textarea, button, select')) { pickTouchStartY = null; return; }
+    pickTouchStartY = e.touches[0].clientY;
+  }, { passive: true });
+  pickPanelEl.addEventListener('touchend', (e) => {
+    if (pickTouchStartY === null) return;
+    const deltaY = e.changedTouches[0].clientY - pickTouchStartY;
+    pickTouchStartY = null;
+    if (Math.abs(deltaY) < 60) return;
+    if (deltaY < 0) goNextItem(); else goPrevItem();
+  }, { passive: true });
+}
 
 // Clicar fora de uma Tarefa aberta em Fazer fecha-a e remove o desfoque.
 // Ignora cliques dentro de modais (criar tarefa/item) e dentro da própria Tarefa aberta.
