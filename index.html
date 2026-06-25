@@ -132,9 +132,9 @@
 
     /* CATEGORY */
     .cat-wrap { padding:12px 14px 0; }
-    .cat-header { display:flex; align-items:center; justify-content:space-between; padding:10px 12px; cursor:pointer; user-select:none; background:var(--md-primary); border-radius:12px; margin-bottom:6px; }
-    .cat-name { font-size:12px; font-weight:600; color:var(--md-white); text-transform:uppercase; letter-spacing:0.8px; }
-    .cat-chevron { font-size:16px; color:var(--md-white); transition:transform 0.2s; }
+    .cat-header { display:flex; align-items:center; justify-content:space-between; padding:10px 12px; cursor:pointer; user-select:none; background:var(--md-surface-variant); border-radius:12px; margin-bottom:6px; }
+    .cat-name { font-size:12px; font-weight:600; color:var(--md-primary); text-transform:uppercase; letter-spacing:0.8px; }
+    .cat-chevron { font-size:16px; color:var(--md-primary); transition:transform 0.2s; }
     .cat-chevron.closed { transform:rotate(-90deg); }
     .cat-body.collapsed { display:none; }
     .cat-body { background:var(--md-surface); border-radius:12px; overflow:hidden; border:1px solid var(--md-outline-variant); margin-top:2px; }
@@ -251,7 +251,9 @@
     #voice-cancel-btn { padding:14px 20px; background:var(--md-surface-variant); color:var(--md-primary); border:none; border-radius:14px; font-size:16px; font-weight:600; font-family:'Outfit',sans-serif; cursor:pointer; }
 
     /* PICK PANEL */
-    #pick-panel { position:fixed; bottom:0; left:50%; transform:translateX(-50%); width:100%; max-width:600px; background:var(--md-surface); border-radius:28px 28px 0 0; padding:0 0 32px; box-shadow:0 -4px 32px rgba(0,0,0,0.3); z-index:200; display:none; max-height:88vh; overflow-y:auto; box-sizing:border-box; }
+    #pick-panel { position:fixed; bottom:0; left:50%; transform:translateX(-50%); width:100%; max-width:600px; background:linear-gradient(160deg, var(--md-primary) 0%, var(--md-primary-dark) 40%, #1a2e1c 100%); border-radius:28px 28px 0 0; padding:0 0 32px; box-shadow:0 -4px 32px rgba(0,0,0,0.3); z-index:200; display:none; max-height:88vh; overflow-y:auto; box-sizing:border-box; }
+    #pick-panel .pick-field-label { color:var(--md-white) !important; opacity:0.75 !important; }
+    #pick-panel { color:var(--md-white); }
     #pick-panel.open { display:block; }
     #pick-overlay { position:fixed; inset:0; background:rgba(26,28,25,0.5); z-index:199; display:none; backdrop-filter:blur(4px); -webkit-backdrop-filter:blur(4px); }
     #pick-overlay.open { display:block; }
@@ -1011,7 +1013,7 @@
   <div id="pick-panel">
     <div id="pick-title-row" style="display:flex; align-items:center; justify-content:space-between; padding:18px 16px 6px;">
       <div>
-        <div id="pick-title" style="font-size:29px; font-weight:600; color:var(--md-primary); font-family:'Outfit',sans-serif; text-align:left;">Produto</div>
+        <div id="pick-title" style="font-size:29px; font-weight:600; color:var(--md-white); font-family:'Outfit',sans-serif; text-align:left;">Produto</div>
         <div id="pick-date-display" style="display:none;">—</div>
       </div>
       <div style="display:flex; gap:10px; align-items:center;">
@@ -1034,19 +1036,19 @@
         <div style="display:flex; gap:10px; margin-bottom:12px;">
           <div style="flex:1;">
             <span style="font-size:12px; color:var(--md-primary); opacity:0.5; display:block; margin-bottom:4px;">Venda</span>
-            <input id="pick-sell-price" type="number" inputmode="decimal" placeholder="0.00" step="0.01" min="0"
+            <input id="pick-sell-price" type="search" inputmode="decimal" placeholder="0.00" step="0.01" min="0"
               autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" data-lpignore="true" data-form-type="other"
               onfocus="this.select()"
               onkeydown="if(event.key==='Enter'){event.preventDefault();document.getElementById('pick-price').focus();}"
-              style="width:100%; padding:12px; border:1.5px solid var(--md-outline-variant); border-radius:10px; font-size:18px; font-weight:700; font-family:'Outfit',sans-serif; color:var(--md-primary); background:var(--md-surface-1); outline:none; text-align:center; box-sizing:border-box;"/>
+              style="width:100%; padding:12px; border:1.5px solid var(--md-outline-variant); border-radius:10px; font-size:18px; font-weight:700; font-family:'Outfit',sans-serif; color:var(--md-primary); background:var(--md-surface-1); outline:none; text-align:center; box-sizing:border-box; -webkit-appearance:none; appearance:none;"/>
           </div>
           <div style="flex:1;">
             <span style="font-size:12px; color:var(--md-primary); opacity:0.5; display:block; margin-bottom:4px;">Compra</span>
-            <input id="pick-price" type="number" inputmode="decimal" placeholder="0.00" step="0.01" min="0"
+            <input id="pick-price" type="search" inputmode="decimal" placeholder="0.00" step="0.01" min="0"
               autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" data-lpignore="true" data-form-type="other"
               onfocus="this.select()"
               onkeydown="if(event.key==='Enter'){event.preventDefault();document.getElementById('pick-notes').focus();}"
-              style="width:100%; padding:12px; border:1.5px solid var(--md-outline-variant); border-radius:10px; font-size:18px; font-weight:700; font-family:'Outfit',sans-serif; color:var(--md-primary); background:var(--md-surface-1); outline:none; text-align:center; box-sizing:border-box;"/>
+              style="width:100%; padding:12px; border:1.5px solid var(--md-outline-variant); border-radius:10px; font-size:18px; font-weight:700; font-family:'Outfit',sans-serif; color:var(--md-primary); background:var(--md-surface-1); outline:none; text-align:center; box-sizing:border-box; -webkit-appearance:none; appearance:none;"/>
           </div>
         </div>
 
@@ -1079,8 +1081,9 @@
           <div>
             <span class="pick-field-label">Peso por caixa</span>
             <div style="display:flex; align-items:center; gap:8px;">
-              <input id="pick-weight" type="number" step="0.1" min="0" placeholder="—" onchange="onPickWeightChange()"
-                style="width:80px; padding:11px; border:1.5px solid var(--md-outline-variant); border-radius:10px; font-size:18px; font-weight:700; font-family:'Outfit',sans-serif; color:var(--md-primary); background:var(--md-surface-1); outline:none; text-align:center;"/>
+              <input id="pick-weight" type="search" inputmode="decimal" step="0.1" min="0" placeholder="—" onchange="onPickWeightChange()"
+                autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" data-lpignore="true" data-form-type="other"
+                style="width:80px; padding:11px; border:1.5px solid var(--md-outline-variant); border-radius:10px; font-size:18px; font-weight:700; font-family:'Outfit',sans-serif; color:var(--md-primary); background:var(--md-surface-1); outline:none; text-align:center; -webkit-appearance:none; appearance:none;"/>
               <span style="font-size:13px; color:var(--md-primary); opacity:0.6;">kg</span>
             </div>
           </div>
@@ -2180,11 +2183,18 @@ function toggleProjectOpen(projectId, wasOpen) {
   if (wasOpen) {
     const body = document.getElementById('task-body-' + projectId);
     if (body) {
-      body.style.transition = 'filter 0.25s ease-in, opacity 0.25s ease-in';
-      body.style.filter = 'blur(8px)';
-      body.style.opacity = '0';
+      // Fixa a altura atual primeiro (estava "auto"), para depois conseguir animar até 0.
+      const currentHeight = body.getBoundingClientRect().height;
+      body.style.height = currentHeight + 'px';
+      body.style.overflow = 'hidden';
+      requestAnimationFrame(() => {
+        body.style.transition = 'height 0.28s ease-in, opacity 0.22s ease-in, padding 0.28s ease-in';
+        body.style.height = '0';
+        body.style.padding = '0 12px';
+        body.style.opacity = '0';
+      });
       openProjects[projectId] = false;
-      setTimeout(() => renderTasksAndProjects(), 220);
+      setTimeout(() => renderTasksAndProjects(), 240);
       return;
     }
   }
@@ -2249,12 +2259,17 @@ function appendProjectCard(container, empty, proj, isFirst) {
   if (open) {
     const body = document.createElement('div');
     body.id = 'task-body-' + proj.id;
-    body.style.cssText = 'padding:6px 12px 16px; border-bottom:1px solid var(--md-outline-variant); filter:blur(8px); opacity:0; transition:filter 0.35s ease-out, opacity 0.35s ease-out;';
+    body.style.cssText = 'padding:0 12px; border-bottom:1px solid var(--md-outline-variant); height:0; overflow:hidden; opacity:0; transition:height 0.32s ease-out, opacity 0.28s ease-out, padding 0.32s ease-out;';
     renderTaskBodyItems(body, proj.id);
     wrap.appendChild(body);
     requestAnimationFrame(() => {
-      body.style.filter = 'blur(0)';
+      // Mede a altura natural do conteúdo (incluindo o padding final) e anima até lá,
+      // como uma gaveta a abrir — height:auto não é animável em CSS, por isso medimos.
+      const targetHeight = body.scrollHeight + 22; // +22 = padding vertical final (6px + 16px)
+      body.style.height = targetHeight + 'px';
+      body.style.padding = '6px 12px 16px';
       body.style.opacity = '1';
+      setTimeout(() => { body.style.height = 'auto'; }, 340);
     });
     attachTaskSwipeNav(wrap, proj.id);
   }
@@ -2265,12 +2280,26 @@ function appendProjectCard(container, empty, proj, isFirst) {
 
 // ── DESLIZAR PARA NAVEGAR ENTRE TAREFAS — sem fechar e voltar à lista ───────
 function attachTaskSwipeNav(wrapEl, projectId) {
-  let touchStartX = null, touchStartY = null;
+  let touchStartX = null, touchStartY = null, dragging = false;
+  const body = wrapEl.querySelector('[id^="task-body-"]') || wrapEl;
+
   wrapEl.addEventListener('touchstart', (e) => {
     // Ignora se o toque começa num campo de edição, botão, ou na alça de arrastar.
     if (e.target.closest('input, textarea, button, .task-drag-handle')) { touchStartX = null; return; }
     touchStartX = e.touches[0].clientX;
     touchStartY = e.touches[0].clientY;
+    dragging = false;
+  }, { passive: true });
+
+  wrapEl.addEventListener('touchmove', (e) => {
+    if (touchStartX === null) return;
+    const deltaX = e.touches[0].clientX - touchStartX;
+    const deltaY = e.touches[0].clientY - touchStartY;
+    if (!dragging && Math.abs(deltaX) < Math.abs(deltaY)) return; // é scroll vertical, não interfere
+    dragging = true;
+    body.style.transition = 'none';
+    body.style.transform = `translateX(${deltaX}px)`;
+    body.style.opacity = String(Math.max(0.4, 1 - Math.abs(deltaX) / 300));
   }, { passive: true });
 
   wrapEl.addEventListener('touchend', (e) => {
@@ -2280,19 +2309,32 @@ function attachTaskSwipeNav(wrapEl, projectId) {
     const deltaX = touchEndX - touchStartX;
     const deltaY = touchEndY - touchStartY;
     touchStartX = null;
+    if (!dragging) return;
+    dragging = false;
+
     // Só conta como gesto horizontal se o movimento lateral for claramente maior
     // que o vertical — evita disparar por engano ao fazer scroll normal da página.
-    if (Math.abs(deltaX) < 60 || Math.abs(deltaX) < Math.abs(deltaY)) return;
+    const isValidSwipe = Math.abs(deltaX) >= 60 && Math.abs(deltaX) >= Math.abs(deltaY);
 
     const idx = projects.findIndex(p => p.id === projectId);
-    if (idx === -1) return;
-    // Deslizar para a esquerda → próxima Tarefa da lista; para a direita → anterior.
     const nextIdx = deltaX < 0 ? idx + 1 : idx - 1;
-    if (nextIdx < 0 || nextIdx >= projects.length) return;
+    const hasTarget = idx !== -1 && nextIdx >= 0 && nextIdx < projects.length;
 
-    openProjects[projectId] = false;
-    openProjects[projects[nextIdx].id] = true;
-    renderTasksAndProjects();
+    body.style.transition = 'transform 0.25s ease-out, opacity 0.25s ease-out';
+    if (isValidSwipe && hasTarget) {
+      // Termina de deslizar para fora, na mesma direção do gesto, antes de trocar.
+      body.style.transform = `translateX(${deltaX < 0 ? '-100%' : '100%'})`;
+      body.style.opacity = '0';
+      setTimeout(() => {
+        openProjects[projectId] = false;
+        openProjects[projects[nextIdx].id] = true;
+        renderTasksAndProjects();
+      }, 220);
+    } else {
+      // Gesto insuficiente ou sem Tarefa vizinha — volta suavemente à posição original.
+      body.style.transform = 'translateX(0)';
+      body.style.opacity = '1';
+    }
   }, { passive: true });
 }
 
@@ -4642,6 +4684,24 @@ function toggleFilter() {
 // O Chrome para Android mostra uma barra de sugestões (senhas/cartões/endereços)
 // em qualquer input que pareça um campo de login ou pagamento — mesmo sendo só
 // uma quantidade de caixas. Esta função neutraliza isso em toda a app.
+// Aplica a um <input> a mesma proteção que já usamos na pesquisa: torna-o type="search"
+// (mais resistente ao gestor de senhas do que type="text"/"number") e desliga todas as
+// sugestões automáticas do browser. Usar sempre que um input for criado dinamicamente.
+function protectInput(inp, opts) {
+  opts = opts || {};
+  inp.type = 'search';
+  if (opts.numeric) { inp.inputMode = opts.decimal ? 'decimal' : 'numeric'; }
+  inp.autocomplete = 'off';
+  inp.autocorrect = 'off';
+  inp.autocapitalize = 'off';
+  inp.spellcheck = false;
+  inp.setAttribute('data-lpignore', 'true');
+  inp.setAttribute('data-form-type', 'other');
+  inp.style.webkitAppearance = 'none';
+  inp.style.appearance = 'none';
+  return inp;
+}
+
 function disableAutofillEverywhere() {
   const skip = ['date', 'hidden', 'checkbox', 'file', 'radio'];
   document.querySelectorAll('input, textarea').forEach(el => {
@@ -4951,7 +5011,7 @@ function makeQty(key, qty) {
 
   const display = document.createElement("div"); display.className = "qty-display" + (qty > 0 ? " active" : ""); display.textContent = qty > 0 ? qty : "—";
   display.addEventListener("click", () => {
-    const inp = document.createElement("input"); inp.type = "number"; inp.inputMode = "numeric"; inp.pattern = "[0-9]*"; inp.className = "qty-input-inline"; inp.value = qty > 0 ? qty : "";
+    const inp = document.createElement("input"); protectInput(inp, {numeric:true}); inp.pattern = "[0-9]*"; inp.className = "qty-input-inline"; inp.value = qty > 0 ? qty : "";
     inp.autocomplete = "off"; inp.setAttribute("autocorrect","off"); inp.setAttribute("autocapitalize","off"); inp.setAttribute("spellcheck","false"); inp.setAttribute("data-lpignore","true"); inp.setAttribute("data-form-type","other");
     wrap.replaceChild(inp, display); inp.focus(); inp.select();
     const commit = () => { const n = parseInt(inp.value, 10); list[key] = { qty: isNaN(n)||n<0?0:Math.min(999,n) }; sched(); rr(); };
@@ -5098,7 +5158,7 @@ function renderManage() {
 
           const bE = document.createElement("button"); bE.className = "btn-icon btn-edit material-icons-round"; bE.textContent = "edit";
           bE.addEventListener("click", () => {
-            const inp = document.createElement("input"); inp.className = "manage-edit-input"; inp.value = item;
+            const inp = document.createElement("input"); protectInput(inp); inp.className = "manage-edit-input"; inp.value = item;
             const bS = document.createElement("button"); bS.className = "btn-icon btn-save material-icons-round"; bS.textContent = "check";
             const bC = document.createElement("button"); bC.className = "btn-icon btn-cancel-edit material-icons-round"; bC.textContent = "close";
             row.innerHTML = ""; row.appendChild(inp); row.appendChild(bS); row.appendChild(bC); inp.focus(); inp.select();
@@ -5148,7 +5208,7 @@ function renderManage() {
 
         // Add item to subcat
         const addRow = document.createElement("div"); addRow.className = "manage-add-row";
-        const addInp = document.createElement("input"); addInp.className = "manage-add-input"; addInp.placeholder = "+ Adicionar artigo...";
+        const addInp = document.createElement("input"); protectInput(addInp); addInp.className = "manage-add-input"; addInp.placeholder = "+ Adicionar artigo...";
         addInp.addEventListener("keydown", e => {
           if (e.key !== "Enter") return;
           const n = addInp.value.trim(); if (!n) return;
@@ -5171,7 +5231,7 @@ function renderManage() {
         bW.addEventListener("click", () => openWeightModal(cat, item));
         const bD = document.createElement("button"); bD.className = "btn-icon btn-delete material-icons-round"; bD.textContent = "delete_outline";
         bE.addEventListener("click", () => {
-          const inp = document.createElement("input"); inp.className = "manage-edit-input"; inp.value = item;
+          const inp = document.createElement("input"); protectInput(inp); inp.className = "manage-edit-input"; inp.value = item;
           const bS = document.createElement("button"); bS.className = "btn-icon btn-save material-icons-round"; bS.textContent = "check";
           const bC = document.createElement("button"); bC.className = "btn-icon btn-cancel-edit material-icons-round"; bC.textContent = "close";
           row.innerHTML = ""; row.appendChild(inp); row.appendChild(bS); row.appendChild(bC); inp.focus(); inp.select();
@@ -6069,11 +6129,13 @@ document.getElementById('task-panel-delete-btn').addEventListener('click', () =>
 
 // Deslizar para a esquerda/direita no painel de produto (Comprar) navega para o
 // próximo/anterior artigo com quantidade marcada — o mesmo que as setas já fazem.
+// Funciona também a partir de dentro dos campos de texto (preço, nota, peso), já que
+// só dispara com um gesto bem horizontal e longo, sem interferir com escrever/selecionar.
 {
   let pickTouchStartX = null, pickTouchStartY = null;
   const pickPanelEl = document.getElementById('pick-panel');
   pickPanelEl.addEventListener('touchstart', (e) => {
-    if (e.target.closest('input, textarea, button, select')) { pickTouchStartX = null; return; }
+    if (e.target.closest('button, select')) { pickTouchStartX = null; return; }
     pickTouchStartX = e.touches[0].clientX;
     pickTouchStartY = e.touches[0].clientY;
   }, { passive: true });
@@ -6082,7 +6144,7 @@ document.getElementById('task-panel-delete-btn').addEventListener('click', () =>
     const deltaX = e.changedTouches[0].clientX - pickTouchStartX;
     const deltaY = e.changedTouches[0].clientY - pickTouchStartY;
     pickTouchStartX = null;
-    if (Math.abs(deltaX) < 60 || Math.abs(deltaX) < Math.abs(deltaY)) return;
+    if (Math.abs(deltaX) < 70 || Math.abs(deltaX) < Math.abs(deltaY) * 1.5) return;
     if (deltaX < 0) goNextItem(); else goPrevItem();
   }, { passive: true });
 }
