@@ -2171,6 +2171,24 @@ function renderProjects() {
   renderTasksAndProjects();
 }
 
+// Abre/fecha uma Tarefa. Ao fechar, anima primeiro o conteúdo a desfocar e a
+// desaparecer, e só depois remove tudo da lista — sem isto, o fecho seria instantâneo.
+function toggleProjectOpen(projectId, wasOpen) {
+  if (wasOpen) {
+    const body = document.getElementById('task-body-' + projectId);
+    if (body) {
+      body.style.transition = 'filter 0.25s ease-in, opacity 0.25s ease-in';
+      body.style.filter = 'blur(8px)';
+      body.style.opacity = '0';
+      openProjects[projectId] = false;
+      setTimeout(() => renderTasksAndProjects(), 220);
+      return;
+    }
+  }
+  openProjects[projectId] = !wasOpen;
+  renderTasksAndProjects();
+}
+
 function appendProjectCard(container, empty, proj, isFirst) {
   const open = openProjects[proj.id] === true;
   const wrap = document.createElement('div');
@@ -2213,20 +2231,14 @@ function appendProjectCard(container, empty, proj, isFirst) {
       row.style.padding = '44px 16px 14px';
     });
   }
-  nm.addEventListener('click', () => {
-    openProjects[proj.id] = !open;
-    renderTasksAndProjects();
-  });
+  nm.addEventListener('click', () => toggleProjectOpen(proj.id, open));
   row.appendChild(nm);
 
   const chevron = document.createElement('span');
   chevron.className = 'material-icons-round';
   chevron.textContent = open ? 'expand_less' : 'chevron_right';
   chevron.style.cssText = `font-size:22px; color:${open ? 'var(--md-white)' : 'var(--md-primary)'}; opacity:${open ? '0.9' : '0.35'}; flex-shrink:0; cursor:pointer; margin-top:4px;`;
-  chevron.addEventListener('click', () => {
-    openProjects[proj.id] = !open;
-    renderTasksAndProjects();
-  });
+  chevron.addEventListener('click', () => toggleProjectOpen(proj.id, open));
   row.appendChild(chevron);
 
   wrap.appendChild(row);
@@ -2234,9 +2246,13 @@ function appendProjectCard(container, empty, proj, isFirst) {
   if (open) {
     const body = document.createElement('div');
     body.id = 'task-body-' + proj.id;
-    body.style.cssText = 'padding:6px 12px 16px; border-bottom:1px solid var(--md-outline-variant);';
+    body.style.cssText = 'padding:6px 12px 16px; border-bottom:1px solid var(--md-outline-variant); filter:blur(8px); opacity:0; transition:filter 0.35s ease-out, opacity 0.35s ease-out;';
     renderTaskBodyItems(body, proj.id);
     wrap.appendChild(body);
+    requestAnimationFrame(() => {
+      body.style.filter = 'blur(0)';
+      body.style.opacity = '1';
+    });
   }
 
   container.insertBefore(wrap, empty);
