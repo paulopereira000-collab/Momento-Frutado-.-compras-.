@@ -1868,30 +1868,17 @@ function renderTasksAndProjects() {
   const hasContent = projects.length > 0;
   empty.style.display = hasContent ? 'none' : 'block';
 
-  projects.forEach(proj => appendProjectCard(list_el, empty, proj));
+  projects.forEach((proj, idx) => appendProjectCard(list_el, empty, proj, idx === 0));
 
   // Se alguma Tarefa estiver aberta, desfoca tudo o resto (cabeçalho + outras Tarefas)
   // para destacar a que está aberta, sem usar um painel flutuante por cima.
   const anyOpen = Object.values(openProjects).some(v => v === true);
-  const header = document.getElementById('header');
   Array.from(list_el.querySelectorAll('.task-row')).forEach(row => {
     const isOpenRow = row.querySelector('[id^="task-body-"]') !== null;
     row.style.filter = (anyOpen && !isOpenRow) ? 'blur(14px)' : 'none';
     row.style.transition = 'filter 0.4s ease-out';
     row.style.pointerEvents = (anyOpen && !isOpenRow) ? 'none' : 'auto';
   });
-  if (header) {
-    header.style.opacity = anyOpen ? '0' : '1';
-    header.style.filter = anyOpen ? 'blur(14px)' : 'none';
-    header.style.transition = 'opacity 0.4s ease-out, filter 0.4s ease-out';
-    // Espera a animação terminar antes de retirar do fluxo, para a transição ficar suave.
-    clearTimeout(header._visTimer);
-    if (anyOpen) {
-      header._visTimer = setTimeout(() => { if (header.style.opacity === '0') header.style.visibility = 'hidden'; }, 400);
-    } else {
-      header.style.visibility = 'visible';
-    }
-  }
   const addBtn = document.getElementById('tasks-add-btn');
   if (addBtn) addBtn.style.display = anyOpen ? 'none' : 'flex';
   if (anyOpen) {
@@ -1901,7 +1888,9 @@ function renderTasksAndProjects() {
       // ficar limitado, por isso não é #scroll-area que tem overflow, é a página toda).
       const rowRect = openRow.getBoundingClientRect();
       const headerHeight = document.getElementById('header')?.offsetHeight || 0;
-      const targetY = window.scrollY + rowRect.top - headerHeight - 8;
+      // A caixa em gradiente sobe 30px com margem negativa — soma-se aqui para o scroll
+      // já apontar para a posição final da caixa, não para a posição antes da margem.
+      const targetY = window.scrollY + rowRect.top - headerHeight - 30;
       window.scrollTo({ top: Math.max(0, targetY), behavior: 'smooth' });
     }
   }
@@ -2150,7 +2139,7 @@ function renderProjects() {
   renderTasksAndProjects();
 }
 
-function appendProjectCard(container, empty, proj) {
+function appendProjectCard(container, empty, proj, isFirst) {
   const open = openProjects[proj.id] === true;
   const wrap = document.createElement('div');
   wrap.className = 'task-row';
@@ -2160,12 +2149,13 @@ function appendProjectCard(container, empty, proj) {
   row.className = 'item-row task-item-row';
   row.style.alignItems = 'flex-start';
   row.style.gap = '2px';
+  row.style.transition = 'background 0.35s ease-out, padding 0.35s ease-out, margin 0.35s ease-out';
 
   // Alça de arrastar — toca e arrasta para reordenar por prioridade
   const dragHandle = document.createElement('span');
   dragHandle.className = 'material-icons-round task-drag-handle';
   dragHandle.textContent = 'drag_indicator';
-  dragHandle.style.cssText = 'font-size:22px; color:var(--md-primary); opacity:0.4; flex-shrink:0; cursor:grab; touch-action:none; width:32px; height:32px; border-radius:50%; display:flex; align-items:center; justify-content:center; margin-top:4px;';
+  dragHandle.style.cssText = `font-size:22px; color:${open ? 'var(--md-white)' : 'var(--md-primary)'}; opacity:${open ? '0.85' : '0.4'}; flex-shrink:0; cursor:grab; touch-action:none; width:32px; height:32px; border-radius:50%; display:flex; align-items:center; justify-content:center; margin-top:4px; transition:opacity 0.2s, color 0.2s;`;
   row.appendChild(dragHandle);
 
   const nm = document.createElement('span');
@@ -2174,12 +2164,23 @@ function appendProjectCard(container, empty, proj) {
   nm.style.fontSize = '35px';
   nm.style.fontWeight = '400';
   nm.style.filter = 'none';
-  nm.style.color = open ? 'var(--md-accent)' : 'var(--md-primary)';
+  nm.style.color = 'var(--md-primary)';
+  nm.style.transition = 'color 0.35s ease-out';
   nm.style.whiteSpace = 'normal';
   nm.style.wordBreak = 'break-word';
   nm.style.lineHeight = '1.15';
   nm.style.minWidth = '0';
   nm.innerHTML = `${proj.title}`;
+  if (open) {
+    // Aplica o estado "aberto" só no frame seguinte, para o browser animar a transição
+    // de cor de texto e o fundo em gradiente que cobre toda a largura da linha.
+    requestAnimationFrame(() => {
+      nm.style.color = 'var(--md-white)';
+      row.style.background = 'linear-gradient(135deg, var(--md-accent) 0%, var(--md-primary-dark) 100%)';
+      row.style.margin = '-30px -16px 0';
+      row.style.padding = '44px 16px 14px';
+    });
+  }
   nm.addEventListener('click', () => {
     openProjects[proj.id] = !open;
     renderTasksAndProjects();
@@ -2189,7 +2190,7 @@ function appendProjectCard(container, empty, proj) {
   const chevron = document.createElement('span');
   chevron.className = 'material-icons-round';
   chevron.textContent = open ? 'expand_less' : 'chevron_right';
-  chevron.style.cssText = 'font-size:22px; color:var(--md-primary); opacity:0.35; flex-shrink:0; cursor:pointer; margin-top:4px;';
+  chevron.style.cssText = `font-size:22px; color:${open ? 'var(--md-white)' : 'var(--md-primary)'}; opacity:${open ? '0.9' : '0.35'}; flex-shrink:0; cursor:pointer; margin-top:4px;`;
   chevron.addEventListener('click', () => {
     openProjects[proj.id] = !open;
     renderTasksAndProjects();
@@ -5187,12 +5188,6 @@ function renderHistory() {
 function switchTo(v, fromPopState) {
   document.querySelectorAll(".hnav-btn").forEach(x => x.classList.toggle("active", x.dataset.view===v));
   document.querySelectorAll(".view").forEach(el => el.classList.toggle("active", el.id===`view-${v}`));
-  // Ao sair de Fazer, o cabeçalho deve sempre voltar a ficar visível,
-  // independentemente de alguma Tarefa ter ficado "aberta" nesse separador.
-  if (v !== 'tasks') {
-    const header = document.getElementById('header');
-    if (header) { header.style.visibility = 'visible'; header.style.opacity = '1'; header.style.filter = 'none'; }
-  }
   // Regista no histórico do browser, para o botão/gesto de retroceder do telemóvel
   // voltar ao dashboard em vez de fechar a app — exceto quando já viemos de um popstate.
   if (!fromPopState) {
