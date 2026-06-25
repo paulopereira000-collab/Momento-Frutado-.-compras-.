@@ -91,6 +91,7 @@
       height:100%;
       background:var(--md-surface);
       font-family:'Outfit',sans-serif; color:var(--md-primary); user-select:none; -webkit-user-select:none; -webkit-touch-callout:none;
+      overflow-x:hidden; max-width:100vw;
     }
     input, textarea { user-select:text; -webkit-user-select:text; }
     input[type="number"] { user-select:none; -webkit-user-select:none; -webkit-touch-callout:none; }
@@ -109,7 +110,7 @@
     #app { max-width:600px; margin:0 auto; min-height:100vh; display:flex; flex-direction:column; }
 
     /* HEADER */
-    #header { background:var(--md-header-bg); border-bottom:none; padding:0 16px; position:sticky; top:0; z-index:100; box-shadow:0 2px 8px rgba(0,0,0,0.15); min-height:var(--header-height); box-sizing:border-box; }
+    #header { background:var(--md-header-bg); border-bottom:none; padding:0 16px; position:sticky; top:0; z-index:100; box-shadow:0 2px 8px rgba(0,0,0,0.15); min-height:var(--header-height); box-sizing:border-box; overflow-x:hidden; max-width:100vw; }
     #header-nav { display:flex; align-items:center; justify-content:space-between; padding:12px 0; }
     #header-icons { display:flex; gap:4px; }
     .hnav-btn { border:none; background:transparent; color:rgba(255,255,255,0.7); padding:8px; cursor:pointer; display:flex; align-items:center; justify-content:center; border-radius:50%; }
@@ -304,7 +305,7 @@
       <div id="header-icons" style="display:flex; align-items:center; justify-content:space-between; width:100%;">
         <div id="header-title-wrap" style="display:flex; align-items:center; gap:6px;">
           <span id="header-home-icon" class="material-icons-round" style="display:none; font-size:18px; color:var(--md-amber); cursor:pointer;" onclick="switchTo('dashboard')">home</span>
-          <button class="hnav-btn hnav-btn-brand active" data-view="dashboard" style="font-size:18px; font-weight:700; letter-spacing:1px; padding:6px 8px; text-transform:uppercase; white-space:nowrap; background:transparent; border-radius:0;">Momento Frutado</button>
+          <button class="hnav-btn hnav-btn-brand active" data-view="dashboard" style="font-size:13px; font-weight:700; letter-spacing:0.5px; padding:6px 8px; text-transform:uppercase; white-space:nowrap; background:transparent; border-radius:0; overflow:hidden; text-overflow:ellipsis; max-width:148px;">Momento Frutado</button>
         </div>
         <div style="display:flex; align-items:center; gap:0;">
           <button class="hnav-btn" id="list-nav-btn" data-view="list" style="font-size:11px; font-weight:700; letter-spacing:0.5px; padding:8px 10px;"><span class="material-icons-round">shopping_basket</span></button>
