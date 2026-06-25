@@ -1573,19 +1573,6 @@ function renderDashSummary() {
   if (!wrap) return;
   wrap.innerHTML = '';
 
-  // Card 1: última venda registada (normalmente "ontem")
-  let salesCardValue = '—';
-  let salesCardLabel = 'Sem vendas';
-  if (sales.length) {
-    const lastSale = [...sales].sort((a, b) => b.date.localeCompare(a.date))[0];
-    const todayStr = new Date().toISOString().split('T')[0];
-    const yesterday = new Date(Date.now() - 86400000).toISOString().split('T')[0];
-    salesCardValue = lastSale.total.toFixed(0) + '€';
-    if (lastSale.date === todayStr) salesCardLabel = 'Vendas hoje';
-    else if (lastSale.date === yesterday) salesCardLabel = 'Vendas ontem';
-    else salesCardLabel = 'Última venda';
-  }
-
   // Card 2 (comparação do dia vs média): como está o último dia de venda
   // desse mesmo dia da semana (Terça/Sexta/Sábado) — comparação direta com
   // dados reais, sem tentar prever o futuro.
@@ -1623,8 +1610,14 @@ function renderDashSummary() {
     }
   }
 
+  // Card 1: previsão do tempo para o próximo dia de mercado, no local certo
+  // (Terça/Sábado → Terrugem, Sintra; Sexta → São Domingos de Rana, Cascais).
+  let weatherCardValue = '—';
+  let weatherCardLabel = 'A consultar...';
+  const weatherCard = { value: weatherCardValue, label: weatherCardLabel, view: 'dashboard', dotId: null, weather: true };
+
   const cards = [
-    { value: salesCardValue, label: salesCardLabel, view: 'sales', dotId: 'dash-dot-sales' },
+    weatherCard,
     { value: dayCompareValue, label: dayCompareLabel, view: 'sales', dotId: null, alert: dayCompareAlert },
     { value: topProjectValue, label: topProjectLabel, view: 'tasks', dotId: null, small: true },
   ];
@@ -1632,6 +1625,7 @@ function renderDashSummary() {
   cards.forEach(c => {
     const card = document.createElement('button');
     card.onclick = () => switchTo(c.view);
+    if (c.weather) card.id = 'dash-weather-card';
     const borderColor = c.alert ? 'var(--md-error)' : 'var(--md-amber)';
     card.style.cssText = `width:100px; height:100px; border-radius:50%; background:transparent; border:2px solid ${borderColor}; display:flex; flex-direction:column; align-items:center; justify-content:center; cursor:pointer; flex-shrink:0; gap:2px; position:relative;`;
     const valueFontSize = c.small ? '13px' : '20px';
@@ -1651,9 +1645,65 @@ function renderDashSummary() {
     wrap.appendChild(card);
   });
 
-  // Indicador funcional: o ponto de vendas fica mais forte quando há vendas
-  const dotSales = document.getElementById('dash-dot-sales');
-  if (dotSales) dotSales.style.opacity = sales.length === 0 ? '0.3' : '0.95';
+  fetchNextMarketDayWeather();
+}
+
+// ── PREVISÃO DO TEMPO — próximo dia de mercado, no local certo ─────────────
+// Terça e Sábado: Terrugem, Sintra. Sexta: São Domingos de Rana, Cascais.
+const WEATHER_LOCATIONS = {
+  2: { name: 'Terrugem', lat: 38.84707, lon: -9.37789 },  // terça
+  5: { name: 'S.Dom.Rana', lat: 38.70157, lon: -9.34174 }, // sexta
+  6: { name: 'Terrugem', lat: 38.84707, lon: -9.37789 },  // sábado
+};
+
+function fetchNextMarketDayWeather() {
+  const card = document.getElementById('dash-weather-card');
+  if (!card) return;
+
+  // Encontra o próximo dia de mercado, sempre a partir de amanhã (nunca hoje,
+  // mesmo que hoje já seja Terça/Sexta/Sábado).
+  const today = new Date();
+  let targetDate = null, targetDow = null;
+  for (let i = 1; i <= 7; i++) {
+    const d = new Date(today);
+    d.setDate(d.getDate() + i);
+    if (WEATHER_LOCATIONS[d.getDay()]) { targetDate = d; targetDow = d.getDay(); break; }
+  }
+  if (!targetDate) return;
+
+  const loc = WEATHER_LOCATIONS[targetDow];
+  const dateStr = targetDate.toISOString().split('T')[0];
+  const dayNames = ['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'];
+
+  const url = `https://api.open-meteo.com/v1/forecast?latitude=${loc.lat}&longitude=${loc.lon}&daily=temperature_2m_max,temperature_2m_min,precipitation_probability_max,weather_code&timezone=Europe%2FLisbon&start_date=${dateStr}&end_date=${dateStr}`;
+
+  fetch(url).then(r => r.json()).then(data => {
+    if (!data.daily || !data.daily.time || !data.daily.time.length) throw new Error('sem dados');
+    const tMax = Math.round(data.daily.temperature_2m_max[0]);
+    const tMin = Math.round(data.daily.temperature_2m_min[0]);
+    const rainPct = data.daily.precipitation_probability_max[0];
+    const code = data.daily.weather_code[0];
+    const icon = weatherCodeToIcon(code);
+    const valueEl = card.querySelector('div:nth-child(1)');
+    const labelEl = card.querySelector('div:nth-child(2)');
+    if (valueEl) valueEl.innerHTML = `${icon} ${tMax}°`;
+    if (labelEl) labelEl.textContent = `${dayNames[targetDow]}${rainPct >= 30 ? ' · 🌧' + rainPct + '%' : ' · ' + loc.name}`;
+    card.title = `${loc.name} — ${dayNames[targetDow]}: ${tMin}° a ${tMax}°, ${rainPct}% chuva`;
+  }).catch(() => {
+    const labelEl = card.querySelector('div:nth-child(2)');
+    if (labelEl) labelEl.textContent = 'Sem ligação';
+  });
+}
+
+function weatherCodeToIcon(code) {
+  // Códigos WMO simplificados, usados pela Open-Meteo
+  if (code === 0) return '☀️';
+  if ([1,2,3].includes(code)) return '⛅';
+  if ([45,48].includes(code)) return '🌫️';
+  if ([51,53,55,56,57,61,63,65,66,67,80,81,82].includes(code)) return '🌧️';
+  if ([71,73,75,77,85,86].includes(code)) return '❄️';
+  if ([95,96,99].includes(code)) return '⛈️';
+  return '🌤️';
 }
 
 
