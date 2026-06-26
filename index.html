@@ -331,10 +331,10 @@
             style="width:100%; padding:9px 9px 9px 36px; border:1.5px solid var(--md-outline-variant); border-radius:10px; font-size:14px; font-family:'Outfit',sans-serif; color:var(--md-primary); background:rgba(92,126,96,0.08); outline:none; -webkit-appearance:none; appearance:none; box-sizing:border-box;"
             oninput="renderCats(this.value)" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" data-lpignore="true" data-form-type="other"/>
         </div>
-        <button onclick="switchTo('prices')" style="background:none; border:none; cursor:pointer; padding:6px; display:flex; align-items:center; opacity:0.5; flex-shrink:0;">
+        <button id="list-sell-btn" onclick="switchTo('prices')" style="background:none; border:none; cursor:pointer; padding:6px; display:flex; align-items:center; opacity:0.5; flex-shrink:0;">
           <span class="material-icons-round" style="font-size:24px; color:var(--md-primary);">sell</span>
         </button>
-        <button onclick="toggleVasilQuickPanel()" style="background:none; border:none; cursor:pointer; padding:6px; display:flex; align-items:center; opacity:0.5; position:relative; flex-shrink:0;">
+        <button id="list-vasil-btn" onclick="toggleVasilQuickPanel()" style="background:none; border:none; cursor:pointer; padding:6px; display:flex; align-items:center; opacity:0.5; position:relative; flex-shrink:0;">
           <span class="material-icons-round" style="font-size:24px; color:var(--md-primary);">inventory_2</span>
           <span id="vasil-quick-badge" style="display:none; position:absolute; top:0px; right:0px; width:8px; height:8px; border-radius:50%; background:var(--md-orange);"></span>
         </button>
@@ -2218,7 +2218,7 @@ function appendProjectCard(container, empty, proj, isFirst) {
   const dragHandle = document.createElement('span');
   dragHandle.className = 'material-icons-round task-drag-handle';
   dragHandle.textContent = 'drag_indicator';
-  dragHandle.style.cssText = `font-size:22px; color:${open ? 'var(--md-white)' : 'var(--md-primary)'}; opacity:${open ? '0.85' : '0.4'}; flex-shrink:0; cursor:grab; touch-action:none; width:32px; height:32px; border-radius:50%; display:flex; align-items:center; justify-content:center; margin-top:4px; transition:opacity 0.2s, color 0.2s;`;
+  dragHandle.style.cssText = `font-size:22px; color:var(--md-primary); opacity:0.4; flex-shrink:0; cursor:grab; touch-action:none; width:32px; height:32px; border-radius:50%; display:flex; align-items:center; justify-content:center; margin-top:4px; transition:opacity 0.2s, color 0.2s;`;
   row.appendChild(dragHandle);
 
   const nm = document.createElement('span');
@@ -2236,12 +2236,9 @@ function appendProjectCard(container, empty, proj, isFirst) {
   nm.innerHTML = `${proj.title}`;
   if (open) {
     // Aplica o estado "aberto" só no frame seguinte, para o browser animar a transição
-    // de cor de texto e o fundo em gradiente que cobre toda a largura da linha.
+    // de cor do texto.
     requestAnimationFrame(() => {
-      nm.style.color = 'var(--md-white)';
-      row.style.background = 'linear-gradient(135deg, var(--md-accent) 0%, var(--md-primary-dark) 100%)';
-      row.style.margin = '-30px -16px 0';
-      row.style.padding = '44px 16px 14px';
+      nm.style.color = 'var(--md-amber)';
     });
   }
   nm.addEventListener('click', () => toggleProjectOpen(proj.id, open));
@@ -2250,7 +2247,7 @@ function appendProjectCard(container, empty, proj, isFirst) {
   const chevron = document.createElement('span');
   chevron.className = 'material-icons-round';
   chevron.textContent = open ? 'expand_less' : 'chevron_right';
-  chevron.style.cssText = `font-size:22px; color:${open ? 'var(--md-white)' : 'var(--md-primary)'}; opacity:${open ? '0.9' : '0.35'}; flex-shrink:0; cursor:pointer; margin-top:4px;`;
+  chevron.style.cssText = `font-size:22px; color:${open ? 'var(--md-amber)' : 'var(--md-primary)'}; opacity:${open ? '0.9' : '0.35'}; flex-shrink:0; cursor:pointer; margin-top:4px;`;
   chevron.addEventListener('click', () => toggleProjectOpen(proj.id, open));
   row.appendChild(chevron);
 
@@ -4688,8 +4685,12 @@ function toggleFilter() {
   if (titleIcon) titleIcon.textContent = filterActive ? "visibility_off" : "visibility";
   const header = document.getElementById('header');
   const closeBtn = document.getElementById('list-filter-close-btn');
+  const sellBtn = document.getElementById('list-sell-btn');
+  const vasilBtn = document.getElementById('list-vasil-btn');
   if (header) header.style.visibility = filterActive ? 'hidden' : 'visible';
   if (closeBtn) closeBtn.style.display = filterActive ? 'flex' : 'none';
+  if (sellBtn) sellBtn.style.display = filterActive ? 'none' : 'flex';
+  if (vasilBtn) vasilBtn.style.display = filterActive ? 'none' : 'flex';
   renderCats("");
 }
 
@@ -4914,6 +4915,56 @@ function isLowMargin(key, item) {
 
 function renderCats(search) {
   const c = document.getElementById("cat-list"); c.innerHTML = "";
+
+  // Com o filtro ativo, mostra todos os produtos com quantidade juntos, sem separar
+  // por categoria — não interessa ver "FRUTA"/"LEGUMES" quando só queres rever o que
+  // já marcaste, só a lista direta importa.
+  if (filterActive) {
+    const flatWrap = document.createElement("div"); flatWrap.className = "cat-wrap";
+    const flatBody = document.createElement("div"); flatBody.className = "cat-body";
+    let zebraIdx = 0;
+    let hasAny = false;
+
+    Object.entries(products).forEach(([cat, items]) => {
+      const allItems = subcats[cat] ? subcats[cat].flatMap(g => g.items) : items;
+      let filtered = search ? allItems.filter(i => i.toLowerCase().includes(search.toLowerCase())) : allItems;
+      filtered = filtered.filter(i => Number(list[gk(cat, i)]?.qty || 0) > 0);
+      filtered.forEach((item) => {
+        hasAny = true;
+        const key = gk(cat, item), e = list[key] || { qty: 0 }, active = Number(e.qty) > 0;
+        const isPicked = picked[key]?.done;
+        const row = document.createElement("div");
+        row.className = "item-row " + (zebraIdx % 2 === 0 ? "zebra-even" : "zebra-odd") + (active ? " active" : "");
+        zebraIdx++;
+        const nm = document.createElement("span"); nm.className = "item-name" + (active ? " active" : "") + (isPicked ? " picked" : "");
+        nm.textContent = item;
+        const qtyEl = makeQty(key, Number(e.qty));
+        if (isPicked) { const qd = qtyEl.querySelector(".qty-display"); if(qd) qd.classList.add("picked"); }
+        if (isLowMargin(key, item)) {
+          row.style.color = 'var(--md-error)';
+          nm.style.color = 'var(--md-error)';
+          const warnM = document.createElement('span'); warnM.className = 'material-icons-round'; warnM.textContent = 'warning';
+          warnM.title = 'Margem abaixo de 20%'; warnM.style.cssText = 'font-size:32px; margin-left:4px; color:var(--md-error); vertical-align:middle;';
+          nm.appendChild(warnM);
+        }
+        row.dataset.key = key;
+        nm.style.cursor = 'pointer';
+        nm.addEventListener("click", () => openPickPanel(cat, item));
+        row.appendChild(nm);
+        const pb = document.createElement("button");
+        pb.className = "pick-btn material-icons-round" + (isPicked ? " picked" : "") + (active ? "" : " pick-hidden");
+        pb.textContent = isPicked ? "task_alt" : "radio_button_unchecked";
+        if (active) pb.addEventListener("click", ev => { ev.stopPropagation(); picked[key] = { ...picked[key], done: !picked[key]?.done }; sched(); renderCats(""); });
+        row.appendChild(pb);
+        row.appendChild(qtyEl); flatBody.appendChild(row);
+      });
+    });
+
+    if (hasAny) { flatWrap.appendChild(flatBody); c.appendChild(flatWrap); }
+    renderHdr();
+    return;
+  }
+
   Object.entries(products).forEach(([cat, items]) => {
     const open = openCats[cat] !== false;
     const wrap = document.createElement("div"); wrap.className = "cat-wrap";
@@ -5369,6 +5420,10 @@ function switchTo(v, fromPopState) {
     if (titleIcon) titleIcon.textContent = "visibility";
     const closeBtn = document.getElementById('list-filter-close-btn');
     if (closeBtn) closeBtn.style.display = 'none';
+    const sellBtn = document.getElementById('list-sell-btn');
+    if (sellBtn) sellBtn.style.display = 'flex';
+    const vasilBtn = document.getElementById('list-vasil-btn');
+    if (vasilBtn) vasilBtn.style.display = 'flex';
     const header = document.getElementById('header');
     if (header) header.style.visibility = 'visible';
   }
@@ -6145,20 +6200,60 @@ document.getElementById('task-panel-delete-btn').addEventListener('click', () =>
 // Funciona também a partir de dentro dos campos de texto (preço, nota, peso), já que
 // só dispara com um gesto bem horizontal e longo, sem interferir com escrever/selecionar.
 {
-  let pickTouchStartX = null, pickTouchStartY = null;
+  let pickTouchStartX = null, pickTouchStartY = null, pickDragging = false;
   const pickPanelEl = document.getElementById('pick-panel');
+
   pickPanelEl.addEventListener('touchstart', (e) => {
     if (e.target.closest('button, select')) { pickTouchStartX = null; return; }
     pickTouchStartX = e.touches[0].clientX;
     pickTouchStartY = e.touches[0].clientY;
+    pickDragging = false;
   }, { passive: true });
+
+  pickPanelEl.addEventListener('touchmove', (e) => {
+    if (pickTouchStartX === null) return;
+    const deltaX = e.touches[0].clientX - pickTouchStartX;
+    const deltaY = e.touches[0].clientY - pickTouchStartY;
+    if (!pickDragging && Math.abs(deltaX) < Math.abs(deltaY) * 1.5) return; // é scroll, não interfere
+    pickDragging = true;
+    pickPanelEl.style.transition = 'none';
+    pickPanelEl.style.transform = `translateX(-50%) translateX(${deltaX}px)`;
+    pickPanelEl.style.opacity = String(Math.max(0.4, 1 - Math.abs(deltaX) / 300));
+  }, { passive: true });
+
   pickPanelEl.addEventListener('touchend', (e) => {
     if (pickTouchStartX === null) return;
     const deltaX = e.changedTouches[0].clientX - pickTouchStartX;
     const deltaY = e.changedTouches[0].clientY - pickTouchStartY;
     pickTouchStartX = null;
-    if (Math.abs(deltaX) < 70 || Math.abs(deltaX) < Math.abs(deltaY) * 1.5) return;
-    if (deltaX < 0) goNextItem(); else goPrevItem();
+    if (!pickDragging) return;
+    pickDragging = false;
+
+    const isValidSwipe = Math.abs(deltaX) >= 70 && Math.abs(deltaX) >= Math.abs(deltaY) * 1.5;
+    pickPanelEl.style.transition = 'transform 0.25s ease-out, opacity 0.25s ease-out';
+
+    if (isValidSwipe) {
+      // Termina de deslizar para fora, na mesma direção do gesto, antes de trocar de artigo.
+      pickPanelEl.style.transform = `translateX(-50%) translateX(${deltaX < 0 ? '-100%' : '100%'})`;
+      pickPanelEl.style.opacity = '0';
+      setTimeout(() => {
+        if (deltaX < 0) goNextItem(); else goPrevItem();
+        // Repõe a posição (sem transição) antes de mostrar o próximo artigo, e entra
+        // suavemente a partir do lado oposto, dando sensação de continuidade.
+        pickPanelEl.style.transition = 'none';
+        pickPanelEl.style.transform = `translateX(-50%) translateX(${deltaX < 0 ? '40px' : '-40px'})`;
+        pickPanelEl.style.opacity = '0';
+        requestAnimationFrame(() => {
+          pickPanelEl.style.transition = 'transform 0.25s ease-out, opacity 0.25s ease-out';
+          pickPanelEl.style.transform = 'translateX(-50%)';
+          pickPanelEl.style.opacity = '1';
+        });
+      }, 220);
+    } else {
+      // Gesto insuficiente — volta suavemente à posição original.
+      pickPanelEl.style.transform = 'translateX(-50%)';
+      pickPanelEl.style.opacity = '1';
+    }
   }, { passive: true });
 }
 
