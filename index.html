@@ -850,6 +850,7 @@
       <input id="sup-type" type="search" placeholder="Ex: Fruta, Lacticínios, Carnes..." style="width:100%; padding:14px; border-radius:10px; border:1.5px solid var(--md-outline-variant); font-size:16px; font-family:'Outfit',sans-serif; outline:none; margin-bottom:14px; background:var(--md-surface-1); color:var(--md-primary); -webkit-appearance:none; appearance:none;" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" data-lpignore="true" data-form-type="other"/>
       <label style="font-size:11px; font-weight:700; color:var(--md-primary); text-transform:uppercase; letter-spacing:0.5px; display:block; margin-bottom:6px;">Telefone</label>
       <input id="sup-phone" type="tel" placeholder="+351 9xx xxx xxx" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" data-lpignore="true" data-form-type="other" style="width:100%; padding:14px; border-radius:10px; border:1.5px solid var(--md-outline-variant); font-size:16px; font-family:'Outfit',sans-serif; outline:none; margin-bottom:14px; background:var(--md-surface-1); color:var(--md-primary);"/>
+      <div id="sup-vasil-balance" style="display:none;"></div>
       <label style="font-size:11px; font-weight:700; color:var(--md-primary); text-transform:uppercase; letter-spacing:0.5px; display:block; margin-bottom:6px;">Notas</label>
       <input id="sup-notes" type="search" placeholder="Corredor MARL, dias de entrega..." style="width:100%; padding:14px; border-radius:10px; border:1.5px solid var(--md-outline-variant); font-size:16px; font-family:'Outfit',sans-serif; outline:none; margin-bottom:20px; background:var(--md-surface-1); color:var(--md-primary); -webkit-appearance:none; appearance:none;" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" data-lpignore="true" data-form-type="other"/>
       <div style="display:flex; gap:10px;">
@@ -1290,6 +1291,21 @@ let snapHistory = []; // array of weekly snapshots
 let filterActive = false;
 let suppliers = []; // fornecedores
 let vasilhameMovs = []; // movimentos { id, date, supplier, boxType, qty, direction:'debit'|'credit' }
+
+// Calcula o saldo de vasilhame em dívida a um fornecedor, por tipo de caixa.
+// Usada tanto em Vasilhame (saldo geral) como no perfil de cada Fornecedor.
+function getVasilBalanceForSupplier(supplierName) {
+  const balance = {};
+  vasilhameMovs.forEach(m => {
+    if (m.supplier !== supplierName) return;
+    balance[m.boxType] = (balance[m.boxType] || 0) + (m.direction === 'debit' ? m.qty : -m.qty);
+  });
+  return Object.fromEntries(Object.entries(balance).filter(([, v]) => v !== 0));
+}
+
+function getTotalVasilBalanceForSupplier(supplierName) {
+  return Object.values(getVasilBalanceForSupplier(supplierName)).reduce((sum, v) => sum + Math.max(0, v), 0);
+}
 const VASILHAME_TYPES = ['Caixa 1kg', 'Caixa espanhola', 'Petit', 'Tabuleiro', 'Palote'];
 let tasks = [];     // tarefas
 let projects = [];  // projetos: { id, title, tasks: [{id, text, notes, done}] }
@@ -1765,6 +1781,37 @@ function openSupplierModal(id) {
   document.getElementById('sup-notes').value = sup ? sup.notes : '';
   const titleEl = document.getElementById('supplier-modal-title');
   if (titleEl) titleEl.textContent = sup ? 'Editar fornecedor' : 'Novo fornecedor';
+
+  // Vasilhame em dívida a este fornecedor, por tipo de caixa — só faz sentido mostrar
+  // para um fornecedor já existente (um novo nunca teve movimentos).
+  const vasilBox = document.getElementById('sup-vasil-balance');
+  if (vasilBox) {
+    const balance = sup ? getVasilBalanceForSupplier(sup.name) : {};
+    const types = Object.keys(balance);
+    if (sup && types.length > 0) {
+      const rowsHtml = types.map(t => {
+        const val = balance[t];
+        const isDebt = val > 0;
+        return `<div style="display:flex; justify-content:space-between; padding:4px 0;">
+          <span style="font-size:14px; color:var(--md-primary); opacity:0.8;">${t}</span>
+          <span style="font-size:14px; font-weight:700; color:${isDebt ? 'var(--md-error)' : 'var(--md-success)'};">${isDebt ? val : Math.abs(val) + ' a mais'}</span>
+        </div>`;
+      }).join('');
+      vasilBox.innerHTML = `
+        <div style="background:rgba(196,69,54,0.06); border:1px solid var(--md-outline-variant); border-radius:10px; padding:12px 14px; margin-bottom:14px;">
+          <div style="font-size:11px; font-weight:700; color:var(--md-primary); opacity:0.6; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:6px; display:flex; align-items:center; gap:5px;">
+            <span class="material-icons-round" style="font-size:14px;">inventory_2</span> Vasilhame em dívida
+          </div>
+          ${rowsHtml}
+        </div>
+      `;
+      vasilBox.style.display = 'block';
+    } else {
+      vasilBox.style.display = 'none';
+      vasilBox.innerHTML = '';
+    }
+  }
+
   document.getElementById('supplier-modal-overlay').style.display = 'block';
   document.getElementById('supplier-modal-panel').style.display   = 'block';
   document.getElementById('sup-name').focus();
@@ -1868,10 +1915,16 @@ function renderSuppliers(query) {
       card.style.cssText = 'display:flex; align-items:center; width:100%; text-align:left; padding:16px; border:none; border-radius:12px; background:var(--md-primary-container); cursor:pointer; margin-bottom:8px; gap:14px;';
       card.onclick = () => openSupplierModal(s.id);
       const initials = s.name.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
+      const vasilTotal = getTotalVasilBalanceForSupplier(s.name);
+      const vasilBadge = vasilTotal > 0
+        ? `<span style="font-size:11px; font-weight:700; color:var(--md-error); background:rgba(196,69,54,0.14); border-radius:7px; padding:2px 6px; display:inline-flex; align-items:center; gap:2px; flex-shrink:0; white-space:nowrap; margin-left:6px; vertical-align:middle;"><span class="material-icons-round" style="font-size:11px;">inventory_2</span>${vasilTotal}</span>`
+        : '';
       card.innerHTML = `
         <div class="supplier-avatar" style="flex-shrink:0;">${initials}</div>
         <div style="flex:1; min-width:0;">
-          <div style="font-size:19px; font-weight:600; color:var(--md-on-primary-container); overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${s.name}</div>
+          <div style="font-size:19px; font-weight:600; color:var(--md-on-primary-container); display:flex; align-items:center; min-width:0;">
+            <span style="overflow:hidden; text-overflow:ellipsis; white-space:nowrap; min-width:0;">${s.name}</span>${vasilBadge}
+          </div>
           ${s.phone ? `<div style="font-size:13px; color:var(--md-on-primary-container); opacity:0.7; margin-top:2px; display:flex; align-items:center; gap:4px;"><span class="material-icons-round" style="font-size:14px;">phone</span>${s.phone}</div>` : ''}
         </div>
       `;
@@ -1913,9 +1966,23 @@ function renderTasksAndProjects() {
   const anyOpen = Object.values(openProjects).some(v => v === true);
   Array.from(list_el.querySelectorAll('.task-row')).forEach(row => {
     const isOpenRow = row.querySelector('[id^="task-body-"]') !== null;
-    row.style.filter = (anyOpen && !isOpenRow) ? 'blur(14px)' : 'none';
-    row.style.transition = 'filter 0.4s ease-out';
-    row.style.pointerEvents = (anyOpen && !isOpenRow) ? 'none' : 'auto';
+    const shouldBlur = anyOpen && !isOpenRow;
+    row.style.pointerEvents = shouldBlur ? 'none' : 'auto';
+    if (shouldBlur) {
+      // O elemento nasce sempre do zero (a lista é recriada a cada render), por isso
+      // sem isto o filtro "salta" direto para o valor final, sem nenhuma transição real.
+      // Define primeiro o estado nítido, e só num frame depois aplica o desfoque com
+      // atraso — assim o browser tem um ponto de partida e consegue animar a sério.
+      row.style.transition = 'none';
+      row.style.filter = 'none';
+      requestAnimationFrame(() => {
+        row.style.transition = 'filter 0.4s ease-out 0.15s';
+        row.style.filter = 'blur(14px)';
+      });
+    } else {
+      row.style.transition = 'filter 0.25s ease-out';
+      row.style.filter = 'none';
+    }
   });
   const addBtn = document.getElementById('tasks-add-btn');
   if (addBtn) addBtn.style.display = anyOpen ? 'none' : 'flex';
@@ -4920,7 +4987,7 @@ function renderCats(search) {
   // por categoria — não interessa ver "FRUTA"/"LEGUMES" quando só queres rever o que
   // já marcaste, só a lista direta importa.
   if (filterActive) {
-    const flatWrap = document.createElement("div"); flatWrap.className = "cat-wrap";
+    const flatWrap = document.createElement("div"); flatWrap.className = "cat-wrap"; flatWrap.style.paddingTop = "0";
     const flatBody = document.createElement("div"); flatBody.className = "cat-body";
     let zebraIdx = 0;
     let hasAny = false;
