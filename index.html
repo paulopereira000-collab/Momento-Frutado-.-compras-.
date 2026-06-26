@@ -304,12 +304,12 @@
 <div id="app" style="display:none">
   <div id="header">
     <div id="header-nav">
-      <div id="header-icons" style="display:flex; align-items:center; justify-content:space-between; width:100%;">
-        <div id="header-title-wrap" style="display:flex; align-items:center; gap:6px;">
-          <span id="header-home-icon" class="material-icons-round" style="display:none; font-size:18px; color:var(--md-amber); cursor:pointer;" onclick="switchTo('dashboard')">home</span>
+      <div id="header-icons" style="display:flex; align-items:center; justify-content:space-between; width:100%; gap:8px;">
+        <div id="header-title-wrap" style="display:flex; align-items:center; gap:6px; min-width:0; flex:1;">
+          <span id="header-home-icon" class="material-icons-round" style="display:none; font-size:18px; color:var(--md-amber); cursor:pointer; flex-shrink:0;" onclick="switchTo('dashboard')">home</span>
           <button class="hnav-btn hnav-btn-brand active" data-view="dashboard" style="font-size:13px; font-weight:700; letter-spacing:0.5px; padding:6px 8px; text-transform:uppercase; white-space:nowrap; background:transparent; border-radius:0; overflow:hidden; text-overflow:ellipsis; max-width:148px;">Momento Frutado</button>
         </div>
-        <div style="display:flex; align-items:center; gap:0;">
+        <div id="header-nav-btns" style="display:flex; align-items:center; gap:0; flex-shrink:0;">
           <button class="hnav-btn" id="list-nav-btn" data-view="list" style="font-size:11px; font-weight:700; letter-spacing:0.5px; padding:8px 10px;"><span class="material-icons-round">shopping_basket</span></button>
           <button class="hnav-btn" data-view="sales" style="font-size:11px; font-weight:700; letter-spacing:0.5px; padding:8px 10px;"><span class="material-icons-round">point_of_sale</span></button>
           <button class="hnav-btn" data-view="tasks" style="font-size:11px; font-weight:700; letter-spacing:0.5px; padding:8px 10px;"><span class="material-icons-round">check_circle</span></button>
@@ -322,9 +322,6 @@
   <div id="scroll-area">
     <div id="view-list" class="view">
       <div id="list-search-row" style="padding:14px 16px 8px; display:flex; align-items:center; gap:8px; position:sticky; top:0; z-index:90; background:var(--md-surface); box-shadow:0 2px 6px rgba(0,0,0,0.06);">
-        <button id="list-filter-close-btn" onclick="toggleFilter()" title="Sair do filtro" style="display:none; width:36px; height:36px; border-radius:50%; background:none; border:1.5px solid var(--md-primary); cursor:pointer; align-items:center; justify-content:center; flex-shrink:0;">
-          <span class="material-icons-round" style="font-size:18px; color:var(--md-primary);">close</span>
-        </button>
         <div style="position:relative; flex:1; min-width:0;">
           <span class="material-icons-round" style="position:absolute; left:12px; top:50%; transform:translateY(-50%); font-size:18px; color:var(--md-primary); opacity:0.4; pointer-events:none;">search</span>
           <input id="list-search" type="search" placeholder="Pesquisar"
@@ -338,10 +335,14 @@
           <span class="material-icons-round" style="font-size:24px; color:var(--md-primary);">inventory_2</span>
           <span id="vasil-quick-badge" style="display:none; position:absolute; top:0px; right:0px; width:8px; height:8px; border-radius:50%; background:var(--md-orange);"></span>
         </button>
-        <button onclick="toggleFilter()" style="background:none; border:none; cursor:pointer; padding:6px; display:flex; align-items:center; opacity:0.5; flex-shrink:0;">
+        <button id="list-filter-btn" onclick="toggleFilter()" style="background:none; border:none; cursor:pointer; padding:6px; display:flex; align-items:center; opacity:0.5; flex-shrink:0;">
           <span class="material-icons-round" id="list-filter-icon" style="font-size:26px; color:var(--md-primary);">visibility</span>
         </button>
       </div>
+
+      <button id="filter-floating-home" onclick="switchTo('dashboard')" title="Voltar ao início" style="display:none; position:fixed; top:0px; left:0px; z-index:95; width:26px; height:26px; border-radius:50%; background:var(--md-amber); border:none; cursor:pointer; align-items:center; justify-content:center; box-shadow:0 2px 6px rgba(0,0,0,0.25); opacity:0.92;">
+        <span class="material-icons-round" style="font-size:14px; color:var(--md-primary-dark);">home</span>
+      </button>
 
       <!-- Painel rápido de vasilhame -->
       <div id="vasil-quick-panel" style="display:none; padding:0 16px 12px;">
@@ -4750,15 +4751,18 @@ function toggleFilter() {
   filterActive = !filterActive;
   const titleIcon = document.getElementById("list-filter-icon");
   if (titleIcon) titleIcon.textContent = filterActive ? "visibility_off" : "visibility";
+
+  const searchRow = document.getElementById('list-search-row');
   const header = document.getElementById('header');
-  const closeBtn = document.getElementById('list-filter-close-btn');
-  const sellBtn = document.getElementById('list-sell-btn');
-  const vasilBtn = document.getElementById('list-vasil-btn');
-  if (header) header.style.visibility = filterActive ? 'hidden' : 'visible';
-  if (closeBtn) closeBtn.style.display = filterActive ? 'flex' : 'none';
-  if (sellBtn) sellBtn.style.display = filterActive ? 'none' : 'flex';
-  if (vasilBtn) vasilBtn.style.display = filterActive ? 'none' : 'flex';
-  renderCats("");
+  const floatingHome = document.getElementById('filter-floating-home');
+
+  // Esconde o cabeçalho geral por completo (e a linha de pesquisa) para maximizar o
+  // espaço de leitura da lista — só fica a bola flutuante para voltar ao início.
+  if (searchRow) searchRow.style.display = filterActive ? 'none' : 'flex';
+  if (header) header.style.display = filterActive ? 'none' : '';
+  if (floatingHome) floatingHome.style.display = filterActive ? 'flex' : 'none';
+
+  renderCats('');
 }
 
 // ── ANTI-AUTOFILL GLOBAL ─────────────────────────────────────────────────────
@@ -4987,8 +4991,9 @@ function renderCats(search) {
   // por categoria — não interessa ver "FRUTA"/"LEGUMES" quando só queres rever o que
   // já marcaste, só a lista direta importa.
   if (filterActive) {
+    c.style.paddingTop = "0";
     const flatWrap = document.createElement("div"); flatWrap.className = "cat-wrap"; flatWrap.style.paddingTop = "0";
-    const flatBody = document.createElement("div"); flatBody.className = "cat-body";
+    const flatBody = document.createElement("div"); flatBody.className = "cat-body"; flatBody.style.marginTop = "0"; flatBody.style.borderTop = "none"; flatBody.style.borderRadius = "0 0 12px 12px";
     let zebraIdx = 0;
     let hasAny = false;
 
@@ -5031,6 +5036,7 @@ function renderCats(search) {
     renderHdr();
     return;
   }
+  c.style.paddingTop = "4px";
 
   Object.entries(products).forEach(([cat, items]) => {
     const open = openCats[cat] !== false;
@@ -5485,14 +5491,12 @@ function switchTo(v, fromPopState) {
     filterActive = false;
     const titleIcon = document.getElementById("list-filter-icon");
     if (titleIcon) titleIcon.textContent = "visibility";
-    const closeBtn = document.getElementById('list-filter-close-btn');
-    if (closeBtn) closeBtn.style.display = 'none';
-    const sellBtn = document.getElementById('list-sell-btn');
-    if (sellBtn) sellBtn.style.display = 'flex';
-    const vasilBtn = document.getElementById('list-vasil-btn');
-    if (vasilBtn) vasilBtn.style.display = 'flex';
+    const searchRow = document.getElementById('list-search-row');
+    if (searchRow) searchRow.style.display = 'flex';
     const header = document.getElementById('header');
-    if (header) header.style.visibility = 'visible';
+    if (header) header.style.display = '';
+    const floatingHome = document.getElementById('filter-floating-home');
+    if (floatingHome) floatingHome.style.display = 'none';
   }
   closeSettingsMenu();
   if (v !== "list") { const s = document.getElementById("list-search"); if(s) s.value = ""; }
