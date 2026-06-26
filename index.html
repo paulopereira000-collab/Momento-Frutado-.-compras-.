@@ -2282,6 +2282,7 @@ function appendProjectCard(container, empty, proj, isFirst) {
 function attachTaskSwipeNav(wrapEl, projectId) {
   let touchStartX = null, touchStartY = null, dragging = false;
   const body = wrapEl.querySelector('[id^="task-body-"]') || wrapEl;
+  const titleRow = wrapEl.querySelector('.item-row');
 
   wrapEl.addEventListener('touchstart', (e) => {
     // Ignora se o toque começa num campo de edição, botão, ou na alça de arrastar.
@@ -2297,9 +2298,15 @@ function attachTaskSwipeNav(wrapEl, projectId) {
     const deltaY = e.touches[0].clientY - touchStartY;
     if (!dragging && Math.abs(deltaX) < Math.abs(deltaY)) return; // é scroll vertical, não interfere
     dragging = true;
+    const opacity = String(Math.max(0.4, 1 - Math.abs(deltaX) / 300));
     body.style.transition = 'none';
     body.style.transform = `translateX(${deltaX}px)`;
-    body.style.opacity = String(Math.max(0.4, 1 - Math.abs(deltaX) / 300));
+    body.style.opacity = opacity;
+    if (titleRow) {
+      titleRow.style.transition = 'none';
+      titleRow.style.transform = `translateX(${deltaX}px)`;
+      titleRow.style.opacity = opacity;
+    }
   }, { passive: true });
 
   wrapEl.addEventListener('touchend', (e) => {
@@ -2320,11 +2327,16 @@ function attachTaskSwipeNav(wrapEl, projectId) {
     const nextIdx = deltaX < 0 ? idx + 1 : idx - 1;
     const hasTarget = idx !== -1 && nextIdx >= 0 && nextIdx < projects.length;
 
-    body.style.transition = 'transform 0.25s ease-out, opacity 0.25s ease-out';
+    const transition = 'transform 0.25s ease-out, opacity 0.25s ease-out';
+    body.style.transition = transition;
+    if (titleRow) titleRow.style.transition = transition;
+
     if (isValidSwipe && hasTarget) {
       // Termina de deslizar para fora, na mesma direção do gesto, antes de trocar.
-      body.style.transform = `translateX(${deltaX < 0 ? '-100%' : '100%'})`;
+      const exitTransform = `translateX(${deltaX < 0 ? '-100%' : '100%'})`;
+      body.style.transform = exitTransform;
       body.style.opacity = '0';
+      if (titleRow) { titleRow.style.transform = exitTransform; titleRow.style.opacity = '0'; }
       setTimeout(() => {
         openProjects[projectId] = false;
         openProjects[projects[nextIdx].id] = true;
@@ -2334,6 +2346,7 @@ function attachTaskSwipeNav(wrapEl, projectId) {
       // Gesto insuficiente ou sem Tarefa vizinha — volta suavemente à posição original.
       body.style.transform = 'translateX(0)';
       body.style.opacity = '1';
+      if (titleRow) { titleRow.style.transform = 'translateX(0)'; titleRow.style.opacity = '1'; }
     }
   }, { passive: true });
 }
