@@ -340,8 +340,8 @@
         </button>
       </div>
 
-      <button id="filter-floating-home" onclick="switchTo('dashboard')" title="Voltar ao início" style="display:none; position:fixed; top:0px; left:0px; z-index:95; width:26px; height:26px; border-radius:50%; background:var(--md-amber); border:none; cursor:pointer; align-items:center; justify-content:center; box-shadow:0 2px 6px rgba(0,0,0,0.25); opacity:0.92;">
-        <span class="material-icons-round" style="font-size:14px; color:var(--md-primary-dark);">home</span>
+      <button id="filter-floating-home" onclick="exitListFilterView()" title="Ver lista completa" style="display:none; position:fixed; bottom:18px; left:50%; transform:translateX(-50%); z-index:95; width:48px; height:48px; border-radius:50%; background:rgba(242,201,76,0.3); border:none; cursor:pointer; align-items:center; justify-content:center; box-shadow:0 2px 8px rgba(0,0,0,0.2);">
+        <span class="material-icons-round" style="font-size:22px; color:var(--md-primary-dark);">home</span>
       </button>
 
       <!-- Painel rápido de vasilhame -->
@@ -927,15 +927,25 @@
 
     <!-- ── PREÇOS DE VENDA ─────────────────────────────────────────────────── -->
     <div id="view-prices" class="view">
-      <div style="padding:14px 16px 4px;">
+      <div id="prices-completude-row" style="padding:14px 16px 4px;">
         <div id="prices-completude" style="font-size:13px; color:var(--md-primary); margin-top:4px; opacity:0.6;"></div>
       </div>
-      <div style="padding:8px 16px 12px; position:relative;">
-        <span class="material-icons-round" style="position:absolute; left:28px; top:50%; transform:translateY(-50%); font-size:20px; color:var(--md-primary); opacity:0.4; pointer-events:none;">search</span>
-        <input id="prices-search" type="search" placeholder="Pesquisar"
-          style="width:100%; padding:12px 12px 12px 40px; border:1.5px solid var(--md-outline-variant); border-radius:12px; font-size:16px; font-family:'Outfit',sans-serif; color:var(--md-primary); background:rgba(92,126,96,0.08); outline:none; -webkit-appearance:none; appearance:none;"
-          oninput="renderPrices()" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" data-lpignore="true" data-form-type="other"/>
+      <div id="prices-search-row" style="padding:8px 16px 12px; display:flex; align-items:center; gap:8px;">
+        <div style="position:relative; flex:1; min-width:0;">
+          <span class="material-icons-round" style="position:absolute; left:12px; top:50%; transform:translateY(-50%); font-size:20px; color:var(--md-primary); opacity:0.4; pointer-events:none;">search</span>
+          <input id="prices-search" type="search" placeholder="Pesquisar"
+            style="width:100%; padding:12px 12px 12px 40px; border:1.5px solid var(--md-outline-variant); border-radius:12px; font-size:16px; font-family:'Outfit',sans-serif; color:var(--md-primary); background:rgba(92,126,96,0.08); outline:none; -webkit-appearance:none; appearance:none; box-sizing:border-box;"
+            oninput="renderPrices()" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" data-lpignore="true" data-form-type="other"/>
+        </div>
+        <button onclick="togglePricesFilter()" style="background:none; border:none; cursor:pointer; padding:6px; display:flex; align-items:center; opacity:0.5; flex-shrink:0;">
+          <span class="material-icons-round" id="prices-filter-icon" style="font-size:26px; color:var(--md-primary);">visibility</span>
+        </button>
       </div>
+
+      <button id="prices-filter-floating-home" onclick="exitPricesFilterView()" title="Ver preços completos" style="display:none; position:fixed; bottom:18px; left:50%; transform:translateX(-50%); z-index:95; width:48px; height:48px; border-radius:50%; background:rgba(242,201,76,0.3); border:none; cursor:pointer; align-items:center; justify-content:center; box-shadow:0 2px 8px rgba(0,0,0,0.2);">
+        <span class="material-icons-round" style="font-size:22px; color:var(--md-primary-dark);">home</span>
+      </button>
+
       <div id="prices-list" style="padding:0 16px 32px; display:flex; flex-direction:column; gap:0;">
         <div id="prices-empty" style="text-align:center; padding:60px 20px; color:var(--md-primary); opacity:0.5;">
           <span class="material-icons-round" style="font-size:48px; display:block; margin-bottom:12px;">search_off</span>
@@ -1290,6 +1300,7 @@ let saveTimer = null;
 let picked = {}; // key -> { done, price, supplier, date }
 let snapHistory = []; // array of weekly snapshots
 let filterActive = false;
+let pricesFilterActive = false; // mostra só artigos com quantidade marcada em Compras
 let suppliers = []; // fornecedores
 let vasilhameMovs = []; // movimentos { id, date, supplier, boxType, qty, direction:'debit'|'credit' }
 
@@ -2752,6 +2763,35 @@ function importBackup(event) {
 
 
 // ── PREÇOS DE VENDA ───────────────────────────────────────────────────────────
+function togglePricesFilter() {
+  pricesFilterActive = !pricesFilterActive;
+  const icon = document.getElementById('prices-filter-icon');
+  if (icon) icon.textContent = pricesFilterActive ? 'visibility_off' : 'visibility';
+
+  const completudeRow = document.getElementById('prices-completude-row');
+  const searchRow = document.getElementById('prices-search-row');
+  const header = document.getElementById('header');
+  const floatingHome = document.getElementById('prices-filter-floating-home');
+
+  // Esconde o cabeçalho geral e a própria linha de pesquisa de Preços, para
+  // maximizar o espaço de leitura — voltar aos preços completos faz-se pela bola
+  // flutuante fixa no fundo do ecrã, igual ao mesmo padrão já usado em Comprar.
+  if (completudeRow) completudeRow.style.display = pricesFilterActive ? 'none' : '';
+  if (searchRow) searchRow.style.display = pricesFilterActive ? 'none' : 'flex';
+  if (header) header.style.display = pricesFilterActive ? 'none' : '';
+  if (floatingHome) floatingHome.style.display = pricesFilterActive ? 'flex' : 'none';
+
+  renderPrices();
+}
+
+// Toca-se na bola flutuante fixa no fundo, com o filtro de Preços ativo, para
+// voltar a ver todos os artigos (com ou sem preço definido).
+function exitPricesFilterView() {
+  if (pricesFilterActive) togglePricesFilter();
+  const ps = document.getElementById('prices-search'); if (ps) ps.value = '';
+  switchTo('prices');
+}
+
 function renderPrices() {
   const container = document.getElementById('prices-list');
   const empty      = document.getElementById('prices-empty');
@@ -2776,8 +2816,11 @@ function renderPrices() {
 
       // Calcular margem para alerta
       const lowMargin = isLowMargin(key, item);
+      const hasQty = Number(list[key]?.qty || 0) > 0;
 
-      if (!search || item.toLowerCase().includes(search)) {
+      const matchesSearch = !search || item.toLowerCase().includes(search);
+      const matchesFilter = !pricesFilterActive || hasQty;
+      if (matchesSearch && matchesFilter) {
         allRows.push({ cat, item, key,
           sellPrice: p?.sellPrice || '',
           buyPrice:  p?.price || '',
@@ -2790,7 +2833,10 @@ function renderPrices() {
 
   const lowMarginCount = allRows.filter(r => r.lowMargin).length;
   if (completude) {
-    completude.innerHTML = withPrice + ' de ' + total + ' artigos com preço definido' + (lowMarginCount > 0 ? ' · <span class="material-icons-round" style="font-size:28px;vertical-align:middle;color:var(--md-error);">warning</span> ' + lowMarginCount + ' com margem baixa' : '');
+    const baseMsg = pricesFilterActive
+      ? allRows.length + ' artigo' + (allRows.length === 1 ? '' : 's') + ' com quantidade marcada'
+      : withPrice + ' de ' + total + ' artigos com preço definido';
+    completude.innerHTML = baseMsg + (lowMarginCount > 0 ? ' · <span class="material-icons-round" style="font-size:28px;vertical-align:middle;color:var(--md-error);">warning</span> ' + lowMarginCount + ' com margem baixa' : '');
     completude.style.color = lowMarginCount > 0 ? 'var(--md-error)' : 'var(--md-primary)';
   }
   empty.style.display = allRows.length ? 'none' : 'block';
@@ -4747,6 +4793,14 @@ function renderResumo() {
   content.appendChild(extremesBlock);
 }
 
+// Toca-se na bola flutuante fixa no fundo, com o filtro de Comprar ativo, para
+// voltar a ver a lista completa (todas as categorias, com ou sem quantidade).
+function exitListFilterView() {
+  if (filterActive) toggleFilter();
+  const ls = document.getElementById('list-search'); if (ls) ls.value = '';
+  switchTo('list');
+}
+
 function toggleFilter() {
   filterActive = !filterActive;
   const titleIcon = document.getElementById("list-filter-icon");
@@ -4757,7 +4811,8 @@ function toggleFilter() {
   const floatingHome = document.getElementById('filter-floating-home');
 
   // Esconde o cabeçalho geral por completo (e a linha de pesquisa) para maximizar o
-  // espaço de leitura da lista — só fica a bola flutuante para voltar ao início.
+  // espaço de leitura da lista — voltar à lista completa faz-se pela bola flutuante
+  // fixa no fundo do ecrã, sempre visível e centrada.
   if (searchRow) searchRow.style.display = filterActive ? 'none' : 'flex';
   if (header) header.style.display = filterActive ? 'none' : '';
   if (floatingHome) floatingHome.style.display = filterActive ? 'flex' : 'none';
@@ -4995,6 +5050,7 @@ function renderCats(search) {
     const flatWrap = document.createElement("div"); flatWrap.className = "cat-wrap"; flatWrap.style.paddingTop = "0";
     const flatBody = document.createElement("div"); flatBody.className = "cat-body"; flatBody.style.marginTop = "0"; flatBody.style.borderTop = "none"; flatBody.style.borderRadius = "0 0 12px 12px";
     let zebraIdx = 0;
+    let globalIdx = 0;
     let hasAny = false;
 
     Object.entries(products).forEach(([cat, items]) => {
@@ -5029,6 +5085,7 @@ function renderCats(search) {
         if (active) pb.addEventListener("click", ev => { ev.stopPropagation(); picked[key] = { ...picked[key], done: !picked[key]?.done }; sched(); renderCats(""); });
         row.appendChild(pb);
         row.appendChild(qtyEl); flatBody.appendChild(row);
+        globalIdx++;
       });
     });
 
@@ -5497,6 +5554,19 @@ function switchTo(v, fromPopState) {
     if (header) header.style.display = '';
     const floatingHome = document.getElementById('filter-floating-home');
     if (floatingHome) floatingHome.style.display = 'none';
+  }
+  if (v !== "prices") {
+    pricesFilterActive = false;
+    const pricesIcon = document.getElementById("prices-filter-icon");
+    if (pricesIcon) pricesIcon.textContent = "visibility";
+    const completudeRow = document.getElementById('prices-completude-row');
+    if (completudeRow) completudeRow.style.display = '';
+    const pricesSearchRow = document.getElementById('prices-search-row');
+    if (pricesSearchRow) pricesSearchRow.style.display = 'flex';
+    const header2 = document.getElementById('header');
+    if (header2) header2.style.display = '';
+    const pricesFloatingHome = document.getElementById('prices-filter-floating-home');
+    if (pricesFloatingHome) pricesFloatingHome.style.display = 'none';
   }
   closeSettingsMenu();
   if (v !== "list") { const s = document.getElementById("list-search"); if(s) s.value = ""; }
