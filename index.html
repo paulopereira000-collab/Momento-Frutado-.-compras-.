@@ -4791,6 +4791,63 @@ function renderResumo() {
     </div>
   `;
   content.appendChild(extremesBlock);
+
+  // ── Bloco 5: Margem por produto — cruza preço de compra e venda registados em
+  // cada ida ao MARL, para mostrar onde o negócio realmente ganha (ou perde) dinheiro.
+  {
+    const productStats = {}; // item -> { totalCost, totalRevenue, totalQty, occurrences }
+    snapHistory.forEach(snap => {
+      (snap.items || []).forEach(it => {
+        const buy = parseFloat(it.price);
+        const sell = parseFloat(it.sellPrice);
+        const qty = parseFloat(it.qty);
+        if (!buy || !sell || !qty || buy <= 0 || sell <= 0 || qty <= 0) return; // sem dados suficientes, não entra
+        const ivaRate = getIVA(it.item) === 0.23 ? 1.23 : 1.06;
+        const costWithIVA = buy * ivaRate;
+        if (!productStats[it.item]) productStats[it.item] = { totalCost: 0, totalRevenue: 0, totalQty: 0, occurrences: 0 };
+        const s = productStats[it.item];
+        s.totalCost += costWithIVA * qty;
+        s.totalRevenue += sell * qty;
+        s.totalQty += qty;
+        s.occurrences += 1;
+      });
+    });
+
+    const productList = Object.entries(productStats)
+      .map(([item, s]) => ({
+        item,
+        marginPct: s.totalRevenue > 0 ? ((s.totalRevenue - s.totalCost) / s.totalRevenue) * 100 : 0,
+        occurrences: s.occurrences,
+      }))
+      .filter(p => p.occurrences >= 2); // só produtos com pelo menos 2 registos, para a margem não ser um acaso isolado
+
+    if (productList.length >= 3) {
+      const sortedByMargin = [...productList].sort((a, b) => b.marginPct - a.marginPct);
+      const topMargin = sortedByMargin.slice(0, 5);
+      const bottomMargin = sortedByMargin.slice(-5).reverse();
+
+      const marginRow = (p) => {
+        const color = p.marginPct >= 20 ? 'var(--md-success)' : (p.marginPct >= 0 ? 'var(--md-gold)' : 'var(--md-error)');
+        return `<div style="display:flex; justify-content:space-between; align-items:center; padding:8px 0; border-bottom:1px solid var(--md-outline-variant);">
+          <span style="font-size:14px; color:var(--md-primary);">${p.item}</span>
+          <span style="font-size:15px; font-weight:700; color:${color};">${p.marginPct.toFixed(0)}%</span>
+        </div>`;
+      };
+
+      const marginBlock = document.createElement('div');
+      marginBlock.className = 'resumo-block';
+      marginBlock.style.cssText = 'background:var(--md-surface); border-radius:14px; border:1px solid var(--md-outline-variant); padding:18px; margin-bottom:20px;';
+      marginBlock.innerHTML = `
+        <div style="font-size:13px; font-weight:700; color:var(--md-primary); opacity:0.6; text-transform:uppercase; letter-spacing:1px; margin-bottom:4px;">Margem por produto</div>
+        <div style="font-size:11px; color:var(--md-primary); opacity:0.45; margin-bottom:14px;">Com base no preço de compra e venda registados em cada ida ao MARL</div>
+        <div style="font-size:12px; font-weight:700; color:var(--md-success); margin-bottom:4px;">Melhor margem</div>
+        ${topMargin.map(marginRow).join('')}
+        <div style="font-size:12px; font-weight:700; color:var(--md-error); margin:14px 0 4px;">Pior margem</div>
+        ${bottomMargin.map(marginRow).join('')}
+      `;
+      content.appendChild(marginBlock);
+    }
+  }
 }
 
 // Toca-se na bola flutuante fixa no fundo, com o filtro de Comprar ativo, para
@@ -5613,7 +5670,9 @@ document.getElementById("clear-btn").addEventListener("click", () => {
   };
   const todayStr = new Date().toISOString().split('T')[0];
   Object.entries(list).forEach(([key, e]) => {
-    if (Number(e.qty) > 0) {
+    if (Number(e.qty) > 0 && picked[key]?.done) {
+      // Só os produtos com o visto ("comprado") entram no registo desta ida ao MARL —
+      // os que ficaram sem visto não foram comprados, por isso não contam aqui.
       const p = picked[key] || {};
       const [cat, item] = key.split('|||');
       const weightKg = getProductWeightKg(key);
@@ -5633,13 +5692,17 @@ document.getElementById("clear-btn").addEventListener("click", () => {
   });
   if (snapshot.items.length > 0) snapHistory.unshift(snapshot);
   if (snapHistory.length > 52) snapHistory = snapHistory.slice(0, 52);
-  // Reset só qty e done — mantém preços, fornecedor, notas, minStock, iva
-  Object.keys(list).forEach(k => { list[k] = { qty: 0 }; });
+  // Reset só qty e done dos produtos COM visto (foram comprados, ficam prontos para a
+  // próxima lista). Os produtos SEM visto mantêm a quantidade e continuam marcados,
+  // para não se perderem — ainda precisam de ser comprados na próxima ida ao MARL.
+  Object.keys(list).forEach(k => {
+    if (picked[k]?.done) list[k] = { qty: 0 };
+  });
   Object.keys(picked).forEach(k => {
-    picked[k] = { ...picked[k], done: false };
+    if (picked[k]?.done) picked[k] = { ...picked[k], done: false };
   });
   sched(); renderCats(""); renderWA();
-  showSnack('Lista gravada e limpa ✓', 'saved');
+  showSnack('Lista gravada ✓ — produtos sem visto mantidos', 'saved');
 });
 document.getElementById("delete-list-btn").addEventListener("click", () => {
   if (!confirm("Apagar tudo sem gravar? Esta ação não pode ser desfeita.")) return;
