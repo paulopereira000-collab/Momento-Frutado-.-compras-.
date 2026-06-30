@@ -833,12 +833,23 @@
     <!-- ── RESUMO (página própria) ───────────────────────────────────────── -->
     <div id="view-resumo" class="view">
       <div style="padding-top:14px;"></div>
+
+      <!-- Separadores: Antes do mercado / Como está a correr / Análise aprofundada -->
+      <div id="resumo-tabs" style="display:none; padding:0 16px 12px; gap:8px;">
+        <button class="resumo-tab-btn active" data-tab="antes" onclick="switchResumoTab('antes')" style="flex:1; padding:10px 6px; border-radius:12px; border:none; background:var(--md-primary); color:var(--md-white); font-family:'Outfit',sans-serif; font-size:12.5px; font-weight:700; cursor:pointer; transition:background 0.15s, color 0.15s;">Antes do mercado</button>
+        <button class="resumo-tab-btn" data-tab="agora" onclick="switchResumoTab('agora')" style="flex:1; padding:10px 6px; border-radius:12px; border:none; background:var(--md-surface-variant); color:var(--md-primary); font-family:'Outfit',sans-serif; font-size:12.5px; font-weight:700; cursor:pointer; transition:background 0.15s, color 0.15s;">Como vai o negócio</button>
+        <button class="resumo-tab-btn" data-tab="fundo" onclick="switchResumoTab('fundo')" style="flex:1; padding:10px 6px; border-radius:12px; border:none; background:var(--md-surface-variant); color:var(--md-primary); font-family:'Outfit',sans-serif; font-size:12.5px; font-weight:700; cursor:pointer; transition:background 0.15s, color 0.15s;">Análise a fundo</button>
+      </div>
+
       <div id="resumo-content" style="padding:4px 16px 32px;">
         <div id="resumo-empty" style="text-align:center; padding:60px 20px; color:var(--md-primary); opacity:0.5;">
           <span class="material-icons-round" style="font-size:48px; display:block; margin-bottom:12px;">bar_chart</span>
           <div style="font-size:17px; font-weight:600;">Ainda sem dados suficientes</div>
           <div style="font-size:14px; margin-top:6px;">Regista vendas para veres a evolução aqui</div>
         </div>
+        <div id="resumo-section-antes" class="resumo-section" style="display:none;"></div>
+        <div id="resumo-section-agora" class="resumo-section" style="display:none;"></div>
+        <div id="resumo-section-fundo" class="resumo-section" style="display:none;"></div>
       </div>
     </div>
     <div id="supplier-modal-overlay" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.5); z-index:299; backdrop-filter:blur(4px);" onclick="closeSupplierModal()"></div>
@@ -4332,9 +4343,29 @@ function renderSeasonalityWindowBlock(content, sorted) {
   window.addEventListener('mouseup', onDragEnd);
 }
 
+let resumoActiveTab = 'antes'; // separador ativo na página Resumir, mantém-se entre renders
+
+function switchResumoTab(tab) {
+  resumoActiveTab = tab;
+  ['antes', 'agora', 'fundo'].forEach(t => {
+    const sec = document.getElementById('resumo-section-' + t);
+    if (sec) sec.style.display = (t === tab) ? 'block' : 'none';
+    const btn = document.querySelector('.resumo-tab-btn[data-tab="' + t + '"]');
+    if (btn) {
+      btn.classList.toggle('active', t === tab);
+      btn.style.background = (t === tab) ? 'var(--md-primary)' : 'var(--md-surface-variant)';
+      btn.style.color = (t === tab) ? 'var(--md-white)' : 'var(--md-primary)';
+    }
+  });
+}
+
 function renderResumo() {
   const content = document.getElementById('resumo-content');
   const empty = document.getElementById('resumo-empty');
+  const tabs = document.getElementById('resumo-tabs');
+  const secAntes = document.getElementById('resumo-section-antes');
+  const secAgora = document.getElementById('resumo-section-agora');
+  const secFundo = document.getElementById('resumo-section-fundo');
   if (!content) return;
 
   // Considera só vendas registadas em dias reais de mercado (Terça/Sexta/Sábado).
@@ -4343,11 +4374,13 @@ function renderResumo() {
 
   if (marketSales.length < 3) {
     empty.style.display = 'block';
-    content.querySelectorAll('.resumo-block').forEach(b => b.remove());
+    if (tabs) tabs.style.display = 'none';
+    [secAntes, secAgora, secFundo].forEach(s => { if (s) { s.style.display = 'none'; s.querySelectorAll('.resumo-block').forEach(b => b.remove()); } });
     return;
   }
   empty.style.display = 'none';
-  content.querySelectorAll('.resumo-block').forEach(b => b.remove());
+  if (tabs) tabs.style.display = 'flex';
+  [secAntes, secAgora, secFundo].forEach(s => { if (s) s.querySelectorAll('.resumo-block').forEach(b => b.remove()); });
 
   const sorted = [...marketSales].sort((a, b) => a.date.localeCompare(b.date));
 
@@ -4432,7 +4465,7 @@ function renderResumo() {
           `;
         }).join('')}
       `;
-      content.appendChild(nextBlock);
+      secAntes.appendChild(nextBlock);
     }
   }
 
@@ -4484,7 +4517,7 @@ function renderResumo() {
     rangeLabel.innerHTML = `<span>${recent[0].label || recent[0].date}</span><span>${recent[recent.length-1].label || recent[recent.length-1].date}</span>`;
     chartBlock.appendChild(rangeLabel);
 
-    content.appendChild(chartBlock);
+    secFundo.appendChild(chartBlock);
   });
 
   // ── Bloco: Sazonalidade por dia da semana — mapa de calor mês x dia ──
@@ -4569,7 +4602,7 @@ function renderResumo() {
       `;
       heatBlock.appendChild(heatLegend);
 
-      content.appendChild(heatBlock);
+      secFundo.appendChild(heatBlock);
     }
   }
 
@@ -4586,6 +4619,7 @@ function renderResumo() {
   });
 
   const wdBlock = document.createElement('div');
+  wdBlock.dataset.order = '4';
   wdBlock.className = 'resumo-block';
   wdBlock.style.cssText = 'background:var(--md-surface); border-radius:14px; border:1px solid var(--md-outline-variant); padding:18px; margin-bottom:20px;';
   const label2 = document.createElement('div');
@@ -4612,68 +4646,10 @@ function renderResumo() {
     `;
     wdBlock.appendChild(row);
   });
-  content.appendChild(wdBlock);
+  secAgora.appendChild(wdBlock);
 
-  // ── Bloco 2.5: Sazonalidade — comparação ano a ano por mês ──
-  const monthNamesShort = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
-  const byYearMonth = {}; // { '01': { '2025': total, '2026': total } }
-  sorted.forEach(s => {
-    const [y, mo] = s.date.split('-');
-    if (!byYearMonth[mo]) byYearMonth[mo] = {};
-    if (!byYearMonth[mo][y]) byYearMonth[mo][y] = 0;
-    byYearMonth[mo][y] += s.total;
-  });
-  const yearsPresent = [...new Set(sorted.map(s => s.date.slice(0,4)))].sort();
-
-  if (yearsPresent.length >= 2) {
-    const yearColors = { };
-    const palette = ['var(--md-accent)', 'var(--md-orange)', 'var(--md-gold)', 'var(--md-error)'];
-    yearsPresent.forEach((y, i) => yearColors[y] = palette[i % palette.length]);
-
-    const seasonBlock = document.createElement('div');
-    seasonBlock.className = 'resumo-block';
-    seasonBlock.style.cssText = 'background:var(--md-surface); border-radius:14px; border:1px solid var(--md-outline-variant); padding:18px; margin-bottom:20px;';
-    const labelSeason = document.createElement('div');
-    labelSeason.style.cssText = 'font-size:13px; font-weight:700; color:var(--md-primary); opacity:0.6; text-transform:uppercase; letter-spacing:1px; margin-bottom:6px;';
-    labelSeason.textContent = 'Sazonalidade — mês a mês, ano a ano';
-    seasonBlock.appendChild(labelSeason);
-
-    // Legend
-    const legend = document.createElement('div');
-    legend.style.cssText = 'display:flex; gap:14px; margin-bottom:14px;';
-    yearsPresent.forEach(y => {
-      legend.innerHTML += `<span style="font-size:12px; color:var(--md-primary); display:flex; align-items:center; gap:5px;"><span style="width:10px; height:10px; border-radius:50%; background:${yearColors[y]}; display:inline-block;"></span>${y}</span>`;
-    });
-    seasonBlock.appendChild(legend);
-
-    const maxYM = Math.max(...Object.values(byYearMonth).flatMap(o => Object.values(o)));
-    monthNamesShort.forEach((mName, idx) => {
-      const moKey = String(idx + 1).padStart(2, '0');
-      const dataForMonth = byYearMonth[moKey];
-      if (!dataForMonth) return;
-      const row = document.createElement('div');
-      row.style.cssText = 'margin-bottom:10px;';
-      let barsHtml = '';
-      yearsPresent.forEach(y => {
-        const val = dataForMonth[y] || 0;
-        const pct = maxYM > 0 ? (val / maxYM) * 100 : 0;
-        barsHtml += `
-          <div style="display:flex; align-items:center; gap:6px; margin-bottom:2px;">
-            <div style="flex:1; height:7px; background:var(--md-outline-variant); border-radius:3px; overflow:hidden;">
-              <div style="height:100%; width:${pct}%; background:${yearColors[y]}; border-radius:3px;"></div>
-            </div>
-            <span style="font-size:11px; color:var(--md-primary); opacity:0.7; width:54px; text-align:right;">${val > 0 ? val.toFixed(0)+'€' : '—'}</span>
-          </div>
-        `;
-      });
-      row.innerHTML = `<div style="font-size:13px; font-weight:600; color:var(--md-primary); margin-bottom:4px;">${mName}</div>${barsHtml}`;
-      seasonBlock.appendChild(row);
-    });
-    content.appendChild(seasonBlock);
-  }
-
-  // ── Bloco 2.6: Sazonalidade próxima — semanas de ±1 mês à volta de uma data de referência, ano passado ──
-  renderSeasonalityWindowBlock(content, sorted);
+  // ── Sazonalidade próxima — semanas de ±1 mês à volta de uma data de referência, ano passado ──
+  renderSeasonalityWindowBlock(secFundo, sorted);
 
   // ── Bloco 3: Comparação mensal ──
   const byMonth = {};
@@ -4687,6 +4663,7 @@ function renderResumo() {
 
   if (monthKeys.length >= 2) {
     const monthBlock = document.createElement('div');
+    monthBlock.dataset.order = '3';
     monthBlock.className = 'resumo-block';
     monthBlock.style.cssText = 'background:var(--md-surface); border-radius:14px; border:1px solid var(--md-outline-variant); padding:18px; margin-bottom:20px;';
     const label3 = document.createElement('div');
@@ -4712,7 +4689,7 @@ function renderResumo() {
       `;
       monthBlock.appendChild(row);
     });
-    content.appendChild(monthBlock);
+    secAgora.appendChild(monthBlock);
   }
 
   // ── Bloco 3.5: Lucro líquido (vendas - custo de mercadoria - despesas - quebras) ──
@@ -4738,6 +4715,7 @@ function renderResumo() {
 
     const net = totalSales - totalCost - totalExp - totalBreaks;
     const profitBlock = document.createElement('div');
+    profitBlock.dataset.order = '1';
     profitBlock.className = 'resumo-block';
     profitBlock.style.cssText = 'background:var(--md-surface); border-radius:14px; border:1px solid var(--md-outline-variant); padding:18px; margin-bottom:20px;';
     profitBlock.innerHTML = `
@@ -4769,13 +4747,14 @@ function renderResumo() {
         <div style="font-size:11px; color:var(--md-primary); opacity:0.5; margin-top:6px;">Configura o peso por caixa em Gestão de produtos para incluir estes no custo.</div>
       </div>` : ''}
     `;
-    content.appendChild(profitBlock);
+    secAgora.appendChild(profitBlock);
   }
 
   // ── Bloco 4: Melhor e pior dia ──
   const best = sorted.reduce((a, s) => s.total > a.total ? s : a, sorted[0]);
   const worst = sorted.reduce((a, s) => s.total < a.total ? s : a, sorted[0]);
   const extremesBlock = document.createElement('div');
+  extremesBlock.dataset.order = '2';
   extremesBlock.className = 'resumo-block';
   extremesBlock.style.cssText = 'display:flex; gap:12px; margin-bottom:20px;';
   extremesBlock.innerHTML = `
@@ -4790,7 +4769,7 @@ function renderResumo() {
       <div style="font-size:12px; color:var(--md-primary); opacity:0.6; margin-top:2px;">${worst.label || worst.date}</div>
     </div>
   `;
-  content.appendChild(extremesBlock);
+  secAgora.appendChild(extremesBlock);
 
   // ── Bloco 5: Margem por produto — cruza preço de compra e venda registados em
   // cada ida ao MARL, para mostrar onde o negócio realmente ganha (ou perde) dinheiro.
@@ -4845,9 +4824,18 @@ function renderResumo() {
         <div style="font-size:12px; font-weight:700; color:var(--md-error); margin:14px 0 4px;">Pior margem</div>
         ${bottomMargin.map(marginRow).join('')}
       `;
-      content.appendChild(marginBlock);
+      secFundo.appendChild(marginBlock);
     }
   }
+
+  // Reordenar "Como vai o negócio": lucro líquido primeiro (o número que importa),
+  // depois melhor/pior dia, comparação mensal, e por fim médias por dia (detalhe de apoio).
+  [...secAgora.children]
+    .sort((a, b) => (parseInt(a.dataset.order || '9', 10) - parseInt(b.dataset.order || '9', 10)))
+    .forEach(el => secAgora.appendChild(el));
+
+  // Aplica o separador ativo (mantém-se o que o utilizador tinha aberto)
+  switchResumoTab(resumoActiveTab);
 }
 
 // Toca-se na bola flutuante fixa no fundo, com o filtro de Comprar ativo, para
