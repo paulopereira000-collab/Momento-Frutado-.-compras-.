@@ -2725,18 +2725,45 @@ function exportBackup() {
   const data = payload();
   data._backupDate = new Date().toISOString();
   data._version = 'mf_backup_v1';
-  const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+  const dateStr = new Date().toISOString().split('T')[0];
+  const filename = `momento-frutado-backup-${dateStr}.json`;
+  const jsonStr = JSON.stringify(data, null, 2);
+  const blob = new Blob([jsonStr], { type: 'application/json' });
+
+  const markSaved = () => {
+    localStorage.setItem('mf_last_backup', new Date().toISOString());
+    renderBackupNotice();
+    renderDashboardBackupNag();
+  };
+
+  // Partilha nativa do telemóvel — abre o menu "Guardar em..." do Android, onde dá
+  // para escolher Google Drive (ou WhatsApp, email, etc.), em vez de ir sempre
+  // direto para Transferências sem perguntar nada.
+  const file = new File([blob], filename, { type: 'application/json' });
+  if (navigator.canShare && navigator.canShare({ files: [file] })) {
+    navigator.share({ files: [file], title: 'Backup Momento Frutado' })
+      .then(() => { markSaved(); showSnack('Backup partilhado ✓', 'saved'); })
+      .catch(err => {
+        if (err && err.name === 'AbortError') return; // cancelou o menu de partilha, não faz nada
+        downloadBackupFile(blob, filename, markSaved); // partilha falhou por outro motivo — recurso ao download direto
+      });
+    return;
+  }
+
+  // Sem suporte a partilha de ficheiros (ex: desktop) — cai no download direto de sempre.
+  downloadBackupFile(blob, filename, markSaved);
+}
+
+function downloadBackupFile(blob, filename, markSaved) {
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
-  const dateStr = new Date().toISOString().split('T')[0];
   a.href = url;
-  a.download = `momento-frutado-backup-${dateStr}.json`;
+  a.download = filename;
   document.body.appendChild(a);
   a.click();
   document.body.removeChild(a);
   URL.revokeObjectURL(url);
-  localStorage.setItem('mf_last_backup', new Date().toISOString());
-  renderBackupNotice();
+  markSaved();
   showSnack('Backup exportado com sucesso ✓', 'saved');
 }
 
