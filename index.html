@@ -994,6 +994,17 @@
         <!-- Resumo rápido — dados reais do negócio, não decoração -->
         <div id="dash-summary" style="padding:40px 20px 0; display:flex; gap:14px; justify-content:center;"></div>
 
+        <!-- Previsão do dia de mercado seguinte a esse — só texto, sem se tornar outra bola -->
+        <div id="dash-weather-next" style="display:none; text-align:center; margin-top:10px; font-size:12px; color:var(--md-white); opacity:0.65; font-family:'Outfit',sans-serif;"></div>
+
+        <!-- Aviso de backup atrasado — só aparece quando realmente é preciso, com ação direta -->
+        <button id="dash-backup-nag" onclick="exportBackup()" style="display:none; margin:16px 20px 0; padding:12px 16px; border-radius:14px; border:1.5px solid var(--md-error); background:rgba(155,58,58,0.15); backdrop-filter:blur(6px); color:var(--md-white); font-family:'Outfit',sans-serif; cursor:pointer; align-items:center; gap:10px; text-align:left;">
+          <span class="material-icons-round" style="font-size:22px; flex-shrink:0;">cloud_off</span>
+          <span style="flex:1; font-size:13px; font-weight:600; line-height:1.3;" id="dash-backup-nag-text">Backup atrasado</span>
+          <span class="material-icons-round" style="font-size:20px; opacity:0.7; flex-shrink:0;">chevron_right</span>
+        </button>
+
+
         <div style="padding:0 20px 0 44px;">
           <div style="font-size:35px; font-weight:700; letter-spacing:-0.5px; line-height:1.1; margin-top:46px; margin-bottom:46px; text-transform:lowercase; color:var(--md-amber);">momento<br>frutado</div>
         </div>
@@ -1153,6 +1164,8 @@
         <span id="pick-margin-pct" style="font-size:22px; font-weight:700; color:var(--md-on-primary-container);">—</span>
       </div>
       <div id="pick-suggestion" style="margin-top:10px; font-size:13px; color:var(--md-primary); display:none;"></div>
+      <div id="pick-waste-note" style="margin-top:6px; font-size:12px; color:var(--md-primary); opacity:0.65; display:none;"></div>
+      <div id="pick-price-alert" style="margin-top:8px; font-size:13px; font-weight:600; color:var(--md-error); display:none;"></div>
       <div id="pick-margin-bar-wrap" style="height:6px; background:var(--md-outline-variant); border-radius:3px; margin-top:8px; overflow:hidden; display:none;">
         <div id="pick-margin-bar" style="height:100%; width:0%; background:var(--md-primary); border-radius:3px; transition:width 0.3s;"></div>
       </div>
@@ -1607,6 +1620,26 @@ function renderDashboard() {
   });
 
   renderDashSummary();
+  renderDashboardBackupNag();
+}
+
+// Aviso pró-ativo de backup — ao contrário do texto em Definições (que só se vê se lá
+// fores), isto aparece logo no dashboard quando o backup está mesmo atrasado, com
+// ação de um toque só (evita teres de navegar até às Definições para o resolver).
+function renderDashboardBackupNag() {
+  const nag = document.getElementById('dash-backup-nag');
+  const txt = document.getElementById('dash-backup-nag-text');
+  if (!nag || !txt) return;
+  const days = getDaysSinceBackup();
+  if (days === null) {
+    txt.textContent = 'Ainda não fizeste nenhum backup — toca para fazer agora';
+    nag.style.display = 'flex';
+  } else if (days >= 14) {
+    txt.textContent = `Backup há ${days} dias — toca para atualizar agora`;
+    nag.style.display = 'flex';
+  } else {
+    nag.style.display = 'none';
+  }
 }
 
 // ── RESUMO RÁPIDO DO DASHBOARD — dados reais, não decoração ─────────────────
@@ -1716,45 +1749,64 @@ function fetchNextMarketDayWeather() {
   const card = document.getElementById('dash-weather-card');
   if (!card) return;
 
-  // Encontra o próximo dia de mercado, sempre a partir de amanhã (nunca hoje,
-  // mesmo que hoje já seja Terça/Sexta/Sábado).
+  // Encontra os próximos 2 dias de mercado, sempre a partir de amanhã (nunca hoje,
+  // mesmo que hoje já seja Terça/Sexta/Sábado) — dá para planear compras com mais
+  // do que um dia de antecedência.
   const today = new Date();
-  let targetDate = null, targetDow = null;
-  for (let i = 1; i <= 7; i++) {
+  const upcoming = [];
+  for (let i = 1; i <= 10 && upcoming.length < 2; i++) {
     const d = new Date(today);
     d.setDate(d.getDate() + i);
-    if (WEATHER_LOCATIONS[d.getDay()]) { targetDate = d; targetDow = d.getDay(); break; }
+    if (WEATHER_LOCATIONS[d.getDay()]) upcoming.push({ date: d, dow: d.getDay() });
   }
-  if (!targetDate) return;
+  if (!upcoming.length) return;
 
-  const loc = WEATHER_LOCATIONS[targetDow];
-  const dateStr = targetDate.toISOString().split('T')[0];
   const dayNames = ['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'];
 
-  const url = `https://api.open-meteo.com/v1/forecast?latitude=${loc.lat}&longitude=${loc.lon}&daily=temperature_2m_max,temperature_2m_min,precipitation_probability_max,weather_code&timezone=Europe%2FLisbon&start_date=${dateStr}&end_date=${dateStr}`;
+  const fetchDay = (target) => {
+    const loc = WEATHER_LOCATIONS[target.dow];
+    const dateStr = target.date.toISOString().split('T')[0];
+    const url = `https://api.open-meteo.com/v1/forecast?latitude=${loc.lat}&longitude=${loc.lon}&daily=temperature_2m_max,temperature_2m_min,precipitation_probability_max,weather_code&timezone=Europe%2FLisbon&start_date=${dateStr}&end_date=${dateStr}`;
+    return fetch(url).then(r => r.json()).then(data => {
+      if (!data.daily || !data.daily.time || !data.daily.time.length) throw new Error('sem dados');
+      return {
+        loc, dow: target.dow,
+        tMax: Math.round(data.daily.temperature_2m_max[0]),
+        tMin: Math.round(data.daily.temperature_2m_min[0]),
+        rainPct: data.daily.precipitation_probability_max[0],
+        icon: weatherCodeToIcon(data.daily.weather_code[0]),
+      };
+    });
+  };
 
-  fetch(url).then(r => r.json()).then(data => {
-    if (!data.daily || !data.daily.time || !data.daily.time.length) throw new Error('sem dados');
-    const tMax = Math.round(data.daily.temperature_2m_max[0]);
-    const tMin = Math.round(data.daily.temperature_2m_min[0]);
-    const rainPct = data.daily.precipitation_probability_max[0];
-    const code = data.daily.weather_code[0];
-    const icon = weatherCodeToIcon(code);
+  // Dia de mercado seguinte — a bola grande do dashboard, como já era.
+  fetchDay(upcoming[0]).then(w => {
     const valueEl = card.querySelector('div:nth-child(1)');
     const labelEl = card.querySelector('div:nth-child(2)');
     // Esconde com fade, troca o conteúdo, e volta a mostrar — em vez de o valor real
     // substituir "A consultar..." de forma abrupta.
     [valueEl, labelEl].forEach(el => { if (el) { el.style.transition = 'opacity 0.25s ease-out'; el.style.opacity = '0'; } });
     setTimeout(() => {
-      if (valueEl) valueEl.innerHTML = `${icon} ${tMax}°`;
-      if (labelEl) labelEl.textContent = `${dayNames[targetDow]}${rainPct >= 30 ? ' · 🌧' + rainPct + '%' : ' · ' + loc.name}`;
+      if (valueEl) valueEl.innerHTML = `${w.icon} ${w.tMax}°`;
+      if (labelEl) labelEl.textContent = `${dayNames[w.dow]}${w.rainPct >= 30 ? ' · 🌧' + w.rainPct + '%' : ' · ' + w.loc.name}`;
       [valueEl, labelEl].forEach(el => { if (el) el.style.opacity = '1'; });
     }, 250);
-    card.title = `${loc.name} — ${dayNames[targetDow]}: ${tMin}° a ${tMax}°, ${rainPct}% chuva`;
+    card.title = `${w.loc.name} — ${dayNames[w.dow]}: ${w.tMin}° a ${w.tMax}°, ${w.rainPct}% chuva`;
   }).catch(() => {
     const labelEl = card.querySelector('div:nth-child(2)');
     if (labelEl) labelEl.textContent = 'Sem ligação';
   });
+
+  // Dia de mercado a seguir a esse — só uma linha de texto discreta, para planear
+  // com mais do que um dia de antecedência (ex: quantidades a comprar no MARL).
+  if (upcoming[1]) {
+    fetchDay(upcoming[1]).then(w => {
+      const nextEl = document.getElementById('dash-weather-next');
+      if (!nextEl) return;
+      nextEl.textContent = `Depois, ${dayNames[w.dow]}: ${w.icon} ${w.tMax}°${w.rainPct >= 30 ? ' · 🌧' + w.rainPct + '%' : ''}`;
+      nextEl.style.display = 'block';
+    }).catch(() => {});
+  }
 }
 
 function weatherCodeToIcon(code) {
@@ -4815,6 +4867,47 @@ function renderResumo() {
     }
   }
 
+  // ── Bloco: produtos que mais desperdiçam — usa os registos de quebras ──
+  if (breaks.length >= 3) {
+    const byProduct = {};
+    breaks.forEach(b => {
+      if (!byProduct[b.product]) byProduct[b.product] = { qty: 0, total: 0 };
+      byProduct[b.product].qty += b.qty;
+      byProduct[b.product].total += (b.total || 0);
+    });
+    const wasteRanked = Object.entries(byProduct)
+      .sort((a, b) => b[1].total - a[1].total)
+      .slice(0, 6);
+
+    if (wasteRanked.length) {
+      const wasteBlock = document.createElement('div');
+      wasteBlock.className = 'resumo-block';
+      wasteBlock.style.cssText = 'background:var(--md-surface); border-radius:14px; border:1px solid var(--md-outline-variant); padding:18px; margin-bottom:20px;';
+      const wasteLabel = document.createElement('div');
+      wasteLabel.style.cssText = 'font-size:13px; font-weight:700; color:var(--md-primary); opacity:0.6; text-transform:uppercase; letter-spacing:1px; margin-bottom:12px;';
+      wasteLabel.textContent = 'Produtos que mais desperdiçam';
+      wasteBlock.appendChild(wasteLabel);
+
+      const maxWaste = Math.max(...wasteRanked.map(([, v]) => v.total));
+      wasteRanked.forEach(([product, v]) => {
+        const row = document.createElement('div');
+        row.style.cssText = 'margin-bottom:10px;';
+        const pct = maxWaste > 0 ? (v.total / maxWaste) * 100 : 0;
+        row.innerHTML = `
+          <div style="display:flex; justify-content:space-between; font-size:14px; color:var(--md-primary); margin-bottom:3px;">
+            <span style="font-weight:600;">${product}</span>
+            <span style="opacity:0.7;">${v.qty.toFixed(1)}kg · ${v.total.toFixed(0)}€</span>
+          </div>
+          <div style="height:7px; background:var(--md-outline-variant); border-radius:3px; overflow:hidden;">
+            <div style="height:100%; width:${pct}%; background:var(--md-error); border-radius:3px;"></div>
+          </div>
+        `;
+        wasteBlock.appendChild(row);
+      });
+      secFundo.appendChild(wasteBlock);
+    }
+  }
+
   // Reordenar "Como vai o negócio": lucro líquido primeiro (o número que importa),
   // depois melhor/pior dia, comparação mensal, e por fim médias por dia (detalhe de apoio).
   [...secAgora.children]
@@ -6293,6 +6386,39 @@ document.getElementById("pick-close").addEventListener("click", closePickPanel);
 document.getElementById("pick-overlay").addEventListener("click", closePickPanel);
 
 // ── MARGIN CALCULATOR ────────────────────────────────────────────────────────
+// Taxa de quebra habitual de um produto, calculada a partir do histórico real:
+// kg perdidos (quebras) ÷ kg comprados (só conta compras com peso registado em
+// Gestão de produtos — sem isso não há como converter para kg com confiança).
+function getProductWasteRate(productName) {
+  let purchasedKg = 0;
+  snapHistory.forEach(snap => {
+    (snap.items || []).forEach(it => {
+      if (it.item === productName && it.weightKg) purchasedKg += it.weightKg;
+    });
+  });
+  if (purchasedKg <= 0) return null;
+  const wastedKg = breaks.filter(b => b.product === productName).reduce((a, b) => a + (b.qty || 0), 0);
+  const rate = wastedKg / purchasedKg;
+  return (rate >= 0 && rate < 0.6) ? rate : null; // acima disto é provavelmente erro de registo, não confiar
+}
+
+// Preço médio pago no passado a este fornecedor, por este produto — para avisar
+// se o preço de hoje foge muito do habitual.
+function getSupplierAvgPrice(productName, supplierName) {
+  if (!supplierName) return null;
+  const prices = [];
+  snapHistory.forEach(snap => {
+    (snap.items || []).forEach(it => {
+      if (it.item === productName && it.supplier === supplierName && it.price) {
+        const p = parseFloat(it.price);
+        if (p > 0) prices.push(p);
+      }
+    });
+  });
+  if (prices.length < 2) return null; // precisa de pelo menos duas compras anteriores para ser fiável
+  return prices.reduce((a, b) => a + b, 0) / prices.length;
+}
+
 function updateMargin() {
   const priceEl = document.getElementById("pick-price");
   const sellEl  = document.getElementById("pick-sell-price");
@@ -6315,6 +6441,44 @@ function updateMargin() {
   document.getElementById("pick-profit").textContent   = profit  ? (profit >= 0 ? "+" : "") + profit.toFixed(2) + "€/kg" : "—";
   document.getElementById("pick-profit").style.color   = profit  ? (profit >= 0 ? "var(--md-success)" : "var(--md-error)") : "var(--md-primary)";
 
+  // Quebra habitual deste produto — descontada do custo antes de sugerir preço,
+  // já que um kg comprado nunca vale um kg vendido quando parte se estraga.
+  const wasteRate = itemName ? getProductWasteRate(itemName) : null;
+  const wasteNote = document.getElementById("pick-waste-note");
+  if (wasteNote) {
+    if (wasteRate !== null && wasteRate > 0.01) {
+      wasteNote.textContent = `Quebra habitual deste produto: ${(wasteRate * 100).toFixed(0)}% — já contada no preço sugerido`;
+      wasteNote.style.display = "block";
+    } else {
+      wasteNote.style.display = "none";
+    }
+  }
+  const costEffective = costIVA ? costIVA / (1 - (wasteRate || 0)) : null;
+
+  // Alerta de preço — compara o que estás a pagar hoje com a média paga a este
+  // mesmo fornecedor por este produto, no histórico.
+  const supplierName = picked[currentPickKey]?.supplier || '';
+  const priceAlertEl = document.getElementById("pick-price-alert");
+  if (priceAlertEl) {
+    const avgPrice = (buy && itemName) ? getSupplierAvgPrice(itemName, supplierName) : null;
+    if (avgPrice !== null) {
+      const diffPct = ((buy - avgPrice) / avgPrice) * 100;
+      if (diffPct >= 10) {
+        priceAlertEl.innerHTML = `<span class="material-icons-round" style="font-size:16px; vertical-align:middle;">trending_up</span> ${diffPct.toFixed(0)}% mais caro que o habitual com ${supplierName} (média ${avgPrice.toFixed(2)}€/kg)`;
+        priceAlertEl.style.color = 'var(--md-error)';
+        priceAlertEl.style.display = "block";
+      } else if (diffPct <= -10) {
+        priceAlertEl.innerHTML = `<span class="material-icons-round" style="font-size:16px; vertical-align:middle;">trending_down</span> ${Math.abs(diffPct).toFixed(0)}% mais barato que o habitual com ${supplierName}`;
+        priceAlertEl.style.color = 'var(--md-success)';
+        priceAlertEl.style.display = "block";
+      } else {
+        priceAlertEl.style.display = "none";
+      }
+    } else {
+      priceAlertEl.style.display = "none";
+    }
+  }
+
   if (margin !== null) {
     document.getElementById("pick-margin-pct").textContent = margin.toFixed(1) + "%";
     document.getElementById("pick-margin-pct").style.color = margin >= 30 ? "var(--md-success)" : margin >= 20 ? "var(--md-primary)" : "var(--md-error)";
@@ -6328,7 +6492,7 @@ function updateMargin() {
       marginEl.style.borderColor = "var(--md-error)";
       sug.style.display = "block";
       sug.style.color = "var(--md-error)";
-      const suggested = costIVA ? (costIVA / 0.8).toFixed(2) : "—";
+      const suggested = costEffective ? (costEffective / 0.7).toFixed(2) : "—";
       sug.innerHTML = '<span class="material-icons-round" style="font-size:28px;vertical-align:middle;">warning</span> Margem abaixo de 20%. Preço sugerido (30% margem): ' + suggested + '€/kg';
     } else {
       marginEl.style.background = "var(--md-primary-container)";
