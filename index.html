@@ -1026,6 +1026,7 @@
     <div id="pick-title-row" style="display:flex; align-items:center; justify-content:space-between; padding:18px 16px 6px;">
       <div>
         <div id="pick-title" style="font-size:29px; font-weight:600; color:var(--md-white); font-family:'Outfit',sans-serif; text-align:left;">Produto</div>
+        <div id="pick-qty-stats" style="display:none; font-size:12px; color:rgba(255,255,255,0.65); margin-top:3px;"></div>
         <div id="pick-date-display" style="display:none;">—</div>
       </div>
       <div style="display:flex; gap:10px; align-items:center;">
@@ -5973,6 +5974,33 @@ function openPickPanel(cat, item) {
   }
   document.getElementById("pick-panel").classList.add("open");
   document.getElementById("pick-overlay").classList.add("open");
+
+  // Estatística de quantidade histórica — quantas unidades/caixas costumas comprar
+  // deste produto, com base nas últimas idas ao MARL registadas.
+  const qtyStatsEl = document.getElementById('pick-qty-stats');
+  if (qtyStatsEl) {
+    const pastQtys = snapHistory
+      .map(snap => (snap.items || []).find(it => gk(it.cat, it.item) === key))
+      .filter(it => it && Number(it.qty) > 0)
+      .map(it => Number(it.qty));
+    if (pastQtys.length >= 2) {
+      const avg = pastQtys.reduce((a, b) => a + b, 0) / pastQtys.length;
+      const min = Math.min(...pastQtys);
+      const max = Math.max(...pastQtys);
+      const last = pastQtys[0]; // snapHistory está ordenado do mais recente para o mais antigo
+      let txt = `Habitualmente ${min === max ? min : min + '–' + max} cx`;
+      if (min !== max) txt += ` (média ${avg.toFixed(0)})`;
+      txt += ` · Última vez ${last} cx`;
+      qtyStatsEl.textContent = txt;
+      qtyStatsEl.style.display = 'block';
+    } else if (pastQtys.length === 1) {
+      qtyStatsEl.textContent = `Última vez ${pastQtys[0]} cx`;
+      qtyStatsEl.style.display = 'block';
+    } else {
+      qtyStatsEl.style.display = 'none';
+    }
+  }
+
   updateMargin();
 }
 
