@@ -145,22 +145,11 @@
     /* ITEM ROWS */
     .item-row { display:flex; align-items:center; gap:16px; padding:14px 12px; border-bottom:1px solid var(--md-outline-variant); user-select:none; -webkit-user-select:none; }
     .item-row:last-child { border-bottom:none; }
+    .task-item-row { border-bottom:1px solid var(--md-outline-variant) !important; }
     .item-row.zebra-even { background:var(--md-surface-1); }
     .item-row.zebra-odd  { background:var(--md-surface); }
     .item-name { flex:1; font-size:29px; font-weight:400; color:var(--md-primary); line-height:1.2; }
     .item-name.active { font-weight:600; color:var(--md-primary); }
-
-    /* TAREFAS — cartões, no mesmo estilo dos blocos do Resumo */
-    .task-row { background:var(--md-surface); border-radius:16px; border:1px solid var(--md-outline-variant); margin-bottom:12px; overflow:hidden; transition:border-color 0.25s, box-shadow 0.25s; }
-    .task-row.is-open { border-color:var(--md-amber); box-shadow:0 2px 12px rgba(217,160,43,0.15); }
-    .task-item-row { border-bottom:none !important; padding:16px 14px; }
-    .task-progress-pill { font-size:13px; font-weight:700; padding:4px 10px; border-radius:20px; background:var(--md-surface-variant); color:var(--md-primary); opacity:0.75; flex-shrink:0; white-space:nowrap; }
-    .task-progress-pill.complete { background:var(--md-primary); color:var(--md-white); opacity:1; }
-    .task-check-circle { width:30px; height:30px; border-radius:50%; border:2px solid var(--md-outline); background:var(--md-white); flex-shrink:0; cursor:pointer; display:flex; align-items:center; justify-content:center; transition:background 0.18s, border-color 0.18s, transform 0.18s; }
-    .task-check-circle.checked { background:var(--md-primary); border-color:var(--md-primary); transform:scale(1.05); }
-    .task-check-circle .material-icons-round { font-size:18px; color:var(--md-white); opacity:0; transition:opacity 0.15s; }
-    .task-check-circle.checked .material-icons-round { opacity:1; }
-    .ptask-text.is-done { text-decoration:line-through; opacity:0.45; }
 
     /* QTY */
     .qty-wrap { display:flex; align-items:center; gap:6px; }
@@ -844,23 +833,12 @@
     <!-- ── RESUMO (página própria) ───────────────────────────────────────── -->
     <div id="view-resumo" class="view">
       <div style="padding-top:14px;"></div>
-
-      <!-- Separadores: Antes do mercado / Como está a correr / Análise aprofundada -->
-      <div id="resumo-tabs" style="display:none; padding:0 16px 12px; gap:8px;">
-        <button class="resumo-tab-btn active" data-tab="antes" onclick="switchResumoTab('antes')" style="flex:1; padding:10px 6px; border-radius:12px; border:none; background:var(--md-primary); color:var(--md-white); font-family:'Outfit',sans-serif; font-size:12.5px; font-weight:700; cursor:pointer; transition:background 0.15s, color 0.15s;">Antes do mercado</button>
-        <button class="resumo-tab-btn" data-tab="agora" onclick="switchResumoTab('agora')" style="flex:1; padding:10px 6px; border-radius:12px; border:none; background:var(--md-surface-variant); color:var(--md-primary); font-family:'Outfit',sans-serif; font-size:12.5px; font-weight:700; cursor:pointer; transition:background 0.15s, color 0.15s;">Como vai o negócio</button>
-        <button class="resumo-tab-btn" data-tab="fundo" onclick="switchResumoTab('fundo')" style="flex:1; padding:10px 6px; border-radius:12px; border:none; background:var(--md-surface-variant); color:var(--md-primary); font-family:'Outfit',sans-serif; font-size:12.5px; font-weight:700; cursor:pointer; transition:background 0.15s, color 0.15s;">Análise a fundo</button>
-      </div>
-
       <div id="resumo-content" style="padding:4px 16px 32px;">
         <div id="resumo-empty" style="text-align:center; padding:60px 20px; color:var(--md-primary); opacity:0.5;">
           <span class="material-icons-round" style="font-size:48px; display:block; margin-bottom:12px;">bar_chart</span>
           <div style="font-size:17px; font-weight:600;">Ainda sem dados suficientes</div>
           <div style="font-size:14px; margin-top:6px;">Regista vendas para veres a evolução aqui</div>
         </div>
-        <div id="resumo-section-antes" class="resumo-section" style="display:none;"></div>
-        <div id="resumo-section-agora" class="resumo-section" style="display:none;"></div>
-        <div id="resumo-section-fundo" class="resumo-section" style="display:none;"></div>
       </div>
     </div>
     <div id="supplier-modal-overlay" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.5); z-index:299; backdrop-filter:blur(4px);" onclick="closeSupplierModal()"></div>
@@ -993,17 +971,6 @@
 
         <!-- Resumo rápido — dados reais do negócio, não decoração -->
         <div id="dash-summary" style="padding:40px 20px 0; display:flex; gap:14px; justify-content:center;"></div>
-
-        <!-- Previsão do dia de mercado seguinte a esse — só texto, sem se tornar outra bola -->
-        <div id="dash-weather-next" style="display:none; text-align:center; margin-top:10px; font-size:12px; color:var(--md-white); opacity:0.65; font-family:'Outfit',sans-serif;"></div>
-
-        <!-- Aviso de backup atrasado — só aparece quando realmente é preciso, com ação direta -->
-        <button id="dash-backup-nag" onclick="exportBackup()" style="display:none; margin:16px 20px 0; padding:12px 16px; border-radius:14px; border:1.5px solid var(--md-error); background:rgba(155,58,58,0.15); backdrop-filter:blur(6px); color:var(--md-white); font-family:'Outfit',sans-serif; cursor:pointer; align-items:center; gap:10px; text-align:left;">
-          <span class="material-icons-round" style="font-size:22px; flex-shrink:0;">cloud_off</span>
-          <span style="flex:1; font-size:13px; font-weight:600; line-height:1.3;" id="dash-backup-nag-text">Backup atrasado</span>
-          <span class="material-icons-round" style="font-size:20px; opacity:0.7; flex-shrink:0;">chevron_right</span>
-        </button>
-
 
         <div style="padding:0 20px 0 44px;">
           <div style="font-size:35px; font-weight:700; letter-spacing:-0.5px; line-height:1.1; margin-top:46px; margin-bottom:46px; text-transform:lowercase; color:var(--md-amber);">momento<br>frutado</div>
@@ -1146,6 +1113,10 @@
             onkeydown="if(event.key==='Enter'){event.preventDefault();this.blur();}" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" data-lpignore="true" data-form-type="other"/>
         </div>
 
+        <button onclick="duplicatePickItem()" style="width:100%; margin-top:14px; padding:11px; background:rgba(92,126,96,0.1); border:1.5px dashed var(--md-outline-variant); border-radius:10px; color:var(--md-primary); font-size:14px; font-weight:600; font-family:'Outfit',sans-serif; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:6px;">
+          <span class="material-icons-round" style="font-size:18px;">content_copy</span> Duplicar produto (lote diferente)
+        </button>
+
       </div>
     </div>
 
@@ -1164,12 +1135,36 @@
         <span id="pick-margin-pct" style="font-size:22px; font-weight:700; color:var(--md-on-primary-container);">—</span>
       </div>
       <div id="pick-suggestion" style="margin-top:10px; font-size:13px; color:var(--md-primary); display:none;"></div>
-      <div id="pick-waste-note" style="margin-top:6px; font-size:12px; color:var(--md-primary); opacity:0.65; display:none;"></div>
-      <div id="pick-price-alert" style="margin-top:8px; font-size:13px; font-weight:600; color:var(--md-error); display:none;"></div>
       <div id="pick-margin-bar-wrap" style="height:6px; background:var(--md-outline-variant); border-radius:3px; margin-top:8px; overflow:hidden; display:none;">
         <div id="pick-margin-bar" style="height:100%; width:0%; background:var(--md-primary); border-radius:3px; transition:width 0.3s;"></div>
       </div>
     </div>
+  </div>
+</div>
+
+<!-- ── PAINEL DE TAREFA — mesmo padrão do painel de produto ────────────────── -->
+<div id="task-panel-overlay" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.55); z-index:299; backdrop-filter:blur(8px);" onclick="closeTaskPanel()"></div>
+<div id="task-panel" style="display:none; position:fixed; bottom:0; left:50%; transform:translateX(-50%); width:100%; max-width:600px; background:var(--md-surface); border-radius:28px 28px 0 0; padding:0 0 32px; z-index:300; max-height:88vh; overflow-y:auto; box-sizing:border-box; box-shadow:0 -4px 32px rgba(0,0,0,0.3);">
+  <div style="display:flex; align-items:center; justify-content:space-between; padding:18px 16px 6px;">
+    <div id="task-panel-title" style="font-size:33px; font-weight:600; color:var(--md-primary); font-family:'Outfit',sans-serif; cursor:pointer; flex:1; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">Tarefa</div>
+    <button id="task-panel-close" title="Fechar" onclick="closeTaskPanel()" style="border:none; background:var(--md-gold); color:var(--md-white); border-radius:50%; width:42px; height:42px; display:flex; align-items:center; justify-content:center; cursor:pointer; flex-shrink:0; box-shadow:0 2px 6px rgba(0,0,0,0.15); margin-left:10px;">
+      <span class="material-icons-round" style="font-size:24px;">close</span>
+    </button>
+  </div>
+
+  <div style="padding:0 16px 16px;">
+    <div style="background:var(--md-surface-1); border-radius:14px; border:1px solid var(--md-outline-variant); padding:10px 14px;">
+      <div id="task-panel-items"></div>
+      <button id="task-panel-add-btn" style="width:100%; display:flex; align-items:center; gap:10px; padding:13px 4px; background:none; border:none; cursor:pointer; color:var(--md-amber); font-size:17px; font-weight:700; font-family:'Outfit',sans-serif;">
+        Adicionar item
+      </button>
+    </div>
+  </div>
+
+  <div style="padding:0 16px; display:flex; justify-content:flex-end;">
+    <button id="task-panel-delete-btn" style="background:none; border:none; cursor:pointer; padding:8px; display:flex; align-items:center; gap:6px; color:var(--md-outline-variant); font-size:14px; font-family:'Outfit',sans-serif;">
+      Apagar tarefa
+    </button>
   </div>
 </div>
 
@@ -1620,26 +1615,6 @@ function renderDashboard() {
   });
 
   renderDashSummary();
-  renderDashboardBackupNag();
-}
-
-// Aviso pró-ativo de backup — ao contrário do texto em Definições (que só se vê se lá
-// fores), isto aparece logo no dashboard quando o backup está mesmo atrasado, com
-// ação de um toque só (evita teres de navegar até às Definições para o resolver).
-function renderDashboardBackupNag() {
-  const nag = document.getElementById('dash-backup-nag');
-  const txt = document.getElementById('dash-backup-nag-text');
-  if (!nag || !txt) return;
-  const days = getDaysSinceBackup();
-  if (days === null) {
-    txt.textContent = 'Ainda não fizeste nenhum backup — toca para fazer agora';
-    nag.style.display = 'flex';
-  } else if (days >= 14) {
-    txt.textContent = `Backup há ${days} dias — toca para atualizar agora`;
-    nag.style.display = 'flex';
-  } else {
-    nag.style.display = 'none';
-  }
 }
 
 // ── RESUMO RÁPIDO DO DASHBOARD — dados reais, não decoração ─────────────────
@@ -1749,64 +1724,45 @@ function fetchNextMarketDayWeather() {
   const card = document.getElementById('dash-weather-card');
   if (!card) return;
 
-  // Encontra os próximos 2 dias de mercado, sempre a partir de amanhã (nunca hoje,
-  // mesmo que hoje já seja Terça/Sexta/Sábado) — dá para planear compras com mais
-  // do que um dia de antecedência.
+  // Encontra o próximo dia de mercado, sempre a partir de amanhã (nunca hoje,
+  // mesmo que hoje já seja Terça/Sexta/Sábado).
   const today = new Date();
-  const upcoming = [];
-  for (let i = 1; i <= 10 && upcoming.length < 2; i++) {
+  let targetDate = null, targetDow = null;
+  for (let i = 1; i <= 7; i++) {
     const d = new Date(today);
     d.setDate(d.getDate() + i);
-    if (WEATHER_LOCATIONS[d.getDay()]) upcoming.push({ date: d, dow: d.getDay() });
+    if (WEATHER_LOCATIONS[d.getDay()]) { targetDate = d; targetDow = d.getDay(); break; }
   }
-  if (!upcoming.length) return;
+  if (!targetDate) return;
 
+  const loc = WEATHER_LOCATIONS[targetDow];
+  const dateStr = targetDate.toISOString().split('T')[0];
   const dayNames = ['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'];
 
-  const fetchDay = (target) => {
-    const loc = WEATHER_LOCATIONS[target.dow];
-    const dateStr = target.date.toISOString().split('T')[0];
-    const url = `https://api.open-meteo.com/v1/forecast?latitude=${loc.lat}&longitude=${loc.lon}&daily=temperature_2m_max,temperature_2m_min,precipitation_probability_max,weather_code&timezone=Europe%2FLisbon&start_date=${dateStr}&end_date=${dateStr}`;
-    return fetch(url).then(r => r.json()).then(data => {
-      if (!data.daily || !data.daily.time || !data.daily.time.length) throw new Error('sem dados');
-      return {
-        loc, dow: target.dow,
-        tMax: Math.round(data.daily.temperature_2m_max[0]),
-        tMin: Math.round(data.daily.temperature_2m_min[0]),
-        rainPct: data.daily.precipitation_probability_max[0],
-        icon: weatherCodeToIcon(data.daily.weather_code[0]),
-      };
-    });
-  };
+  const url = `https://api.open-meteo.com/v1/forecast?latitude=${loc.lat}&longitude=${loc.lon}&daily=temperature_2m_max,temperature_2m_min,precipitation_probability_max,weather_code&timezone=Europe%2FLisbon&start_date=${dateStr}&end_date=${dateStr}`;
 
-  // Dia de mercado seguinte — a bola grande do dashboard, como já era.
-  fetchDay(upcoming[0]).then(w => {
+  fetch(url).then(r => r.json()).then(data => {
+    if (!data.daily || !data.daily.time || !data.daily.time.length) throw new Error('sem dados');
+    const tMax = Math.round(data.daily.temperature_2m_max[0]);
+    const tMin = Math.round(data.daily.temperature_2m_min[0]);
+    const rainPct = data.daily.precipitation_probability_max[0];
+    const code = data.daily.weather_code[0];
+    const icon = weatherCodeToIcon(code);
     const valueEl = card.querySelector('div:nth-child(1)');
     const labelEl = card.querySelector('div:nth-child(2)');
     // Esconde com fade, troca o conteúdo, e volta a mostrar — em vez de o valor real
     // substituir "A consultar..." de forma abrupta.
     [valueEl, labelEl].forEach(el => { if (el) { el.style.transition = 'opacity 0.25s ease-out'; el.style.opacity = '0'; } });
     setTimeout(() => {
-      if (valueEl) valueEl.innerHTML = `${w.icon} ${w.tMax}°`;
-      if (labelEl) labelEl.textContent = `${dayNames[w.dow]}${w.rainPct >= 30 ? ' · 🌧' + w.rainPct + '%' : ' · ' + w.loc.name}`;
+      if (valueEl) valueEl.innerHTML = `${icon} ${tMax}°`;
+      if (labelEl) labelEl.textContent = `${dayNames[targetDow]}${rainPct >= 30 ? ' · 🌧' + rainPct + '%' : ' · ' + loc.name}`;
       [valueEl, labelEl].forEach(el => { if (el) el.style.opacity = '1'; });
     }, 250);
-    card.title = `${w.loc.name} — ${dayNames[w.dow]}: ${w.tMin}° a ${w.tMax}°, ${w.rainPct}% chuva`;
+    card.title = `${loc.name} — ${dayNames[targetDow]}: ${tMin}° a ${tMax}°, ${rainPct}% chuva`;
   }).catch(() => {
     const labelEl = card.querySelector('div:nth-child(2)');
     if (labelEl) labelEl.textContent = 'Sem ligação';
   });
-
-  // Dia de mercado a seguir a esse — só uma linha de texto discreta, para planear
-  // com mais do que um dia de antecedência (ex: quantidades a comprar no MARL).
-  if (upcoming[1]) {
-    fetchDay(upcoming[1]).then(w => {
-      const nextEl = document.getElementById('dash-weather-next');
-      if (!nextEl) return;
-      nextEl.textContent = `Depois, ${dayNames[w.dow]}: ${w.icon} ${w.tMax}°${w.rainPct >= 30 ? ' · 🌧' + w.rainPct + '%' : ''}`;
-      nextEl.style.display = 'block';
-    }).catch(() => {});
-  }
 }
 
 function weatherCodeToIcon(code) {
@@ -2090,6 +2046,73 @@ function deleteProject(id) {
 }
 
 // ── PAINEL DE TAREFA — mesmo padrão do painel de produto em Compras ─────────
+let currentTaskPanelId = null;
+
+function openTaskPanel(projectId) {
+  currentTaskPanelId = projectId;
+  const proj = projects.find(p => p.id === projectId);
+  if (!proj) return;
+  const titleEl = document.getElementById('task-panel-title');
+  titleEl.textContent = proj.title;
+  titleEl.onclick = () => startEditProjectTitle(proj.id, titleEl, true);
+  renderTaskPanelItems();
+  document.getElementById('task-panel-overlay').style.display = 'block';
+  document.getElementById('task-panel').style.display = 'block';
+}
+
+function closeTaskPanel() {
+  document.getElementById('task-panel-overlay').style.display = 'none';
+  document.getElementById('task-panel').style.display = 'none';
+  currentTaskPanelId = null;
+  renderTasksAndProjects();
+}
+
+function renderTaskPanelItems() {
+  const proj = projects.find(p => p.id === currentTaskPanelId);
+  const itemsBox = document.getElementById('task-panel-items');
+  if (!proj || !itemsBox) return;
+  itemsBox.innerHTML = '';
+
+  if (proj.tasks.length === 0) {
+    const empty = document.createElement('div');
+    empty.style.cssText = 'text-align:center; padding:24px 0; color:var(--md-primary); opacity:0.4; font-size:15px;';
+    empty.textContent = 'Ainda sem itens';
+    itemsBox.appendChild(empty);
+  }
+
+  proj.tasks.forEach((t, idx) => {
+    const row = document.createElement('div');
+    row.style.cssText = 'padding:13px 0; display:flex; align-items:flex-start; gap:10px;';
+
+    const textWrap = document.createElement('div');
+    textWrap.style.cssText = 'flex:1; min-width:0;';
+
+    const textSpan = document.createElement('div');
+    textSpan.className = 'ptask-text';
+    textSpan.style.cssText = 'font-size:19px; font-weight:600; color:var(--md-primary); cursor:pointer;';
+    textSpan.textContent = t.text;
+    textSpan.addEventListener('click', () => startEditPTaskText(proj.id, t.id, textSpan, true));
+    textWrap.appendChild(textSpan);
+
+    // Nota — sempre visível e legível, sem precisar de tocar para ver.
+    const notesSpan = document.createElement('div');
+    notesSpan.className = 'ptask-notes-display';
+    notesSpan.style.cssText = `font-size:15px; color:var(--md-primary); opacity:${t.notes ? '0.7' : '0.35'}; margin-top:4px; cursor:pointer; ${t.notes ? '' : 'font-style:italic;'}`;
+    notesSpan.textContent = t.notes ? t.notes : '+ adicionar nota';
+    notesSpan.addEventListener('click', () => startEditPTaskNotesInline(proj.id, t.id, notesSpan));
+    textWrap.appendChild(notesSpan);
+
+    row.appendChild(textWrap);
+
+    const delTaskBtn = document.createElement('button');
+    delTaskBtn.style.cssText = 'background:none; border:none; cursor:pointer; padding:4px; flex-shrink:0; width:30px; height:30px; display:flex; align-items:center; justify-content:center; overflow:hidden;';
+    delTaskBtn.innerHTML = '<span class="material-icons-round" style="font-size:21px; color:var(--md-outline-variant);">close</span>';
+    delTaskBtn.addEventListener('click', () => { deletePTask(proj.id, t.id, true); });
+    row.appendChild(delTaskBtn);
+
+    itemsBox.appendChild(row);
+  });
+}
 
 function startEditPTaskNotesInline(projectId, taskId, el) {
   const proj = projects.find(p => p.id === projectId);
@@ -2151,51 +2174,16 @@ function savePTask() {
   if (!proj) return;
   proj.tasks.push({ id: Date.now(), text, notes, done: false });
   sched(); closePTaskModal();
-  renderProjects();
+  if (currentTaskPanelId === currentProjectId) renderTaskPanelItems(); else renderProjects();
   showSnack('Tarefa adicionada ✓', 'saved');
 }
 
-// Marca/desmarca um item como concluído — não apaga nada, só risca e esbate.
-function toggleTaskDone(projectId, taskId) {
-  const proj = projects.find(p => p.id === projectId);
-  if (!proj) return;
-  const t = proj.tasks.find(t => t.id === taskId);
-  if (!t) return;
-  t.done = !t.done;
-  sched();
-  const body = document.getElementById('task-body-' + projectId);
-  if (body) renderTaskBodyItems(body, projectId);
-  renderTasksAndProjects();
-}
-
-// Remove de vez os itens já marcados como concluídos de uma Tarefa.
-function clearCompletedTasks(projectId) {
-  const proj = projects.find(p => p.id === projectId);
-  if (!proj) return;
-  proj.tasks = proj.tasks.filter(t => !t.done);
-  sched();
-  cleanupEmptyProject(proj.id);
-  showSnack('Concluídos limpos ✓', 'saved');
-}
-
-// Uma Tarefa sem nenhum item já não serve de nada na lista — remove-a sozinha,
-// sem pedir confirmação (não há dados a perder, está vazia).
-function cleanupEmptyProject(projectId) {
-  const proj = projects.find(p => p.id === projectId);
-  if (proj && proj.tasks.length === 0) {
-    projects = projects.filter(p => p.id !== projectId);
-    delete openProjects[projectId];
-    sched();
-  }
-  renderTasksAndProjects();
-}
-
-function deletePTask(projectId, taskId) {
+function deletePTask(projectId, taskId, fromPanel) {
   const proj = projects.find(p => p.id === projectId);
   if (!proj) return;
   proj.tasks = proj.tasks.filter(t => t.id !== taskId);
   sched();
-  cleanupEmptyProject(projectId);
+  if (fromPanel) renderTaskPanelItems(); else renderProjects();
 }
 
 function editPTaskNotes(projectId, taskId, notes) {
@@ -2207,13 +2195,15 @@ function editPTaskNotes(projectId, taskId, notes) {
 
 
 // ── EDIÇÃO INLINE: título de projeto e texto de sub-tarefa ──────────────────
-function startEditProjectTitle(projectId, el) {
+function startEditProjectTitle(projectId, el, fromPanel) {
   const proj = projects.find(p => p.id === projectId);
   if (!proj) return;
   const input = document.createElement('input');
   input.type = 'text';
   input.value = proj.title;
-  input.style.cssText = 'font-size:29px; font-weight:700; color:var(--md-primary); border:none; border-bottom:1.5px solid var(--md-primary); background:transparent; outline:none; font-family:Outfit,sans-serif; padding:0; flex:1; min-width:0;';
+  input.style.cssText = fromPanel
+    ? 'font-size:22px; font-weight:600; color:var(--md-primary); border:none; border-bottom:1.5px solid var(--md-outline-variant); background:transparent; outline:none; font-family:Outfit,sans-serif; padding:0; flex:1; min-width:0; width:100%;'
+    : 'font-size:29px; font-weight:700; color:var(--md-primary); border:none; border-bottom:1.5px solid var(--md-primary); background:transparent; outline:none; font-family:Outfit,sans-serif; padding:0; flex:1; min-width:0;';
   el.replaceWith(input);
   input.focus();
   input.setSelectionRange(input.value.length, input.value.length);
@@ -2225,13 +2215,22 @@ function startEditProjectTitle(projectId, el) {
     const newTitle = input.value.trim();
     if (newTitle) proj.title = newTitle;
     sched();
-    renderProjects();
+    if (fromPanel) {
+      // Repõe o elemento de título original (o input não tem o id necessário para reabrir o painel)
+      const restored = document.createElement('div');
+      restored.id = 'task-panel-title';
+      restored.style.cssText = input.style.cssText.replace('width:100%;', '') + ' overflow:hidden; text-overflow:ellipsis; white-space:nowrap;';
+      input.replaceWith(restored);
+      openTaskPanel(proj.id);
+    } else {
+      renderProjects();
+    }
   };
   input.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); commit(); } });
   input.addEventListener('blur', commit);
 }
 
-function startEditPTaskText(projectId, taskId, el) {
+function startEditPTaskText(projectId, taskId, el, fromPanel) {
   const proj = projects.find(p => p.id === projectId);
   if (!proj) return;
   const t = proj.tasks.find(t => t.id === taskId);
@@ -2251,7 +2250,7 @@ function startEditPTaskText(projectId, taskId, el) {
     const newText = input.value.trim();
     if (newText) t.text = newText;
     sched();
-    renderProjects();
+    if (fromPanel) renderTaskPanelItems(); else renderProjects();
   };
   input.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); commit(); } });
   input.addEventListener('blur', commit);
@@ -2289,13 +2288,13 @@ function toggleProjectOpen(projectId, wasOpen) {
 function appendProjectCard(container, empty, proj, isFirst) {
   const open = openProjects[proj.id] === true;
   const wrap = document.createElement('div');
-  wrap.className = 'task-row' + (open ? ' is-open' : '');
+  wrap.className = 'task-row';
   wrap.dataset.projId = proj.id;
 
   const row = document.createElement('div');
   row.className = 'item-row task-item-row';
   row.style.alignItems = 'flex-start';
-  row.style.gap = '10px';
+  row.style.gap = '2px';
   row.style.transition = 'background 0.35s ease-out, padding 0.35s ease-out, margin 0.35s ease-out';
 
   // Alça de arrastar — toca e arrasta para reordenar por prioridade
@@ -2308,8 +2307,8 @@ function appendProjectCard(container, empty, proj, isFirst) {
   const nm = document.createElement('span');
   nm.className = 'item-name';
   nm.style.cursor = 'pointer';
-  nm.style.fontSize = '32px';
-  nm.style.fontWeight = '500';
+  nm.style.fontSize = '35px';
+  nm.style.fontWeight = '400';
   nm.style.filter = 'none';
   nm.style.color = 'var(--md-primary)';
   nm.style.transition = 'color 0.35s ease-out';
@@ -2328,32 +2327,11 @@ function appendProjectCard(container, empty, proj, isFirst) {
   nm.addEventListener('click', () => toggleProjectOpen(proj.id, open));
   row.appendChild(nm);
 
-  // Selo de progresso — quantos itens já estão concluídos, de relance, sem abrir a Tarefa
-  const total = proj.tasks.length;
-  const doneCount = proj.tasks.filter(t => t.done).length;
-  if (total > 0) {
-    const pill = document.createElement('span');
-    pill.className = 'task-progress-pill' + (doneCount === total ? ' complete' : '');
-    pill.style.marginTop = '6px';
-    pill.textContent = `${doneCount}/${total}`;
-    row.appendChild(pill);
-  }
-
   const chevron = document.createElement('span');
   chevron.className = 'material-icons-round';
   chevron.textContent = open ? 'expand_less' : 'chevron_right';
   chevron.style.cssText = `font-size:22px; color:${open ? 'var(--md-amber)' : 'var(--md-primary)'}; opacity:${open ? '0.9' : '0.35'}; flex-shrink:0; cursor:pointer; margin-top:4px;`;
   chevron.addEventListener('click', () => toggleProjectOpen(proj.id, open));
-  if (open) {
-    // Editar nome — só visível com a Tarefa aberta, para não estorvar o toque de abrir/fechar.
-    const editIcon = document.createElement('span');
-    editIcon.className = 'material-icons-round';
-    editIcon.textContent = 'edit';
-    editIcon.title = 'Editar nome';
-    editIcon.style.cssText = 'font-size:19px; color:var(--md-primary); opacity:0.35; flex-shrink:0; cursor:pointer; margin-top:6px;';
-    editIcon.addEventListener('click', (e) => { e.stopPropagation(); startEditProjectTitle(proj.id, nm); });
-    row.appendChild(editIcon);
-  }
   row.appendChild(chevron);
 
   wrap.appendChild(row);
@@ -2361,7 +2339,7 @@ function appendProjectCard(container, empty, proj, isFirst) {
   if (open) {
     const body = document.createElement('div');
     body.id = 'task-body-' + proj.id;
-    body.style.cssText = 'padding:0 14px; border-top:1px solid var(--md-outline-variant); height:0; overflow:hidden; opacity:0; transition:height 0.32s ease-out, opacity 0.28s ease-out, padding 0.32s ease-out;';
+    body.style.cssText = 'padding:0 12px; border-bottom:1px solid var(--md-outline-variant); height:0; overflow:hidden; opacity:0; transition:height 0.32s ease-out, opacity 0.28s ease-out, padding 0.32s ease-out;';
     renderTaskBodyItems(body, proj.id);
     wrap.appendChild(body);
     requestAnimationFrame(() => {
@@ -2369,7 +2347,7 @@ function appendProjectCard(container, empty, proj, isFirst) {
       // como uma gaveta a abrir — height:auto não é animável em CSS, por isso medimos.
       const targetHeight = body.scrollHeight + 22; // +22 = padding vertical final (6px + 16px)
       body.style.height = targetHeight + 'px';
-      body.style.padding = '6px 14px 16px';
+      body.style.padding = '6px 12px 16px';
       body.style.opacity = '1';
       setTimeout(() => { body.style.height = 'auto'; }, 340);
     });
@@ -2527,23 +2505,17 @@ function renderTaskBodyItems(body, projectId) {
     body.appendChild(empty);
   }
 
-  // Pendentes primeiro, concluídos depois — sem reordenar os dados, só a vista.
-  const pending = proj.tasks.filter(t => !t.done);
-  const done = proj.tasks.filter(t => t.done);
-  const ordered = [...pending, ...done];
-
-  ordered.forEach((t, idx) => {
+  proj.tasks.forEach((t, idx) => {
     const row = document.createElement('div');
-    row.style.cssText = `padding:11px 0; display:flex; align-items:flex-start; gap:10px; ${idx < ordered.length - 1 ? 'border-bottom:1px solid var(--md-outline-variant);' : ''}`;
+    row.style.cssText = `padding:11px 0; display:flex; align-items:flex-start; gap:10px; ${idx < proj.tasks.length - 1 ? 'border-bottom:1px solid var(--md-outline-variant);' : ''}`;
 
-    // Círculo de concluído — toca para marcar/desmarcar feito (não apaga nada)
-    const check = document.createElement('button');
-    check.className = 'task-check-circle' + (t.done ? ' checked' : '');
-    check.title = t.done ? 'Marcar por fazer' : 'Marcar concluído';
-    check.style.marginTop = '2px';
-    check.innerHTML = '<span class="material-icons-round">check</span>';
-    check.addEventListener('click', () => toggleTaskDone(proj.id, t.id));
-    row.appendChild(check);
+    // Bolinha-marcador à esquerda — toca para apagar o item (X dentro da bolinha)
+    const bullet = document.createElement('button');
+    bullet.title = 'Apagar item';
+    bullet.style.cssText = 'width:24px; height:24px; border-radius:50%; background:none; border:1.5px solid var(--md-outline-variant); cursor:pointer; flex-shrink:0; margin-top:2px; padding:0; display:flex; align-items:center; justify-content:center; overflow:hidden;';
+    bullet.innerHTML = '<span class="material-icons-round" style="font-size:15px; color:var(--md-outline-variant);">close</span>';
+    bullet.addEventListener('click', () => deletePTask(proj.id, t.id, false));
+    row.appendChild(bullet);
 
     const textWrap = document.createElement('div');
     textWrap.style.cssText = 'flex:1; min-width:0;';
@@ -2552,19 +2524,11 @@ function renderTaskBodyItems(body, projectId) {
     titleRow.style.cssText = 'display:flex; align-items:center; justify-content:space-between; gap:8px;';
 
     const textSpan = document.createElement('div');
-    textSpan.className = 'ptask-text' + (t.done ? ' is-done' : '');
+    textSpan.className = 'ptask-text';
     textSpan.style.cssText = 'font-size:26px; font-weight:700; color:var(--md-primary); cursor:pointer;';
     textSpan.textContent = t.text;
-    textSpan.addEventListener('click', () => startEditPTaskText(proj.id, t.id, textSpan));
+    textSpan.addEventListener('click', () => startEditPTaskText(proj.id, t.id, textSpan, false));
     titleRow.appendChild(textSpan);
-
-    // Nota — sempre criada primeiro para que o botão "+" lhe possa apontar
-    // diretamente (evita o bug de apontar para a nota de outro item da lista).
-    const notesSpan = document.createElement('div');
-    notesSpan.className = 'ptask-notes-display';
-    notesSpan.style.cssText = `font-size:26px; font-weight:400; color:var(--md-primary); opacity:${t.notes ? '0.7' : '0'}; margin-top:4px; cursor:pointer; height:${t.notes ? 'auto' : '0'}; overflow:hidden; white-space:pre-line; line-height:1.3;`;
-    notesSpan.textContent = t.notes ? t.notes : '';
-    notesSpan.addEventListener('click', () => startEditPTaskNotesInline(proj.id, t.id, notesSpan));
 
     // Bolinha "+" para adicionar/editar nota — só aparece quando ainda não há nota
     if (!t.notes) {
@@ -2572,21 +2536,21 @@ function renderTaskBodyItems(body, projectId) {
       noteBtn.title = 'Adicionar nota';
       noteBtn.style.cssText = 'width:26px; height:26px; border-radius:50%; background:none; border:1.5px solid var(--md-primary); cursor:pointer; display:flex; align-items:center; justify-content:center; opacity:0.5; flex-shrink:0;';
       noteBtn.innerHTML = '<span class="material-icons-round" style="font-size:16px; color:var(--md-primary);">add</span>';
-      noteBtn.addEventListener('click', (e) => { e.stopPropagation(); startEditPTaskNotesInline(proj.id, t.id, notesSpan); });
+      noteBtn.addEventListener('click', (e) => { e.stopPropagation(); startEditPTaskNotesInline(proj.id, t.id, notesSpanRef); });
       titleRow.appendChild(noteBtn);
     }
 
     textWrap.appendChild(titleRow);
-    textWrap.appendChild(notesSpan);
-    row.appendChild(textWrap);
 
-    // Apagar item — ação secundária e discreta, separada de "concluir"
-    const delBtn = document.createElement('button');
-    delBtn.title = 'Apagar item';
-    delBtn.style.cssText = 'width:22px; height:22px; border-radius:50%; background:none; border:none; cursor:pointer; flex-shrink:0; margin-top:4px; padding:0; display:flex; align-items:center; justify-content:center; opacity:0.3;';
-    delBtn.innerHTML = '<span class="material-icons-round" style="font-size:16px; color:var(--md-primary);">close</span>';
-    delBtn.addEventListener('click', () => deletePTask(proj.id, t.id));
-    row.appendChild(delBtn);
+    const notesSpan = document.createElement('div');
+    notesSpan.className = 'ptask-notes-display';
+    notesSpan.style.cssText = `font-size:26px; font-weight:400; color:var(--md-primary); opacity:${t.notes ? '0.7' : '0'}; margin-top:4px; cursor:pointer; height:${t.notes ? 'auto' : '0'}; overflow:hidden; white-space:pre-line; line-height:1.3;`;
+    notesSpan.textContent = t.notes ? t.notes : '';
+    notesSpan.addEventListener('click', () => startEditPTaskNotesInline(proj.id, t.id, notesSpan));
+    var notesSpanRef = notesSpan;
+    textWrap.appendChild(notesSpan);
+
+    row.appendChild(textWrap);
 
     body.appendChild(row);
   });
@@ -2601,19 +2565,9 @@ function renderTaskBodyItems(body, projectId) {
   addBtn.addEventListener('click', () => openPTaskModal(proj.id));
   actionsRow.appendChild(addBtn);
 
-  // Limpar concluídos — só aparece quando há itens já marcados como feitos
-  if (done.length > 0) {
-    const clearBtn = document.createElement('button');
-    clearBtn.title = 'Limpar concluídos';
-    clearBtn.style.cssText = 'padding:0 14px; height:34px; border-radius:17px; background:none; border:1.5px solid var(--md-outline-variant); cursor:pointer; display:flex; align-items:center; gap:6px; opacity:0.75; font-family:Outfit,sans-serif; font-size:13px; font-weight:600; color:var(--md-primary);';
-    clearBtn.innerHTML = `<span class="material-icons-round" style="font-size:16px;">done_all</span> Limpar ${done.length} concluído${done.length > 1 ? 's' : ''}`;
-    clearBtn.addEventListener('click', () => clearCompletedTasks(proj.id));
-    actionsRow.appendChild(clearBtn);
-  }
-
   const delProjBtn = document.createElement('button');
   delProjBtn.title = 'Apagar tarefa';
-  delProjBtn.style.cssText = 'width:34px; height:34px; border-radius:50%; background:none; border:1.5px solid var(--md-outline-variant); cursor:pointer; display:flex; align-items:center; justify-content:center; opacity:0.7; margin-left:auto;';
+  delProjBtn.style.cssText = 'width:34px; height:34px; border-radius:50%; background:none; border:1.5px solid var(--md-outline-variant); cursor:pointer; display:flex; align-items:center; justify-content:center; opacity:0.7;';
   delProjBtn.innerHTML = '<span class="material-icons-round" style="font-size:18px; color:var(--md-outline-variant);">close</span>';
   delProjBtn.addEventListener('click', () => deleteProject(proj.id));
   actionsRow.appendChild(delProjBtn);
@@ -2725,45 +2679,18 @@ function exportBackup() {
   const data = payload();
   data._backupDate = new Date().toISOString();
   data._version = 'mf_backup_v1';
-  const dateStr = new Date().toISOString().split('T')[0];
-  const filename = `momento-frutado-backup-${dateStr}.json`;
-  const jsonStr = JSON.stringify(data, null, 2);
-  const blob = new Blob([jsonStr], { type: 'application/json' });
-
-  const markSaved = () => {
-    localStorage.setItem('mf_last_backup', new Date().toISOString());
-    renderBackupNotice();
-    renderDashboardBackupNag();
-  };
-
-  // Partilha nativa do telemóvel — abre o menu "Guardar em..." do Android, onde dá
-  // para escolher Google Drive (ou WhatsApp, email, etc.), em vez de ir sempre
-  // direto para Transferências sem perguntar nada.
-  const file = new File([blob], filename, { type: 'application/json' });
-  if (navigator.canShare && navigator.canShare({ files: [file] })) {
-    navigator.share({ files: [file], title: 'Backup Momento Frutado' })
-      .then(() => { markSaved(); showSnack('Backup partilhado ✓', 'saved'); })
-      .catch(err => {
-        if (err && err.name === 'AbortError') return; // cancelou o menu de partilha, não faz nada
-        downloadBackupFile(blob, filename, markSaved); // partilha falhou por outro motivo — recurso ao download direto
-      });
-    return;
-  }
-
-  // Sem suporte a partilha de ficheiros (ex: desktop) — cai no download direto de sempre.
-  downloadBackupFile(blob, filename, markSaved);
-}
-
-function downloadBackupFile(blob, filename, markSaved) {
+  const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
+  const dateStr = new Date().toISOString().split('T')[0];
   a.href = url;
-  a.download = filename;
+  a.download = `momento-frutado-backup-${dateStr}.json`;
   document.body.appendChild(a);
   a.click();
   document.body.removeChild(a);
   URL.revokeObjectURL(url);
-  markSaved();
+  localStorage.setItem('mf_last_backup', new Date().toISOString());
+  renderBackupNotice();
   showSnack('Backup exportado com sucesso ✓', 'saved');
 }
 
@@ -4409,29 +4336,9 @@ function renderSeasonalityWindowBlock(content, sorted) {
   window.addEventListener('mouseup', onDragEnd);
 }
 
-let resumoActiveTab = 'antes'; // separador ativo na página Resumir, mantém-se entre renders
-
-function switchResumoTab(tab) {
-  resumoActiveTab = tab;
-  ['antes', 'agora', 'fundo'].forEach(t => {
-    const sec = document.getElementById('resumo-section-' + t);
-    if (sec) sec.style.display = (t === tab) ? 'block' : 'none';
-    const btn = document.querySelector('.resumo-tab-btn[data-tab="' + t + '"]');
-    if (btn) {
-      btn.classList.toggle('active', t === tab);
-      btn.style.background = (t === tab) ? 'var(--md-primary)' : 'var(--md-surface-variant)';
-      btn.style.color = (t === tab) ? 'var(--md-white)' : 'var(--md-primary)';
-    }
-  });
-}
-
 function renderResumo() {
   const content = document.getElementById('resumo-content');
   const empty = document.getElementById('resumo-empty');
-  const tabs = document.getElementById('resumo-tabs');
-  const secAntes = document.getElementById('resumo-section-antes');
-  const secAgora = document.getElementById('resumo-section-agora');
-  const secFundo = document.getElementById('resumo-section-fundo');
   if (!content) return;
 
   // Considera só vendas registadas em dias reais de mercado (Terça/Sexta/Sábado).
@@ -4440,13 +4347,11 @@ function renderResumo() {
 
   if (marketSales.length < 3) {
     empty.style.display = 'block';
-    if (tabs) tabs.style.display = 'none';
-    [secAntes, secAgora, secFundo].forEach(s => { if (s) { s.style.display = 'none'; s.querySelectorAll('.resumo-block').forEach(b => b.remove()); } });
+    content.querySelectorAll('.resumo-block').forEach(b => b.remove());
     return;
   }
   empty.style.display = 'none';
-  if (tabs) tabs.style.display = 'flex';
-  [secAntes, secAgora, secFundo].forEach(s => { if (s) s.querySelectorAll('.resumo-block').forEach(b => b.remove()); });
+  content.querySelectorAll('.resumo-block').forEach(b => b.remove());
 
   const sorted = [...marketSales].sort((a, b) => a.date.localeCompare(b.date));
 
@@ -4531,7 +4436,7 @@ function renderResumo() {
           `;
         }).join('')}
       `;
-      secAntes.appendChild(nextBlock);
+      content.appendChild(nextBlock);
     }
   }
 
@@ -4583,7 +4488,7 @@ function renderResumo() {
     rangeLabel.innerHTML = `<span>${recent[0].label || recent[0].date}</span><span>${recent[recent.length-1].label || recent[recent.length-1].date}</span>`;
     chartBlock.appendChild(rangeLabel);
 
-    secFundo.appendChild(chartBlock);
+    content.appendChild(chartBlock);
   });
 
   // ── Bloco: Sazonalidade por dia da semana — mapa de calor mês x dia ──
@@ -4668,7 +4573,7 @@ function renderResumo() {
       `;
       heatBlock.appendChild(heatLegend);
 
-      secFundo.appendChild(heatBlock);
+      content.appendChild(heatBlock);
     }
   }
 
@@ -4685,7 +4590,6 @@ function renderResumo() {
   });
 
   const wdBlock = document.createElement('div');
-  wdBlock.dataset.order = '4';
   wdBlock.className = 'resumo-block';
   wdBlock.style.cssText = 'background:var(--md-surface); border-radius:14px; border:1px solid var(--md-outline-variant); padding:18px; margin-bottom:20px;';
   const label2 = document.createElement('div');
@@ -4712,10 +4616,68 @@ function renderResumo() {
     `;
     wdBlock.appendChild(row);
   });
-  secAgora.appendChild(wdBlock);
+  content.appendChild(wdBlock);
 
-  // ── Sazonalidade próxima — semanas de ±1 mês à volta de uma data de referência, ano passado ──
-  renderSeasonalityWindowBlock(secFundo, sorted);
+  // ── Bloco 2.5: Sazonalidade — comparação ano a ano por mês ──
+  const monthNamesShort = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
+  const byYearMonth = {}; // { '01': { '2025': total, '2026': total } }
+  sorted.forEach(s => {
+    const [y, mo] = s.date.split('-');
+    if (!byYearMonth[mo]) byYearMonth[mo] = {};
+    if (!byYearMonth[mo][y]) byYearMonth[mo][y] = 0;
+    byYearMonth[mo][y] += s.total;
+  });
+  const yearsPresent = [...new Set(sorted.map(s => s.date.slice(0,4)))].sort();
+
+  if (yearsPresent.length >= 2) {
+    const yearColors = { };
+    const palette = ['var(--md-accent)', 'var(--md-orange)', 'var(--md-gold)', 'var(--md-error)'];
+    yearsPresent.forEach((y, i) => yearColors[y] = palette[i % palette.length]);
+
+    const seasonBlock = document.createElement('div');
+    seasonBlock.className = 'resumo-block';
+    seasonBlock.style.cssText = 'background:var(--md-surface); border-radius:14px; border:1px solid var(--md-outline-variant); padding:18px; margin-bottom:20px;';
+    const labelSeason = document.createElement('div');
+    labelSeason.style.cssText = 'font-size:13px; font-weight:700; color:var(--md-primary); opacity:0.6; text-transform:uppercase; letter-spacing:1px; margin-bottom:6px;';
+    labelSeason.textContent = 'Sazonalidade — mês a mês, ano a ano';
+    seasonBlock.appendChild(labelSeason);
+
+    // Legend
+    const legend = document.createElement('div');
+    legend.style.cssText = 'display:flex; gap:14px; margin-bottom:14px;';
+    yearsPresent.forEach(y => {
+      legend.innerHTML += `<span style="font-size:12px; color:var(--md-primary); display:flex; align-items:center; gap:5px;"><span style="width:10px; height:10px; border-radius:50%; background:${yearColors[y]}; display:inline-block;"></span>${y}</span>`;
+    });
+    seasonBlock.appendChild(legend);
+
+    const maxYM = Math.max(...Object.values(byYearMonth).flatMap(o => Object.values(o)));
+    monthNamesShort.forEach((mName, idx) => {
+      const moKey = String(idx + 1).padStart(2, '0');
+      const dataForMonth = byYearMonth[moKey];
+      if (!dataForMonth) return;
+      const row = document.createElement('div');
+      row.style.cssText = 'margin-bottom:10px;';
+      let barsHtml = '';
+      yearsPresent.forEach(y => {
+        const val = dataForMonth[y] || 0;
+        const pct = maxYM > 0 ? (val / maxYM) * 100 : 0;
+        barsHtml += `
+          <div style="display:flex; align-items:center; gap:6px; margin-bottom:2px;">
+            <div style="flex:1; height:7px; background:var(--md-outline-variant); border-radius:3px; overflow:hidden;">
+              <div style="height:100%; width:${pct}%; background:${yearColors[y]}; border-radius:3px;"></div>
+            </div>
+            <span style="font-size:11px; color:var(--md-primary); opacity:0.7; width:54px; text-align:right;">${val > 0 ? val.toFixed(0)+'€' : '—'}</span>
+          </div>
+        `;
+      });
+      row.innerHTML = `<div style="font-size:13px; font-weight:600; color:var(--md-primary); margin-bottom:4px;">${mName}</div>${barsHtml}`;
+      seasonBlock.appendChild(row);
+    });
+    content.appendChild(seasonBlock);
+  }
+
+  // ── Bloco 2.6: Sazonalidade próxima — semanas de ±1 mês à volta de uma data de referência, ano passado ──
+  renderSeasonalityWindowBlock(content, sorted);
 
   // ── Bloco 3: Comparação mensal ──
   const byMonth = {};
@@ -4729,7 +4691,6 @@ function renderResumo() {
 
   if (monthKeys.length >= 2) {
     const monthBlock = document.createElement('div');
-    monthBlock.dataset.order = '3';
     monthBlock.className = 'resumo-block';
     monthBlock.style.cssText = 'background:var(--md-surface); border-radius:14px; border:1px solid var(--md-outline-variant); padding:18px; margin-bottom:20px;';
     const label3 = document.createElement('div');
@@ -4755,7 +4716,7 @@ function renderResumo() {
       `;
       monthBlock.appendChild(row);
     });
-    secAgora.appendChild(monthBlock);
+    content.appendChild(monthBlock);
   }
 
   // ── Bloco 3.5: Lucro líquido (vendas - custo de mercadoria - despesas - quebras) ──
@@ -4781,7 +4742,6 @@ function renderResumo() {
 
     const net = totalSales - totalCost - totalExp - totalBreaks;
     const profitBlock = document.createElement('div');
-    profitBlock.dataset.order = '1';
     profitBlock.className = 'resumo-block';
     profitBlock.style.cssText = 'background:var(--md-surface); border-radius:14px; border:1px solid var(--md-outline-variant); padding:18px; margin-bottom:20px;';
     profitBlock.innerHTML = `
@@ -4813,14 +4773,13 @@ function renderResumo() {
         <div style="font-size:11px; color:var(--md-primary); opacity:0.5; margin-top:6px;">Configura o peso por caixa em Gestão de produtos para incluir estes no custo.</div>
       </div>` : ''}
     `;
-    secAgora.appendChild(profitBlock);
+    content.appendChild(profitBlock);
   }
 
   // ── Bloco 4: Melhor e pior dia ──
   const best = sorted.reduce((a, s) => s.total > a.total ? s : a, sorted[0]);
   const worst = sorted.reduce((a, s) => s.total < a.total ? s : a, sorted[0]);
   const extremesBlock = document.createElement('div');
-  extremesBlock.dataset.order = '2';
   extremesBlock.className = 'resumo-block';
   extremesBlock.style.cssText = 'display:flex; gap:12px; margin-bottom:20px;';
   extremesBlock.innerHTML = `
@@ -4835,7 +4794,7 @@ function renderResumo() {
       <div style="font-size:12px; color:var(--md-primary); opacity:0.6; margin-top:2px;">${worst.label || worst.date}</div>
     </div>
   `;
-  secAgora.appendChild(extremesBlock);
+  content.appendChild(extremesBlock);
 
   // ── Bloco 5: Margem por produto — cruza preço de compra e venda registados em
   // cada ida ao MARL, para mostrar onde o negócio realmente ganha (ou perde) dinheiro.
@@ -4890,59 +4849,9 @@ function renderResumo() {
         <div style="font-size:12px; font-weight:700; color:var(--md-error); margin:14px 0 4px;">Pior margem</div>
         ${bottomMargin.map(marginRow).join('')}
       `;
-      secFundo.appendChild(marginBlock);
+      content.appendChild(marginBlock);
     }
   }
-
-  // ── Bloco: produtos que mais desperdiçam — usa os registos de quebras ──
-  if (breaks.length >= 3) {
-    const byProduct = {};
-    breaks.forEach(b => {
-      if (!byProduct[b.product]) byProduct[b.product] = { qty: 0, total: 0 };
-      byProduct[b.product].qty += b.qty;
-      byProduct[b.product].total += (b.total || 0);
-    });
-    const wasteRanked = Object.entries(byProduct)
-      .sort((a, b) => b[1].total - a[1].total)
-      .slice(0, 6);
-
-    if (wasteRanked.length) {
-      const wasteBlock = document.createElement('div');
-      wasteBlock.className = 'resumo-block';
-      wasteBlock.style.cssText = 'background:var(--md-surface); border-radius:14px; border:1px solid var(--md-outline-variant); padding:18px; margin-bottom:20px;';
-      const wasteLabel = document.createElement('div');
-      wasteLabel.style.cssText = 'font-size:13px; font-weight:700; color:var(--md-primary); opacity:0.6; text-transform:uppercase; letter-spacing:1px; margin-bottom:12px;';
-      wasteLabel.textContent = 'Produtos que mais desperdiçam';
-      wasteBlock.appendChild(wasteLabel);
-
-      const maxWaste = Math.max(...wasteRanked.map(([, v]) => v.total));
-      wasteRanked.forEach(([product, v]) => {
-        const row = document.createElement('div');
-        row.style.cssText = 'margin-bottom:10px;';
-        const pct = maxWaste > 0 ? (v.total / maxWaste) * 100 : 0;
-        row.innerHTML = `
-          <div style="display:flex; justify-content:space-between; font-size:14px; color:var(--md-primary); margin-bottom:3px;">
-            <span style="font-weight:600;">${product}</span>
-            <span style="opacity:0.7;">${v.qty.toFixed(1)}kg · ${v.total.toFixed(0)}€</span>
-          </div>
-          <div style="height:7px; background:var(--md-outline-variant); border-radius:3px; overflow:hidden;">
-            <div style="height:100%; width:${pct}%; background:var(--md-error); border-radius:3px;"></div>
-          </div>
-        `;
-        wasteBlock.appendChild(row);
-      });
-      secFundo.appendChild(wasteBlock);
-    }
-  }
-
-  // Reordenar "Como vai o negócio": lucro líquido primeiro (o número que importa),
-  // depois melhor/pior dia, comparação mensal, e por fim médias por dia (detalhe de apoio).
-  [...secAgora.children]
-    .sort((a, b) => (parseInt(a.dataset.order || '9', 10) - parseInt(b.dataset.order || '9', 10)))
-    .forEach(el => secAgora.appendChild(el));
-
-  // Aplica o separador ativo (mantém-se o que o utilizador tinha aberto)
-  switchResumoTab(resumoActiveTab);
 }
 
 // Toca-se na bola flutuante fixa no fundo, com o filtro de Comprar ativo, para
@@ -6331,6 +6240,61 @@ function goNextItem() {
   openPickPanel(next.cat, next.item);
 }
 
+function duplicatePickItem() {
+  if (!currentPickKey) return;
+  const parts = currentPickKey.split('|||');
+  const currentCat   = parts[0];
+  const currentItem  = parts[1];
+
+  // O produto raiz é sempre o nome sem sufixo de letra: "Cerejas B" → "Cerejas".
+  // Assim, duplicar um duplicado continua a criar Cerejas C, não "Cerejas B B".
+  const rootItem = currentItem.replace(/ [B-F]$/, '');
+  const rootKey  = gk(currentCat, rootItem);
+
+  const suffixes = ['B','C','D','E','F'];
+  let newName = null;
+  for (const s of suffixes) {
+    const candidate = `${rootItem} ${s}`;
+    const exists = (products[currentCat] || []).includes(candidate) ||
+                   (subcats[currentCat] || []).some(g => g.items.includes(candidate));
+    if (!exists) { newName = candidate; break; }
+  }
+  if (!newName) { alert('Já existe um lote para cada sufixo (B a F). Usa a Gestão para criar mais.'); return; }
+
+  const newKey = gk(currentCat, newName);
+  let addedToSubcat = false;
+  if (subcats[currentCat]) {
+    const group = subcats[currentCat].find(g => g.items.includes(rootItem));
+    if (group) {
+      // Insere a seguir ao último duplicado da série (ex: depois de "Cerejas B")
+      const lastDuplicateIdx = Math.max(...suffixes.map(s => group.items.indexOf(`${rootItem} ${s}`)).filter(i => i !== -1), group.items.indexOf(rootItem));
+      group.items.splice(lastDuplicateIdx + 1, 0, newName);
+      addedToSubcat = true;
+    }
+  }
+  if (!addedToSubcat) {
+    if (!products[currentCat]) products[currentCat] = [];
+    const lastDupIdx = Math.max(...suffixes.map(s => products[currentCat].indexOf(`${rootItem} ${s}`)).filter(i => i !== -1), products[currentCat].indexOf(rootItem));
+    products[currentCat].splice(lastDupIdx !== -1 ? lastDupIdx + 1 : products[currentCat].length, 0, newName);
+  }
+
+  // Copia os dados do produto RAIZ (não do duplicado atual), para ter sempre a
+  // mesma base de partida, independentemente de qual duplicado está aberto.
+  const origData = picked[rootKey] || picked[currentPickKey] || {};
+  picked[newKey] = {
+    price:     origData.price     || '',
+    sellPrice: origData.sellPrice || '',
+    supplier:  origData.supplier  || '',
+    weightKg:  origData.weightKg  || 0,
+    iva:       origData.iva       || null,
+    notes:     '',
+  };
+
+  sched();
+  renderCats('');
+  openPickPanel(currentCat, newName);
+}
+
 function goPrevItem() {
   if (!currentPickKey) return;
   const withQty = getItemsWithQty();
@@ -6413,39 +6377,6 @@ document.getElementById("pick-close").addEventListener("click", closePickPanel);
 document.getElementById("pick-overlay").addEventListener("click", closePickPanel);
 
 // ── MARGIN CALCULATOR ────────────────────────────────────────────────────────
-// Taxa de quebra habitual de um produto, calculada a partir do histórico real:
-// kg perdidos (quebras) ÷ kg comprados (só conta compras com peso registado em
-// Gestão de produtos — sem isso não há como converter para kg com confiança).
-function getProductWasteRate(productName) {
-  let purchasedKg = 0;
-  snapHistory.forEach(snap => {
-    (snap.items || []).forEach(it => {
-      if (it.item === productName && it.weightKg) purchasedKg += it.weightKg;
-    });
-  });
-  if (purchasedKg <= 0) return null;
-  const wastedKg = breaks.filter(b => b.product === productName).reduce((a, b) => a + (b.qty || 0), 0);
-  const rate = wastedKg / purchasedKg;
-  return (rate >= 0 && rate < 0.6) ? rate : null; // acima disto é provavelmente erro de registo, não confiar
-}
-
-// Preço médio pago no passado a este fornecedor, por este produto — para avisar
-// se o preço de hoje foge muito do habitual.
-function getSupplierAvgPrice(productName, supplierName) {
-  if (!supplierName) return null;
-  const prices = [];
-  snapHistory.forEach(snap => {
-    (snap.items || []).forEach(it => {
-      if (it.item === productName && it.supplier === supplierName && it.price) {
-        const p = parseFloat(it.price);
-        if (p > 0) prices.push(p);
-      }
-    });
-  });
-  if (prices.length < 2) return null; // precisa de pelo menos duas compras anteriores para ser fiável
-  return prices.reduce((a, b) => a + b, 0) / prices.length;
-}
-
 function updateMargin() {
   const priceEl = document.getElementById("pick-price");
   const sellEl  = document.getElementById("pick-sell-price");
@@ -6468,44 +6399,6 @@ function updateMargin() {
   document.getElementById("pick-profit").textContent   = profit  ? (profit >= 0 ? "+" : "") + profit.toFixed(2) + "€/kg" : "—";
   document.getElementById("pick-profit").style.color   = profit  ? (profit >= 0 ? "var(--md-success)" : "var(--md-error)") : "var(--md-primary)";
 
-  // Quebra habitual deste produto — descontada do custo antes de sugerir preço,
-  // já que um kg comprado nunca vale um kg vendido quando parte se estraga.
-  const wasteRate = itemName ? getProductWasteRate(itemName) : null;
-  const wasteNote = document.getElementById("pick-waste-note");
-  if (wasteNote) {
-    if (wasteRate !== null && wasteRate > 0.01) {
-      wasteNote.textContent = `Quebra habitual deste produto: ${(wasteRate * 100).toFixed(0)}% — já contada no preço sugerido`;
-      wasteNote.style.display = "block";
-    } else {
-      wasteNote.style.display = "none";
-    }
-  }
-  const costEffective = costIVA ? costIVA / (1 - (wasteRate || 0)) : null;
-
-  // Alerta de preço — compara o que estás a pagar hoje com a média paga a este
-  // mesmo fornecedor por este produto, no histórico.
-  const supplierName = picked[currentPickKey]?.supplier || '';
-  const priceAlertEl = document.getElementById("pick-price-alert");
-  if (priceAlertEl) {
-    const avgPrice = (buy && itemName) ? getSupplierAvgPrice(itemName, supplierName) : null;
-    if (avgPrice !== null) {
-      const diffPct = ((buy - avgPrice) / avgPrice) * 100;
-      if (diffPct >= 10) {
-        priceAlertEl.innerHTML = `<span class="material-icons-round" style="font-size:16px; vertical-align:middle;">trending_up</span> ${diffPct.toFixed(0)}% mais caro que o habitual com ${supplierName} (média ${avgPrice.toFixed(2)}€/kg)`;
-        priceAlertEl.style.color = 'var(--md-error)';
-        priceAlertEl.style.display = "block";
-      } else if (diffPct <= -10) {
-        priceAlertEl.innerHTML = `<span class="material-icons-round" style="font-size:16px; vertical-align:middle;">trending_down</span> ${Math.abs(diffPct).toFixed(0)}% mais barato que o habitual com ${supplierName}`;
-        priceAlertEl.style.color = 'var(--md-success)';
-        priceAlertEl.style.display = "block";
-      } else {
-        priceAlertEl.style.display = "none";
-      }
-    } else {
-      priceAlertEl.style.display = "none";
-    }
-  }
-
   if (margin !== null) {
     document.getElementById("pick-margin-pct").textContent = margin.toFixed(1) + "%";
     document.getElementById("pick-margin-pct").style.color = margin >= 30 ? "var(--md-success)" : margin >= 20 ? "var(--md-primary)" : "var(--md-error)";
@@ -6519,7 +6412,7 @@ function updateMargin() {
       marginEl.style.borderColor = "var(--md-error)";
       sug.style.display = "block";
       sug.style.color = "var(--md-error)";
-      const suggested = costEffective ? (costEffective / 0.7).toFixed(2) : "—";
+      const suggested = costIVA ? (costIVA / 0.8).toFixed(2) : "—";
       sug.innerHTML = '<span class="material-icons-round" style="font-size:28px;vertical-align:middle;">warning</span> Margem abaixo de 20%. Preço sugerido (30% margem): ' + suggested + '€/kg';
     } else {
       marginEl.style.background = "var(--md-primary-container)";
@@ -6551,6 +6444,18 @@ function formatDate(val) {
 // ── BOTÃO/GESTO DE RETROCEDER — volta sempre ao dashboard ───────────────────
 window.addEventListener('popstate', () => {
   switchTo('dashboard', true);
+});
+
+document.getElementById('task-panel-add-btn').addEventListener('click', () => {
+  if (currentTaskPanelId) openPTaskModal(currentTaskPanelId);
+});
+document.getElementById('task-panel-delete-btn').addEventListener('click', () => {
+  if (!currentTaskPanelId) return;
+  const idToDelete = currentTaskPanelId;
+  document.getElementById('task-panel-overlay').style.display = 'none';
+  document.getElementById('task-panel').style.display = 'none';
+  currentTaskPanelId = null;
+  deleteProject(idToDelete);
 });
 
 // Deslizar para a esquerda/direita no painel de produto (Comprar) navega para o
@@ -6623,7 +6528,7 @@ document.addEventListener('click', (e) => {
   if (document.getElementById('view-tasks')?.classList.contains('active') !== true) return;
   if (e.target.closest('[id^="task-body-"]')) return; // clique dentro dos itens da Tarefa aberta
   if (e.target.closest('.task-row')?.querySelector('[id^="task-body-"]')) return; // clique no cabeçalho da própria Tarefa aberta (para o toggle normal funcionar)
-  if (e.target.closest('#project-modal-panel, #ptask-modal-panel, #numkeypad, #supplier-picker, #tasks-add-btn')) return;
+  if (e.target.closest('#project-modal-panel, #ptask-modal-panel, #task-panel, #numkeypad, #supplier-picker, #tasks-add-btn')) return;
   Object.keys(openProjects).forEach(id => { openProjects[id] = false; });
   renderTasksAndProjects();
 }, true);
