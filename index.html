@@ -5702,6 +5702,21 @@ document.querySelectorAll(".hnav-btn").forEach(b => {
   b.addEventListener("click", () => switchTo(b.dataset.view));
 });
 document.getElementById("clear-btn").addEventListener("click", () => {
+  // Preço de compra é obrigatório em todos os produtos marcados (picados) —
+  // sem ele a margem fica sempre incompleta. O preço de venda fica de fora
+  // de propósito, porque muitas vezes só se decide depois de ver o lote.
+  const missingPrice = [];
+  Object.entries(list).forEach(([key, e]) => {
+    if (Number(e.qty) > 0 && picked[key]?.done && !picked[key]?.price) {
+      const [, item] = key.split('|||');
+      missingPrice.push(item);
+    }
+  });
+  if (missingPrice.length > 0) {
+    const preview = missingPrice.slice(0, 3).join(', ') + (missingPrice.length > 3 ? ` +${missingPrice.length - 3}` : '');
+    showSnack(`Falta preço de compra: ${preview}`, 'error');
+    return;
+  }
   if (!confirm("Limpar lista e guardar histórico?")) return;
   const snapshot = {
     date: new Date().toISOString().split('T')[0],
