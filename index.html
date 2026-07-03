@@ -1090,11 +1090,14 @@
           </div>
           <div style="flex:1;">
             <span style="font-size:12px; color:var(--md-primary); opacity:0.5; display:block; margin-bottom:4px;">Compra</span>
-            <input id="pick-price" type="search" inputmode="decimal" placeholder="0.00" step="0.01" min="0"
-              autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" data-lpignore="true" data-form-type="other"
-              onfocus="this.select()"
-              onkeydown="if(event.key==='Enter'){event.preventDefault();document.getElementById('pick-notes').focus();}"
-              style="width:100%; padding:12px; border:1.5px solid var(--md-outline-variant); border-radius:10px; font-size:18px; font-weight:700; font-family:'Outfit',sans-serif; color:var(--md-primary); background:var(--md-surface-1); outline:none; text-align:center; box-sizing:border-box; -webkit-appearance:none; appearance:none;"/>
+            <div style="position:relative;">
+              <input id="pick-price" type="search" inputmode="decimal" placeholder="0.00" step="0.01" min="0"
+                autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" data-lpignore="true" data-form-type="other"
+                onfocus="this.select()"
+                onkeydown="if(event.key==='Enter'){event.preventDefault();document.getElementById('pick-notes').focus();}"
+                style="width:100%; padding:12px; border:1.5px solid var(--md-outline-variant); border-radius:10px; font-size:18px; font-weight:700; font-family:'Outfit',sans-serif; color:var(--md-primary); background:var(--md-surface-1); outline:none; text-align:center; box-sizing:border-box; -webkit-appearance:none; appearance:none;"/>
+              <button id="pick-price-same-btn" type="button" onclick="acceptSuggestedPrice()" style="display:none; position:absolute; right:4px; top:50%; transform:translateY(-50%); background:var(--md-primary); color:var(--md-white); border:none; border-radius:8px; padding:6px 8px; font-size:11px; font-weight:700; font-family:'Outfit',sans-serif; cursor:pointer; white-space:nowrap;">✓ igual</button>
+            </div>
           </div>
         </div>
 
@@ -5750,15 +5753,15 @@ document.getElementById("clear-btn").addEventListener("click", () => {
   // Reset só qty e done dos produtos COM visto (foram comprados, ficam prontos para a
   // próxima lista). Os produtos SEM visto mantêm a quantidade e continuam marcados,
   // para não se perderem — ainda precisam de ser comprados na próxima ida ao MARL.
-  // O preço de compra é limpo de propósito: fica sempre diferente em cada ida ao MARL,
-  // por isso não pode ficar pré-preenchido com o valor da semana passada — senão a
-  // obrigatoriedade do preço nunca dispara, porque tecnicamente "já tinha preço".
-  // Fornecedor e vasilhame mantêm-se, porque normalmente não mudam de semana para semana.
+  // O preço de compra não fica pré-preenchido (senão a obrigatoriedade nunca dispara),
+  // mas guarda-se em lastPrice como sugestão fantasma — mostra-se a cinzento no campo
+  // e um toque em "✓ igual" aceita-o, para não obrigar a reescrever quando o preço
+  // se mantém igual ao da semana passada. Fornecedor e vasilhame mantêm-se sempre.
   Object.keys(list).forEach(k => {
     if (picked[k]?.done) list[k] = { qty: 0 };
   });
   Object.keys(picked).forEach(k => {
-    if (picked[k]?.done) picked[k] = { ...picked[k], done: false, price: '' };
+    if (picked[k]?.done) picked[k] = { ...picked[k], done: false, lastPrice: picked[k].price || picked[k].lastPrice || '', price: '' };
   });
   sched(); renderCats(""); renderWA();
 
@@ -6121,6 +6124,7 @@ function openPickPanel(cat, item) {
   picked[key] = { ...p, date: today };
   document.getElementById("pick-title").textContent = item;
   document.getElementById("pick-price").value = formatPrice(p.price) || "";
+  updatePriceSuggestionUI(p);
   const sellEl = document.getElementById("pick-sell-price"); if(sellEl) sellEl.value = formatPrice(p.sellPrice) || "";
   buildSupplierOptions();
   document.getElementById("pick-supplier").value = p.supplier || "";
@@ -6515,15 +6519,46 @@ function getItemsWithQty() {
   return result;
 }
 
+// ── SUGESTÃO FANTASMA DE PREÇO — quando o preço se mantém igual ao da semana passada ──
+function updatePriceSuggestionUI(p) {
+  const priceEl = document.getElementById("pick-price");
+  const sameBtn = document.getElementById("pick-price-same-btn");
+  if (!priceEl || !sameBtn) return;
+  const hasGhost = !priceEl.value && p?.lastPrice;
+  if (hasGhost) {
+    priceEl.placeholder = formatPrice(p.lastPrice) || p.lastPrice;
+    sameBtn.style.display = "block";
+    priceEl.style.paddingRight = "70px";
+  } else {
+    priceEl.placeholder = "0.00";
+    sameBtn.style.display = "none";
+    priceEl.style.paddingRight = "12px";
+  }
+}
+
+function acceptSuggestedPrice() {
+  if (!currentPickKey) return;
+  const p = picked[currentPickKey] || {};
+  if (!p.lastPrice) return;
+  const fmt = formatPrice(p.lastPrice) || p.lastPrice;
+  const priceEl = document.getElementById("pick-price");
+  priceEl.value = fmt;
+  picked[currentPickKey] = { ...p, price: fmt };
+  sched(); updateMargin();
+  updatePriceSuggestionUI(picked[currentPickKey]);
+}
+
 document.getElementById("pick-price").addEventListener("input", e => {
   if (!currentPickKey) return;
   picked[currentPickKey] = { ...picked[currentPickKey], price: e.target.value };
   sched(); updateMargin();
+  updatePriceSuggestionUI(picked[currentPickKey]);
 });
 document.getElementById("pick-price").addEventListener("blur", e => {
   if (!currentPickKey) return;
   const fmt = formatPrice(e.target.value);
   if (fmt !== '') { e.target.value = fmt; picked[currentPickKey] = { ...picked[currentPickKey], price: fmt }; sched(); }
+  updatePriceSuggestionUI(picked[currentPickKey]);
 });
 
 document.getElementById("pick-sell-price").addEventListener("blur", e => {
