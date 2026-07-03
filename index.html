@@ -393,6 +393,30 @@
       <div id="history-content" style="padding:14px"></div>
     </div>
 
+    <!-- ── MANIFESTO DA CARGA — vista limpa para copiar/partilhar depois de gravar as compras ── -->
+    <div id="view-manifest" class="view">
+      <div style="padding:20px 16px 8px;">
+        <div style="font-size:20px; font-weight:700; color:var(--md-primary); text-align:center; letter-spacing:2px;">. C A R G A . MARL .</div>
+        <div id="manifest-date" style="font-size:13px; color:var(--md-primary); opacity:0.5; text-align:center; margin-top:4px;"></div>
+      </div>
+      <div style="padding:12px 16px 32px;">
+        <div id="manifest-empty" style="display:none; text-align:center; padding:60px 20px; color:var(--md-primary); opacity:0.5;">
+          <span class="material-icons-round" style="font-size:48px; display:block; margin-bottom:12px;">local_shipping</span>
+          <div style="font-size:17px; font-weight:600;">Sem carga registada</div>
+          <div style="font-size:14px; margin-top:6px;">Grava as compras com produtos marcados para gerar o manifesto</div>
+        </div>
+        <div id="manifest-filled" style="display:none;">
+          <textarea id="manifest-text" readonly style="width:100%; padding:14px; border-radius:12px; border:1px solid var(--md-outline-variant); font-size:15px; line-height:2; font-family:monospace; color:var(--md-primary); background:var(--md-surface); resize:none; outline:none; box-sizing:border-box;"></textarea>
+          <button onclick="shareManifest()" style="width:100%;margin-top:12px;padding:14px;background:var(--md-primary);color:var(--md-white);border:none;border-radius:12px;font-size:16px;font-weight:600;font-family:'Outfit',sans-serif;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;">
+            <span class="material-icons-round" style="font-size:20px;">share</span> Partilhar manifesto
+          </button>
+          <button onclick="copyManifest()" style="width:100%;margin-top:10px;padding:14px;background:var(--md-surface-1);color:var(--md-primary);border:1.5px solid var(--md-outline-variant);border-radius:12px;font-size:16px;font-weight:600;font-family:'Outfit',sans-serif;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;">
+            <span class="material-icons-round" style="font-size:20px;">content_copy</span> Copiar texto
+          </button>
+        </div>
+      </div>
+    </div>
+
     <!-- ── FAZER (TAREFAS) ────────────────────────────────────────────────── -->
     <div id="view-tasks" class="view">
       <div style="padding:14px 16px 8px; display:flex; align-items:center; justify-content:flex-end;">
@@ -1304,6 +1328,7 @@ let dayHistoryWeekOffset = 0;  // semanas de deslocamento a partir da próxima o
 let saveTimer = null;
 let picked = {}; // key -> { done, price, supplier, date }
 let snapHistory = []; // array of weekly snapshots
+let lastManifest = null; // último manifesto de carga gerado ao gravar as compras
 let filterActive = false;
 let pricesFilterActive = false; // mostra só artigos com quantidade marcada em Compras
 let suppliers = []; // fornecedores
@@ -5633,7 +5658,7 @@ function switchTo(v, fromPopState) {
   closeSettingsMenu();
   if (v !== "list") { const s = document.getElementById("list-search"); if(s) s.value = ""; }
   // Header title — substitui "Momento Frutado" pelo nome da página atual; no dashboard, mostra a marca.
-  const titles = { dashboard:'Momento Frutado', list:'Comprar', prices:'Preços', tasks:'Fazer', history:'Histórico', whatsapp:'WhatsApp', suppliers:'Fornecedores', add:'Gerir', sales:'Vender', settings:'Definições', rents:'Rendas', resumo:'Resumir', vasilhame:'Vasilhame' };
+  const titles = { dashboard:'Momento Frutado', list:'Comprar', prices:'Preços', tasks:'Fazer', history:'Histórico', whatsapp:'WhatsApp', suppliers:'Fornecedores', add:'Gerir', sales:'Vender', settings:'Definições', rents:'Rendas', resumo:'Resumir', vasilhame:'Vasilhame', manifest:'Manifesto' };
   const brandBtn = document.querySelector('.hnav-btn-brand');
   if (brandBtn) brandBtn.textContent = titles[v] || 'Momento Frutado';
   const homeIcon = document.getElementById('header-home-icon');
@@ -5707,7 +5732,17 @@ document.getElementById("clear-btn").addEventListener("click", () => {
     if (picked[k]?.done) picked[k] = { ...picked[k], done: false };
   });
   sched(); renderCats(""); renderWA();
-  showSnack('Lista gravada ✓ — produtos sem visto mantidos', 'saved');
+
+  // Gera o manifesto da carga (só os produtos comprados, os que tinham visto) e
+  // abre a página dedicada para partilhar/copiar, para os funcionários conferirem
+  // no camião o que devia vir e o que veio.
+  if (snapshot.items.length > 0) {
+    lastManifest = snapshot;
+    renderManifest();
+    switchTo('manifest');
+  } else {
+    showSnack('Lista gravada ✓ — produtos sem visto mantidos', 'saved');
+  }
 });
 document.getElementById("delete-list-btn").addEventListener("click", () => {
   if (!confirm("Apagar tudo sem gravar? Esta ação não pode ser desfeita.")) return;
@@ -5757,6 +5792,51 @@ function copyWA() {
     const ta = document.getElementById("wa-text");
     ta.select(); document.execCommand("copy");
     showSnack("Copiado!", "saved");
+  }
+}
+
+// ── MANIFESTO DA CARGA — vista dedicada para conferência no camião ──────────
+function renderManifest() {
+  const dateEl = document.getElementById('manifest-date');
+  const emptyEl = document.getElementById('manifest-empty');
+  const filledEl = document.getElementById('manifest-filled');
+  const textEl = document.getElementById('manifest-text');
+  if (!lastManifest || !lastManifest.items || lastManifest.items.length === 0) {
+    if (emptyEl) emptyEl.style.display = 'block';
+    if (filledEl) filledEl.style.display = 'none';
+    if (dateEl) dateEl.textContent = '';
+    return;
+  }
+  if (dateEl) dateEl.textContent = lastManifest.label || '';
+  const lines = lastManifest.items.map(it => {
+    const qty = Number(it.qty);
+    return `${it.item} - ${qty} cx`;
+  });
+  if (textEl) textEl.value = lines.join('\n');
+  if (emptyEl) emptyEl.style.display = 'none';
+  if (filledEl) filledEl.style.display = 'block';
+}
+
+function copyManifest() {
+  const text = document.getElementById('manifest-text').value;
+  if (!text) return;
+  if (navigator.clipboard) {
+    navigator.clipboard.writeText(text).then(() => showSnack('Copiado!', 'saved'));
+  } else {
+    const ta = document.getElementById('manifest-text');
+    ta.select(); document.execCommand('copy');
+    showSnack('Copiado!', 'saved');
+  }
+}
+
+function shareManifest() {
+  const text = document.getElementById('manifest-text').value;
+  if (!text) return;
+  const fullText = '. C A R G A . MARL .\n\n' + text;
+  if (navigator.share) {
+    navigator.share({ text: fullText }).catch(() => {}); // utilizador pode cancelar, sem erro
+  } else {
+    copyManifest();
   }
 }
 document.getElementById("wa-prices-text").addEventListener("focus", e => e.target.select());
