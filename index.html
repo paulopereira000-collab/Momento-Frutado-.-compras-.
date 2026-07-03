@@ -396,7 +396,7 @@
     <!-- ── MANIFESTO DA CARGA — vista limpa para copiar/partilhar depois de gravar as compras ── -->
     <div id="view-manifest" class="view">
       <div style="padding:20px 16px 8px;">
-        <div style="font-size:20px; font-weight:700; color:var(--md-primary); text-align:center; letter-spacing:2px;">. C A R G A . MARL .</div>
+        <div style="font-size:20px; font-weight:700; color:var(--md-primary); text-align:center; letter-spacing:2px;">.   C A R G A   .</div>
         <div id="manifest-date" style="font-size:13px; color:var(--md-primary); opacity:0.5; text-align:center; margin-top:4px;"></div>
       </div>
       <div style="padding:12px 16px 32px;">
@@ -5793,6 +5793,12 @@ document.getElementById("add-btn").addEventListener("click", () => {
 document.getElementById("cancel-btn").addEventListener("click", () => switchTo("list"));
 document.getElementById("wa-text").addEventListener("focus", e => e.target.select());
 
+// Constrói o texto completo da carga com o espaçamento e formatação pedidos por Paulo:
+// pontos isolados em linha própria para forçar o espaçamento visual no WhatsApp.
+function buildCargaText(itemLines) {
+  return '.\n\n\n\n.   *C   A   R   G   A*  .\n\n\n' + itemLines + '\n\n\n.';
+}
+
 function copyWA() {
   const text = document.getElementById("wa-text").value;
   if (!text) return;
@@ -5842,7 +5848,7 @@ function copyManifest() {
 function shareManifest() {
   const text = document.getElementById('manifest-text').value;
   if (!text) return;
-  const fullText = '*. C A R G A . MARL .*\n\n' + text;
+  const fullText = buildCargaText(text);
   if (navigator.share) {
     navigator.share({ text: fullText }).catch(() => {}); // utilizador pode cancelar, sem erro
   } else {
@@ -5888,7 +5894,7 @@ function renderManifestHistory() {
     shareBtn.style.cssText = 'flex:1; padding:12px; background:var(--md-primary); color:var(--md-white); border:none; border-radius:12px; font-size:14px; font-weight:600; font-family:\'Outfit\',sans-serif; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:6px;';
     shareBtn.innerHTML = '<span class="material-icons-round" style="font-size:18px;">share</span> Partilhar';
     shareBtn.addEventListener('click', () => {
-      const fullText = '*. C A R G A . MARL .*\n\n' + manifestLinesFor(snap);
+      const fullText = buildCargaText(manifestLinesFor(snap));
       if (navigator.share) { navigator.share({ text: fullText }).catch(() => {}); }
       else { navigator.clipboard?.writeText(fullText); showSnack('Copiado!', 'saved'); }
     });
