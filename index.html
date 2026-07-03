@@ -417,6 +417,14 @@
       </div>
     </div>
 
+    <!-- ── HISTÓRICO DAS CARGAS — todas as cargas passadas no formato limpo do manifesto ── -->
+    <div id="view-manifest-history" class="view">
+      <div style="padding:20px 16px 8px;">
+        <div style="font-size:20px; font-weight:700; color:var(--md-primary); text-align:center; letter-spacing:2px;">HISTÓRICO DAS CARGAS</div>
+      </div>
+      <div id="manifest-history-content" style="padding:12px 16px 32px;"></div>
+    </div>
+
     <!-- ── FAZER (TAREFAS) ────────────────────────────────────────────────── -->
     <div id="view-tasks" class="view">
       <div style="padding:14px 16px 8px; display:flex; align-items:center; justify-content:flex-end;">
@@ -481,6 +489,7 @@
         <button onclick="switchTo('add')" style="background:none; border:none; border-bottom:1px solid var(--md-outline-variant); padding:14px 0; text-align:left; cursor:pointer; width:100%; font-size:17px; font-weight:500; color:var(--md-primary); font-family:'Outfit',sans-serif; display:flex; align-items:center; gap:12px;"><span class="material-icons-round" style="font-size:20px;">category</span>Gerir</button>
         <button onclick="switchTo('whatsapp')" style="background:none; border:none; border-bottom:1px solid var(--md-outline-variant); padding:14px 0; text-align:left; cursor:pointer; width:100%; font-size:17px; font-weight:500; color:var(--md-primary); font-family:'Outfit',sans-serif; display:flex; align-items:center; gap:12px;"><span class="material-icons-round" style="font-size:20px;">chat_bubble_outline</span>WhatsApp</button>
         <button onclick="switchTo('history')" style="background:none; border:none; border-bottom:1px solid var(--md-outline-variant); padding:14px 0; text-align:left; cursor:pointer; width:100%; font-size:17px; font-weight:500; color:var(--md-primary); font-family:'Outfit',sans-serif; display:flex; align-items:center; gap:12px;"><span class="material-icons-round" style="font-size:20px;">history</span>Histórico</button>
+        <button onclick="switchTo('manifest-history')" style="background:none; border:none; border-bottom:1px solid var(--md-outline-variant); padding:14px 0; text-align:left; cursor:pointer; width:100%; font-size:17px; font-weight:500; color:var(--md-primary); font-family:'Outfit',sans-serif; display:flex; align-items:center; gap:12px;"><span class="material-icons-round" style="font-size:20px;">local_shipping</span>Histórico das Cargas</button>
         <button onclick="switchTo('rents')" style="background:none; border:none; border-bottom:1px solid var(--md-outline-variant); padding:14px 0; text-align:left; cursor:pointer; width:100%; font-size:17px; font-weight:500; color:var(--md-primary); font-family:'Outfit',sans-serif; display:flex; align-items:center; gap:12px;"><span class="material-icons-round" style="font-size:20px;">home</span>Rendas</button>
         <button onclick="switchTo('resumo')" style="background:none; border:none; padding:14px 0; text-align:left; cursor:pointer; width:100%; font-size:17px; font-weight:500; color:var(--md-primary); font-family:'Outfit',sans-serif; display:flex; align-items:center; gap:12px;"><span class="material-icons-round" style="font-size:20px;">bar_chart</span>Resumo</button>
       </div>
@@ -5658,7 +5667,7 @@ function switchTo(v, fromPopState) {
   closeSettingsMenu();
   if (v !== "list") { const s = document.getElementById("list-search"); if(s) s.value = ""; }
   // Header title — substitui "Momento Frutado" pelo nome da página atual; no dashboard, mostra a marca.
-  const titles = { dashboard:'Momento Frutado', list:'Comprar', prices:'Preços', tasks:'Fazer', history:'Histórico', whatsapp:'WhatsApp', suppliers:'Fornecedores', add:'Gerir', sales:'Vender', settings:'Definições', rents:'Rendas', resumo:'Resumir', vasilhame:'Vasilhame', manifest:'Manifesto' };
+  const titles = { dashboard:'Momento Frutado', list:'Comprar', prices:'Preços', tasks:'Fazer', history:'Histórico', whatsapp:'WhatsApp', suppliers:'Fornecedores', add:'Gerir', sales:'Vender', settings:'Definições', rents:'Rendas', resumo:'Resumir', vasilhame:'Vasilhame', manifest:'Manifesto', 'manifest-history':'Histórico das Cargas' };
   const brandBtn = document.querySelector('.hnav-btn-brand');
   if (brandBtn) brandBtn.textContent = titles[v] || 'Momento Frutado';
   const homeIcon = document.getElementById('header-home-icon');
@@ -5672,6 +5681,7 @@ function switchTo(v, fromPopState) {
     scrollArea.style.overflowY = (v === 'dashboard') ? 'hidden' : 'auto';
   }
   if (v==="whatsapp")  renderWA();
+  if (v==="manifest-history") renderManifestHistory();
   if (v==="add")       renderAdd();
   if (v==="history")   renderHistory();
   if (v==="dashboard") renderDashboard();
@@ -5840,6 +5850,62 @@ function shareManifest() {
   }
 }
 document.getElementById("wa-prices-text").addEventListener("focus", e => e.target.select());
+
+// ── HISTÓRICO DAS CARGAS — lista de todas as cargas passadas, formato limpo ─
+function manifestLinesFor(snap) {
+  return snap.items.map(it => `- ${it.item} - *${Number(it.qty)} cx*`).join('\n');
+}
+
+function renderManifestHistory() {
+  const c = document.getElementById('manifest-history-content'); if (!c) return;
+  c.innerHTML = '';
+  if (!snapHistory.length) {
+    c.innerHTML = '<div class="hist-empty">Ainda não há cargas guardadas.<br>Ficam aqui sempre que gravares as compras.</div>';
+    return;
+  }
+  snapHistory.forEach((snap, si) => {
+    const card = document.createElement('div');
+    card.style.cssText = 'margin-bottom:14px; background:var(--md-surface); border-radius:14px; border:1px solid var(--md-outline-variant); overflow:hidden;';
+
+    const hdr = document.createElement('div');
+    hdr.style.cssText = 'display:flex; align-items:center; justify-content:space-between; padding:14px 16px; cursor:pointer;';
+    hdr.innerHTML = `<span style="font-size:15px; font-weight:600; color:var(--md-primary);">${snap.label || ''}</span><span style="font-size:13px; opacity:0.5; color:var(--md-primary);">${snap.items.length} artigos</span>`;
+
+    const body = document.createElement('div');
+    body.style.cssText = 'display:' + (si === 0 ? 'block' : 'none') + '; padding:0 16px 16px;';
+
+    const ta = document.createElement('textarea');
+    ta.readOnly = true;
+    ta.value = manifestLinesFor(snap);
+    ta.style.cssText = 'width:100%; box-sizing:border-box; padding:14px; border-radius:12px; border:1px solid var(--md-outline-variant); font-size:14px; line-height:1.9; font-family:monospace; color:var(--md-primary); background:var(--md-surface-1); resize:none; outline:none;';
+    ta.addEventListener('focus', e => e.target.select());
+    body.appendChild(ta);
+
+    const btnRow = document.createElement('div');
+    btnRow.style.cssText = 'display:flex; gap:8px; margin-top:10px;';
+
+    const shareBtn = document.createElement('button');
+    shareBtn.style.cssText = 'flex:1; padding:12px; background:var(--md-primary); color:var(--md-white); border:none; border-radius:12px; font-size:14px; font-weight:600; font-family:\'Outfit\',sans-serif; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:6px;';
+    shareBtn.innerHTML = '<span class="material-icons-round" style="font-size:18px;">share</span> Partilhar';
+    shareBtn.addEventListener('click', () => {
+      const fullText = '*. C A R G A . MARL .*\n\n' + manifestLinesFor(snap);
+      if (navigator.share) { navigator.share({ text: fullText }).catch(() => {}); }
+      else { navigator.clipboard?.writeText(fullText); showSnack('Copiado!', 'saved'); }
+    });
+
+    const copyBtn = document.createElement('button');
+    copyBtn.style.cssText = 'flex:1; padding:12px; background:var(--md-surface-1); color:var(--md-primary); border:1.5px solid var(--md-outline-variant); border-radius:12px; font-size:14px; font-weight:600; font-family:\'Outfit\',sans-serif; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:6px;';
+    copyBtn.innerHTML = '<span class="material-icons-round" style="font-size:18px;">content_copy</span> Copiar';
+    copyBtn.addEventListener('click', () => {
+      navigator.clipboard?.writeText(manifestLinesFor(snap)).then(() => showSnack('Copiado!', 'saved'));
+    });
+
+    btnRow.appendChild(shareBtn); btnRow.appendChild(copyBtn); body.appendChild(btnRow);
+
+    hdr.addEventListener('click', () => { body.style.display = body.style.display === 'none' ? 'block' : 'none'; });
+    card.appendChild(hdr); card.appendChild(body); c.appendChild(card);
+  });
+}
 
 // ── SUPPLIER PICKER ───────────────────────────────────────────────────────────
 function openSupplierPicker() {
