@@ -5810,7 +5810,7 @@ function renderManifest() {
   if (dateEl) dateEl.textContent = lastManifest.label || '';
   const lines = lastManifest.items.map(it => {
     const qty = Number(it.qty);
-    return `${it.item} - ${qty} cx`;
+    return `- ${it.item} - *${qty} cx*`;
   });
   if (textEl) textEl.value = lines.join('\n');
   if (emptyEl) emptyEl.style.display = 'none';
@@ -5832,7 +5832,7 @@ function copyManifest() {
 function shareManifest() {
   const text = document.getElementById('manifest-text').value;
   if (!text) return;
-  const fullText = '. C A R G A . MARL .\n\n' + text;
+  const fullText = '*. C A R G A . MARL .*\n\n' + text;
   if (navigator.share) {
     navigator.share({ text: fullText }).catch(() => {}); // utilizador pode cancelar, sem erro
   } else {
