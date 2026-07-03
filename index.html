@@ -5750,11 +5750,15 @@ document.getElementById("clear-btn").addEventListener("click", () => {
   // Reset só qty e done dos produtos COM visto (foram comprados, ficam prontos para a
   // próxima lista). Os produtos SEM visto mantêm a quantidade e continuam marcados,
   // para não se perderem — ainda precisam de ser comprados na próxima ida ao MARL.
+  // O preço de compra é limpo de propósito: fica sempre diferente em cada ida ao MARL,
+  // por isso não pode ficar pré-preenchido com o valor da semana passada — senão a
+  // obrigatoriedade do preço nunca dispara, porque tecnicamente "já tinha preço".
+  // Fornecedor e vasilhame mantêm-se, porque normalmente não mudam de semana para semana.
   Object.keys(list).forEach(k => {
     if (picked[k]?.done) list[k] = { qty: 0 };
   });
   Object.keys(picked).forEach(k => {
-    if (picked[k]?.done) picked[k] = { ...picked[k], done: false };
+    if (picked[k]?.done) picked[k] = { ...picked[k], done: false, price: '' };
   });
   sched(); renderCats(""); renderWA();
 
