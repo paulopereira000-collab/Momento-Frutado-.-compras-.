@@ -5289,7 +5289,7 @@ function buildMarlFieldsRow(key, bg) {
     if (ev.key === "Enter") { ev.preventDefault(); sellInput.focus(); }
   });
   sellInput.addEventListener("keydown", ev => {
-    if (ev.key === "Enter") { ev.preventDefault(); supBtn.focus(); }
+    if (ev.key === "Enter") { ev.preventDefault(); supBtn.click(); }
   });
   const sellWrap = document.createElement("div"); sellWrap.style.cssText = "flex:1;"; sellWrap.appendChild(sellInput);
   line2.appendChild(sellWrap);
