@@ -4900,7 +4900,8 @@ function exitListFilterView() {
   switchTo('list');
 }
 
-function applyFilterView(state) {
+function applyFilterView(state, hideChrome) {
+  if (hideChrome === undefined) hideChrome = true;
   filterActive = state;
   const titleIcon = document.getElementById("list-filter-icon");
   if (titleIcon) titleIcon.textContent = filterActive ? "visibility_off" : "visibility";
@@ -4911,14 +4912,17 @@ function applyFilterView(state) {
 
   // Esconde o cabeçalho geral por completo (e a linha de pesquisa) para maximizar o
   // espaço de leitura da lista — voltar à lista completa faz-se pela bola flutuante
-  // fixa no fundo do ecrã, sempre visível e centrada.
-  if (searchRow) searchRow.style.display = filterActive ? 'none' : 'flex';
-  if (header) header.style.display = filterActive ? 'none' : '';
-  if (floatingHome) floatingHome.style.display = filterActive ? 'flex' : 'none';
+  // fixa no fundo do ecrã, sempre visível e centrada. No modo MARL a vista filtrada
+  // é a vista por omissão, por isso aí mantém-se o cabeçalho (com os ícones Loja/MARL)
+  // em vez de esconder tudo atrás da bolinha de casa.
+  const hide = filterActive && hideChrome;
+  if (searchRow) searchRow.style.display = hide ? 'none' : 'flex';
+  if (header) header.style.display = hide ? 'none' : '';
+  if (floatingHome) floatingHome.style.display = hide ? 'flex' : 'none';
 }
 
 function toggleFilter() {
-  applyFilterView(!filterActive);
+  applyFilterView(!filterActive, true);
   renderCats('');
 }
 
@@ -5146,7 +5150,7 @@ function setListMode(mode) {
   // No MARL a vista por omissão é a mesma do ícone do olho — só os produtos com
   // quantidade, sem os que ainda não foram marcados. Na loja mostra-se tudo,
   // porque aí o objetivo é rever/reorganizar a lista completa.
-  applyFilterView(mode === 'marl');
+  applyFilterView(mode === 'marl', false);
   updateListModeButtons();
   renderCats(document.getElementById('list-search')?.value || '');
 }
@@ -5238,8 +5242,19 @@ function buildMarlFieldsRow(key, bg) {
   priceInput.addEventListener("input", ev => { picked[key] = { ...picked[key], price: ev.target.value }; sched(); });
   priceInput.addEventListener("blur", ev => {
     const fmt = formatPrice(ev.target.value);
-    if (fmt !== '') picked[key] = { ...picked[key], price: fmt };
-    sched(); renderCats(document.getElementById('list-search')?.value || '');
+    if (fmt !== '') {
+      ev.target.value = fmt;
+      picked[key] = { ...picked[key], price: fmt };
+      sched();
+      // O valor real já está preenchido — a sugestão fantasma e o botão "✓ igual"
+      // deixam de fazer sentido, escondem-se sem precisar de reconstruir a lista
+      // toda (isso destruiria o campo seguinte antes do Enter conseguir focá-lo).
+      const oldSameBtn = priceWrap.querySelector('button');
+      if (oldSameBtn) oldSameBtn.remove();
+      priceInput.style.paddingRight = '12px';
+    } else {
+      sched();
+    }
   });
   priceWrap.appendChild(priceInput);
   if (hasGhost) {
