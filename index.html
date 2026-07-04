@@ -1089,7 +1089,7 @@
               <input id="pick-price" type="search" inputmode="decimal" placeholder="0.00" step="0.01" min="0"
                 autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" data-lpignore="true" data-form-type="other"
                 onfocus="this.select()"
-                onkeydown="if(event.key==='Enter'){event.preventDefault();document.getElementById('pick-notes').focus();}"
+                onkeydown="if(event.key==='Enter'){event.preventDefault();this.blur();}"
                 style="width:100%; padding:12px; border:1.5px solid var(--md-outline-variant); border-radius:10px; font-size:18px; font-weight:700; font-family:'Outfit',sans-serif; color:var(--md-primary); background:var(--md-surface-1); outline:none; text-align:center; box-sizing:border-box; -webkit-appearance:none; appearance:none;"/>
               <button id="pick-price-same-btn" type="button" onclick="acceptSuggestedPrice()" style="display:none; position:absolute; right:4px; top:50%; transform:translateY(-50%); background:var(--md-primary); color:var(--md-white); border:none; border-radius:8px; padding:6px 8px; font-size:11px; font-weight:700; font-family:'Outfit',sans-serif; cursor:pointer; white-space:nowrap;">✓ igual</button>
             </div>
@@ -1138,11 +1138,6 @@
               <button id="iva-btn-23" onclick="setPickIVA(23)" style="padding:8px 16px; border:none; border-radius:6px; font-size:15px; font-weight:700; font-family:inherit; cursor:pointer; background:transparent; color:var(--md-primary);">23%</button>
             </div>
           </div>
-        </div>
-
-        <div>
-          <input id="pick-notes" type="search" placeholder="+ Adicionar nota (ex: pedir ao João...)" style="width:100%; padding:10px 2px; border:none; border-bottom:1px solid var(--md-outline-variant); border-radius:0; font-size:14px; font-style:italic; font-family:'Outfit',sans-serif; outline:none; background:transparent; color:var(--md-primary); opacity:0.75; box-sizing:border-box; -webkit-appearance:none; appearance:none;"
-            onkeydown="if(event.key==='Enter'){event.preventDefault();this.blur();}" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" data-lpignore="true" data-form-type="other"/>
         </div>
 
         <button onclick="duplicatePickItem()" style="width:100%; margin-top:14px; padding:11px; background:rgba(92,126,96,0.1); border:1.5px dashed var(--md-outline-variant); border-radius:10px; color:var(--md-primary); font-size:14px; font-weight:600; font-family:'Outfit',sans-serif; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:6px;">
@@ -5186,6 +5181,9 @@ function appendItemRow(container, cat, item, zebraIdx) {
   const row = document.createElement("div");
   row.className = "item-row " + (zebraIdx % 2 === 0 ? "zebra-even" : "zebra-odd") + (active ? " active" : "");
   row.dataset.key = key;
+  // No MARL a zebra ganha mais contraste (~10%) para ser mais fácil de distinguir
+  // as linhas a olhar rápido — usa o tom "surface-variant", já existente na paleta.
+  if (listMode === 'marl' && zebraIdx % 2 === 0) row.style.background = 'var(--md-surface-variant)';
 
   const nm = document.createElement("span");
   nm.className = "item-name" + (active ? " active" : "") + (isPicked ? " picked" : "");
@@ -5205,17 +5203,26 @@ function appendItemRow(container, cat, item, zebraIdx) {
     const pb = document.createElement("button");
     pb.className = "pick-btn material-icons-round" + (isPicked ? " picked" : "") + (active ? "" : " pick-hidden");
     pb.textContent = isPicked ? "task_alt" : "radio_button_unchecked";
+    pb.style.fontSize = "24px"; // mais +10% sobre os 22px anteriores — fácil de acertar no MARL
     if (active) pb.addEventListener("click", ev => { ev.stopPropagation(); picked[key] = { ...picked[key], done: !picked[key]?.done }; sched(); renderCats(document.getElementById('list-search')?.value || ''); });
     row.appendChild(pb);
   }
 
   const qtyEl = makeQty(key, Number(e.qty));
   if (isPicked) { const qd = qtyEl.querySelector(".qty-display"); if (qd) qd.classList.add("picked"); }
+  if (listMode === 'marl') {
+    // -15% em relação aos 56px/26px de origem — dá mais espaço à 2ª linha de preços
+    const qd = qtyEl.querySelector(".qty-display");
+    if (qd) { qd.style.width = "48px"; qd.style.height = "48px"; qd.style.fontSize = "22px"; qd.style.background = "transparent"; }
+    // +10% de espaçamento vertical entre artigos (14px → 15.4px)
+    row.style.paddingTop = "15.4px";
+    row.style.paddingBottom = "15.4px";
+  }
   row.appendChild(qtyEl);
   container.appendChild(row);
 
   if (listMode === 'marl' && active) {
-    const bg = zebraIdx % 2 === 0 ? 'var(--md-surface-1)' : 'var(--md-surface)';
+    const bg = zebraIdx % 2 === 0 ? 'var(--md-surface-variant)' : 'var(--md-surface)';
     container.appendChild(buildMarlFieldsRow(key, bg));
   }
 }
