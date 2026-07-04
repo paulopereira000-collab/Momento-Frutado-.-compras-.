@@ -4900,8 +4900,8 @@ function exitListFilterView() {
   switchTo('list');
 }
 
-function toggleFilter() {
-  filterActive = !filterActive;
+function applyFilterView(state) {
+  filterActive = state;
   const titleIcon = document.getElementById("list-filter-icon");
   if (titleIcon) titleIcon.textContent = filterActive ? "visibility_off" : "visibility";
 
@@ -4915,7 +4915,10 @@ function toggleFilter() {
   if (searchRow) searchRow.style.display = filterActive ? 'none' : 'flex';
   if (header) header.style.display = filterActive ? 'none' : '';
   if (floatingHome) floatingHome.style.display = filterActive ? 'flex' : 'none';
+}
 
+function toggleFilter() {
+  applyFilterView(!filterActive);
   renderCats('');
 }
 
@@ -5140,6 +5143,10 @@ function isLowMargin(key, item) {
 
 function setListMode(mode) {
   listMode = mode;
+  // No MARL a vista por omissão é a mesma do ícone do olho — só os produtos com
+  // quantidade, sem os que ainda não foram marcados. Na loja mostra-se tudo,
+  // porque aí o objetivo é rever/reorganizar a lista completa.
+  applyFilterView(mode === 'marl');
   updateListModeButtons();
   renderCats(document.getElementById('list-search')?.value || '');
 }
@@ -5262,6 +5269,9 @@ function buildMarlFieldsRow(key, bg) {
   sellInput.addEventListener("blur", ev => {
     const fmt = formatPrice(ev.target.value);
     if (fmt !== '') { ev.target.value = fmt; picked[key] = { ...picked[key], sellPrice: fmt, sellPriceChanged: true }; sched(); if (document.getElementById("view-whatsapp").classList.contains("active")) renderWA(); }
+  });
+  priceInput.addEventListener("keydown", ev => {
+    if (ev.key === "Enter") { ev.preventDefault(); sellInput.focus(); }
   });
   const sellWrap = document.createElement("div"); sellWrap.style.cssText = "flex:1;"; sellWrap.appendChild(sellInput);
   line2.appendChild(sellWrap);
@@ -5910,16 +5920,17 @@ function buildCargaText(itemLines, word) {
 // ── ENVIAR LISTA DA LOJA — mesmo estilo do manifesto da carga, mas com os artigos
 // e quantidades da lista de loja (reorganizar), em vez da carga do MARL ──
 function shareLojaList() {
-  const lines = [];
+  const entries = [];
   Object.entries(products).forEach(([cat, items]) => {
     const allItems = subcats[cat] ? subcats[cat].flatMap(g => g.items) : items;
     allItems.forEach(item => {
       const qty = Number(list[gk(cat, item)]?.qty || 0);
-      if (qty > 0) lines.push(`- ${item} - *${qty} cx*`);
+      if (qty > 0) entries.push({ cat, item, qty });
     });
   });
-  if (!lines.length) { showSnack('Lista vazia', 'error'); return; }
-  const fullText = buildCargaText(lines.join('\n'), 'LOJA');
+  if (!entries.length) { showSnack('Lista vazia', 'error'); return; }
+  const lines = buildGroupedCargaLines(entries, (item, qty) => `- ${item} - *${qty}*`);
+  const fullText = buildCargaText(lines, 'LOJA');
   if (navigator.share) { navigator.share({ text: fullText }).catch(() => {}); }
   else { navigator.clipboard?.writeText(fullText); showSnack('Copiado!', 'saved'); }
 }
@@ -5949,11 +5960,7 @@ function renderManifest() {
     return;
   }
   if (dateEl) dateEl.textContent = lastManifest.label || '';
-  const lines = lastManifest.items.map(it => {
-    const qty = Number(it.qty);
-    return `- ${it.item} - *${qty} cx*`;
-  });
-  if (textEl) textEl.value = lines.join('\n');
+  if (textEl) textEl.value = manifestLinesFor(lastManifest);
   if (emptyEl) emptyEl.style.display = 'none';
   if (filledEl) filledEl.style.display = 'block';
 }
@@ -5983,8 +5990,36 @@ function shareManifest() {
 document.getElementById("wa-prices-text").addEventListener("focus", e => e.target.select());
 
 // ── HISTÓRICO DAS CARGAS — lista de todas as cargas passadas, formato limpo ─
+// ── AGRUPAR LINHAS PARA O WHATSAPP — 1 linha em branco entre sub-categorias, 2 entre
+// categorias, seguindo a ordem em que aparecem em "products"/"subcats". Só o número
+// da quantidade, sem "cx". "lineFn(item, qty, supplier)" formata cada linha.
+function buildGroupedCargaLines(entries, lineFn) {
+  const byCat = {};
+  entries.forEach(e => { (byCat[e.cat] = byCat[e.cat] || []).push(e); });
+  const catBlocks = [];
+  Object.keys(products).forEach(cat => {
+    const items = byCat[cat];
+    if (!items || !items.length) return;
+    const subBlocks = [];
+    if (subcats[cat]) {
+      const covered = new Set();
+      subcats[cat].forEach(group => {
+        const groupLines = items.filter(e => group.items.includes(e.item)).map(e => { covered.add(e.item); return lineFn(e.item, e.qty, e.supplier); });
+        if (groupLines.length) subBlocks.push(groupLines.join('\n'));
+      });
+      const leftover = items.filter(e => !covered.has(e.item)).map(e => lineFn(e.item, e.qty, e.supplier));
+      if (leftover.length) subBlocks.push(leftover.join('\n'));
+    } else {
+      subBlocks.push(items.map(e => lineFn(e.item, e.qty, e.supplier)).join('\n'));
+    }
+    catBlocks.push(subBlocks.join('\n\n')); // 1 linha em branco entre sub-categorias
+  });
+  return catBlocks.join('\n\n\n'); // 2 linhas em branco entre categorias
+}
+
 function manifestLinesFor(snap) {
-  return snap.items.map(it => `- ${it.item} - *${Number(it.qty)} cx*`).join('\n');
+  const entries = snap.items.map(it => ({ cat: it.cat, item: it.item, qty: Number(it.qty), supplier: it.supplier || '' }));
+  return buildGroupedCargaLines(entries, (item, qty, supplier) => `- ${item} - *${qty}*` + (supplier ? `  (${supplier})` : ''));
 }
 
 function renderManifestHistory() {
