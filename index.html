@@ -132,9 +132,9 @@
 
     /* CATEGORY */
     .cat-wrap { padding:12px 14px 0; }
-    .cat-header { display:flex; align-items:center; justify-content:space-between; padding:10px 12px; cursor:pointer; user-select:none; background:var(--md-surface-variant); border-radius:12px; margin-bottom:6px; }
-    .cat-name { font-size:12px; font-weight:600; color:var(--md-primary); text-transform:uppercase; letter-spacing:0.8px; }
-    .cat-chevron { font-size:16px; color:var(--md-primary); transition:transform 0.2s; }
+    .cat-header { display:flex; align-items:center; justify-content:space-between; padding:10px 12px; cursor:pointer; user-select:none; background:var(--md-primary-dark); border-radius:12px; margin-bottom:6px; }
+    .cat-name { font-size:12px; font-weight:600; color:var(--md-white); text-transform:uppercase; letter-spacing:0.8px; }
+    .cat-chevron { font-size:16px; color:var(--md-white); transition:transform 0.2s; }
     .cat-chevron.closed { transform:rotate(-90deg); }
     .cat-body.collapsed { display:none; }
     .cat-body { background:var(--md-surface); border-radius:12px; overflow:hidden; border:1px solid var(--md-outline-variant); margin-top:2px; }
@@ -327,14 +327,6 @@
           <input id="list-search" type="search" placeholder="Pesquisar"
             style="width:100%; padding:9px 9px 9px 36px; border:1.5px solid var(--md-outline-variant); border-radius:10px; font-size:14px; font-family:'Outfit',sans-serif; color:var(--md-primary); background:rgba(92,126,96,0.08); outline:none; -webkit-appearance:none; appearance:none; box-sizing:border-box;"
             oninput="renderCats(this.value)" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" data-lpignore="true" data-form-type="other"/>
-        </div>
-        <div id="list-mode-toggle" style="display:flex; background:var(--md-surface-variant); border-radius:10px; padding:2px; flex-shrink:0; gap:2px;">
-          <button id="list-mode-loja" onclick="setListMode('loja')" title="Lista loja — reorganizar" style="border:none; border-radius:8px; width:34px; height:34px; display:flex; align-items:center; justify-content:center; cursor:pointer;">
-            <span class="material-icons-round" style="font-size:19px;">storefront</span>
-          </button>
-          <button id="list-mode-marl" onclick="setListMode('marl')" title="Lista MARL — comprar" style="border:none; border-radius:8px; width:34px; height:34px; display:flex; align-items:center; justify-content:center; cursor:pointer;">
-            <span class="material-icons-round" style="font-size:19px;">local_shipping</span>
-          </button>
         </div>
         <button id="list-filter-btn" onclick="toggleFilter()" style="background:none; border:none; cursor:pointer; padding:6px; display:flex; align-items:center; opacity:0.5; flex-shrink:0;">
           <span class="material-icons-round" id="list-filter-icon" style="font-size:26px; color:var(--md-primary);">visibility</span>
@@ -5714,7 +5706,11 @@ function switchToSalesSection(sectionId) {
 }
 
 function switchTo(v, fromPopState) {
-  document.querySelectorAll(".hnav-btn").forEach(x => x.classList.toggle("active", x.dataset.view===v));
+  document.querySelectorAll(".hnav-btn").forEach(x => {
+    if (x.id === "loja-nav-btn") x.classList.toggle("active", v === "list" && listMode === "loja");
+    else if (x.id === "marl-nav-btn") x.classList.toggle("active", v === "list" && listMode === "marl");
+    else x.classList.toggle("active", x.dataset.view === v);
+  });
   document.querySelectorAll(".view").forEach(el => el.classList.toggle("active", el.id===`view-${v}`));
   // Regista no histórico do browser, para o botão/gesto de retroceder do telemóvel
   // voltar ao dashboard em vez de fechar a app — exceto quando já viemos de um popstate.
