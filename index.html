@@ -5190,6 +5190,8 @@ function appendItemRow(container, cat, item, zebraIdx) {
   nm.textContent = item;
   nm.style.cursor = 'pointer';
   nm.addEventListener("click", () => openPickPanel(cat, item));
+  // Na linha clara da zebra (MARL), todo o texto passa a verde seco intermédio.
+  if (listMode === 'marl' && zebraIdx % 2 !== 0) nm.style.color = 'var(--md-outline)';
   if (isLowMargin(key, item)) {
     row.style.color = 'var(--md-error)';
     nm.style.color = 'var(--md-error)';
@@ -5213,7 +5215,11 @@ function appendItemRow(container, cat, item, zebraIdx) {
   if (listMode === 'marl') {
     // -15% em relação aos 56px/26px de origem — dá mais espaço à 2ª linha de preços
     const qd = qtyEl.querySelector(".qty-display");
-    if (qd) { qd.style.width = "48px"; qd.style.height = "48px"; qd.style.fontSize = "22px"; qd.style.background = "transparent"; }
+    if (qd) {
+      qd.style.width = "48px"; qd.style.height = "48px"; qd.style.fontSize = "22px"; qd.style.background = "transparent";
+      qd.style.borderColor = (zebraIdx % 2 === 0) ? "#97AD99" : "#C4CEC6";
+      if (zebraIdx % 2 !== 0) qd.style.color = 'var(--md-outline)';
+    }
     // +10% de espaçamento vertical entre artigos (14px → 15.4px)
     row.style.paddingTop = "15.4px";
     row.style.paddingBottom = "15.4px";
@@ -5229,10 +5235,16 @@ function appendItemRow(container, cat, item, zebraIdx) {
 
 function buildMarlFieldsRow(key, bg) {
   const p = picked[key] || {};
+  // Linha escura da zebra → contorno mais 20% mais claro (acumulado sobre o ajuste anterior).
+  // Linha clara da zebra → contorno 50% mais claro que o tom intermédio original.
+  const borderColor = (bg === 'var(--md-surface-variant)') ? '#97AD99' : '#C4CEC6';
+  // Na linha clara da zebra, o texto do preço de compra/venda e fornecedor passa a
+  // verde seco intermédio (--md-outline). Na linha escura mantém-se o verde principal.
+  const textColor = (bg === 'var(--md-surface-variant)') ? 'var(--md-primary)' : 'var(--md-outline)';
   const line2 = document.createElement("div");
   line2.style.cssText = `display:flex; gap:6px; padding:2px 12px 10px; background:${bg || 'transparent'};`;
 
-  const fieldStyle = `width:100%; padding:8px 6px; border:1.5px solid var(--md-outline-variant); border-radius:8px; font-size:13px; font-weight:700; font-family:'Outfit',sans-serif; color:var(--md-primary); background:${bg || 'var(--md-surface-1)'}; outline:none; text-align:center; box-sizing:border-box; -webkit-appearance:none; appearance:none;`;
+  const fieldStyle = `width:100%; padding:8px 6px; border:1.5px solid ${borderColor}; border-radius:8px; font-size:13px; font-weight:700; font-family:'Outfit',sans-serif; color:${textColor}; background:${bg || 'var(--md-surface-1)'}; outline:none; text-align:center; box-sizing:border-box; -webkit-appearance:none; appearance:none;`;
 
   // Preço de compra — com a sugestão fantasma do preço anterior
   const priceWrap = document.createElement("div"); priceWrap.style.cssText = "flex:1; position:relative;";
@@ -5305,7 +5317,7 @@ function buildMarlFieldsRow(key, bg) {
   const supBtn = document.createElement("button");
   supBtn.type = "button";
   supBtn.textContent = p.supplier || "Fornecedor";
-  supBtn.style.cssText = `flex:1.3; padding:8px 6px; border:1.5px solid var(--md-outline-variant); border-radius:8px; font-size:13px; font-weight:600; font-family:'Outfit',sans-serif; color:var(--md-primary); background:${bg || 'var(--md-surface-1)'}; cursor:pointer; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;`;
+  supBtn.style.cssText = `flex:1.3; padding:8px 6px; border:1.5px solid ${borderColor}; border-radius:8px; font-size:13px; font-weight:600; font-family:'Outfit',sans-serif; color:${textColor}; background:${bg || 'var(--md-surface-1)'}; cursor:pointer; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;`;
   supBtn.addEventListener("click", ev => {
     ev.stopPropagation();
     currentPickKey = key;
@@ -5955,7 +5967,7 @@ function shareLojaList() {
   });
   if (!entries.length) { showSnack('Lista vazia', 'error'); return; }
   const lines = buildGroupedCargaLines(entries, (item, qty) => `- ${item} - *${qty}*`);
-  const fullText = buildCargaText(lines, 'LOJA');
+  const fullText = buildCargaText(lines, 'MARL');
   if (navigator.share) { navigator.share({ text: fullText }).catch(() => {}); }
   else { navigator.clipboard?.writeText(fullText); showSnack('Copiado!', 'saved'); }
 }
