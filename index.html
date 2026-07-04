@@ -311,7 +311,6 @@
         </div>
         <div id="header-nav-btns" style="display:flex; align-items:center; gap:0; flex-shrink:0;">
           <button class="hnav-btn" id="list-nav-btn" data-view="list" style="font-size:11px; font-weight:700; letter-spacing:0.5px; padding:8px 10px;"><span class="material-icons-round">shopping_basket</span></button>
-          <button class="hnav-btn" data-view="sales" style="font-size:11px; font-weight:700; letter-spacing:0.5px; padding:8px 10px;"><span class="material-icons-round">point_of_sale</span></button>
           <button class="hnav-btn" data-view="tasks" style="font-size:11px; font-weight:700; letter-spacing:0.5px; padding:8px 10px;"><span class="material-icons-round">check_circle</span></button>
           <button class="hnav-btn" data-view="settings" onclick="openSettings()" id="settings-btn"><span class="material-icons-round">more_vert</span></button>
         </div>
@@ -336,13 +335,6 @@
             <span class="material-icons-round" style="font-size:19px;">local_shipping</span>
           </button>
         </div>
-        <button id="list-sell-btn" onclick="switchTo('prices')" style="background:none; border:none; cursor:pointer; padding:6px; display:flex; align-items:center; opacity:0.5; flex-shrink:0;">
-          <span class="material-icons-round" style="font-size:24px; color:var(--md-primary);">sell</span>
-        </button>
-        <button id="list-vasil-btn" onclick="toggleVasilQuickPanel()" style="background:none; border:none; cursor:pointer; padding:6px; display:flex; align-items:center; opacity:0.5; position:relative; flex-shrink:0;">
-          <span class="material-icons-round" style="font-size:24px; color:var(--md-primary);">inventory_2</span>
-          <span id="vasil-quick-badge" style="display:none; position:absolute; top:0px; right:0px; width:8px; height:8px; border-radius:50%; background:var(--md-orange);"></span>
-        </button>
         <button id="list-filter-btn" onclick="toggleFilter()" style="background:none; border:none; cursor:pointer; padding:6px; display:flex; align-items:center; opacity:0.5; flex-shrink:0;">
           <span class="material-icons-round" id="list-filter-icon" style="font-size:26px; color:var(--md-primary);">visibility</span>
         </button>
@@ -496,8 +488,10 @@
         <button onclick="switchTo('suppliers')" style="background:none; border:none; border-bottom:1px solid var(--md-outline-variant); padding:14px 0; text-align:left; cursor:pointer; width:100%; font-size:17px; font-weight:500; color:var(--md-primary); font-family:'Outfit',sans-serif; display:flex; align-items:center; gap:12px;"><span class="material-icons-round" style="font-size:20px;">contacts</span>Fornecedores</button>
         <button onclick="switchTo('add')" style="background:none; border:none; border-bottom:1px solid var(--md-outline-variant); padding:14px 0; text-align:left; cursor:pointer; width:100%; font-size:17px; font-weight:500; color:var(--md-primary); font-family:'Outfit',sans-serif; display:flex; align-items:center; gap:12px;"><span class="material-icons-round" style="font-size:20px;">category</span>Gerir</button>
         <button onclick="switchTo('whatsapp')" style="background:none; border:none; border-bottom:1px solid var(--md-outline-variant); padding:14px 0; text-align:left; cursor:pointer; width:100%; font-size:17px; font-weight:500; color:var(--md-primary); font-family:'Outfit',sans-serif; display:flex; align-items:center; gap:12px;"><span class="material-icons-round" style="font-size:20px;">chat_bubble_outline</span>WhatsApp</button>
-        <button onclick="switchTo('history')" style="background:none; border:none; border-bottom:1px solid var(--md-outline-variant); padding:14px 0; text-align:left; cursor:pointer; width:100%; font-size:17px; font-weight:500; color:var(--md-primary); font-family:'Outfit',sans-serif; display:flex; align-items:center; gap:12px;"><span class="material-icons-round" style="font-size:20px;">history</span>Histórico</button>
         <button onclick="switchTo('manifest-history')" style="background:none; border:none; border-bottom:1px solid var(--md-outline-variant); padding:14px 0; text-align:left; cursor:pointer; width:100%; font-size:17px; font-weight:500; color:var(--md-primary); font-family:'Outfit',sans-serif; display:flex; align-items:center; gap:12px;"><span class="material-icons-round" style="font-size:20px;">local_shipping</span>Histórico das Cargas</button>
+        <button onclick="switchToSalesSection('sales-section-vendas')" style="background:none; border:none; border-bottom:1px solid var(--md-outline-variant); padding:14px 0; text-align:left; cursor:pointer; width:100%; font-size:17px; font-weight:500; color:var(--md-primary); font-family:'Outfit',sans-serif; display:flex; align-items:center; gap:12px;"><span class="material-icons-round" style="font-size:20px;">point_of_sale</span>Vendas</button>
+        <button onclick="switchToSalesSection('sales-section-quebras')" style="background:none; border:none; border-bottom:1px solid var(--md-outline-variant); padding:14px 0; text-align:left; cursor:pointer; width:100%; font-size:17px; font-weight:500; color:var(--md-primary); font-family:'Outfit',sans-serif; display:flex; align-items:center; gap:12px;"><span class="material-icons-round" style="font-size:20px;">broken_image</span>Quebras</button>
+        <button onclick="switchToSalesSection('sales-section-despesas')" style="background:none; border:none; border-bottom:1px solid var(--md-outline-variant); padding:14px 0; text-align:left; cursor:pointer; width:100%; font-size:17px; font-weight:500; color:var(--md-primary); font-family:'Outfit',sans-serif; display:flex; align-items:center; gap:12px;"><span class="material-icons-round" style="font-size:20px;">receipt_long</span>Despesas</button>
         <button onclick="switchTo('rents')" style="background:none; border:none; border-bottom:1px solid var(--md-outline-variant); padding:14px 0; text-align:left; cursor:pointer; width:100%; font-size:17px; font-weight:500; color:var(--md-primary); font-family:'Outfit',sans-serif; display:flex; align-items:center; gap:12px;"><span class="material-icons-round" style="font-size:20px;">home</span>Rendas</button>
         <button onclick="switchTo('resumo')" style="background:none; border:none; padding:14px 0; text-align:left; cursor:pointer; width:100%; font-size:17px; font-weight:500; color:var(--md-primary); font-family:'Outfit',sans-serif; display:flex; align-items:center; gap:12px;"><span class="material-icons-round" style="font-size:20px;">bar_chart</span>Resumo</button>
       </div>
@@ -633,7 +627,7 @@
       <div style="padding:0 16px 16px;">
 
         <!-- Registar venda -->
-        <div style="background:var(--md-surface); border-radius:14px; border:1px solid var(--md-outline-variant); padding:18px; margin-bottom:20px;">
+        <div id="sales-section-vendas" style="background:var(--md-surface); border-radius:14px; border:1px solid var(--md-outline-variant); padding:18px; margin-bottom:20px;">
           <div style="font-size:13px; font-weight:700; color:var(--md-primary); opacity:0.6; text-transform:uppercase; letter-spacing:1px; margin-bottom:12px;">Registar venda</div>
           <div style="margin-bottom:12px;">
             <input id="sales-date" type="date" style="width:100%; padding:12px; border:1.5px solid var(--md-outline-variant); border-radius:10px; font-size:15px; font-family:'Outfit',sans-serif; color:var(--md-primary); background:var(--md-surface-1); outline:none;"/>
@@ -662,7 +656,7 @@
         </div>
 
         <!-- ── QUEBRAS — fruta que se estragou, calcula valor pelo preço de compra ── -->
-        <div style="margin-top:36px; padding-top:24px; border-top:1px solid var(--md-outline-variant);">
+        <div id="sales-section-quebras" style="margin-top:36px; padding-top:24px; border-top:1px solid var(--md-outline-variant);">
           <div style="font-size:52px; font-weight:700; letter-spacing:-1px; line-height:1; color:var(--md-amber); text-transform:lowercase; margin-bottom:14px;">Quebras</div>
 
           <div style="background:var(--md-surface); border-radius:14px; border:1px solid var(--md-outline-variant); padding:18px; margin-bottom:20px;">
@@ -700,7 +694,7 @@
         </div>
 
         <!-- ── DESPESAS — junto a Vendas, mesmo título visual ───────────────── -->
-        <div style="margin-top:36px; padding-top:24px; padding-bottom:40px; border-top:1px solid var(--md-outline-variant);">
+        <div id="sales-section-despesas" style="margin-top:36px; padding-top:24px; padding-bottom:40px; border-top:1px solid var(--md-outline-variant);">
           <div style="font-size:52px; font-weight:700; letter-spacing:-1px; line-height:1; color:var(--md-amber); text-transform:lowercase; margin-bottom:14px;">Despesas</div>
 
           <!-- Despesas: abas -->
@@ -5706,6 +5700,16 @@ function renderHistory() {
     });
     block.appendChild(hdr); block.appendChild(body); prodView.appendChild(block);
   });
+}
+
+// Vai para Vendas e desloca logo para a secção pedida (Vendas / Quebras / Despesas) —
+// as 3 vivem na mesma página, só a posição do scroll muda.
+function switchToSalesSection(sectionId) {
+  switchTo('sales');
+  setTimeout(() => {
+    const el = document.getElementById(sectionId);
+    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }, 60);
 }
 
 function switchTo(v, fromPopState) {
