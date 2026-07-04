@@ -5144,6 +5144,12 @@ function setListMode(mode) {
   renderCats(document.getElementById('list-search')?.value || '');
 }
 function updateListModeButtons() {
+  const saveBtn = document.getElementById('clear-btn');
+  if (saveBtn) {
+    saveBtn.innerHTML = listMode === 'loja'
+      ? '<span class="material-icons-round" style="font-size:18px;">share</span>Enviar WhatsApp'
+      : '<span class="material-icons-round" style="font-size:18px;">save</span>Gravar';
+  }
   const lojaBtn = document.getElementById('list-mode-loja');
   const marlBtn = document.getElementById('list-mode-marl');
   if (!lojaBtn || !marlBtn) return;
@@ -5783,6 +5789,7 @@ document.querySelectorAll(".hnav-btn").forEach(b => {
   b.addEventListener("click", () => switchTo(b.dataset.view));
 });
 document.getElementById("clear-btn").addEventListener("click", () => {
+  if (listMode === 'loja') { shareLojaList(); return; }
   // Preço de compra é obrigatório em todos os produtos marcados (picados) —
   // sem ele a margem fica sempre incompleta. O preço de venda fica de fora
   // de propósito, porque muitas vezes só se decide depois de ver o lote.
@@ -5895,8 +5902,26 @@ document.getElementById("wa-text").addEventListener("focus", e => e.target.selec
 
 // Constrói o texto completo da carga com o espaçamento e formatação pedidos por Paulo:
 // pontos isolados em linha própria para forçar o espaçamento visual no WhatsApp.
-function buildCargaText(itemLines) {
-  return '.\n\n\n\n.   *C   A   R   G   A*  .\n\n\n' + itemLines + '\n\n\n.';
+function buildCargaText(itemLines, word) {
+  const spaced = (word || 'CARGA').split('').join('   ');
+  return `.\n\n\n\n.   *${spaced}*  .\n\n\n` + itemLines + '\n\n\n.';
+}
+
+// ── ENVIAR LISTA DA LOJA — mesmo estilo do manifesto da carga, mas com os artigos
+// e quantidades da lista de loja (reorganizar), em vez da carga do MARL ──
+function shareLojaList() {
+  const lines = [];
+  Object.entries(products).forEach(([cat, items]) => {
+    const allItems = subcats[cat] ? subcats[cat].flatMap(g => g.items) : items;
+    allItems.forEach(item => {
+      const qty = Number(list[gk(cat, item)]?.qty || 0);
+      if (qty > 0) lines.push(`- ${item} - *${qty} cx*`);
+    });
+  });
+  if (!lines.length) { showSnack('Lista vazia', 'error'); return; }
+  const fullText = buildCargaText(lines.join('\n'), 'LOJA');
+  if (navigator.share) { navigator.share({ text: fullText }).catch(() => {}); }
+  else { navigator.clipboard?.writeText(fullText); showSnack('Copiado!', 'saved'); }
 }
 
 function copyWA() {
