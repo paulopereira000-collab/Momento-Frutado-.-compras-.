@@ -328,6 +328,14 @@
             style="width:100%; padding:9px 9px 9px 36px; border:1.5px solid var(--md-outline-variant); border-radius:10px; font-size:14px; font-family:'Outfit',sans-serif; color:var(--md-primary); background:rgba(92,126,96,0.08); outline:none; -webkit-appearance:none; appearance:none; box-sizing:border-box;"
             oninput="renderCats(this.value)" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" data-lpignore="true" data-form-type="other"/>
         </div>
+        <div id="list-mode-toggle" style="display:flex; background:var(--md-surface-variant); border-radius:10px; padding:2px; flex-shrink:0; gap:2px;">
+          <button id="list-mode-loja" onclick="setListMode('loja')" title="Lista loja — reorganizar" style="border:none; border-radius:8px; width:34px; height:34px; display:flex; align-items:center; justify-content:center; cursor:pointer;">
+            <span class="material-icons-round" style="font-size:19px;">storefront</span>
+          </button>
+          <button id="list-mode-marl" onclick="setListMode('marl')" title="Lista MARL — comprar" style="border:none; border-radius:8px; width:34px; height:34px; display:flex; align-items:center; justify-content:center; cursor:pointer;">
+            <span class="material-icons-round" style="font-size:19px;">local_shipping</span>
+          </button>
+        </div>
         <button id="list-sell-btn" onclick="switchTo('prices')" style="background:none; border:none; cursor:pointer; padding:6px; display:flex; align-items:center; opacity:0.5; flex-shrink:0;">
           <span class="material-icons-round" style="font-size:24px; color:var(--md-primary);">sell</span>
         </button>
@@ -1342,6 +1350,11 @@ let picked = {}; // key -> { done, price, supplier, date }
 let snapHistory = []; // array of weekly snapshots
 let lastManifest = null; // último manifesto de carga gerado ao gravar as compras
 let filterActive = false;
+// Alterna entre "loja" (reorganizar a lista, só nome+quantidade) e "marl" (comprar,
+// com botão de confirmar, preço de compra/venda e fornecedor logo na lista, sem abrir
+// o painel completo). "Outras informações" (vasilhame, peso, IVA, notas, margem)
+// continuam só a aparecer com o clique no nome do produto, em qualquer um dos modos.
+let listMode = 'loja';
 let pricesFilterActive = false; // mostra só artigos com quantidade marcada em Compras
 let suppliers = []; // fornecedores
 let vasilhameMovs = []; // movimentos { id, date, supplier, boxType, qty, direction:'debit'|'credit' }
@@ -5138,7 +5151,145 @@ function isLowMargin(key, item) {
   return margin < 20;
 }
 
+function setListMode(mode) {
+  listMode = mode;
+  updateListModeButtons();
+  renderCats(document.getElementById('list-search')?.value || '');
+}
+function updateListModeButtons() {
+  const lojaBtn = document.getElementById('list-mode-loja');
+  const marlBtn = document.getElementById('list-mode-marl');
+  if (!lojaBtn || !marlBtn) return;
+  const on  = { background:'var(--md-primary)', color:'var(--md-white)' };
+  const off = { background:'transparent', color:'var(--md-primary)' };
+  const s1 = listMode === 'loja' ? on : off, s2 = listMode === 'marl' ? on : off;
+  lojaBtn.style.background = s1.background; lojaBtn.style.color = s1.color;
+  marlBtn.style.background = s2.background; marlBtn.style.color = s2.color;
+}
+
+// ── LINHA DE PRODUTO — partilhada pelos 3 modos de lista (filtro/grupos/plana) ──
+// No modo "loja" mostra só nome+quantidade. No modo "marl" acrescenta o botão de
+// confirmar e uma 2ª linha com preço de compra, preço de venda e fornecedor, editável
+// ali mesmo sem abrir o painel completo. "Outras informações" só aparecem com o clique
+// no nome (abre o painel completo, igual em qualquer um dos modos).
+// Nota: a linha e a 2ª linha (se existir) são acrescentadas como filhos diretos do
+// contentor (não dentro de um wrapper), para não partir o CSS ".item-row:last-child"
+// que depende da posição real dentro do "cat-body".
+function appendItemRow(container, cat, item, zebraIdx) {
+  const key = gk(cat, item), e = list[key] || { qty: 0 }, active = Number(e.qty) > 0;
+  const isPicked = picked[key]?.done;
+
+  const row = document.createElement("div");
+  row.className = "item-row " + (zebraIdx % 2 === 0 ? "zebra-even" : "zebra-odd") + (active ? " active" : "");
+  row.dataset.key = key;
+
+  const nm = document.createElement("span");
+  nm.className = "item-name" + (active ? " active" : "") + (isPicked ? " picked" : "");
+  nm.textContent = item;
+  nm.style.cursor = 'pointer';
+  nm.addEventListener("click", () => openPickPanel(cat, item));
+  if (isLowMargin(key, item)) {
+    row.style.color = 'var(--md-error)';
+    nm.style.color = 'var(--md-error)';
+    const warnM = document.createElement('span'); warnM.className = 'material-icons-round'; warnM.textContent = 'warning';
+    warnM.title = 'Margem abaixo de 20%'; warnM.style.cssText = 'font-size:32px; margin-left:4px; color:var(--md-error); vertical-align:middle;';
+    nm.appendChild(warnM);
+  }
+  row.appendChild(nm);
+
+  if (listMode === 'marl') {
+    const pb = document.createElement("button");
+    pb.className = "pick-btn material-icons-round" + (isPicked ? " picked" : "") + (active ? "" : " pick-hidden");
+    pb.textContent = isPicked ? "task_alt" : "radio_button_unchecked";
+    if (active) pb.addEventListener("click", ev => { ev.stopPropagation(); picked[key] = { ...picked[key], done: !picked[key]?.done }; sched(); renderCats(document.getElementById('list-search')?.value || ''); });
+    row.appendChild(pb);
+  }
+
+  const qtyEl = makeQty(key, Number(e.qty));
+  if (isPicked) { const qd = qtyEl.querySelector(".qty-display"); if (qd) qd.classList.add("picked"); }
+  row.appendChild(qtyEl);
+  container.appendChild(row);
+
+  if (listMode === 'marl' && active) {
+    const bg = zebraIdx % 2 === 0 ? 'var(--md-surface-1)' : 'var(--md-surface)';
+    container.appendChild(buildMarlFieldsRow(key, bg));
+  }
+}
+
+function buildMarlFieldsRow(key, bg) {
+  const p = picked[key] || {};
+  const line2 = document.createElement("div");
+  line2.style.cssText = `display:flex; gap:6px; padding:2px 12px 10px; background:${bg || 'transparent'};`;
+
+  const fieldStyle = "width:100%; padding:8px 6px; border:1.5px solid var(--md-outline-variant); border-radius:8px; font-size:13px; font-weight:700; font-family:'Outfit',sans-serif; color:var(--md-primary); background:var(--md-surface-1); outline:none; text-align:center; box-sizing:border-box; -webkit-appearance:none; appearance:none;";
+
+  // Preço de compra — com a sugestão fantasma do preço anterior
+  const priceWrap = document.createElement("div"); priceWrap.style.cssText = "flex:1; position:relative;";
+  const priceInput = document.createElement("input");
+  priceInput.type = "search"; priceInput.inputMode = "decimal";
+  priceInput.autocomplete = "off"; priceInput.autocorrect = "off"; priceInput.autocapitalize = "off"; priceInput.spellcheck = false;
+  priceInput.setAttribute("data-lpignore", "true"); priceInput.setAttribute("data-form-type", "other");
+  priceInput.value = formatPrice(p.price) || "";
+  priceInput.style.cssText = fieldStyle;
+  const hasGhost = !priceInput.value && p.lastPrice;
+  priceInput.placeholder = hasGhost ? (formatPrice(p.lastPrice) || p.lastPrice) : "Compra";
+  if (hasGhost) priceInput.style.paddingRight = "34px";
+  priceInput.addEventListener("focus", () => priceInput.select());
+  priceInput.addEventListener("input", ev => { picked[key] = { ...picked[key], price: ev.target.value }; sched(); });
+  priceInput.addEventListener("blur", ev => {
+    const fmt = formatPrice(ev.target.value);
+    if (fmt !== '') picked[key] = { ...picked[key], price: fmt };
+    sched(); renderCats(document.getElementById('list-search')?.value || '');
+  });
+  priceWrap.appendChild(priceInput);
+  if (hasGhost) {
+    const sameBtn = document.createElement("button");
+    sameBtn.type = "button"; sameBtn.textContent = "✓";
+    sameBtn.title = "Igual ao preço anterior";
+    sameBtn.style.cssText = "position:absolute; right:3px; top:50%; transform:translateY(-50%); background:var(--md-primary); color:var(--md-white); border:none; border-radius:6px; padding:4px 7px; font-size:12px; font-weight:700; cursor:pointer;";
+    sameBtn.addEventListener("click", ev => {
+      ev.stopPropagation();
+      const fmt = formatPrice(p.lastPrice) || p.lastPrice;
+      picked[key] = { ...picked[key], price: fmt };
+      sched(); renderCats(document.getElementById('list-search')?.value || '');
+    });
+    priceWrap.appendChild(sameBtn);
+  }
+  line2.appendChild(priceWrap);
+
+  // Preço de venda
+  const sellInput = document.createElement("input");
+  sellInput.type = "search"; sellInput.inputMode = "decimal"; sellInput.placeholder = "Venda";
+  sellInput.autocomplete = "off"; sellInput.autocorrect = "off"; sellInput.autocapitalize = "off"; sellInput.spellcheck = false;
+  sellInput.setAttribute("data-lpignore", "true"); sellInput.setAttribute("data-form-type", "other");
+  sellInput.value = formatPrice(p.sellPrice) || "";
+  sellInput.style.cssText = fieldStyle + "flex:1;";
+  sellInput.addEventListener("focus", () => sellInput.select());
+  sellInput.addEventListener("input", ev => { picked[key] = { ...picked[key], sellPrice: ev.target.value }; sched(); });
+  sellInput.addEventListener("blur", ev => {
+    const fmt = formatPrice(ev.target.value);
+    if (fmt !== '') { ev.target.value = fmt; picked[key] = { ...picked[key], sellPrice: fmt, sellPriceChanged: true }; sched(); if (document.getElementById("view-whatsapp").classList.contains("active")) renderWA(); }
+  });
+  const sellWrap = document.createElement("div"); sellWrap.style.cssText = "flex:1;"; sellWrap.appendChild(sellInput);
+  line2.appendChild(sellWrap);
+
+  // Fornecedor — reutiliza o picker já existente no painel completo
+  const supBtn = document.createElement("button");
+  supBtn.type = "button";
+  supBtn.textContent = p.supplier || "Fornecedor";
+  supBtn.style.cssText = "flex:1.3; padding:8px 6px; border:1.5px solid var(--md-outline-variant); border-radius:8px; font-size:13px; font-weight:600; font-family:'Outfit',sans-serif; color:var(--md-primary); background:var(--md-surface-1); cursor:pointer; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;";
+  supBtn.addEventListener("click", ev => {
+    ev.stopPropagation();
+    currentPickKey = key;
+    openSupplierPicker();
+  });
+  line2.appendChild(supBtn);
+
+  return line2;
+}
+
 function renderCats(search) {
+  updateListModeButtons();
   const c = document.getElementById("cat-list"); c.innerHTML = "";
 
   // Com o filtro ativo, mostra todos os produtos com quantidade juntos, sem separar
@@ -5149,7 +5300,6 @@ function renderCats(search) {
     const flatWrap = document.createElement("div"); flatWrap.className = "cat-wrap"; flatWrap.style.paddingTop = "0";
     const flatBody = document.createElement("div"); flatBody.className = "cat-body"; flatBody.style.marginTop = "0"; flatBody.style.borderTop = "none"; flatBody.style.borderRadius = "0 0 12px 12px";
     let zebraIdx = 0;
-    let globalIdx = 0;
     let hasAny = false;
 
     Object.entries(products).forEach(([cat, items]) => {
@@ -5158,33 +5308,8 @@ function renderCats(search) {
       filtered = filtered.filter(i => Number(list[gk(cat, i)]?.qty || 0) > 0);
       filtered.forEach((item) => {
         hasAny = true;
-        const key = gk(cat, item), e = list[key] || { qty: 0 }, active = Number(e.qty) > 0;
-        const isPicked = picked[key]?.done;
-        const row = document.createElement("div");
-        row.className = "item-row " + (zebraIdx % 2 === 0 ? "zebra-even" : "zebra-odd") + (active ? " active" : "");
+        appendItemRow(flatBody, cat, item, zebraIdx);
         zebraIdx++;
-        const nm = document.createElement("span"); nm.className = "item-name" + (active ? " active" : "") + (isPicked ? " picked" : "");
-        nm.textContent = item;
-        const qtyEl = makeQty(key, Number(e.qty));
-        if (isPicked) { const qd = qtyEl.querySelector(".qty-display"); if(qd) qd.classList.add("picked"); }
-        if (isLowMargin(key, item)) {
-          row.style.color = 'var(--md-error)';
-          nm.style.color = 'var(--md-error)';
-          const warnM = document.createElement('span'); warnM.className = 'material-icons-round'; warnM.textContent = 'warning';
-          warnM.title = 'Margem abaixo de 20%'; warnM.style.cssText = 'font-size:32px; margin-left:4px; color:var(--md-error); vertical-align:middle;';
-          nm.appendChild(warnM);
-        }
-        row.dataset.key = key;
-        nm.style.cursor = 'pointer';
-        nm.addEventListener("click", () => openPickPanel(cat, item));
-        row.appendChild(nm);
-        const pb = document.createElement("button");
-        pb.className = "pick-btn material-icons-round" + (isPicked ? " picked" : "") + (active ? "" : " pick-hidden");
-        pb.textContent = isPicked ? "task_alt" : "radio_button_unchecked";
-        if (active) pb.addEventListener("click", ev => { ev.stopPropagation(); picked[key] = { ...picked[key], done: !picked[key]?.done }; sched(); renderCats(""); });
-        row.appendChild(pb);
-        row.appendChild(qtyEl); flatBody.appendChild(row);
-        globalIdx++;
       });
     });
 
@@ -5221,32 +5346,8 @@ function renderCats(search) {
         catHasRows = true;
         if (gi > 0) { const sp = document.createElement("div"); sp.className = "subcat-spacer"; body.appendChild(sp); }
         gItems.forEach((item) => {
-          const key = gk(cat, item), e = list[key] || { qty: 0 }, active = Number(e.qty) > 0;
-          const isPicked = picked[key]?.done;
-          const row = document.createElement("div");
-          row.className = "item-row " + (zebraIdx % 2 === 0 ? "zebra-even" : "zebra-odd") + (active ? " active" : "");
+          appendItemRow(body, cat, item, zebraIdx);
           zebraIdx++;
-          const nm = document.createElement("span"); nm.className = "item-name" + (active ? " active" : "") + (isPicked ? " picked" : "");
-          nm.textContent = item;
-          const qtyEl = makeQty(key, Number(e.qty));
-          if (isPicked) { const qd = qtyEl.querySelector(".qty-display"); if(qd) qd.classList.add("picked"); }
-          if (isLowMargin(key, item)) {
-            row.style.color = 'var(--md-error)';
-            nm.style.color = 'var(--md-error)';
-            const warnM = document.createElement('span'); warnM.className = 'material-icons-round'; warnM.textContent = 'warning';
-            warnM.title = 'Margem abaixo de 20%'; warnM.style.cssText = 'font-size:32px; margin-left:4px; color:var(--md-error); vertical-align:middle;';
-            nm.appendChild(warnM);
-          }
-          row.dataset.key = key;
-          nm.style.cursor = 'pointer';
-          nm.addEventListener("click", () => openPickPanel(cat, item));
-          row.appendChild(nm);
-          const pb = document.createElement("button");
-          pb.className = "pick-btn material-icons-round" + (isPicked ? " picked" : "") + (active ? "" : " pick-hidden");
-          pb.textContent = isPicked ? "task_alt" : "radio_button_unchecked";
-          if (active) pb.addEventListener("click", ev => { ev.stopPropagation(); picked[key] = { ...picked[key], done: !picked[key]?.done }; sched(); renderCats(""); });
-          row.appendChild(pb);
-          row.appendChild(qtyEl); body.appendChild(row);
         });
       });
     } else {
@@ -5260,32 +5361,8 @@ function renderCats(search) {
       });
       filtered.forEach((item) => {
         catHasRows = true;
-        const key = gk(cat, item), e = list[key] || { qty: 0 }, active = Number(e.qty) > 0;
-        const isPicked2 = picked[key]?.done;
-        const row = document.createElement("div");
-        row.className = "item-row " + (zebraIdx % 2 === 0 ? "zebra-even" : "zebra-odd") + (active ? " active" : "");
+        appendItemRow(body, cat, item, zebraIdx);
         zebraIdx++;
-        const nm = document.createElement("span"); nm.className = "item-name" + (active ? " active" : "") + (isPicked2 ? " picked" : "");
-        nm.textContent = item;
-        const qtyEl2 = makeQty(key, Number(e.qty));
-        if (isPicked2) { const qd = qtyEl2.querySelector(".qty-display"); if(qd) qd.classList.add("picked"); }
-        if (isLowMargin(key, item)) {
-          row.style.color = 'var(--md-error)';
-          nm.style.color = 'var(--md-error)';
-          const warnM2 = document.createElement('span'); warnM2.className = 'material-icons-round'; warnM2.textContent = 'warning';
-          warnM2.title = 'Margem abaixo de 20%'; warnM2.style.cssText = 'font-size:32px; margin-left:4px; color:var(--md-error); vertical-align:middle;';
-          nm.appendChild(warnM2);
-        }
-        row.dataset.key = key;
-        nm.style.cursor = 'pointer';
-        nm.addEventListener("click", () => openPickPanel(cat, item));
-        row.appendChild(nm);
-        const pb2 = document.createElement("button");
-        pb2.className = "pick-btn material-icons-round" + (isPicked2 ? " picked" : "") + (active ? "" : " pick-hidden");
-        pb2.textContent = isPicked2 ? "task_alt" : "radio_button_unchecked";
-        if (active) pb2.addEventListener("click", ev => { ev.stopPropagation(); picked[key] = { ...picked[key], done: !picked[key]?.done }; sched(); renderCats(""); });
-        row.appendChild(pb2);
-        row.appendChild(qtyEl2); body.appendChild(row);
       });
     }
 
@@ -6056,6 +6133,7 @@ function renderSupplierPickerResults(query) {
           updateSupplierCallBtn(s.name);
           sched();
           closeSupplierPicker();
+          if (listMode === 'marl') renderCats(document.getElementById('list-search')?.value || '');
         });
         results.appendChild(btn);
       });
@@ -6074,6 +6152,7 @@ function renderSupplierPickerResults(query) {
     updateSupplierCallBtn("");
     sched();
     closeSupplierPicker();
+    if (listMode === 'marl') renderCats(document.getElementById('list-search')?.value || '');
   });
   results.appendChild(clearBtn);
 }
