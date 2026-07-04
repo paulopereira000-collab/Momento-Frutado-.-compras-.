@@ -251,9 +251,9 @@
     #voice-cancel-btn { padding:14px 20px; background:var(--md-surface-variant); color:var(--md-primary); border:none; border-radius:14px; font-size:16px; font-weight:600; font-family:'Outfit',sans-serif; cursor:pointer; }
 
     /* PICK PANEL */
-    #pick-panel { position:fixed; bottom:0; left:50%; transform:translateX(-50%); width:100%; max-width:600px; background:linear-gradient(160deg, var(--md-primary) 0%, var(--md-primary-dark) 40%, #1a2e1c 100%); border-radius:28px 28px 0 0; padding:0 0 32px; box-shadow:0 -4px 32px rgba(0,0,0,0.3); z-index:200; display:none; max-height:88vh; overflow-y:auto; box-sizing:border-box; }
-    #pick-panel .pick-field-label { color:var(--md-white) !important; opacity:0.75 !important; }
-    #pick-panel { color:var(--md-white); }
+    #pick-panel { position:fixed; bottom:0; left:50%; transform:translateX(-50%); width:100%; max-width:600px; background:var(--md-surface); border-radius:28px 28px 0 0; padding:0 0 32px; box-shadow:0 -4px 32px rgba(0,0,0,0.3); z-index:200; display:none; max-height:88vh; overflow-y:auto; box-sizing:border-box; }
+    #pick-panel .pick-field-label { color:var(--md-primary) !important; opacity:0.7 !important; }
+    #pick-panel { color:var(--md-primary); }
     #pick-panel.open { display:block; }
     #pick-overlay { position:fixed; inset:0; background:rgba(26,28,25,0.5); z-index:199; display:none; backdrop-filter:blur(4px); -webkit-backdrop-filter:blur(4px); }
     #pick-overlay.open { display:block; }
@@ -1058,8 +1058,8 @@
   <div id="pick-panel">
     <div id="pick-title-row" style="display:flex; align-items:center; justify-content:space-between; padding:18px 16px 6px;">
       <div>
-        <div id="pick-title" style="font-size:29px; font-weight:600; color:var(--md-white); font-family:'Outfit',sans-serif; text-align:left;">Produto</div>
-        <div id="pick-qty-stats" style="display:none; font-size:12px; color:rgba(255,255,255,0.65); margin-top:3px;"></div>
+        <div id="pick-title" style="font-size:29px; font-weight:600; color:var(--md-primary); font-family:'Outfit',sans-serif; text-align:left;">Produto</div>
+        <div id="pick-qty-stats" style="display:none; font-size:12px; color:var(--md-primary); opacity:0.6; margin-top:3px;"></div>
         <div id="pick-date-display" style="display:none;">—</div>
       </div>
       <div style="display:flex; gap:10px; align-items:center;">
@@ -1076,7 +1076,7 @@
     </div>
 
     <div style="padding:0 16px 16px;">
-      <div style="background:var(--md-surface); border-radius:14px; border:1px solid var(--md-outline-variant); padding:18px;">
+      <div style="padding:18px;">
 
         <div style="font-size:13px; font-weight:700; color:var(--md-primary); opacity:0.6; text-transform:uppercase; letter-spacing:1px; margin-bottom:12px;">Preços</div>
         <div style="display:flex; gap:10px; margin-bottom:12px;">
