@@ -46,10 +46,10 @@
       --marl-light-bg:           var(--md-surface);         /* linha clara da zebra */
       --marl-dark-outline:       #97AD99;   /* contorno da linha escura */
       --marl-light-outline:      #C4CEC6;   /* contorno da linha clara */
-      --marl-dark-text:          var(--md-primary);  /* texto da linha escura */
-      --marl-light-text:         var(--md-outline);  /* texto da linha clara — verde seco intermédio */
+      --marl-dark-text:          #1A2E1C;   /* quase-preto — máxima leitura ao sol, igual nas duas zebras */
+      --marl-light-text:         #1A2E1C;
 
-      --md-error:                #9B3A3A;
+      --md-error:                #9C6B0A;   /* tons secundários de alerta — dourado/amarelo, não vermelho */
       --md-error-container:      #F5E0E0;
       --md-on-error-container:   #4A1010;
       --md-error-soft:           #c62828;   /* erro inline em fundo claro */
@@ -241,7 +241,7 @@
 
     /* VOICE (structure kept) */
     @keyframes pulse { 0%,100% { transform:scale(1); } 50% { transform:scale(1.08); } }
-    @keyframes dashAlertPulse { 0%,100% { box-shadow:0 0 0 0 rgba(196,69,54,0); } 50% { box-shadow:0 0 0 5px rgba(196,69,54,0.18); } }
+    @keyframes dashAlertPulse { 0%,100% { box-shadow:0 0 0 0 rgba(156,107,10,0); } 50% { box-shadow:0 0 0 5px rgba(156,107,10,0.18); } }
     #voice-modal { display:none; position:fixed; inset:0; z-index:400; }
     #voice-modal.open { display:block; }
     #voice-modal-overlay { position:absolute; inset:0; background:rgba(0,0,0,0.55); }
@@ -318,8 +318,8 @@
           <button class="hnav-btn hnav-btn-brand active" data-view="dashboard" style="font-size:13px; font-weight:700; letter-spacing:0.5px; padding:6px 8px; text-transform:uppercase; white-space:nowrap; background:transparent; border-radius:0; overflow:hidden; text-overflow:ellipsis; max-width:148px;">Momento Frutado</button>
         </div>
         <div id="header-nav-btns" style="display:flex; align-items:center; gap:0; flex-shrink:0;">
-          <button class="hnav-btn" id="loja-nav-btn" data-view="list" onclick="setListMode('loja')" style="font-size:11px; font-weight:700; letter-spacing:0.5px; padding:8px 10px;" title="Loja"><span class="material-icons-round">storefront</span></button>
-          <button class="hnav-btn" id="marl-nav-btn" data-view="list" onclick="setListMode('marl')" style="font-size:11px; font-weight:700; letter-spacing:0.5px; padding:8px 10px;" title="MARL"><span class="material-icons-round">local_shipping</span></button>
+          <button class="hnav-btn" id="loja-nav-btn" data-view="list" onclick="switchTo('list'); setListMode('loja');" style="font-size:11px; font-weight:700; letter-spacing:0.5px; padding:8px 10px;" title="Loja"><span class="material-icons-round">storefront</span></button>
+          <button class="hnav-btn" id="marl-nav-btn" data-view="list" onclick="switchTo('list'); setListMode('marl');" style="font-size:11px; font-weight:700; letter-spacing:0.5px; padding:8px 10px;" title="MARL"><span class="material-icons-round">local_shipping</span></button>
           <button class="hnav-btn" data-view="tasks" style="font-size:11px; font-weight:700; letter-spacing:0.5px; padding:8px 10px;"><span class="material-icons-round">check_circle</span></button>
           <button class="hnav-btn" data-view="settings" onclick="openSettings()" id="settings-btn"><span class="material-icons-round">more_vert</span></button>
         </div>
@@ -1855,7 +1855,7 @@ function openSupplierModal(id) {
         </div>`;
       }).join('');
       vasilBox.innerHTML = `
-        <div style="background:rgba(196,69,54,0.06); border:1px solid var(--md-outline-variant); border-radius:10px; padding:12px 14px; margin-bottom:14px;">
+        <div style="background:rgba(156,107,10,0.06); border:1px solid var(--md-outline-variant); border-radius:10px; padding:12px 14px; margin-bottom:14px;">
           <div style="font-size:11px; font-weight:700; color:var(--md-primary); opacity:0.6; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:6px; display:flex; align-items:center; gap:5px;">
             <span class="material-icons-round" style="font-size:14px;">inventory_2</span> Vasilhame em dívida
           </div>
@@ -1974,7 +1974,7 @@ function renderSuppliers(query) {
       const initials = s.name.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
       const vasilTotal = getTotalVasilBalanceForSupplier(s.name);
       const vasilBadge = vasilTotal > 0
-        ? `<span style="font-size:11px; font-weight:700; color:var(--md-error); background:rgba(196,69,54,0.14); border-radius:7px; padding:2px 6px; display:inline-flex; align-items:center; gap:2px; flex-shrink:0; white-space:nowrap; margin-left:6px; vertical-align:middle;"><span class="material-icons-round" style="font-size:11px;">inventory_2</span>${vasilTotal}</span>`
+        ? `<span style="font-size:11px; font-weight:700; color:var(--md-error); background:rgba(156,107,10,0.14); border-radius:7px; padding:2px 6px; display:inline-flex; align-items:center; gap:2px; flex-shrink:0; white-space:nowrap; margin-left:6px; vertical-align:middle;"><span class="material-icons-round" style="font-size:11px;">inventory_2</span>${vasilTotal}</span>`
         : '';
       card.innerHTML = `
         <div class="supplier-avatar" style="flex-shrink:0;">${initials}</div>
@@ -2922,7 +2922,7 @@ function renderPrices() {
 
     catItems.forEach(r => {
       const row = document.createElement('div');
-      row.style.cssText = 'display:flex; align-items:center; padding:14px 4px; border-bottom:1px solid var(--md-outline-variant); gap:10px;' + (r.lowMargin ? ' background:rgba(155,58,58,0.08);' : '');
+      row.style.cssText = 'display:flex; align-items:center; padding:14px 4px; border-bottom:1px solid var(--md-outline-variant); gap:10px;' + (r.lowMargin ? ' background:rgba(156,107,10,0.08);' : '');
 
       // Item name
       const nameSpan = document.createElement('span');
@@ -4915,9 +4915,8 @@ function applyFilterView(state, hideChrome) {
 
   // Esconde o cabeçalho geral por completo (e a linha de pesquisa) para maximizar o
   // espaço de leitura da lista — voltar à lista completa faz-se pela bola flutuante
-  // fixa no fundo do ecrã, sempre visível e centrada. No modo MARL a vista filtrada
-  // é a vista por omissão, por isso aí mantém-se o cabeçalho (com os ícones Loja/MARL)
-  // em vez de esconder tudo atrás da bolinha de casa.
+  // fixa no fundo do ecrã, sempre visível e centrada. Aplica-se tanto ao MARL (vista
+  // filtrada por omissão) como à loja (toggle manual do ícone do olho).
   const hide = filterActive && hideChrome;
   if (searchRow) searchRow.style.display = hide ? 'none' : 'flex';
   if (header) header.style.display = hide ? 'none' : '';
@@ -5153,7 +5152,7 @@ function setListMode(mode) {
   // No MARL a vista por omissão é a mesma do ícone do olho — só os produtos com
   // quantidade, sem os que ainda não foram marcados. Na loja mostra-se tudo,
   // porque aí o objetivo é rever/reorganizar a lista completa.
-  applyFilterView(mode === 'marl', false);
+  applyFilterView(mode === 'marl', true);
   updateListModeButtons();
   renderCats(document.getElementById('list-search')?.value || '');
 }
@@ -5198,8 +5197,8 @@ function appendItemRow(container, cat, item, zebraIdx) {
   nm.textContent = item;
   nm.style.cursor = 'pointer';
   nm.addEventListener("click", () => openPickPanel(cat, item));
-  // Na linha clara da zebra (MARL), todo o texto passa a verde seco intermédio.
-  if (listMode === 'marl' && zebraIdx % 2 !== 0) nm.style.color = 'var(--marl-light-text)';
+  // No MARL, texto do nome em quase-preto para máxima leitura ao sol.
+  if (listMode === 'marl') nm.style.color = zebraIdx % 2 !== 0 ? 'var(--marl-light-text)' : 'var(--marl-dark-text)';
   if (isLowMargin(key, item)) {
     row.style.color = 'var(--md-error)';
     nm.style.color = 'var(--md-error)';
@@ -5226,7 +5225,7 @@ function appendItemRow(container, cat, item, zebraIdx) {
     if (qd) {
       qd.style.width = "48px"; qd.style.height = "48px"; qd.style.fontSize = "22px"; qd.style.background = "transparent";
       qd.style.borderColor = (zebraIdx % 2 === 0) ? "var(--marl-dark-outline)" : "var(--marl-light-outline)";
-      if (zebraIdx % 2 !== 0) qd.style.color = 'var(--marl-light-text)';
+      qd.style.color = zebraIdx % 2 !== 0 ? 'var(--marl-light-text)' : 'var(--marl-dark-text)';
     }
     // +10% de espaçamento vertical entre artigos (14px → 15.4px)
     row.style.paddingTop = "15.4px";
@@ -5789,6 +5788,10 @@ function switchTo(v, fromPopState) {
     if (header) header.style.display = '';
     const floatingHome = document.getElementById('filter-floating-home');
     if (floatingHome) floatingHome.style.display = 'none';
+  } else {
+    // Cabeçalho escondido sempre que a lista está filtrada — a bolinha de casa é a
+    // forma de sair, tanto no MARL (vista por omissão) como na loja (toggle manual).
+    applyFilterView(filterActive, true);
   }
   if (v !== "prices") {
     pricesFilterActive = false;
@@ -5798,8 +5801,6 @@ function switchTo(v, fromPopState) {
     if (completudeRow) completudeRow.style.display = '';
     const pricesSearchRow = document.getElementById('prices-search-row');
     if (pricesSearchRow) pricesSearchRow.style.display = 'flex';
-    const header2 = document.getElementById('header');
-    if (header2) header2.style.display = '';
     const pricesFloatingHome = document.getElementById('prices-filter-floating-home');
     if (pricesFloatingHome) pricesFloatingHome.style.display = 'none';
   }
@@ -6824,7 +6825,7 @@ function updateMargin() {
     if (barWrap) barWrap.style.display = "block";
     const sug = document.getElementById("pick-suggestion");
     if (margin < 20) {
-      marginEl.style.background = "rgba(155,58,58,0.12)";
+      marginEl.style.background = "rgba(156,107,10,0.12)";
       marginEl.style.borderColor = "var(--md-error)";
       sug.style.display = "block";
       sug.style.color = "var(--md-error)";
