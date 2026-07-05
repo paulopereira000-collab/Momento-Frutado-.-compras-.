@@ -41,6 +41,14 @@
       --md-outline:              #8A9E8E;   /* bordas */
       --md-outline-variant:      #C8D8C8;   /* bordas subtis */
 
+      /* ── Lista MARL — zebra: cores nomeadas em vez de valores soltos no código ── */
+      --marl-dark-bg:            var(--md-surface-variant); /* linha escura da zebra */
+      --marl-light-bg:           var(--md-surface);         /* linha clara da zebra */
+      --marl-dark-outline:       #97AD99;   /* contorno da linha escura */
+      --marl-light-outline:      #C4CEC6;   /* contorno da linha clara */
+      --marl-dark-text:          var(--md-primary);  /* texto da linha escura */
+      --marl-light-text:         var(--md-outline);  /* texto da linha clara — verde seco intermédio */
+
       --md-error:                #9B3A3A;
       --md-error-container:      #F5E0E0;
       --md-on-error-container:   #4A1010;
@@ -5182,8 +5190,8 @@ function appendItemRow(container, cat, item, zebraIdx) {
   row.className = "item-row " + (zebraIdx % 2 === 0 ? "zebra-even" : "zebra-odd") + (active ? " active" : "");
   row.dataset.key = key;
   // No MARL a zebra ganha mais contraste (~10%) para ser mais fácil de distinguir
-  // as linhas a olhar rápido — usa o tom "surface-variant", já existente na paleta.
-  if (listMode === 'marl' && zebraIdx % 2 === 0) row.style.background = 'var(--md-surface-variant)';
+  // as linhas a olhar rápido — cores nomeadas em vez de valores soltos.
+  if (listMode === 'marl' && zebraIdx % 2 === 0) row.style.background = 'var(--marl-dark-bg)';
 
   const nm = document.createElement("span");
   nm.className = "item-name" + (active ? " active" : "") + (isPicked ? " picked" : "");
@@ -5191,7 +5199,7 @@ function appendItemRow(container, cat, item, zebraIdx) {
   nm.style.cursor = 'pointer';
   nm.addEventListener("click", () => openPickPanel(cat, item));
   // Na linha clara da zebra (MARL), todo o texto passa a verde seco intermédio.
-  if (listMode === 'marl' && zebraIdx % 2 !== 0) nm.style.color = 'var(--md-outline)';
+  if (listMode === 'marl' && zebraIdx % 2 !== 0) nm.style.color = 'var(--marl-light-text)';
   if (isLowMargin(key, item)) {
     row.style.color = 'var(--md-error)';
     nm.style.color = 'var(--md-error)';
@@ -5217,8 +5225,8 @@ function appendItemRow(container, cat, item, zebraIdx) {
     const qd = qtyEl.querySelector(".qty-display");
     if (qd) {
       qd.style.width = "48px"; qd.style.height = "48px"; qd.style.fontSize = "22px"; qd.style.background = "transparent";
-      qd.style.borderColor = (zebraIdx % 2 === 0) ? "#97AD99" : "#C4CEC6";
-      if (zebraIdx % 2 !== 0) qd.style.color = 'var(--md-outline)';
+      qd.style.borderColor = (zebraIdx % 2 === 0) ? "var(--marl-dark-outline)" : "var(--marl-light-outline)";
+      if (zebraIdx % 2 !== 0) qd.style.color = 'var(--marl-light-text)';
     }
     // +10% de espaçamento vertical entre artigos (14px → 15.4px)
     row.style.paddingTop = "15.4px";
@@ -5228,19 +5236,16 @@ function appendItemRow(container, cat, item, zebraIdx) {
   container.appendChild(row);
 
   if (listMode === 'marl' && active) {
-    const bg = zebraIdx % 2 === 0 ? 'var(--md-surface-variant)' : 'var(--md-surface)';
+    const bg = zebraIdx % 2 === 0 ? 'var(--marl-dark-bg)' : 'var(--marl-light-bg)';
     container.appendChild(buildMarlFieldsRow(key, bg));
   }
 }
 
 function buildMarlFieldsRow(key, bg) {
   const p = picked[key] || {};
-  // Linha escura da zebra → contorno mais 20% mais claro (acumulado sobre o ajuste anterior).
-  // Linha clara da zebra → contorno 50% mais claro que o tom intermédio original.
-  const borderColor = (bg === 'var(--md-surface-variant)') ? '#97AD99' : '#C4CEC6';
-  // Na linha clara da zebra, o texto do preço de compra/venda e fornecedor passa a
-  // verde seco intermédio (--md-outline). Na linha escura mantém-se o verde principal.
-  const textColor = (bg === 'var(--md-surface-variant)') ? 'var(--md-primary)' : 'var(--md-outline)';
+  const isDark = bg === 'var(--marl-dark-bg)';
+  const borderColor = isDark ? 'var(--marl-dark-outline)' : 'var(--marl-light-outline)';
+  const textColor = isDark ? 'var(--marl-dark-text)' : 'var(--marl-light-text)';
   const line2 = document.createElement("div");
   line2.style.cssText = `display:flex; gap:6px; padding:2px 12px 10px; background:${bg || 'transparent'};`;
 
