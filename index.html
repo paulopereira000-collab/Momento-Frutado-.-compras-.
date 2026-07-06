@@ -1395,6 +1395,42 @@ function initOpen(prods) {
 // ── LOCAL STORAGE ─────────────────────────────────────────────────────────────
 function payload() { return { products, subcats, list, picked, history: snapHistory, suppliers, tasks, sales, projects, expenses, recurringExpenses, vasilhameMovs, rents, boxWeights, breaks }; }
 
+// ── LIMPEZA DE REPETIÇÕES — um lote duplicado (ex: "Cerejas B") só é válido 24h;
+// passado esse tempo volta a haver só o lote original, para o catálogo não acumular
+// duplicados de compras pontuais do MARL.
+function cleanupExpiredDuplicates() {
+  const DAY_MS = 24 * 60 * 60 * 1000;
+  const now = Date.now();
+  let changed = false;
+
+  Object.keys(picked).forEach(key => {
+    const entry = picked[key];
+    if (!entry || !entry.duplicatedAt) return;
+    if (now - entry.duplicatedAt < DAY_MS) return;
+
+    const parts = key.split('|||');
+    const cat = parts[0], item = parts[1];
+    if (!/ [B-F]$/.test(item)) return; // só remove lotes marcados como duplicado
+
+    // Remove da categoria (lista simples ou dentro de uma subcategoria)
+    if (products[cat]) {
+      const idx = products[cat].indexOf(item);
+      if (idx !== -1) products[cat].splice(idx, 1);
+    }
+    if (subcats[cat]) {
+      subcats[cat].forEach(group => {
+        const gIdx = group.items.indexOf(item);
+        if (gIdx !== -1) group.items.splice(gIdx, 1);
+      });
+    }
+    delete picked[key];
+    delete list[key];
+    changed = true;
+  });
+
+  if (changed) sched();
+}
+
 function applyLocal(r) {
   if (r.products) products = r.products;
   if (r.picked) picked = r.picked;
@@ -1414,6 +1450,7 @@ function applyLocal(r) {
   if (r.list) list = { ...buildEmpty(products), ...r.list };
   else        list = buildEmpty(products);
   initOpen(products);
+  cleanupExpiredDuplicates();
 }
 
 function sched() {
@@ -5480,16 +5517,16 @@ function renderWA() {
     if (p.sellPrice && p.sellPriceChanged) {
       const parts = key.split("|||");
       const item = parts[1] || key;
-      const price = parseFloat(p.sellPrice).toFixed(2).replace(".", ",");
-      priceLines.push(`${item}  ${price}€`);
+      const price = parseFloat(p.sellPrice).toFixed(2);
+      priceLines.push(`- ${item} - *${price}*`);
     }
   });
   const hasPrices = priceLines.length > 0;
   document.getElementById("wa-prices").style.display = hasPrices ? "block" : "none";
   if (hasPrices) {
     const ta = document.getElementById("wa-prices-text");
-    ta.value = "*Actualizações de preço*\n\n" + priceLines.join("\n");
-    ta.style.height = Math.min(400, 40 + priceLines.length * 30 + 60) + "px";
+    ta.value = buildCargaText(priceLines.join('\n'), 'PREÇOS');
+    ta.style.height = Math.min(400, 40 + priceLines.length * 30 + 140) + "px";
   }
 }
 
@@ -6677,6 +6714,7 @@ function duplicatePickItem() {
     weightKg:  origData.weightKg  || 0,
     iva:       origData.iva       || null,
     notes:     '',
+    duplicatedAt: Date.now(), // usado para remover o lote automaticamente passadas 24h
   };
 
   // Sem isto o duplicado fica com quantidade 0 e não aparece na lista MARL, que só
