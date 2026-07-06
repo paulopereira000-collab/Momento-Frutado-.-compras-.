@@ -3420,6 +3420,7 @@ function openVasilSupplierPicker() {
   searchBar.setAttribute("data-form-type", "other"); // sinaliza ao Chrome que não é um campo de login/pagamento
   searchBar.style.cssText = "width:100%; box-sizing:border-box; padding:14px 16px; border:1.5px solid var(--md-outline-variant); border-radius:12px; font-size:18px; font-family:'Outfit',sans-serif; color:var(--md-primary); background:var(--md-surface-1); outline:none; margin-bottom:14px;";
   searchBar.addEventListener("input", () => renderVasilSupplierResults(searchBar.value));
+  searchBar.addEventListener("keydown", ev => { if (ev.key === "Enter") { ev.preventDefault(); searchBar.blur(); } });
   picker.appendChild(searchBar);
 
   // Contentor dos resultados — este sim é recriado a cada tecla
@@ -3565,6 +3566,7 @@ function openGenericSupplierPicker(onSelect, currentValue) {
   searchBar.setAttribute("data-form-type", "other");
   searchBar.style.cssText = "width:100%; box-sizing:border-box; padding:14px 16px; border:1.5px solid var(--md-outline-variant); border-radius:12px; font-size:18px; font-family:'Outfit',sans-serif; color:var(--md-primary); background:var(--md-surface-1); outline:none; margin-bottom:14px;";
   searchBar.addEventListener("input", () => renderGenericSupplierPickerResults(searchBar.value));
+  searchBar.addEventListener("keydown", ev => { if (ev.key === "Enter") { ev.preventDefault(); searchBar.blur(); } });
   picker.appendChild(searchBar);
 
   const results = document.createElement("div");
@@ -6151,6 +6153,7 @@ function openSupplierPicker() {
   searchBar.setAttribute("data-form-type", "other");
   searchBar.style.cssText = "width:100%; box-sizing:border-box; padding:14px 16px; border:1.5px solid var(--md-outline-variant); border-radius:12px; font-size:18px; font-family:'Outfit',sans-serif; color:var(--md-primary); background:var(--md-surface-1); outline:none; margin-bottom:14px;";
   searchBar.addEventListener("input", () => renderSupplierPickerResults(searchBar.value));
+  searchBar.addEventListener("keydown", ev => { if (ev.key === "Enter") { ev.preventDefault(); searchBar.blur(); } });
   picker.appendChild(searchBar);
 
   // Contentor dos resultados — este sim é recriado a cada tecla
@@ -6675,6 +6678,10 @@ function duplicatePickItem() {
     iva:       origData.iva       || null,
     notes:     '',
   };
+
+  // Sem isto o duplicado fica com quantidade 0 e não aparece na lista MARL, que só
+  // mostra os produtos ativos (quantidade > 0) — começa já com 1 caixa.
+  list[newKey] = { qty: 1 };
 
   sched();
   renderCats('');
