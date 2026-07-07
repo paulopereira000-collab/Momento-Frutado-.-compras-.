@@ -41,13 +41,9 @@
       --md-outline:              #8A9E8E;   /* bordas */
       --md-outline-variant:      #C8D8C8;   /* bordas subtis */
 
-      /* ── Lista MARL — zebra: cores nomeadas em vez de valores soltos no código ── */
-      --marl-dark-bg:            var(--md-surface-variant); /* linha escura da zebra */
-      --marl-light-bg:           var(--md-surface);         /* linha clara da zebra */
-      --marl-dark-outline:       #97AD99;   /* contorno da linha escura */
-      --marl-light-outline:      #C4CEC6;   /* contorno da linha clara */
-      --marl-dark-text:          #1A2E1C;   /* quase-preto — máxima leitura ao sol, igual nas duas zebras */
-      --marl-light-text:         #1A2E1C;
+      /* ── Lista MARL — sem zebra: fundo branco uniforme + linha verde acima de cada produto ── */
+      --marl-dark-outline:       #97AD99;   /* contorno dos campos/bolinha */
+      --marl-dark-text:          #1A2E1C;   /* quase-preto — máxima leitura ao sol */
 
       --md-error:                #9C6B0A;   /* tons secundários de alerta — dourado/amarelo, não vermelho */
       --md-error-container:      #F5E0E0;
@@ -5227,9 +5223,10 @@ function appendItemRow(container, cat, item, zebraIdx) {
   const row = document.createElement("div");
   row.className = "item-row " + (zebraIdx % 2 === 0 ? "zebra-even" : "zebra-odd") + (active ? " active" : "");
   row.dataset.key = key;
-  // No MARL a zebra ganha mais contraste (~10%) para ser mais fácil de distinguir
-  // as linhas a olhar rápido — cores nomeadas em vez de valores soltos.
-  if (listMode === 'marl' && zebraIdx % 2 === 0) row.style.background = 'var(--marl-dark-bg)';
+  // Sem zebra no MARL — em vez disso, fundo branco uniforme e uma linha verde forte
+  // acima do nome separa os produtos. Mais fácil de ler ao sol do que depender de
+  // tons de cor próximos. A loja mantém a zebra normal.
+  if (listMode === 'marl') { row.style.background = 'var(--md-surface)'; row.style.borderTop = '3px solid var(--md-primary)'; }
 
   const nm = document.createElement("span");
   nm.className = "item-name" + (active ? " active" : "") + (isPicked ? " picked" : "");
@@ -5237,7 +5234,7 @@ function appendItemRow(container, cat, item, zebraIdx) {
   nm.style.cursor = 'pointer';
   nm.addEventListener("click", () => openPickPanel(cat, item));
   // No MARL, texto do nome em quase-preto para máxima leitura ao sol.
-  if (listMode === 'marl') nm.style.color = zebraIdx % 2 !== 0 ? 'var(--marl-light-text)' : 'var(--marl-dark-text)';
+  if (listMode === 'marl') nm.style.color = 'var(--marl-dark-text)';
   if (isLowMargin(key, item)) {
     row.style.color = 'var(--md-error)';
     nm.style.color = 'var(--md-error)';
@@ -5263,8 +5260,8 @@ function appendItemRow(container, cat, item, zebraIdx) {
     const qd = qtyEl.querySelector(".qty-display");
     if (qd) {
       qd.style.width = "48px"; qd.style.height = "48px"; qd.style.fontSize = "22px"; qd.style.background = "transparent";
-      qd.style.borderColor = (zebraIdx % 2 === 0) ? "var(--marl-dark-outline)" : "var(--marl-light-outline)";
-      qd.style.color = zebraIdx % 2 !== 0 ? 'var(--marl-light-text)' : 'var(--marl-dark-text)';
+      qd.style.borderColor = "var(--marl-dark-outline)";
+      qd.style.color = "var(--marl-dark-text)";
     }
     // +10% de espaçamento vertical entre artigos (14px → 15.4px)
     row.style.paddingTop = "15.4px";
@@ -5274,20 +5271,18 @@ function appendItemRow(container, cat, item, zebraIdx) {
   container.appendChild(row);
 
   if (listMode === 'marl' && active) {
-    const bg = zebraIdx % 2 === 0 ? 'var(--marl-dark-bg)' : 'var(--marl-light-bg)';
-    container.appendChild(buildMarlFieldsRow(key, bg));
+    container.appendChild(buildMarlFieldsRow(key, 'var(--md-surface)'));
   }
 }
 
 function buildMarlFieldsRow(key, bg) {
   const p = picked[key] || {};
-  const isDark = bg === 'var(--marl-dark-bg)';
-  const borderColor = isDark ? 'var(--marl-dark-outline)' : 'var(--marl-light-outline)';
-  const textColor = isDark ? 'var(--marl-dark-text)' : 'var(--marl-light-text)';
+  const borderColor = 'var(--marl-dark-outline)';
+  const textColor = 'var(--marl-dark-text)';
   const line2 = document.createElement("div");
-  line2.style.cssText = `display:flex; gap:6px; padding:2px 12px 10px; background:${bg || 'transparent'};`;
+  line2.style.cssText = `display:flex; gap:6px; padding:2px 12px 10px; background:${bg || 'var(--md-surface)'};`;
 
-  const fieldStyle = `width:100%; padding:8px 6px; border:1.5px solid ${borderColor}; border-radius:8px; font-size:13px; font-weight:700; font-family:'Outfit',sans-serif; color:${textColor}; background:${bg || 'var(--md-surface-1)'}; outline:none; text-align:center; box-sizing:border-box; -webkit-appearance:none; appearance:none;`;
+  const fieldStyle = `width:100%; padding:8px 6px; border:1.5px solid ${borderColor}; border-radius:8px; font-size:13px; font-weight:700; font-family:'Outfit',sans-serif; color:${textColor}; background:${bg || 'var(--md-surface)'}; outline:none; text-align:center; box-sizing:border-box; -webkit-appearance:none; appearance:none;`;
 
   // Preço de compra — com a sugestão fantasma do preço anterior
   const priceWrap = document.createElement("div"); priceWrap.style.cssText = "flex:1; position:relative;";
