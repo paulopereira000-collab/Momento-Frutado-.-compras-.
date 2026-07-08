@@ -5253,16 +5253,16 @@ function appendItemRow(container, cat, item, zebraIdx) {
   container.appendChild(row);
 
   if (listMode === 'marl' && active) {
-    container.appendChild(buildMarlFieldsRow(key, 'var(--md-surface)'));
+    container.appendChild(buildMarlFieldsRow(key, 'var(--md-surface)', isPicked));
   }
 }
 
-function buildMarlFieldsRow(key, bg) {
+function buildMarlFieldsRow(key, bg, isPicked) {
   const p = picked[key] || {};
   const borderColor = 'var(--md-primary)';
   const textColor = 'var(--md-white)';
   const line2 = document.createElement("div");
-  line2.style.cssText = `display:flex; gap:6px; padding:2px 12px 10px; background:${bg || 'var(--md-surface)'};`;
+  line2.style.cssText = `display:flex; gap:6px; padding:2px 12px 10px; background:${bg || 'var(--md-surface)'};` + (isPicked ? ' opacity:0.4;' : '');
 
   const fieldStyle = `width:100%; padding:8px 6px; border:1.5px solid ${borderColor}; border-radius:999px; font-size:17px; font-weight:700; font-family:'Outfit',sans-serif; color:${textColor}; background:var(--md-primary); outline:none; text-align:center; box-sizing:border-box; -webkit-appearance:none; appearance:none;`;
 
