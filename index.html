@@ -5223,18 +5223,12 @@ function appendItemRow(container, cat, item, zebraIdx) {
   const row = document.createElement("div");
   row.className = "item-row " + (zebraIdx % 2 === 0 ? "zebra-even" : "zebra-odd") + (active ? " active" : "");
   row.dataset.key = key;
-  // Sem zebra no MARL — em vez disso, fundo branco uniforme e uma linha verde forte
-  // acima do nome separa os produtos. Mais fácil de ler ao sol do que depender de
-  // tons de cor próximos. A loja mantém a zebra normal.
-  if (listMode === 'marl') { row.style.background = 'var(--md-surface)'; row.style.borderTop = '3px solid var(--md-primary)'; }
 
   const nm = document.createElement("span");
   nm.className = "item-name" + (active ? " active" : "") + (isPicked ? " picked" : "");
   nm.textContent = item;
   nm.style.cursor = 'pointer';
   nm.addEventListener("click", () => openPickPanel(cat, item));
-  // No MARL, texto do nome em quase-preto para máxima leitura ao sol.
-  if (listMode === 'marl') nm.style.color = 'var(--marl-dark-text)';
   if (isLowMargin(key, item)) {
     row.style.color = 'var(--md-error)';
     nm.style.color = 'var(--md-error)';
@@ -5248,25 +5242,12 @@ function appendItemRow(container, cat, item, zebraIdx) {
     const pb = document.createElement("button");
     pb.className = "pick-btn material-icons-round" + (isPicked ? " picked" : "") + (active ? "" : " pick-hidden");
     pb.textContent = isPicked ? "task_alt" : "radio_button_unchecked";
-    pb.style.fontSize = "24px"; // mais +10% sobre os 22px anteriores — fácil de acertar no MARL
     if (active) pb.addEventListener("click", ev => { ev.stopPropagation(); picked[key] = { ...picked[key], done: !picked[key]?.done }; sched(); renderCats(document.getElementById('list-search')?.value || ''); });
     row.appendChild(pb);
   }
 
   const qtyEl = makeQty(key, Number(e.qty));
   if (isPicked) { const qd = qtyEl.querySelector(".qty-display"); if (qd) qd.classList.add("picked"); }
-  if (listMode === 'marl') {
-    // -15% em relação aos 56px/26px de origem — dá mais espaço à 2ª linha de preços
-    const qd = qtyEl.querySelector(".qty-display");
-    if (qd) {
-      qd.style.width = "48px"; qd.style.height = "48px"; qd.style.fontSize = "22px"; qd.style.background = "transparent";
-      qd.style.borderColor = "var(--marl-dark-outline)";
-      qd.style.color = "var(--marl-dark-text)";
-    }
-    // +10% de espaçamento vertical entre artigos (14px → 15.4px)
-    row.style.paddingTop = "15.4px";
-    row.style.paddingBottom = "15.4px";
-  }
   row.appendChild(qtyEl);
   container.appendChild(row);
 
@@ -5278,7 +5259,7 @@ function appendItemRow(container, cat, item, zebraIdx) {
 function buildMarlFieldsRow(key, bg) {
   const p = picked[key] || {};
   const borderColor = 'var(--md-outline-variant)';
-  const textColor = 'var(--marl-dark-text)';
+  const textColor = 'var(--md-primary)';
   const line2 = document.createElement("div");
   line2.style.cssText = `display:flex; gap:6px; padding:2px 12px 10px; background:${bg || 'var(--md-surface)'};`;
 
