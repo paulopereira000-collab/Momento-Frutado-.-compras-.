@@ -5264,7 +5264,8 @@ function buildMarlFieldsRow(key, bg, isPicked) {
   const line2 = document.createElement("div");
   line2.style.cssText = `display:flex; gap:6px; padding:2px 12px 10px; background:${bg || 'var(--md-surface)'};` + (isPicked ? ' opacity:0.4;' : '');
 
-  const fieldStyle = `width:100%; padding:8px 6px; border:1.5px solid ${borderColor}; border-radius:999px; font-size:17px; font-weight:700; font-family:'Outfit',sans-serif; color:${textColor}; background:var(--md-primary); outline:none; text-align:center; box-sizing:border-box; -webkit-appearance:none; appearance:none;`;
+  const fieldBg = '#749178';
+  const fieldStyle = `width:100%; padding:8px 6px; border:1.5px solid ${borderColor}; border-radius:999px; font-size:17px; font-weight:700; font-family:'Outfit',sans-serif; color:${textColor}; background:${fieldBg}; outline:none; text-align:center; box-sizing:border-box; -webkit-appearance:none; appearance:none;`;
 
   // Preço de compra — com a sugestão fantasma do preço anterior
   const priceWrap = document.createElement("div"); priceWrap.style.cssText = "flex:1; position:relative;";
@@ -5339,7 +5340,7 @@ function buildMarlFieldsRow(key, bg, isPicked) {
   const supBtn = document.createElement("button");
   supBtn.type = "button";
   supBtn.textContent = p.supplier || "Fornecedor";
-  supBtn.style.cssText = `flex:1.3; padding:8px 6px; border:1.5px solid ${borderColor}; border-radius:999px; font-size:13px; font-weight:600; font-family:'Outfit',sans-serif; color:${textColor}; background:var(--md-primary); cursor:pointer; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;`;
+  supBtn.style.cssText = `flex:1.3; padding:8px 6px; border:1.5px solid ${borderColor}; border-radius:999px; font-size:13px; font-weight:600; font-family:'Outfit',sans-serif; color:${textColor}; background:${fieldBg}; cursor:pointer; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;`;
   supBtn.addEventListener("click", ev => {
     ev.stopPropagation();
     currentPickKey = key;
