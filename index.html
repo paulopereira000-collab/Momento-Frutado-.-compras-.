@@ -230,6 +230,7 @@
 
     /* PICKED */
     .item-name.picked { color:var(--md-primary) !important; font-weight:400 !important; text-decoration:none; font-size:29px !important; opacity:0.4; }
+    .marl-field::placeholder { color:var(--md-white); opacity:0.85; }
     .qty-display.picked { opacity:0.35; }
     .pick-btn { border:none; background:transparent; font-size:20px; color:var(--md-outline-variant); cursor:pointer; padding:2px; flex-shrink:0; line-height:1; }
     .pick-btn.pick-hidden { visibility:hidden; pointer-events:none; }
@@ -5268,6 +5269,7 @@ function buildMarlFieldsRow(key, bg) {
   // Preço de compra — com a sugestão fantasma do preço anterior
   const priceWrap = document.createElement("div"); priceWrap.style.cssText = "flex:1; position:relative;";
   const priceInput = document.createElement("input");
+  priceInput.className = "marl-field";
   priceInput.type = "search"; priceInput.inputMode = "decimal";
   priceInput.autocomplete = "off"; priceInput.autocorrect = "off"; priceInput.autocapitalize = "off"; priceInput.spellcheck = false;
   priceInput.setAttribute("data-lpignore", "true"); priceInput.setAttribute("data-form-type", "other");
@@ -5312,6 +5314,7 @@ function buildMarlFieldsRow(key, bg) {
 
   // Preço de venda
   const sellInput = document.createElement("input");
+  sellInput.className = "marl-field";
   sellInput.type = "search"; sellInput.inputMode = "decimal"; sellInput.placeholder = "Venda";
   sellInput.autocomplete = "off"; sellInput.autocorrect = "off"; sellInput.autocapitalize = "off"; sellInput.spellcheck = false;
   sellInput.setAttribute("data-lpignore", "true"); sellInput.setAttribute("data-form-type", "other");
