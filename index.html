@@ -6372,6 +6372,7 @@ function openPickPanel(cat, item) {
   }
   document.getElementById("pick-panel").classList.add("open");
   document.getElementById("pick-overlay").classList.add("open");
+  updateMargin(); // sem isto, a margem ficava com o valor do artigo anterior
 
   // Estatística de quantidade histórica — quantas unidades/caixas costumas comprar
   // deste produto, com base nas últimas idas ao MARL registadas.
