@@ -1698,37 +1698,47 @@ function renderDashSummary() {
   if (!wrap) return;
   wrap.innerHTML = '';
 
-  // Card 2 (previsão do próximo dia de mercado): usa a média histórica desse dia da
-  // semana como previsão, e mostra se isso é melhor ou pior do que a semana passada,
-  // em percentagem — não é o dia mais recente vs a média, é a previsão vs a semana
-  // que passou.
+  // Card 2 (previsão dos próximos dias de mercado): mostra até 2 dias de mercado
+  // que aí vêm (ex: quinta-feira mostra Sexta E Sábado, não só o primeiro), cada um
+  // com a média histórica desse dia da semana como previsão, comparada com a semana
+  // que passou, em percentagem.
   let dayCompareValue = '—';
   let dayCompareLabel = 'Sem dados';
   let dayCompareAlert = false;
   {
     const today = new Date();
-    let nextDow = null;
-    for (let i = 1; i <= 7; i++) {
+    const upcomingDows = [];
+    for (let i = 1; i <= 7 && upcomingDows.length < 2; i++) {
       const d = new Date(today);
       d.setDate(d.getDate() + i);
-      if ([2, 5, 6].includes(d.getDay())) { nextDow = d.getDay(); break; }
+      if ([2, 5, 6].includes(d.getDay())) upcomingDows.push(d.getDay());
     }
-    if (nextDow !== null) {
+
+    const dayNames = ['domingo','segunda','terça','quarta','quinta','sexta','sábado'];
+    const dayAbbrev = ['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'];
+    const lines = [];
+    let anyAlert = false;
+
+    upcomingDows.forEach(dow => {
       const sameDaySales = [...sales]
-        .filter(s => new Date(s.date).getDay() === nextDow)
+        .filter(s => new Date(s.date).getDay() === dow)
         .sort((a, b) => b.date.localeCompare(a.date));
       if (sameDaySales.length >= 2) {
-        const lastWeek = sameDaySales[0]; // semana que passou, mesmo dia
-        const history = sameDaySales.slice(1); // anos/semanas anteriores
+        const lastWeek = sameDaySales[0];
+        const history = sameDaySales.slice(1);
         const forecast = history.reduce((a, s) => a + s.total, 0) / history.length;
         if (lastWeek.total > 0) {
           const diffPct = ((forecast - lastWeek.total) / lastWeek.total) * 100;
-          const dayNames = ['domingo','segunda','terça','quarta','quinta','sexta','sábado'];
-          dayCompareValue = (diffPct >= 0 ? '+' : '') + diffPct.toFixed(0) + '%';
-          dayCompareLabel = 'previsão ' + dayNames[nextDow];
-          dayCompareAlert = Math.abs(diffPct) >= 20; // previsão bem diferente da semana passada
+          lines.push(`${dayAbbrev[dow]} ${diffPct >= 0 ? '+' : ''}${diffPct.toFixed(0)}%`);
+          if (Math.abs(diffPct) >= 20) anyAlert = true;
         }
       }
+    });
+
+    if (lines.length) {
+      dayCompareValue = lines.join('\n');
+      dayCompareLabel = 'previsão';
+      dayCompareAlert = anyAlert;
     }
   }
 
@@ -1752,7 +1762,7 @@ function renderDashSummary() {
 
   const cards = [
     weatherCard,
-    { value: dayCompareValue, label: dayCompareLabel, view: 'sales', dotId: null, alert: dayCompareAlert },
+    { value: dayCompareValue, label: dayCompareLabel, view: 'sales', dotId: null, alert: dayCompareAlert, small: true },
     { value: topProjectValue, label: topProjectLabel, view: 'tasks', dotId: null, small: true },
   ];
 
@@ -1764,15 +1774,16 @@ function renderDashSummary() {
     card.style.cssText = `width:100px; height:100px; border-radius:50%; background:transparent; border:2px solid ${borderColor}; display:flex; flex-direction:column; align-items:center; justify-content:center; cursor:pointer; flex-shrink:0; gap:2px; position:relative; opacity:0; transform:translateY(10px) scale(0.92);`;
     const valueFontSize = c.small ? '13px' : '20px';
     const valueLineClamp = c.small ? 'display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; line-height:1.15;' : 'line-height:1; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;';
+    const valueHtml = String(c.value).replace(/\n/g, '<br>');
     if (c.alert) {
       card.innerHTML = `
         <span style="position:absolute; top:-4px; right:-2px; width:18px; height:18px; border-radius:50%; background:var(--md-error); color:white; font-size:12px; font-weight:800; display:flex; align-items:center; justify-content:center;">!</span>
-        <div style="font-size:${valueFontSize}; font-weight:700; color:var(--md-white); ${valueLineClamp} text-align:center; padding:0 8px; max-width:90px;">${c.value}</div>
+        <div style="font-size:${valueFontSize}; font-weight:700; color:var(--md-white); ${valueLineClamp} text-align:center; padding:0 8px; max-width:90px;">${valueHtml}</div>
         <div style="font-size:10px; color:var(--md-white); opacity:0.7; text-align:center; padding:0 6px; line-height:1.2; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; max-width:84px;">${c.label}</div>
       `;
     } else {
       card.innerHTML = `
-        <div style="font-size:${valueFontSize}; font-weight:700; color:var(--md-white); ${valueLineClamp} text-align:center; padding:0 8px; max-width:90px;">${c.value}</div>
+        <div style="font-size:${valueFontSize}; font-weight:700; color:var(--md-white); ${valueLineClamp} text-align:center; padding:0 8px; max-width:90px;">${valueHtml}</div>
         <div style="font-size:10px; color:var(--md-white); opacity:0.7; text-align:center; padding:0 6px; line-height:1.2; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; max-width:84px;">${c.label}</div>
       `;
     }
