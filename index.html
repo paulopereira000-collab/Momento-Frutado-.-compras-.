@@ -1081,23 +1081,23 @@
         <div style="font-size:13px; font-weight:700; color:var(--md-primary); opacity:0.6; text-transform:uppercase; letter-spacing:1px; margin-bottom:12px;">Preços</div>
         <div style="display:flex; gap:10px; margin-bottom:12px;">
           <div style="flex:1;">
-            <span style="font-size:12px; color:var(--md-primary); opacity:0.5; display:block; margin-bottom:4px;">Venda</span>
-            <input id="pick-sell-price" type="search" inputmode="decimal" placeholder="0.00" step="0.01" min="0"
-              autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" data-lpignore="true" data-form-type="other"
-              onfocus="this.select()"
-              onkeydown="if(event.key==='Enter'){event.preventDefault();document.getElementById('pick-price').focus();}"
-              style="width:100%; padding:12px; border:1.5px solid var(--md-outline-variant); border-radius:10px; font-size:18px; font-weight:700; font-family:'Outfit',sans-serif; color:var(--md-primary); background:var(--md-surface-1); outline:none; text-align:center; box-sizing:border-box; -webkit-appearance:none; appearance:none;"/>
-          </div>
-          <div style="flex:1;">
             <span style="font-size:12px; color:var(--md-primary); opacity:0.5; display:block; margin-bottom:4px;">Compra</span>
             <div style="position:relative;">
               <input id="pick-price" type="search" inputmode="decimal" placeholder="0.00" step="0.01" min="0"
                 autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" data-lpignore="true" data-form-type="other"
                 onfocus="this.select()"
-                onkeydown="if(event.key==='Enter'){event.preventDefault();this.blur();}"
+                onkeydown="if(event.key==='Enter'){event.preventDefault();document.getElementById('pick-sell-price').focus();}"
                 style="width:100%; padding:12px; border:1.5px solid var(--md-outline-variant); border-radius:10px; font-size:18px; font-weight:700; font-family:'Outfit',sans-serif; color:var(--md-primary); background:var(--md-surface-1); outline:none; text-align:center; box-sizing:border-box; -webkit-appearance:none; appearance:none;"/>
               <button id="pick-price-same-btn" type="button" onclick="acceptSuggestedPrice()" style="display:none; position:absolute; right:4px; top:50%; transform:translateY(-50%); background:var(--md-primary); color:var(--md-white); border:none; border-radius:8px; padding:6px 8px; font-size:11px; font-weight:700; font-family:'Outfit',sans-serif; cursor:pointer; white-space:nowrap;">✓ igual</button>
             </div>
+          </div>
+          <div style="flex:1;">
+            <span style="font-size:12px; color:var(--md-primary); opacity:0.5; display:block; margin-bottom:4px;">Venda</span>
+            <input id="pick-sell-price" type="search" inputmode="decimal" placeholder="0.00" step="0.01" min="0"
+              autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" data-lpignore="true" data-form-type="other"
+              onfocus="this.select()"
+              onkeydown="if(event.key==='Enter'){event.preventDefault();this.blur();}"
+              style="width:100%; padding:12px; border:1.5px solid var(--md-outline-variant); border-radius:10px; font-size:18px; font-weight:700; font-family:'Outfit',sans-serif; color:var(--md-primary); background:var(--md-surface-1); outline:none; text-align:center; box-sizing:border-box; -webkit-appearance:none; appearance:none;"/>
           </div>
         </div>
 
@@ -1698,26 +1698,35 @@ function renderDashSummary() {
   if (!wrap) return;
   wrap.innerHTML = '';
 
-  // Card 2 (comparação do dia vs média): como está o último dia de venda
-  // desse mesmo dia da semana (Terça/Sexta/Sábado) — comparação direta com
-  // dados reais, sem tentar prever o futuro.
+  // Card 2 (previsão do próximo dia de mercado): usa a média histórica desse dia da
+  // semana como previsão, e mostra se isso é melhor ou pior do que a semana passada,
+  // em percentagem — não é o dia mais recente vs a média, é a previsão vs a semana
+  // que passou.
   let dayCompareValue = '—';
   let dayCompareLabel = 'Sem dados';
   let dayCompareAlert = false;
   {
-    const sortedSales = [...sales].sort((a, b) => b.date.localeCompare(a.date));
-    if (sortedSales.length >= 2) {
-      const lastSale = sortedSales[0];
-      const lastDayOfWeek = new Date(lastSale.date).getDay();
-      const sameDaySales = sortedSales.slice(1).filter(s => new Date(s.date).getDay() === lastDayOfWeek);
+    const today = new Date();
+    let nextDow = null;
+    for (let i = 1; i <= 7; i++) {
+      const d = new Date(today);
+      d.setDate(d.getDate() + i);
+      if ([2, 5, 6].includes(d.getDay())) { nextDow = d.getDay(); break; }
+    }
+    if (nextDow !== null) {
+      const sameDaySales = [...sales]
+        .filter(s => new Date(s.date).getDay() === nextDow)
+        .sort((a, b) => b.date.localeCompare(a.date));
       if (sameDaySales.length >= 2) {
-        const avg = sameDaySales.reduce((a, s) => a + s.total, 0) / sameDaySales.length;
-        if (avg > 0) {
-          const diffPct = ((lastSale.total - avg) / avg) * 100;
+        const lastWeek = sameDaySales[0]; // semana que passou, mesmo dia
+        const history = sameDaySales.slice(1); // anos/semanas anteriores
+        const forecast = history.reduce((a, s) => a + s.total, 0) / history.length;
+        if (lastWeek.total > 0) {
+          const diffPct = ((forecast - lastWeek.total) / lastWeek.total) * 100;
           const dayNames = ['domingo','segunda','terça','quarta','quinta','sexta','sábado'];
           dayCompareValue = (diffPct >= 0 ? '+' : '') + diffPct.toFixed(0) + '%';
-          dayCompareLabel = 'vs média ' + dayNames[lastDayOfWeek];
-          dayCompareAlert = Math.abs(diffPct) >= 20; // diferença grande face ao habitual
+          dayCompareLabel = 'previsão ' + dayNames[nextDow];
+          dayCompareAlert = Math.abs(diffPct) >= 20; // previsão bem diferente da semana passada
         }
       }
     }
