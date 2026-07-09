@@ -339,9 +339,20 @@
         </button>
       </div>
 
-      <button id="filter-floating-home" onclick="exitListFilterView()" title="Ver lista completa" style="display:none; position:fixed; bottom:18px; left:50%; transform:translateX(-50%); z-index:95; width:48px; height:48px; border-radius:50%; background:rgba(242,201,76,0.3); border:none; cursor:pointer; align-items:center; justify-content:center; box-shadow:0 2px 8px rgba(0,0,0,0.2);">
-        <span class="material-icons-round" style="font-size:22px; color:var(--md-primary-dark);">home</span>
-      </button>
+      <div id="filter-floating-search" style="display:none; position:fixed; bottom:78px; left:50%; transform:translateX(-50%); z-index:95; width:calc(100% - 32px); max-width:400px;">
+        <input id="filter-floating-search-input" type="search" placeholder="Pesquisar produto..." oninput="renderCats(this.value)"
+          autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"
+          style="width:100%; padding:12px 16px; border-radius:999px; border:1.5px solid var(--md-outline-variant); background:var(--md-surface); color:var(--md-primary); font-size:15px; font-family:'Outfit',sans-serif; outline:none; box-shadow:0 2px 8px rgba(0,0,0,0.15); box-sizing:border-box; -webkit-appearance:none; appearance:none;"/>
+      </div>
+
+      <div id="filter-floating-search-wrap" style="display:none; position:fixed; bottom:18px; left:50%; transform:translateX(-50%); z-index:95; align-items:center; gap:8px;">
+        <input id="filter-floating-search" type="search" placeholder="Pesquisar"
+          style="width:170px; padding:11px 14px; border:none; border-radius:999px; font-size:14px; font-weight:600; font-family:'Outfit',sans-serif; color:var(--md-primary-dark); background:rgba(242,201,76,0.3); outline:none; -webkit-appearance:none; appearance:none; box-sizing:border-box; box-shadow:0 2px 8px rgba(0,0,0,0.2);"
+          oninput="renderCats(this.value)" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" data-lpignore="true" data-form-type="other"/>
+        <button id="filter-floating-home" onclick="exitListFilterView()" title="Ver lista completa" style="width:48px; height:48px; border-radius:50%; background:rgba(242,201,76,0.3); border:none; cursor:pointer; display:flex; align-items:center; justify-content:center; box-shadow:0 2px 8px rgba(0,0,0,0.2); flex-shrink:0;">
+          <span class="material-icons-round" style="font-size:22px; color:var(--md-primary-dark);">home</span>
+        </button>
+      </div>
 
       <!-- Painel rápido de vasilhame -->
       <div id="vasil-quick-panel" style="display:none; padding:0 16px 12px;">
@@ -4730,7 +4741,7 @@ function applyFilterView(state, hideChrome) {
 
   const searchRow = document.getElementById('list-search-row');
   const header = document.getElementById('header');
-  const floatingHome = document.getElementById('filter-floating-home');
+  const floatingHome = document.getElementById('filter-floating-search-wrap');
 
   // Esconde o cabeçalho geral por completo (e a linha de pesquisa) para maximizar o
   // espaço de leitura da lista — voltar à lista completa faz-se pela bola flutuante
@@ -5588,7 +5599,7 @@ function switchTo(v, fromPopState) {
     if (searchRow) searchRow.style.display = 'flex';
     const header = document.getElementById('header');
     if (header) header.style.display = '';
-    const floatingHome = document.getElementById('filter-floating-home');
+    const floatingHome = document.getElementById('filter-floating-search-wrap');
     if (floatingHome) floatingHome.style.display = 'none';
   } else {
     // Cabeçalho escondido sempre que a lista está filtrada — a bolinha de casa é a
