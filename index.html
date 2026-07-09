@@ -231,6 +231,7 @@
     /* PICKED */
     .item-name.picked { color:var(--md-primary) !important; font-weight:400 !important; text-decoration:none; font-size:29px !important; opacity:0.4; }
     .marl-field::placeholder { color:var(--md-white); opacity:0.85; }
+    #pick-price::placeholder { color:var(--md-primary); opacity:0.4; font-weight:400; }
     .qty-display.picked { opacity:0.35; }
     .pick-btn { border:none; background:transparent; font-size:20px; color:var(--md-outline-variant); cursor:pointer; padding:2px; flex-shrink:0; line-height:1; }
     .pick-btn.pick-hidden { visibility:hidden; pointer-events:none; }
@@ -6888,6 +6889,13 @@ function updateMargin() {
     if (bar) bar.style.width = "0%";
     const barWrap = document.getElementById("pick-margin-bar-wrap");
     if (barWrap) barWrap.style.display = "none";
+    // Sem isto, o aviso "Margem abaixo de 20%" ficava preso do produto anterior
+    // sempre que a margem deixava de poder ser calculada (ex: sugestão fantasma
+    // ainda não aceite, sem preço real introduzido).
+    const sug = document.getElementById("pick-suggestion");
+    if (sug) sug.style.display = "none";
+    marginEl.style.background = "var(--md-primary-container)";
+    marginEl.style.borderColor = "var(--md-outline-variant)";
   }
 }
 
