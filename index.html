@@ -332,7 +332,7 @@
           <span class="material-icons-round" style="position:absolute; left:12px; top:50%; transform:translateY(-50%); font-size:18px; color:var(--md-primary); opacity:0.4; pointer-events:none;">search</span>
           <input id="list-search" type="search" placeholder="Pesquisar"
             style="width:100%; padding:9px 9px 9px 36px; border:1.5px solid var(--md-outline-variant); border-radius:10px; font-size:14px; font-family:'Outfit',sans-serif; color:var(--md-primary); background:rgba(92,126,96,0.08); outline:none; -webkit-appearance:none; appearance:none; box-sizing:border-box;"
-            oninput="renderCats(this.value)" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" data-lpignore="true" data-form-type="other"/>
+            oninput="searchAndScroll(this.value)" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" data-lpignore="true" data-form-type="other"/>
         </div>
         <button id="list-filter-btn" onclick="toggleFilter()" style="background:none; border:none; cursor:pointer; padding:6px; display:flex; align-items:center; opacity:0.5; flex-shrink:0;">
           <span class="material-icons-round" id="list-filter-icon" style="font-size:26px; color:var(--md-primary);">visibility</span>
@@ -342,7 +342,7 @@
       <div id="filter-floating-search-wrap" style="display:none; position:fixed; bottom:18px; left:50%; transform:translateX(-50%); z-index:95; align-items:center; gap:8px;">
         <input id="filter-floating-search-field" type="search" placeholder="Pesquisar"
           style="width:170px; padding:11px 14px; border:none; border-radius:999px; font-size:14px; font-weight:600; font-family:'Outfit',sans-serif; color:var(--md-primary-dark); background:rgba(242,201,76,0.3); outline:none; -webkit-appearance:none; appearance:none; box-sizing:border-box; box-shadow:0 2px 8px rgba(0,0,0,0.2);"
-          oninput="renderCats(this.value); scrollFirstResultIntoView();" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" data-lpignore="true" data-form-type="other"/>
+          oninput="searchAndScroll(this.value);" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" data-lpignore="true" data-form-type="other"/>
         <button id="filter-floating-home" onclick="exitListFilterView()" title="Ver lista completa" style="width:48px; height:48px; border-radius:50%; background:rgba(242,201,76,0.3); border:none; cursor:pointer; display:flex; align-items:center; justify-content:center; box-shadow:0 2px 8px rgba(0,0,0,0.2); flex-shrink:0;">
           <span class="material-icons-round" style="font-size:22px; color:var(--md-primary-dark);">home</span>
         </button>
@@ -4971,11 +4971,22 @@ function isLowMargin(key, item) {
   return margin < 20;
 }
 
-// Traz o primeiro resultado da pesquisa (na vista filtrada) diretamente para a vista,
-// sem precisar de saber qual o elemento exato que faz scroll — funciona sempre.
-function scrollFirstResultIntoView() {
-  const firstRow = document.querySelector('#cat-list .item-row');
-  if (firstRow) firstRow.scrollIntoView({ block: 'start', behavior: 'auto' });
+// Pesquisa que não esconde o resto da lista — só salta até ao primeiro produto que
+// corresponde, para continuares a ver o que vem a seguir (ex: "cereja" leva-te lá,
+// mas os outros produtos continuam visíveis por baixo, sem teres de limpar a
+// pesquisa para voltar a vê-los).
+function searchAndScroll(term) {
+  renderCats('');
+  if (!term) return;
+  const t = term.toLowerCase();
+  const names = document.querySelectorAll('#cat-list .item-name');
+  for (const nm of names) {
+    if (nm.textContent.toLowerCase().includes(t)) {
+      const row = nm.closest('.item-row');
+      if (row) row.scrollIntoView({ block: 'start', behavior: 'smooth' });
+      break;
+    }
+  }
 }
 
 function setListMode(mode) {
@@ -5877,9 +5888,30 @@ function buildGroupedCargaLines(entries, lineFn) {
   return catBlocks.join('\n\n\n'); // 2 linhas em branco entre categorias
 }
 
+// ── AGRUPAR POR FORNECEDOR — usado na carga do MARL, para saberes logo o que
+// pedir a cada fornecedor quando fores pagar/carregar. 2 linhas em branco entre
+// fornecedores, fornecedores sem nome ficam por último.
+function buildSupplierGroupedLines(entries) {
+  const bySupplier = {};
+  entries.forEach(e => {
+    const sup = e.supplier || 'Sem fornecedor';
+    (bySupplier[sup] = bySupplier[sup] || []).push(e);
+  });
+  const names = Object.keys(bySupplier).sort((a, b) => {
+    if (a === 'Sem fornecedor') return 1;
+    if (b === 'Sem fornecedor') return -1;
+    return a.localeCompare(b, 'pt');
+  });
+  const blocks = names.map(sup => {
+    const lines = bySupplier[sup].map(e => `- ${e.item} - *${e.qty}*`).join('\n');
+    return `*${sup}*\n\n${lines}`;
+  });
+  return blocks.join('\n\n\n');
+}
+
 function manifestLinesFor(snap) {
   const entries = snap.items.map(it => ({ cat: it.cat, item: it.item, qty: Number(it.qty), supplier: it.supplier || '' }));
-  return buildGroupedCargaLines(entries, (item, qty, supplier) => `- ${item} - *${qty}*` + (supplier ? `  (${supplier})` : ''));
+  return buildSupplierGroupedLines(entries);
 }
 
 function renderManifestHistory() {
